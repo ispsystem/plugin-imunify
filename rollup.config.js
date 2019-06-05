@@ -1,4 +1,3 @@
-// rollup.config.js
 import typescript from 'rollup-plugin-typescript';
 import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
@@ -7,17 +6,6 @@ import postcss from 'rollup-plugin-postcss';
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
-
-// const common = {
-//   plugins: [
-//     typescript(),
-//     resolve(), // tells Rollup how to find date-fns in node_modules
-//     production && terser(), // minify, but only in production
-//     postcss({
-//       inject: false
-//     })
-//   ]
-// }
 
 const pluginsCommon = [
   typescript(),
