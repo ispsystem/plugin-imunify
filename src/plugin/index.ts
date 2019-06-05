@@ -1,12 +1,11 @@
-import { AbstractElement, Define } from 'abstract-element';
+import { AbstractElement } from 'abstract-element';
 import litRender from 'abstract-element/render/lit';
 import { html, TemplateResult } from 'lit-html';
 import styles from './styles.css';
 
 /**
- * The demo web component with lit-html render engine
+ * The imunifyav-widget web component
  */
-// @Define('plugin-imunifyav-widget')
 export default class PluginImunifyAvWidget extends AbstractElement<TemplateResult> {
   title = 'Антивирус';
   state = this._changeStatus(true);
