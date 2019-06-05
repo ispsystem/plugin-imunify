@@ -1,0 +1,106 @@
+:host {
+  --isp-ui-grid__max-width: 1300px;
+  --isp-ui-grid__side-margin: 40px;
+  --isp-ui-grid__gutter: 20px;
+  --isp-color__border: #d9d9d9;
+  --isp-color__basic-text: #344a5e;
+  --isp-font-size-default: 14px;
+  --isp-color__additional-text: #9b9b9b;
+  --isp-font-size-small: 12px;
+  --isp-color__active-text: #30ba9a;
+}
+
+@media (min-width: 1021px) and (max-width: 1380px) {
+  :host {
+    --isp-ui-grid__max-width: calc(100vw - 80px);
+  }
+}
+
+@media (max-width: 1020px) {
+  :host {
+    --isp-ui-grid__max-width: 940px;
+  }
+}
+
+:host {
+  --isp-ui-grid__cell-width: calc((var(--isp-ui-grid__max-width, 100%) - var(--isp-ui-grid__gutter) * 11) / 12);
+  --item-width: calc(var(--isp-ui-grid__cell-width) * 2 + var(--isp-ui-grid__gutter));
+}
+
+.vepp-overview-widget-list__item {
+  margin-right: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 200px;
+  height: 200px;
+  padding: 24px 10px 34px 10px;
+  text-align: center;
+  border: 1px solid var(--isp-color__border);
+  border-radius: 3px;
+  line-height: 22px;
+
+  font-family: Ubuntu, sans-serif;
+  font-size: var(--isp-font-size-default);
+}
+
+.vepp-widget_adaptive {
+  box-sizing: border-box;
+  width: var(--item-width);
+  height: var(--item-width);
+  padding: calc(var(--item-width) * 0.35 - 46px) calc(var(--item-width) * 0.05) calc(var(--item-width) * 0.33 - 32px)
+    calc(var(--item-width) * 0.05);
+  text-align: center;
+  line-height: 22px;
+}
+
+.vepp-overview-widget-list__item-link {
+  text-decoration: none;
+  color: var(--isp-color__basic-text);
+}
+
+/* .vepp-widget-text_with-margin-adaptive {
+  margin-bottom: calc(var(--item-width) * 0.36 - 64px);
+} */
+
+.vepp-widget-text_additional {
+  color: var(--isp-color__additional-text);
+  font-size: var(--isp-font-size-small);
+}
+
+.vepp-overview-widget-list__item-overflow {
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.vepp-widget-icon_adaptive {
+  margin-bottom: calc(var(--item-width) * 0.1333 - 13.66px);
+  margin-top: auto;
+  font-size: 0;
+  line-height: 0;
+}
+
+.ngispui-link {
+  display: inline-block;
+}
+
+.ngispui-link_size_small {
+  font: 12px Ubuntu, sans-serif;
+  font-size: var(--isp-font-size-small);
+}
+
+.ngispui-link_color_primary {
+  color: var(--isp-link__color_regular, #0279c0);
+  cursor: pointer;
+}
+
+.ngispui-link_color_primary:focus {
+  outline: 0;
+}
+
+.vepp-widget-text_success {
+  color: var(--isp-color__active-text);
+  font-size: var(--isp-font-size-small);
+}
