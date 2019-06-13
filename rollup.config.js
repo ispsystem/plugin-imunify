@@ -2,6 +2,7 @@ import typescript from 'rollup-plugin-typescript';
 import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
+import minifyLiteralsHTML from 'rollup-plugin-minify-html-literals';
 
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
@@ -15,26 +16,25 @@ const pluginsCommon = [
   })
 ];
 
-const dev = {
-  input: './src/index.ts',
+export const dev = (input, file) => ({
+  input,
   output: {
-    file: 'public/bundle.js',
+    file,
     format: 'iife', // immediately-invoked function expression — suitable for <script> tags
     sourcemap: true
   },
   plugins: pluginsCommon
-};
+});
 
-const prod = {
-  input: './src/plugin/index.ts',
+export const prod = (input, file) => ({
+  input,
   output: {
-    file: 'dist/plugin.js',
+    file,
     format: 'es'
   },
-  plugins: [
-    ...pluginsCommon,
-    terser() // minify, but only in production
-  ]
-};
+  plugins: [...pluginsCommon, terser(), minifyLiteralsHTML()]
+});
 
-export default (production ? prod : dev);
+export default input => {
+  return production ? prod(input) : dev(input);
+};
