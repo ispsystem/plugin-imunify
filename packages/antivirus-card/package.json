@@ -1,0 +1,23 @@
+{
+  "name": "antivirus-card",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Den Sumbaev <d.sumbaev@ispsystem.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/antivirus-card.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab-dev.ispsystem.net:ispsystem/plugin/imunify.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
