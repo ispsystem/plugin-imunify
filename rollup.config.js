@@ -3,7 +3,11 @@ import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import minifyLiteralsHTML from 'rollup-plugin-minify-html-literals';
+// import postcssPresetEnv from 'postcss-preset-env';
+const postcssPresetEnv = require('postcss-preset-env');
+var atImport = require("postcss-import")
 
+console.log(postcssPresetEnv);
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
@@ -12,7 +16,18 @@ const pluginsCommon = [
   typescript(),
   resolve(), // tells Rollup how to find date-fns in node_modules
   postcss({
-    inject: false
+    inject: false,
+    extensions: ['.css', '.pcss'],
+    plugins: [
+      atImport(),
+      postcssPresetEnv({
+        /* use stage 3 features + css nesting rules */
+        stage: 0,
+        // features: {
+        //   'nesting-rules': true
+        // }
+      })
+    ]
   })
 ];
 
