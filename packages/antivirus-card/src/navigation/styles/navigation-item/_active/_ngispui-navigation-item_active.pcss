@@ -1,0 +1,26 @@
+.ngispui-navigation-item_active {
+  position: relative;
+
+  cursor: default;
+
+  &::after {
+
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: var(--ngispui-navigation-border-line-top, var(--isp-navigation-border-line-top, 1px));
+    left: 0;
+
+    display: block;
+
+    content: '';
+
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    border-bottom-color: var(--ngispui-color__nav-line, var(--isp-color__nav-line, #0279c0));
+  }
+
+  &:hover {
+    --ngispui-color__nav-text: var(--ngispui-color__nav-text_active, var(--isp-color__nav-text_active, #344a5e));
+  }
+}
