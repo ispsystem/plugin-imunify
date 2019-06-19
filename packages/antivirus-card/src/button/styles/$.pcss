@@ -1,0 +1,80 @@
+@import "_type/_ngispui-button_type_accent.pcss";
+@import "_type/_ngispui-button_type_primary.pcss";
+@import "_type/_ngispui-button_type_secondary.pcss";
+@import "_type/_ngispui-button_type_third.pcss";
+@import "_type/_ngispui-button_type_fourth.pcss";
+
+:host(ngispui-button) {
+  -webkit-appearance: none;
+}
+
+.ngispui-button {
+  box-sizing: border-box;
+  width: var(--ngispui-button__width, auto);
+  min-width: var(--ngispui-button__min-width, auto);
+  max-width: var(--ngispui-button__max-width, none);
+  padding-top: 0;
+  padding-right: var(--ngispui-button__padding-right, 14px);
+  padding-bottom: 0;
+  padding-left: var(--ngispui-button__padding-left, 14px);
+
+  cursor: pointer;
+  transition-duration: .25s;
+
+  transition-property: background-color, color, fill, stroke;
+  text-align: center;
+  vertical-align: var(--ngispui-button__vertical-align, middle);
+  white-space: nowrap;
+
+  border-width: 1px;
+
+  border-style: solid;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px 0 rgba(64, 61, 4, 0.44);
+
+  font: 14px Ubuntu, sans-serif;
+  line-height: 28px;
+
+  stroke: var(--ngispui-button__icon-stroke, var(--isp-color__button-icon-stroke, #0279c0));
+  fill: var(--ngispui-button__icon-fill, var(--isp-color__button-icon-fill, transparent));
+
+  &:hover {
+    stroke: var(--ngispui-button__icon-stroke_hover, var(--isp-color__button-icon-stroke_hover, #0991e2));
+    fill: var(--ngispui-button__icon-fill_hover, var(--isp-color__button-icon-fill_hover, transparent));
+  }
+
+  &:active {
+    stroke: var(--ngispui-button__icon-stroke_active, var(--isp-color__button-icon-stroke_active, #035b90));
+    fill: var(--ngispui-button__icon-fill_active, var(--isp-color__button-icon-fill_active, transparent));
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    color: var(--ngispui-button__inactive_text_regular, var(--isp-color__inactive-buttont-text_regular, #9b9b9b));
+    border-color: transparent;
+    background-color: var(--ngispui-button__inactive_background_regular, var(--isp-color__inactive-button_background_regular, #f4f4f4));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.44);
+
+    stroke: var(--ngispui-button__inactive-icon-stroke, var(--isp-color__inactive-button-icon-stroke, #9b9b9b));
+    fill: var(--ngispui-button__inactive-icon-fill, var(--isp-color__inactive-button-icon-fill, transparent));
+
+    &:hover {
+      color: var(--ngispui-button__inactive_text_hover, var(--isp-color__inactive-buttont-text_hover, #9b9b9b));
+      border-color: transparent;
+      background-color: var(--ngispui-button__inactive_background_hover, var(--isp-color__inactive-button_background_hover, #f4f4f4));
+
+      stroke: var(--ngispui-button__inactive-icon-stroke_hover, var(--isp-color__inactive-button-icon-stroke_hover, #9b9b9b));
+      fill: var(--ngispui-button__inactive-icon-fill_hover, var(--isp-color__inactive-button-icon-fill_hover, transparent));
+    }
+
+    &:active {
+      color: var(--ngispui-button__inactive_text_active, var(--isp-color__inactive-buttont-text_active, #9b9b9b));
+      border-color: transparent;
+      background-color: var(--ngispui-button__inactive_background_active, var(--isp-color__inactive-button_background_active, #f4f4f4));
+
+      stroke: var(--ngispui-button__inactive-icon-stroke_active, var(--isp-color__inactive-button-icon-stroke_active, #9b9b9b));
+      fill: var(--ngispui-button__inactive-icon-fill_active, var(--isp-color__inactive-button-icon-fill_active, transparent));
+    }
+  }
+}
