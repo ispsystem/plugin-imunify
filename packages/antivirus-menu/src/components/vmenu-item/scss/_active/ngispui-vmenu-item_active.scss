@@ -1,0 +1,12 @@
+ngispui-vmenu-item.ngispui-vmenu-item_active {
+  .ngispui-vmenu-item__label {
+    font-weight: 700;
+  }
+
+  .ngispui-vmenu-item__icon {
+    background-color: var(
+      --ngispui-vmenu-option-icon__bg,
+      var(--isp-color__active-icon-nav-background, $isp-color__active-icon-nav-background)
+    );
+  }
+}

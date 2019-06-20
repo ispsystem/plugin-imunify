@@ -1,0 +1,8 @@
+ngispui-vmenu-item.ngispui-vmenu-item_disabled {
+  cursor: not-allowed;
+  user-select: none;
+
+  color: var(--ngispui-vmenu-option-inactive__color, var(--isp-color__additional-text, $isp-color__additional-text));
+
+  outline: none;
+}
