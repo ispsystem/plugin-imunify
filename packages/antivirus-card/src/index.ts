@@ -1,7 +1,11 @@
-import { AbstractElement } from 'abstract-element';
+import { AbstractElement, state } from 'abstract-element';
 import litRender from 'abstract-element/render/lit';
 import { html, TemplateResult } from 'lit-html';
 import styles from './styles/$.pcss';
+
+import './preview';
+import './infected-files';
+import './navigation';
 
 /**
  * The imunifyav-card web component
@@ -9,6 +13,25 @@ import styles from './styles/$.pcss';
 export default class PluginImunifyAvCard extends AbstractElement<TemplateResult> {
   title = 'Антивирус ImunifyAV';
   state = this._changeStatus(true);
+
+  @state()
+  items: {
+    label: string;
+    active: boolean;
+  }[] = [
+    {
+      label: 'Обзор',
+      active: true
+    },
+    {
+      label: 'Заражённые файлы',
+      active: false
+    },
+    {
+      label: 'История сканирований',
+      active: false
+    }
+  ];
 
   constructor() {
     super(litRender, true);
@@ -19,6 +42,13 @@ export default class PluginImunifyAvCard extends AbstractElement<TemplateResult>
       <style>
         ${styles}
       </style>
+      <plugin-imunifyav-card-navigation
+        .items=${this.items}
+        @click-item="${this.handleClickItem.bind(this)}"
+      ></plugin-imunifyav-card-navigation>
+
+      <plugin-imunifyav-card-infected-files></plugin-imunifyav-card-infected-files>
+      <plugin-imunifyav-card-preview></plugin-imunifyav-card-preview>
 
       <div>
         <div class="ngispui-table">
@@ -88,6 +118,14 @@ export default class PluginImunifyAvCard extends AbstractElement<TemplateResult>
         </div>
       </div>
     `;
+  }
+
+  handleClickItem(e: MouseEvent) {
+    const beforeIndex = this.items.findIndex(item => item.active);
+    this.items[beforeIndex].active = false;
+    this.items[e.detail['index']].active = true;
+
+    this.items = this.items;
   }
 
   handleClickSection(event: MouseEvent) {
