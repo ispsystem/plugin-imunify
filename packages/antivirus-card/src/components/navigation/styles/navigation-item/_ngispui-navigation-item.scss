@@ -1,0 +1,24 @@
+@import "_active/_ngispui-navigation-item_active.scss";
+@import "_disabled/_ngispui-navigation-item_disabled.scss";
+@import "_invert-line/_ngispui-navigation-item_invert-line.scss";
+@import "_invert-text/_ngispui-navigation-item_invert-text.scss";
+@import "_indicator/_ngispui-navigation-item_indicator.scss";
+
+.ngispui-navigation-item {
+  margin-right: var(--ngispui-navigation-item__gap, 22px);
+
+  cursor: pointer;
+
+  color: var(--ngispui-color__nav-text, var(--isp-color__nav-text, #344a5e));
+
+  &:focus, &:active {
+    --ngispui-color__nav-text: var(--ngispui-color__nav-text_active, var(--isp-color__nav-text_active, #344a5e));
+    outline: 0 none;
+  }
+
+  &:hover {
+    --ngispui-color__nav-text: var(--ngispui-color__nav-text_hover, var(--isp-color__nav-text_hover, #e44592));
+  }
+}
+
+

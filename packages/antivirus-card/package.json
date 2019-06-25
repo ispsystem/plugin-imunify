@@ -1,30 +1,32 @@
 {
   "name": "antivirus-card",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Den Sumbaev <d.sumbaev@ispsystem.com>",
-  "license": "ISC",
-  "main": "lib/antivirus-card.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "version": "0.0.1",
+  "description": "Stencil Component Starter",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/antivirus-card/antivirus-card.js",
   "files": [
-    "lib"
+    "dist/",
+    "loader/"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab-dev.ispsystem.net:ispsystem/plugin/imunify.git"
-  },
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "dev": "concurrently \"npm:start\" \"npm:watch\"",
-    "start": "browser-sync 'public' -w --port 8081 --no-open",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "index.esm": "cat index.esm.js >> dist/esm/index.mjs",
+    "build": "stencil build --docs && npm run index.esm",
+    "start": "stencil build --dev --watch --serve",
+    "watch:index": "reflex -s -r './dist/collection/index.js' cp './dist/collection/index.js' './www/build'",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll"
   },
+  "devDependencies": {
+    "@stencil/core": "^1.0.7"
+  },
+  "license": "MIT",
   "dependencies": {
-    "abstract-element": "^4.4.1",
-    "lit-html": "^1.1.0"
+    "@stencil/sass": "^1.0.0"
   }
 }
