@@ -1,0 +1,30 @@
+{
+  "name": "antivirus-card1",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Den Sumbaev <d.sumbaev@ispsystem.com>",
+  "license": "ISC",
+  "main": "lib/antivirus-card.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab-dev.ispsystem.net:ispsystem/plugin/imunify.git"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "dev": "concurrently \"npm:start\" \"npm:watch\"",
+    "start": "browser-sync 'public' -w --port 8081 --no-open",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "abstract-element": "^4.4.1",
+    "lit-html": "^1.1.0"
+  }
+}
