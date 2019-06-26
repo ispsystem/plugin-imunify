@@ -32,6 +32,7 @@ export class AntivirusCard {
   render() {
     return (
       <Host>
+        <h2 class="title">Антивирус imunifyAV</h2>
         <antivirus-card-navigation items={this.items} onClickItem={this.handleClickItem.bind(this)} />
         {this.items.find(item => item.active).component()}
       </Host>

@@ -20,7 +20,7 @@ export class ButtonComponent {
 
   render() {
     return (
-      <div style={{ '--ngispui-navigation-border-line-top': '-13px', 'margin-bottom': '20px' }} class="ngispui-navigation">
+      <div style={{ '--ngispui-navigation-border-line-top': '-13px', 'margin-bottom': '30px' }} class="ngispui-navigation">
         {this.items.map((val, index) => (
           <div
             onClick={this.handleClickItem.bind(this, index)}

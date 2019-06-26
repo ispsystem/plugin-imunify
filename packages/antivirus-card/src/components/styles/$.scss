@@ -4,4 +4,11 @@
   color: var(--isp-color__basic-text, #344a5e);
   font-size: var(--isp-font-size-default, 14px);
   font-family: Ubuntu, sans-serif;
+
+  .title {
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 24px;
+  }
 }
