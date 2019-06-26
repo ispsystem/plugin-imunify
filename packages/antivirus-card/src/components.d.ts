@@ -19,6 +19,10 @@ export namespace Components {
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
+  interface AntivirusCardBuyModal {
+    'title': string;
+    'visible': boolean;
+  }
   interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardNavigation {
@@ -43,6 +47,12 @@ declare global {
   var HTMLAntivirusCardButtonElement: {
     prototype: HTMLAntivirusCardButtonElement;
     new (): HTMLAntivirusCardButtonElement;
+  };
+
+  interface HTMLAntivirusCardBuyModalElement extends Components.AntivirusCardBuyModal, HTMLStencilElement {}
+  var HTMLAntivirusCardBuyModalElement: {
+    prototype: HTMLAntivirusCardBuyModalElement;
+    new (): HTMLAntivirusCardBuyModalElement;
   };
 
   interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
@@ -71,6 +81,7 @@ declare global {
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
+    'antivirus-card-buy-modal': HTMLAntivirusCardBuyModalElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
@@ -86,6 +97,10 @@ declare namespace LocalJSX {
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
   }
+  interface AntivirusCardBuyModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardBuyModalElement> {
+    'title'?: string;
+    'visible'?: boolean;
+  }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
@@ -100,6 +115,7 @@ declare namespace LocalJSX {
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
+    'antivirus-card-buy-modal': AntivirusCardBuyModal;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-navigation': AntivirusCardNavigation;

@@ -1,4 +1,5 @@
 import { Component, h, Host, State, JSX } from '@stencil/core';
+import { FreeIcon } from './icons/free';
 
 @Component({
   tag: 'antivirus-card',
@@ -35,6 +36,13 @@ export class AntivirusCard {
         <h2 class="title">Антивирус imunifyAV</h2>
         <antivirus-card-navigation items={this.items} onClickItem={this.handleClickItem.bind(this)} />
         {this.items.find(item => item.active).component()}
+        <antivirus-card-buy-modal title="Подписка Imunify Pro" visible>
+          <p style={{ marginBottom: '30px' }}>4.08 €/мес при оплате за год</p>
+          <LableForByModal text="Ежедневное сканирование сайта"/>
+          <LableForByModal text="Ежедневное сканирование сайта"/>
+          <LableForByModal text="Ежедневное сканирование сайта"/>
+          <LableForByModal text="Ежедневное сканирование сайта"/>
+        </antivirus-card-buy-modal>
       </Host>
     );
   }
@@ -47,3 +55,12 @@ export class AntivirusCard {
     this.items = [...this.items];
   }
 }
+
+const LableForByModal = (props) => (
+  <div style={{ margin: '10px 0' }}>
+    <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>
+      <FreeIcon />
+    </span>
+    <span>{props.text}</span>
+  </div>
+);
