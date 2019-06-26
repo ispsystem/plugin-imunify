@@ -5,7 +5,7 @@ import { Component, h, Host, State, JSX } from '@stencil/core';
   styleUrl: 'styles/$.scss',
   shadow: true
 })
-export class ButtonComponent {
+export class AntivirusCard {
   @State()
   items: {
     label: string;
@@ -25,7 +25,7 @@ export class ButtonComponent {
     {
       label: 'История сканирований',
       active: false,
-      component: () => <div>3</div>
+      component: () => <antivirus-card-history />
     }
   ];
 

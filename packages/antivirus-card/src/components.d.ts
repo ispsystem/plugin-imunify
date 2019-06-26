@@ -19,6 +19,7 @@ export namespace Components {
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
+  interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardNavigation {
     'items': {
@@ -44,6 +45,12 @@ declare global {
     new (): HTMLAntivirusCardButtonElement;
   };
 
+  interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
+  var HTMLAntivirusCardHistoryElement: {
+    prototype: HTMLAntivirusCardHistoryElement;
+    new (): HTMLAntivirusCardHistoryElement;
+  };
+
   interface HTMLAntivirusCardInfectedFilesElement extends Components.AntivirusCardInfectedFiles, HTMLStencilElement {}
   var HTMLAntivirusCardInfectedFilesElement: {
     prototype: HTMLAntivirusCardInfectedFilesElement;
@@ -64,6 +71,7 @@ declare global {
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
+    'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
@@ -78,6 +86,7 @@ declare namespace LocalJSX {
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
   }
+  interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
     'items'?: {
@@ -91,6 +100,7 @@ declare namespace LocalJSX {
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
+    'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-navigation': AntivirusCardNavigation;
     'antivirus-card-preview': AntivirusCardPreview;

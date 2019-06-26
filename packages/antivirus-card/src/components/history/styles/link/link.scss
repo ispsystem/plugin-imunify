@@ -1,0 +1,18 @@
+.ngispui-link {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.ngispui-link_size_regular {
+  font: 14px Ubuntu, sans-serif;
+  font-size: var(--isp-font-size-regular, 14px);
+}
+
+.ngispui-link_color_primary {
+  color: var(--isp-link__color_regular, #0279c0);
+}
+
+
+.ngispui-link_type_default-hover {
+    text-decoration: none;
+}
