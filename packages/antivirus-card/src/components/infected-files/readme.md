@@ -5,14 +5,11 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-| Property   | Attribute | Description | Type     | Default     |
-| ---------- | --------- | ----------- | -------- | ----------- |
-| `myObject` | --        |             | `object` | `undefined` |
-
-
 ## Dependencies
+
+### Used by
+
+ - [antivirus-card](..)
 
 ### Depends on
 
@@ -22,6 +19,7 @@
 ```mermaid
 graph TD;
   antivirus-card-infected-files --> antivirus-card-button
+  antivirus-card --> antivirus-card-infected-files
   style antivirus-card-infected-files fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

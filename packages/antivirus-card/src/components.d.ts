@@ -12,25 +12,31 @@ import {
 } from './components/button/button.interface';
 
 export namespace Components {
+  interface AntivirusCard {}
   interface AntivirusCardButton {
     'btnType': ButtonType;
     'customCSSClass': string;
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
-  interface AntivirusCardInfectedFiles {
-    'myObject': object;
-  }
+  interface AntivirusCardInfectedFiles {}
   interface AntivirusCardNavigation {
     'items': {
       label: string;
       active: boolean;
     }[];
   }
+  interface AntivirusCardPreview {}
 }
 
 declare global {
 
+
+  interface HTMLAntivirusCardElement extends Components.AntivirusCard, HTMLStencilElement {}
+  var HTMLAntivirusCardElement: {
+    prototype: HTMLAntivirusCardElement;
+    new (): HTMLAntivirusCardElement;
+  };
 
   interface HTMLAntivirusCardButtonElement extends Components.AntivirusCardButton, HTMLStencilElement {}
   var HTMLAntivirusCardButtonElement: {
@@ -49,23 +55,30 @@ declare global {
     prototype: HTMLAntivirusCardNavigationElement;
     new (): HTMLAntivirusCardNavigationElement;
   };
+
+  interface HTMLAntivirusCardPreviewElement extends Components.AntivirusCardPreview, HTMLStencilElement {}
+  var HTMLAntivirusCardPreviewElement: {
+    prototype: HTMLAntivirusCardPreviewElement;
+    new (): HTMLAntivirusCardPreviewElement;
+  };
   interface HTMLElementTagNameMap {
+    'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
+    'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
   }
 }
 
 declare namespace LocalJSX {
+  interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {}
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;
     'customCSSClass'?: string;
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
   }
-  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
-    'myObject'?: object;
-  }
+  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
     'items'?: {
       label: string;
@@ -73,11 +86,14 @@ declare namespace LocalJSX {
     }[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
+  interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {}
 
   interface IntrinsicElements {
+    'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-navigation': AntivirusCardNavigation;
+    'antivirus-card-preview': AntivirusCardPreview;
   }
 }
 

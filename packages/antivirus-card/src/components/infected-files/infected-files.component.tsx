@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop, Watch } from '@stencil/core';
+import { Component, h, Host } from '@stencil/core';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -6,19 +6,7 @@ import { Component, h, Host, Prop, Watch } from '@stencil/core';
   shadow: true
 })
 export class ButtonComponent {
-  // constructor(a:any){
-  //   console.log(a)
-  // }
-
-  @Prop() myObject: object;
-
-  @Watch('myObject')
-  parseMyObjectProp(newValue: string) {
-    console.log(newValue);
-  }
-
   render() {
-    console.log(this.myObject);
     return (
       <Host>
         <p class="stub-text">

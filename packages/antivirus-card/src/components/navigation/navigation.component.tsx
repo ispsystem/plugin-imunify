@@ -3,7 +3,7 @@ import { Component, Prop, Event, h, EventEmitter } from '@stencil/core';
 @Component({
   tag: 'antivirus-card-navigation',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: false
 })
 export class ButtonComponent {
   @Prop()
@@ -33,9 +33,7 @@ export class ButtonComponent {
     );
   }
 
-  handleClickItem(index: number, e: MouseEvent) {
-    console.log(index, e);
-
+  handleClickItem(index: number) {
     this.items.map(item => {
       if (item.active) {
         item.active = false;
