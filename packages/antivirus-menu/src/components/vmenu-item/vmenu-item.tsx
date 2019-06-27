@@ -4,10 +4,10 @@ import { Component, h } from '@stencil/core';
  * Компонент пункта меню
  */
 @Component({
-  tag: 'ngispui-vmenu-item',
-  styleUrls: ['./scss/ngispui-vmenu-item.scss']
+  tag: 'antivirus-menu-vmenu-item',
+  styleUrls: ['./scss/$.scss']
 })
-export class VMenuItemComponent {
+export class VMenuItem {
   render() {
     return (
       <div class="ngispui-vmenu-item__wrap">

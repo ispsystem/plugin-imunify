@@ -12,7 +12,7 @@ export namespace Components {
   interface AntivirusMenu {
     'url': string;
   }
-  interface NgispuiVmenuItem {}
+  interface AntivirusMenuVmenuItem {}
 }
 
 declare global {
@@ -24,14 +24,14 @@ declare global {
     new (): HTMLAntivirusMenuElement;
   };
 
-  interface HTMLNgispuiVmenuItemElement extends Components.NgispuiVmenuItem, HTMLStencilElement {}
-  var HTMLNgispuiVmenuItemElement: {
-    prototype: HTMLNgispuiVmenuItemElement;
-    new (): HTMLNgispuiVmenuItemElement;
+  interface HTMLAntivirusMenuVmenuItemElement extends Components.AntivirusMenuVmenuItem, HTMLStencilElement {}
+  var HTMLAntivirusMenuVmenuItemElement: {
+    prototype: HTMLAntivirusMenuVmenuItemElement;
+    new (): HTMLAntivirusMenuVmenuItemElement;
   };
   interface HTMLElementTagNameMap {
     'antivirus-menu': HTMLAntivirusMenuElement;
-    'ngispui-vmenu-item': HTMLNgispuiVmenuItemElement;
+    'antivirus-menu-vmenu-item': HTMLAntivirusMenuVmenuItemElement;
   }
 }
 
@@ -39,11 +39,11 @@ declare namespace LocalJSX {
   interface AntivirusMenu extends JSXBase.HTMLAttributes<HTMLAntivirusMenuElement> {
     'url'?: string;
   }
-  interface NgispuiVmenuItem extends JSXBase.HTMLAttributes<HTMLNgispuiVmenuItemElement> {}
+  interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {}
 
   interface IntrinsicElements {
     'antivirus-menu': AntivirusMenu;
-    'ngispui-vmenu-item': NgispuiVmenuItem;
+    'antivirus-menu-vmenu-item': AntivirusMenuVmenuItem;
   }
 }
 

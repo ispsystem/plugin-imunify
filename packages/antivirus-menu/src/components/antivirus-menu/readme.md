@@ -7,12 +7,23 @@
 
 ## Properties
 
-| Property | Attribute | Description     | Type     | Default     |
-| -------- | --------- | --------------- | -------- | ----------- |
-| `first`  | `first`   | The first name  | `string` | `undefined` |
-| `last`   | `last`    | The last name   | `string` | `undefined` |
-| `middle` | `middle`  | The middle name | `string` | `undefined` |
+| Property | Attribute | Description | Type     | Default     |
+| -------- | --------- | ----------- | -------- | ----------- |
+| `url`    | `url`     |             | `string` | `undefined` |
 
+
+## Dependencies
+
+### Depends on
+
+- [antivirus-menu-vmenu-item](../vmenu-item)
+
+### Graph
+```mermaid
+graph TD;
+  antivirus-menu --> antivirus-menu-vmenu-item
+  style antivirus-menu fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

@@ -2,7 +2,6 @@ import { Component, h, Prop } from '@stencil/core';
 
 @Component({
   tag: 'antivirus-menu',
-  styleUrl: 'antivirus-menu.css',
   shadow: true
 })
 export class AntivirusMenu {
@@ -10,7 +9,7 @@ export class AntivirusMenu {
 
   render() {
     return (
-      <ngispui-vmenu-item
+      <antivirus-menu-vmenu-item
         onClick={this.handleClickLink.bind(this)}
         class={location.href.startsWith(this.url) ? 'ngispui-vmenu-item_active' : ''}
       >
@@ -26,8 +25,8 @@ export class AntivirusMenu {
             <path d="M23.5327 26.6297L12.0208 31.8568L17.2405 33.346L19.0031 38.4704L23.5327 26.6297Z" stroke="#344A5E" />
           </svg>
         </div>
-        <div slot="ngispui-vmenu-label">Подпись пункта меню</div>
-      </ngispui-vmenu-item>
+        <div slot="ngispui-vmenu-label">Антивирус ImunifyAV</div>
+      </antivirus-menu-vmenu-item>
     );
   }
 
