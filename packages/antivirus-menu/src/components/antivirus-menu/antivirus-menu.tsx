@@ -1,4 +1,4 @@
-import { Component, h, Prop } from '@stencil/core';
+import { Component, h, Prop, State } from '@stencil/core';
 
 @Component({
   tag: 'antivirus-menu',
@@ -6,12 +6,13 @@ import { Component, h, Prop } from '@stencil/core';
 })
 export class AntivirusMenu {
   @Prop() url: string;
+  @State() ativeVmenuItem
 
   render() {
     return (
       <antivirus-menu-vmenu-item
         onClick={this.handleClickLink.bind(this)}
-        class={location.href.startsWith(this.url) ? 'ngispui-vmenu-item_active' : ''}
+        active={location.href.startsWith(this.url)}
       >
         <div slot="ngispui-vmenu-icon">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">

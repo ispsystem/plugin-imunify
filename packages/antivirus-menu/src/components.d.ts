@@ -12,7 +12,11 @@ export namespace Components {
   interface AntivirusMenu {
     'url': string;
   }
-  interface AntivirusMenuVmenuItem {}
+  interface AntivirusMenuVmenuItem {
+    'active': boolean;
+    'disabled': boolean;
+    'iconOnly': boolean;
+  }
 }
 
 declare global {
@@ -39,7 +43,11 @@ declare namespace LocalJSX {
   interface AntivirusMenu extends JSXBase.HTMLAttributes<HTMLAntivirusMenuElement> {
     'url'?: string;
   }
-  interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {}
+  interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {
+    'active'?: boolean;
+    'disabled'?: boolean;
+    'iconOnly'?: boolean;
+  }
 
   interface IntrinsicElements {
     'antivirus-menu': AntivirusMenu;
