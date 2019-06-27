@@ -15,13 +15,14 @@
     "loader/"
   ],
   "scripts": {
-    "build": "stencil build --docs",
+    "index.esm": "cat index.esm.js >> dist/esm/index.mjs",
+    "build": "stencil build --docs && npm run index.esm",
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
   "devDependencies": {
-    "@stencil/core": "^1.0.7",
+    "@stencil/core": "1.1.2",
     "@stencil/sass": "^1.0.0"
   },
   "license": "MIT",
