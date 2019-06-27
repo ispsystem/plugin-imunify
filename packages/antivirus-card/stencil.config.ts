@@ -16,6 +16,8 @@ export const config: Config = {
     }
   ],
   plugins: [
-    sass()
+    sass({
+      injectGlobalPaths: ['src/theme.scss']
+    })
   ],
 };

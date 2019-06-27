@@ -1,0 +1,385 @@
+
+  $isp-font-family:                                          Ubuntu, sans-serif;
+  $isp-color__default-main:                                  #FFFFFF;
+
+/** переменные для шрифта текста
+    isp-font__[тип текста]_[модификация]
+**/
+  $isp-font__header-h1:                                      bold 25px $isp-font-family;
+  // $isp-font__header-h1_inverse:                              700 25px $isp-font-family;
+  $isp-font__header-h2:                                      bold 18px $isp-font-family;
+  // $isp-font__header-h2_inverse:                              700 18px $isp-font-family;
+  $isp-font__header-h3:                                      bold 15px $isp-font-family;
+  $isp-font__base:                                           14px $isp-font-family;
+  // $isp-font__base_inverse:                                   14px $isp-font-family;
+  $isp-font__header_additional:                              14px $isp-font-family;
+  // $isp-font__header_additional-inverse:                      14px $isp-font-family;
+  $isp-font__secondary_accent:                               14px $isp-font-family;
+  $isp-font__secondary_positive:                             14px $isp-font-family;
+  $isp-font__text_link:                                           14px $isp-font-family;
+  $isp-font__text_hint:                                           12px $isp-font-family;
+
+/**
+    название переменных задается по следующему правилу:
+    isp-color__[название элемента]_[свойство]_[состояние]
+  **/
+
+  $isp-font-size-default:                                    14px;
+  $isp-font-size-micro:                                      8px;
+  $isp-font-size-small:                                      12px;
+  $isp-font-size-regular:                                    14px;
+  $isp-font-size-main:                                       16px;
+  $isp-font-size-medium:                                     18px;
+  $isp-font-size-h3:                                         16px;
+  $isp-font-size-big:                                        25px;
+  $isp-font-size-bigger:                                     48px;
+
+  $isp-color__default-font:                                  #d9d9d9;
+  // основной  цвет текста (на светлом фоне)
+  $isp-color__basic-text:                                    #344a5e;
+  // цвет вспомогательного текста
+  $isp-color__additional-text:                               #9b9b9b;
+  // акцентный цвет текста
+  $isp-color__accent-text:                                   #E44592;
+  // дополнительный цвет текста
+  $isp-color__active-text:                                   #30ba9a;
+  // акцентный цвет текста в шапке (ссылки, наведение)
+  $isp-color__accent-head-text:                              #f8e71c;
+  // основной цвет текста в шапке
+  $isp-color__basic-head-text:                               #ffffff;
+  // дополнительный цвет текста в шапке
+  $isp-color__additional-head-text:                          #5d6f7f; // #7295b5; - старый цвет
+  // цвет ссылок
+  $isp-color__link-regular:                                  #0279c0;
+  // цвет ссылок при наведении
+  $isp-color__link-hover:                                    #0991e2;
+  // цвет активных ссылок
+  $isp-color__link-active:                                   #035b90;
+  // цвет не активных ссылок
+  $isp-color__link-inactive:                                 #d9d9d9;
+  // заливка шапок
+  $isp-color__head:                                          #344a5e;
+  // цвет не активного текста
+  $isp-color__inactive-text:                                 #d9d9d9;
+
+  $isp-color__default-shadow:                               rgba(#000000, 0.4);
+
+  // шрифт
+  $isp-font-size-default:                                    14px;
+
+  // заливка иконок в кнопках
+  $isp-color__button-icon-fill:                              transparent;
+  // обводка иконок в кнопках при наведении
+  $isp-color__button-icon-fill_hover:                        transparent;
+  // обводка иконок в кнопках при нажатии
+  $isp-color__button-icon-fill_active:                       transparent;
+  // заливка иконок в неактивных кнопках
+  $isp-color__inactive-button-icon-fill:                              transparent;
+  // заливка иконок в неактивных кнопках при наведении
+  $isp-color__inactive-button-icon-fill_hover:                        transparent;
+  // заливка иконок в неактивных кнопках при нажатии
+  $isp-color__inactive-button-icon-fill_active:                       transparent;
+
+  // обводка иконок в кнопках
+  $isp-color__button-icon-stroke:                            #0279c0;
+  // обводка иконок в кнопках при наведении
+  $isp-color__button-icon-stroke_hover:                      #0991e2;
+  // обводка иконок в кнопках при нажатии
+  $isp-color__button-icon-stroke_active:                     #035b90;
+  // обводка иконок в неактивных кнопках
+  $isp-color__inactive-button-icon-stroke:                   #9b9b9b;
+  // обводка иконок в неактивных кнопках при наведении
+  $isp-color__inactive-button-icon-stroke_hover:             #9b9b9b;
+  // обводка иконок в неактивных кнопках при нажатии
+  $isp-color__inactive-button-icon-stroke_active:            #9b9b9b;
+
+
+  /**ActionButton**/
+  // заливка кнопки действия
+  $isp-color__action-button_background_regular:              #0279c0;
+  // заливка кнопки действия(наведение на кнопку)
+  $isp-color__action-button_background_hover:                #0891e2;
+  // заливка кнопки действия (нажатие на кнопку)
+  $isp-color__action-button_background_active:               #025b90;
+  // цвет текста кнопки действия
+  $isp-color__action-button_text_regular:                    #ffffff;
+  // цвет текста кнопки действия (наведение на кнопку)
+  $isp-color__action-button_text_hover:                      #ffffff;
+  // цвет текста кнопки действия (нажатие на кнопку)
+  $isp-color__action-button_text_active:                     #ffffff;
+  // обводка кнопки действия (нажатие на кнопку)
+  $isp-color__action-button_border_regular:                    transparent;
+  // обводка кнопки действия (нажатие на кнопку)
+  $isp-color__action-button_border_hover:                      transparent;
+  // обводка кнопки действия (нажатие на кнопку)
+  $isp-color__action-button_border_active:                     transparent;
+  // закнугление кнопки действия
+  $isp-size__action-button_border-radius:                      3px;
+
+  /**PayButton**/
+  // заливки кнопки оплаты
+  $isp-color__pay-button_background_regular:                 #f8e71c;
+  // заливки кнопки оплаты (наведение на кнопку)
+  $isp-color__pay-button_background_hover:                   #fff680;
+  // заливки кнопки оплаты (нажатие на кнопку)
+  $isp-color__pay-button_background_active:                  #ffd200;
+  // цвет текста кнопки оплаты
+  $isp-color__pay-button_text_regular:                       #344a5e;
+  // цвет текста кнопки оплаты (наведение на кнопку)
+  $isp-color__pay-button_text_hover:                         #344a5e;
+  // цвет текста кнопки оплаты (нажатие на кнопку)
+  $isp-color__pay-button_text_active:                        #344a5e;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__pay-button_border_regular:                       transparent;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__pay-button_border_hover:                         transparent;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__pay-button_border_active:                        transparent;
+  // закнугление кнопки оплаты
+  $isp-size__button_border-radius:                             3px;
+
+  /**HeaderButton**/
+  // заливки кнопки для шапки
+  $isp-color__header-button_background_regular:              #f8e71c;
+  // заливки кнопки для шапки (наведение на кнопку)
+  $isp-color__header-button_background_hover:                #fff680;
+   // заливки кнопки для шапки (нажатие на кнопку)
+  $isp-color__header-button_background_active:               #ffd200;
+  // цвет текста кнопки для шапки
+  $isp-color__header-button_text_regular:                    #344a5e;
+  // цвет текста кнопки для шапки (наведение на кнопку)
+  $isp-color__header-button_text_hover:                      #344a5e;
+  // цвет текста кнопки для шапки (нажатие на кнопку)
+  $isp-color__header-button_text_active:                     #344a5e;
+  // обводка кнопки для шапки (нажатие на кнопку)
+  $isp-color__header-button_border_regular:                    transparent;
+  // обводка кнопки для шапки (нажатие на кнопку)
+  $isp-color__header-button_border_hover:                      transparent;
+  // обводка кнопки для шапки (нажатие на кнопку)
+  $isp-color__header-button_border_active:                     transparent;
+  // закнугление кнопки для шапки
+  $isp-size__header-button_border-radius:                      3px;
+
+  /**CheckBox&RadioButton**/
+  // цвет активго чекбокса и радиобаттона
+  $isp-border__checkbox:                                       1px solid #4DABE9;
+  // цвет рамки чекбокса
+  $isp-color__checkbox-border:                               #9b9b9b;
+  // цвет рамки активного чекбокса
+  $isp-color__checkbox-border-active:                        #0279c0;
+  // цвет рамки не активного чекбокса
+  $isp-color__checkbox-border-inactive:                      #d9d9d9;
+  // фон чекбокса
+  $isp-color__checkbox-background:                             transparent;
+
+  /**Table**/
+  // цвет текста в шапке
+  $isp-color__table-head-background-dark:                    #ecf2f6;
+  $isp-color__table-head-background-light:                   #ffffff;
+  $isp-color__table-row-background:                          #ffffff;
+  $isp-color__table-row-border:                              #d9d9d9;
+  $isp-color__table-selected-border:                         #0279c0;
+
+  /**Filter**/
+  $isp-border__filter-icon:                                    1px solid #f8e71c;
+
+  /**MoreButton**/
+  // заливки кнопки еще
+  $isp-color__more-button_background_regular:                #c4e9ff;
+  // заливки кнопки еще (наведение на кнопку)
+  $isp-color__more-button_background_hover:                  #eaf7ff;
+  // заливки кнопки еще (нажатие на кнопку)
+  $isp-color__more-button_background_active:                 #8ed5ff;
+  // цвет текста кнопки еще
+  $isp-color__more-button-text_regular:                      #344a5e;
+  // цвет текста кнопки еще (наведение на кнопку)
+  $isp-color__more-button-text_hover:                        #344a5e;
+  // цвет текста кнопки еще (нажатие на кнопку)
+  $isp-color__more-button-text_active:                       #344a5e;
+  // обводка кнопки оплаты
+  $isp-color__more-button_border_regular:                      transparent;
+  // обводка кнопки оплаты (наведение на кнопку)
+  $isp-color__more-button_border_hover:                        transparent;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__more-button_border_active:                       transparent;
+
+  /**InfoButton**/
+  // заливки кнопки подробнее
+  $isp-color__info-button_background_regular:                rgba(255, 255, 255, .4);
+  // заливки кнопки подробнее (наведение на кнопку)
+  $isp-color__info-button_background_hover:                  rgba(255, 255, 255, .5);
+  // заливки кнопки подробнее (нажатие на кнопку)
+  $isp-color__info-button_background_active:                 rgba(255, 255, 255, .2);
+  // цвет текста кнопки подробнее
+  $isp-color__info-button_text_regular:                      #ffffff;
+  // цвет текста кнопки подробнее (наведение на кнопку)
+  $isp-color__info-button_text_hover:                        #ffffff;
+  // цвет текста кнопки подробнее (нажатие на кнопку)
+  $isp-color__info-button_text_active:                       #ffffff;
+  // обводка кнопки оплаты
+  $isp-color__info-button_border_regular:                    #ffffff;
+  // обводка кнопки оплаты (наведение на кнопку)
+  $isp-color__info-button_border_hover:                      #ffffff;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__info-button_border_active:                     #ffffff;
+
+  /**TagButton**/
+  // заливки кнопки подробнее
+  $isp-color__tag-button_background_regular:                   transparent;
+  // заливки кнопки подробнее (наведение на кнопку)
+  $isp-color__tag-button_background_hover:                     transparent;
+  // заливки кнопки подробнее (нажатие на кнопку)
+  $isp-color__tag-button_background_active:                    transparent;
+  // цвет текста кнопки подробнее
+  $isp-color__tag-button_text_regular:                       #f4f4f4;
+  // цвет текста кнопки подробнее (наведение на кнопку)
+  $isp-color__tag-button_text_hover:                         #f8e71c;
+  // цвет текста кнопки подробнее (нажатие на кнопку)
+  $isp-color__tag-button_text_active:                        #fffabb;
+  // обводка кнопки оплаты
+  $isp-color__tag-button_border_regular:                       transparent;
+  // обводка кнопки оплаты (наведение на кнопку)
+  $isp-color__tag-button_border_hover:                         transparent;
+  // обводка кнопки оплаты (нажатие на кнопку)
+  $isp-color__tag-button_border_active:                        transparent;
+
+  /**InactiveButton**/
+  // заливка не активной кнопки
+  $isp-color__inactive-button_background_regular:            #f4f4f4;
+  // заливка не активной кнопки (наведение на кнопку)
+  $isp-color__inactive-button_background_hover:              #f4f4f4;
+  // заливка не активной кнопки (нажатие на кнопку)
+  $isp-color__inactive-button_background_active:             #f4f4f4;
+  // цвет текста не активной кнопки
+  $isp-color__inactive-buttont-text_regular:                 #9b9b9b;
+  // цвет текста не активной кнопки (наведение на кнопку)
+  $isp-color__inactive-buttont-text_hover:                   #9b9b9b;
+  // цвет текста не активной кнопки (нажатие на кнопку)
+  $isp-color__inactive-buttont-text_active:                  #9b9b9b;
+
+
+  // заливка входящего сообщение в обращениях
+  $isp-color__incoming-message:                              #e7fbe8;
+  // заливка исходящего сообщение в обращениях
+  $isp-color__outcoming-message:                             #eaf7ff;
+  // заливка сообщения с предупреждением
+  $isp-color__warning-banner:                                #fffabb;
+  // заливка сообщения с предупреждением
+  $isp-color__success-banner:                                #e7fbe8;
+  // цвет затемнения lightbox
+  $isp-color__lightbox:                                        rgba(#344a5e, 0.8);
+  // цвет затемнения фона модального окна
+  $isp-color__modal-overlay-background:                        rgba(#344a5e, 0.8);
+
+
+  $isp-color__modal-border:                                  #d9d9d9;
+
+
+
+  // цвет фона шапки модального окна
+  $isp-color__modal-header-background:                       #ffffff;
+  // цвет фона футера модального окна
+  $isp-color__modal-footer-background:                       #ffffff;
+  // заливка строки таблицы при нведении
+  $isp-color__hover-row-table:                               #fffcea;
+  // полоса подчеркивания в меню на светлом фоне
+  $isp-color__nav-dark-line:                                 #0279c0;
+  // полоса подчеркивания в меню на темном фоне
+  $isp-color__nav-light-line:                                #f8e71c;
+  // фон иконки активного пункта меню
+  $isp-color__active-icon-nav-background:                    #f8e71c;
+  // круг за иконкой в боковом меню
+  $isp-color__left-nav:                                      #f8e71c;
+  // заливка активного свича
+  $isp-color__active-switch:                                 #fffabb;
+  // заливка не активного свича
+  $isp-color__inactive-switch:                               #ffffff;
+  // разделительные линии в тексте и рамки таблиц
+  $isp-color__line:                                          #d9d9d9;
+  // обводка форм
+  $isp-color__border:                                        #d9d9d9;
+  // акцентирующая обводка форм
+  $isp-color__accent-border:                                 #e44592;
+  // обводка выделенного элемента
+  $isp-color__hover-border:                                  #f8e71c;
+  // полоса прокрутки
+  $isp-color__scroll-bar:                                    #f4f4f4;
+  // ползунки полосы прокрутки
+  $isp-color__scroll-bar-slider:                             #344a5e;
+  // цвет круга с числом над иконками в шапке
+  $isp-color__badge:                                         #e44592;
+
+  /**Spinner color for preloader**/
+  // цвет прелоадера
+  $ispui-color__spinner-round:                               #E44592;
+
+  /**Slider range**/
+  $ispui-color__slider-range__handle:                        #f4f4f4;
+  $ispui-border__slider-range__handle:                         1px solid #d9d9d9;
+  // цвет активной полосы слайдера интервалов
+  $ispui-color__slider-range__connect:                       #0279c0;
+  $ispui-color__slider-range__background:                    #d9d9d9;
+
+
+  /** цвета для навигационного меню **/
+  // цвет подчеркивания активного пункта меню
+  $isp-color__nav-line:                                      #0279c0;
+  // цвет подчеркивания инверсного активного пункта меню
+  $isp-color__nav-line_invert:                               #f8e71c;
+  // цвет текста пункта меню
+  $isp-color__nav-text:                                      #344a5e;
+  // цвет текста инверсного пункта меню
+  $isp-color__nav-text_invert:                               #ffffff;
+  // цвет текста пункта меню при наведении
+  $isp-color__nav-text_hover:                                #e44592;
+  // цвет текста инверсного пункта меню при наведении
+  $isp-color__nav-text_invert_hover:                         #fffabb;
+  // цвет текста активного пункта меню при наведении
+  $isp-color__nav-text_active:                               #344a5e;
+  // цвет текста инверсного активного пункта меню
+  $isp-color__nav-text_invert_active:                        #ffffff;
+  // цвет текста отключенного пункта меню
+  $isp-color__nav-text_disabled:                             $isp-color__additional-text;
+
+
+  /** цвета для поля предупреждения **/
+  // цвет фона
+  $isp-color__warning_background:                            #fffabb;
+  // цвет бордера
+  $isp-color__warning_border:                                #d9d9d9;
+  // цвет тени
+  $isp-color__warning_box-shadow:                            #cccccc;
+
+  /** цвета для элементов таблиц **/
+  // цвет фона кнопки пагинатора
+  $isp-color__pagination-control-background:                 #d9d9d9;
+  // цвет фона кнопки пагинатора при наведении
+  $isp-color__pagination-control-background_hover:           #f4f4f4;
+  // цвет фона кнопки пагинатора при клике
+  $isp-color__pagination-control-background_active:          #b8b8b8;
+
+  /** цвета карточки **/
+  // цвет фона шапки в светлой теме
+  $isp-card-color__header-background_light-theme:            #ecf2f6;
+  // цвет фона шапки в тёмной теме
+  $isp-card-color__header-background_dark-theme:             #344a5e;
+  // цвет хлебных крошек в шапке (по умолчанию)
+  $isp-card-color__breadcrumbs-color:                        #9b9b9b;
+  // цвет заголовка в шапке в светлой теме
+  $isp-card-color__title-color_light-theme:                  #344a5e;
+  // цвет заголовка в шапке в тёмной теме
+  $isp-card-color__title-color_dark-theme:                   #ffffff;
+  // цвет хлебных крошек в шапке в светлой теме
+  $isp-card-color__breadcrumbs-color_light-theme:            #9b9b9b;
+  // цвет хлебных крошек в шапке в тёмной теме
+  $isp-card-color__breadcrumbs-color_dark-theme:             #d9d9d9;
+  // цвет хинта в нижнем правом углу шапки
+  $isp-card-header__hint-color:                              #9b9b9b;
+
+  /** шрифты карточке **/
+  // цвет хинта в нижнем правом углу шапки
+  $isp-card-header__hint-font-size:                          12px;
+  /**SortIndicator**/
+  // цвет индикатора сортировки
+  $isp-color__sort-indicator__color:                         #344A5E;
+
