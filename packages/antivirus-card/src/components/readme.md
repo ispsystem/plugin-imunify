@@ -13,6 +13,10 @@
 - [antivirus-card-infected-files](infected-files)
 - [antivirus-card-history](history)
 - [antivirus-card-navigation](navigation)
+- [antivirus-card-modal](modal)
+- [antivirus-card-switcher](switcher)
+- [antivirus-card-switcher-option](switcher-option)
+- [antivirus-card-button](button)
 
 ### Graph
 ```mermaid
@@ -21,6 +25,10 @@ graph TD;
   antivirus-card --> antivirus-card-infected-files
   antivirus-card --> antivirus-card-history
   antivirus-card --> antivirus-card-navigation
+  antivirus-card --> antivirus-card-modal
+  antivirus-card --> antivirus-card-switcher
+  antivirus-card --> antivirus-card-switcher-option
+  antivirus-card --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-button
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```

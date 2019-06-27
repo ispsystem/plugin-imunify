@@ -1,4 +1,4 @@
-import { Component, h, Host } from '@stencil/core';
+import { Component, h, Host, Event, EventEmitter } from '@stencil/core';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -6,6 +6,8 @@ import { Component, h, Host } from '@stencil/core';
   shadow: true
 })
 export class ButtonComponent {
+  @Event() openBuyModal: EventEmitter;
+
   render() {
     return (
       <Host>
@@ -14,7 +16,9 @@ export class ButtonComponent {
           вирусов вам понадобится Imunify Pro. Оформить подписку можно сейчас.
         </p>
 
-        <antivirus-card-button btn-theme="accent">Оформить подписку на Imunify Pro</antivirus-card-button>
+        <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
+          Оформить подписку на Imunify Pro
+        </antivirus-card-button>
       </Host>
     );
   }

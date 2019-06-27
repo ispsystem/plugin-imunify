@@ -1,4 +1,4 @@
-import { Component, h, Host, State, JSX } from '@stencil/core';
+import { Component, h, Host, State, JSX, Listen } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 
 @Component({
@@ -47,13 +47,18 @@ export class AntivirusCard {
   @State()
   public selectedPeriod = 0;
 
+  @Listen('openBuyModal')
+  openBuyModal() {
+    this.buyModal.visible = true;
+  }
+
   render() {
     return (
       <Host>
         <h2 class="title">Антивирус imunifyAV</h2>
         <antivirus-card-navigation items={this.items} onClickItem={this.handleClickItem.bind(this)} />
         {this.items.find(item => item.active).component()}
-        <antivirus-card-modal modal-width="370px" visible ref={el => (this.buyModal = el)}>
+        <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
           <span class="title">Подписка Imunify Pro</span>
           <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
             <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>

@@ -19,11 +19,13 @@
 
 ### Used by
 
+ - [antivirus-card](..)
  - [antivirus-card-infected-files](../infected-files)
 
 ### Graph
 ```mermaid
 graph TD;
+  antivirus-card --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-button
   style antivirus-card-button fill:#f9f,stroke:#333,stroke-width:4px
 ```

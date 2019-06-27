@@ -23,7 +23,6 @@ export namespace Components {
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardModal {
     'modalWidth': string;
-    'title': string;
     'visible': boolean;
   }
   interface AntivirusCardNavigation {
@@ -120,10 +119,11 @@ declare namespace LocalJSX {
     'theme'?: ThemePalette;
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
-  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
+  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
+    'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+  }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
     'modalWidth'?: string;
-    'title'?: string;
     'visible'?: boolean;
   }
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {

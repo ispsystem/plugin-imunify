@@ -8,7 +8,6 @@ import { CloseIcon } from '../icons/close';
 })
 export class Modal {
   @Prop({ attribute: 'modal-width' }) public modalWidth: string;
-  @Prop() public title: string;
   @Prop({
     mutable: true,
     reflect: true
