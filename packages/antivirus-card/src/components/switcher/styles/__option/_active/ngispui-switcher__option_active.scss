@@ -1,0 +1,3 @@
+::slotted([active]) {
+  background: var(--ngispui-switcher__option_color_active, var(--switcher-option-active-background-color, #fffabb));
+}

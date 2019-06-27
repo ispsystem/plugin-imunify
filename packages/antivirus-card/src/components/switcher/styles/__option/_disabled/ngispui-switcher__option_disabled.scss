@@ -1,0 +1,5 @@
+::slotted([disabled]) {
+  cursor: not-allowed;
+
+  background: var(--ngispui-switcher__option_color_inactive, var(--isp-color-inactiveButton, #f4f4f4));
+}

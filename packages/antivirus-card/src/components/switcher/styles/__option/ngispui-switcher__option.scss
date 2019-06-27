@@ -1,0 +1,29 @@
+::slotted(*) {
+  display: inline-block;
+
+  min-height: 18px;
+  padding: 5px 10px;
+
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  color: var(--ngispui-switcher__font_color_default, var(--font-color-default, $isp-color__basic-text));
+  border: none;
+  outline: none;
+  background: var(--ngispui-switcher__option_background_color, var(--switcher-option-background-color, #ffffff));
+}
+
+::slotted(:first-of-type) {
+  border-radius: 3px 0 0 3px;
+}
+::slotted(:not(:first-of-type)) {
+  border-left: solid 1px var(--ngispui-switcher__border_color, var(--switcher-border-color, #d9d9d9));
+}
+::slotted(:last-of-type) {
+  border-radius: 0 3px 3px 0;
+}
+
+@import '_active/ngispui-switcher__option_active';
+@import '_last/ngispui-switcher__option_last';
+@import '_disabled/ngispui-switcher__option_disabled';
+@import '_selected-disabled/ngispui-switcher__option_selected-disabled';
