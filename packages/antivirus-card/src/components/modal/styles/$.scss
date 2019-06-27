@@ -31,28 +31,10 @@
   min-width: 310px;
   max-width: 860px;
 }
-.title {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 18px;
-  line-height: 24px;
-  margin-bottom: 20px;
-}
-.button-container {
-  text-align: right;
-}
-button {
-  margin-left: 5px;
-  min-width: 80px;
-  background-color: #848e97;
-  border-color: #848e97;
-  border-style: solid;
-  border-radius: 2px;
-  padding: 3px;
-  color: white;
+
+.modal-close {
+  position: absolute;
+  right: 20px;
+  top: 20px;
   cursor: pointer;
-}
-button:hover {
-  background-color: #6c757d;
-  border-color: #6c757d;
 }

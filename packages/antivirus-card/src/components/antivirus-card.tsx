@@ -30,25 +30,55 @@ export class AntivirusCard {
     }
   ];
 
+  public buyModal: HTMLAntivirusCardModalElement;
+
+  public proPeriods = [
+    {
+      msg: 'Месячная',
+      monthCost: '4.9 €/мес',
+      fullCost: '4.9 €'
+    },
+    {
+      msg: 'Годовая',
+      monthCost: '4.08 €/мес при оплате за год',
+      fullCost: '49 €'
+    }
+  ];
+  @State()
+  public selectedPeriod = 0;
+
   render() {
     return (
       <Host>
         <h2 class="title">Антивирус imunifyAV</h2>
         <antivirus-card-navigation items={this.items} onClickItem={this.handleClickItem.bind(this)} />
         {this.items.find(item => item.active).component()}
-        <antivirus-card-buy-modal title="Подписка Imunify Pro" visible>
-          <antivirus-card-switcher>
-            <antivirus-card-switcher-option active>Годовая</antivirus-card-switcher-option>
-            <antivirus-card-switcher-option last>Месячная</antivirus-card-switcher-option>
+        <antivirus-card-modal modal-width="370px" visible ref={el => (this.buyModal = el)}>
+          <span class="title">Подписка Imunify Pro</span>
+          <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
+            <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>
+              {this.proPeriods[0].msg}
+            </antivirus-card-switcher-option>
+            <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 1)} last>
+              {this.proPeriods[1].msg}
+            </antivirus-card-switcher-option>
           </antivirus-card-switcher>
-          <p style={{ marginBottom: '30px' }}>4.08 €/мес при оплате за год</p>
+          <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p>
           <LableForByModal text="Ежедневное сканирование сайта" />
           <LableForByModal text="Обновление вирусных баз" />
           <LableForByModal text="Поиск сайта в черных списках" />
           <LableForByModal text="Лечение заражённых файлов" />
           <LableForByModal text="Сканирование по расписанию" />
           <LableForByModal text="Оповещения об угрозах на почту" />
-        </antivirus-card-buy-modal>
+          <div class="button-container">
+            <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
+              Оформить подписку за {this.proPeriods[this.selectedPeriod].fullCost}
+            </antivirus-card-button>
+            <a class="link link_indent-left" onClick={() => (this.buyModal.visible = false)}>
+              Нет, не сейчас
+            </a>
+          </div>
+        </antivirus-card-modal>
       </Host>
     );
   }

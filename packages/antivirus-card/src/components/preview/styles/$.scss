@@ -41,22 +41,3 @@ antivirus-card-preview {
   &.viruses-found_no {
   }
 }
-
-.link {
-  height: 8px;
-
-  font-size: 12px;
-  line-height: 14px;
-  align-items: center;
-  margin-right: 20px;
-
-  color: #187abd;
-  cursor: pointer;
-
-  &:hover {
-    color: #0991e2;
-    & path:not([fill-rule="evenodd"]) {
-      fill: #0991e2;
-    }
-  }
-}

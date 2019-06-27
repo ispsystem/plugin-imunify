@@ -19,12 +19,13 @@ export namespace Components {
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
-  interface AntivirusCardBuyModal {
+  interface AntivirusCardHistory {}
+  interface AntivirusCardInfectedFiles {}
+  interface AntivirusCardModal {
+    'modalWidth': string;
     'title': string;
     'visible': boolean;
   }
-  interface AntivirusCardHistory {}
-  interface AntivirusCardInfectedFiles {}
   interface AntivirusCardNavigation {
     'items': {
       label: string;
@@ -32,6 +33,13 @@ export namespace Components {
     }[];
   }
   interface AntivirusCardPreview {}
+  interface AntivirusCardSwitcher {}
+  interface AntivirusCardSwitcherOption {
+    'active': boolean;
+    'disabled': boolean;
+    'last': boolean;
+    'selectedDisabled': boolean;
+  }
 }
 
 declare global {
@@ -49,12 +57,6 @@ declare global {
     new (): HTMLAntivirusCardButtonElement;
   };
 
-  interface HTMLAntivirusCardBuyModalElement extends Components.AntivirusCardBuyModal, HTMLStencilElement {}
-  var HTMLAntivirusCardBuyModalElement: {
-    prototype: HTMLAntivirusCardBuyModalElement;
-    new (): HTMLAntivirusCardBuyModalElement;
-  };
-
   interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
   var HTMLAntivirusCardHistoryElement: {
     prototype: HTMLAntivirusCardHistoryElement;
@@ -65,6 +67,12 @@ declare global {
   var HTMLAntivirusCardInfectedFilesElement: {
     prototype: HTMLAntivirusCardInfectedFilesElement;
     new (): HTMLAntivirusCardInfectedFilesElement;
+  };
+
+  interface HTMLAntivirusCardModalElement extends Components.AntivirusCardModal, HTMLStencilElement {}
+  var HTMLAntivirusCardModalElement: {
+    prototype: HTMLAntivirusCardModalElement;
+    new (): HTMLAntivirusCardModalElement;
   };
 
   interface HTMLAntivirusCardNavigationElement extends Components.AntivirusCardNavigation, HTMLStencilElement {}
@@ -78,14 +86,28 @@ declare global {
     prototype: HTMLAntivirusCardPreviewElement;
     new (): HTMLAntivirusCardPreviewElement;
   };
+
+  interface HTMLAntivirusCardSwitcherElement extends Components.AntivirusCardSwitcher, HTMLStencilElement {}
+  var HTMLAntivirusCardSwitcherElement: {
+    prototype: HTMLAntivirusCardSwitcherElement;
+    new (): HTMLAntivirusCardSwitcherElement;
+  };
+
+  interface HTMLAntivirusCardSwitcherOptionElement extends Components.AntivirusCardSwitcherOption, HTMLStencilElement {}
+  var HTMLAntivirusCardSwitcherOptionElement: {
+    prototype: HTMLAntivirusCardSwitcherOptionElement;
+    new (): HTMLAntivirusCardSwitcherOptionElement;
+  };
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
-    'antivirus-card-buy-modal': HTMLAntivirusCardBuyModalElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
+    'antivirus-card-modal': HTMLAntivirusCardModalElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
+    'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
+    'antivirus-card-switcher-option': HTMLAntivirusCardSwitcherOptionElement;
   }
 }
 
@@ -97,12 +119,13 @@ declare namespace LocalJSX {
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
   }
-  interface AntivirusCardBuyModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardBuyModalElement> {
+  interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
+  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
+  interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
+    'modalWidth'?: string;
     'title'?: string;
     'visible'?: boolean;
   }
-  interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
-  interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {}
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
     'items'?: {
       label: string;
@@ -111,15 +134,25 @@ declare namespace LocalJSX {
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {}
+  interface AntivirusCardSwitcher extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherElement> {}
+  interface AntivirusCardSwitcherOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherOptionElement> {
+    'active'?: boolean;
+    'disabled'?: boolean;
+    'last'?: boolean;
+    'onSelected'?: (event: CustomEvent<any>) => void;
+    'selectedDisabled'?: boolean;
+  }
 
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
-    'antivirus-card-buy-modal': AntivirusCardBuyModal;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
+    'antivirus-card-modal': AntivirusCardModal;
     'antivirus-card-navigation': AntivirusCardNavigation;
     'antivirus-card-preview': AntivirusCardPreview;
+    'antivirus-card-switcher': AntivirusCardSwitcher;
+    'antivirus-card-switcher-option': AntivirusCardSwitcherOption;
   }
 }
 

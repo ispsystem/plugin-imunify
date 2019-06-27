@@ -28,8 +28,8 @@ export class Preview {
           <div style={{ display: 'flex', 'flex-direction': 'column', 'margin-left': '20px', 'justify-content': 'center' }}>
             <span>Заражено 4 файла</span>
             <div style={{ display: 'inline' }}>
-              <a class="link">Лечить</a>
-              <a class="link">Подробнее</a>
+              <a class="link link_small link_indent-right">Лечить</a>
+              <a class="link link_small">Подробнее</a>
             </div>
           </div>
         </div>
@@ -38,7 +38,7 @@ export class Preview {
           <div style={{ display: 'flex', 'flex-direction': 'column', 'margin-left': '20px', 'justify-content': 'center' }}>
             <span>Сайт находится в чёных списках</span>
             <div style={{ display: 'inline' }}>
-              <a class="link">Как исправить</a>
+              <a class="link link_small">Как исправить</a>
             </div>
           </div>
         </div>
