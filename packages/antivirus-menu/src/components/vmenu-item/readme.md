@@ -5,6 +5,15 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property   | Attribute   | Description | Type      | Default     |
+| ---------- | ----------- | ----------- | --------- | ----------- |
+| `active`   | `active`    |             | `boolean` | `undefined` |
+| `disabled` | `disabled`  |             | `boolean` | `undefined` |
+| `iconOnly` | `icon-only` |             | `boolean` | `undefined` |
+
+
 ## Dependencies
 
 ### Used by

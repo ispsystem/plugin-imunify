@@ -1,4 +1,5 @@
 import { Component, h, Prop, State } from '@stencil/core';
+import { Observable } from 'rxjs';
 
 @Component({
   tag: 'antivirus-menu',
@@ -6,14 +7,19 @@ import { Component, h, Prop, State } from '@stencil/core';
 })
 export class AntivirusMenu {
   @Prop() url: string;
-  @State() ativeVmenuItem
+  @Prop() routerChangeEvent: Observable<any>;
+  @State() isAtiveVmenuItem: boolean;
+
+  constructor() {
+    this.isAtiveVmenuItem = location.href.startsWith(this.url);
+    this.routerChangeEvent.subscribe(() => {
+      this.isAtiveVmenuItem = location.href.startsWith(this.url);
+    });
+  }
 
   render() {
     return (
-      <antivirus-menu-vmenu-item
-        onClick={this.handleClickLink.bind(this)}
-        active={location.href.startsWith(this.url)}
-      >
+      <antivirus-menu-vmenu-item onClick={this.handleClickLink.bind(this)} active={this.isAtiveVmenuItem}>
         <div slot="ngispui-vmenu-icon">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M26.5911 22.0457L22.8447 34.1363L27.4236 31.2179L32.4188 33.3025L26.5911 22.0457Z" stroke="#344A5E" />

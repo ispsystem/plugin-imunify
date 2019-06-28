@@ -26,5 +26,7 @@
     "@stencil/sass": "^1.0.0"
   },
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "rxjs": "^6.5.2"
+  }
 }

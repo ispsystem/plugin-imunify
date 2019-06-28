@@ -6,10 +6,13 @@
 
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
-
+import {
+  Observable,
+} from 'rxjs';
 
 export namespace Components {
   interface AntivirusMenu {
+    'routerChangeEvent': Observable<any>;
     'url': string;
   }
   interface AntivirusMenuVmenuItem {
@@ -41,6 +44,7 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusMenu extends JSXBase.HTMLAttributes<HTMLAntivirusMenuElement> {
+    'routerChangeEvent'?: Observable<any>;
     'url'?: string;
   }
   interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {

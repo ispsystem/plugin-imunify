@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `url`    | `url`     |             | `string` | `undefined` |
+| Property            | Attribute | Description | Type              | Default     |
+| ------------------- | --------- | ----------- | ----------------- | ----------- |
+| `routerChangeEvent` | --        |             | `Observable<any>` | `undefined` |
+| `url`               | `url`     |             | `string`          | `undefined` |
 
 
 ## Dependencies
