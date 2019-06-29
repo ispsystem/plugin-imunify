@@ -1,12 +1,49 @@
 import { Component, h, Host, State, JSX, Listen } from '@stencil/core';
 import { FreeIcon } from './icons/free';
+import { AntivirusModel } from '../models/antivirus';
 
+/**
+ *
+ * AntivirusCard component
+ */
 @Component({
   tag: 'antivirus-card',
   styleUrl: 'styles/$.scss',
   shadow: true
 })
 export class AntivirusCard {
+  /** reference to modal element */
+  public buyModal: HTMLAntivirusCardModalElement;
+  /** previods for PRO version */
+  public proPeriods = [
+    {
+      msg: 'Месячная',
+      monthCost: '4.9 €/мес',
+      fullCost: '4.9 €'
+    },
+    {
+      msg: 'Годовая',
+      monthCost: '4.08 €/мес при оплате за год',
+      fullCost: '49 €'
+    }
+  ];
+
+  constructor() {
+    setTimeout(() => {
+      this.store.catScheduledActions = true;
+      console.log(111111);
+    }, 2000);
+  }
+
+  /** selected period */
+  @State()
+  selectedPeriod = 0;
+
+  /** flag - is current version is FREE or not */
+  @State()
+  store = new AntivirusModel();
+
+  /** nested components */
   @State()
   items: {
     label: string;
@@ -16,7 +53,7 @@ export class AntivirusCard {
     {
       label: 'Обзор',
       active: true,
-      component: () => <antivirus-card-preview />
+      component: () => <antivirus-card-preview store={this.store} />
     },
     {
       label: 'Заражённые файлы',
@@ -30,26 +67,24 @@ export class AntivirusCard {
     }
   ];
 
-  public buyModal: HTMLAntivirusCardModalElement;
-
-  public proPeriods = [
-    {
-      msg: 'Месячная',
-      monthCost: '4.9 €/мес',
-      fullCost: '4.9 €'
-    },
-    {
-      msg: 'Годовая',
-      monthCost: '4.08 €/мес при оплате за год',
-      fullCost: '49 €'
-    }
-  ];
-  @State()
-  public selectedPeriod = 0;
-
+  /**
+   * Litening event to open buy modal
+   */
   @Listen('openBuyModal')
   openBuyModal() {
     this.buyModal.visible = true;
+  }
+
+  /**
+   * Handle click by an item
+   * @param e - event
+   */
+  handleClickItem(e: MouseEvent) {
+    const beforeIndex = this.items.findIndex(item => item.active);
+    this.items[beforeIndex].active = false;
+    this.items[e.detail].active = true;
+
+    this.items = [...this.items];
   }
 
   render() {
@@ -87,16 +122,13 @@ export class AntivirusCard {
       </Host>
     );
   }
-
-  handleClickItem(e: MouseEvent) {
-    const beforeIndex = this.items.findIndex(item => item.active);
-    this.items[beforeIndex].active = false;
-    this.items[e.detail].active = true;
-
-    this.items = [...this.items];
-  }
 }
 
+/**
+ *
+ * LableForByModal Functional Components
+ * @param props - properties
+ */
 const LableForByModal = props => (
   <div style={{ margin: '10px 0' }}>
     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>

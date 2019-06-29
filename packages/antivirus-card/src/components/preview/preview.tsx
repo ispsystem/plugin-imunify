@@ -1,15 +1,30 @@
-import { Component, h, Host } from '@stencil/core';
+import { Component, h, Host, Prop } from '@stencil/core';
 import { VirusesCheckIcon } from '../icons/viruses-check';
 import { StartCheckIcon } from '../icons/start-check';
 import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
 import { CheckListIcon } from '../icons/check-list';
+import { AntivirusModel } from '../../models/Antivirus';
+
+import { autorun } from 'mobx';
 
 @Component({
   tag: 'antivirus-card-preview',
   styleUrl: 'styles/$.scss'
 })
 export class Preview {
+  @Prop()
+  store: AntivirusModel;
+
+  constructor() {
+    autorun(() => {
+      // console.log(store)
+      // console.log(222222);
+      console.log(222222, this.store.catScheduledActions);
+      // this.store = this.store;
+    });
+  }
+
   render() {
     return (
       <Host>
@@ -17,12 +32,13 @@ export class Preview {
           <SettingsIcon />
         </div>
         <p class="before-check">Последняя проверка сегодня в 06:00</p>
-        <p class="next-check">
+        {/* <p class="next-check">
           Следующая проверка: 04.06.2019 Ежедневно
           <span style={{ 'margin-left': '5px', 'vertical-align': 'middle' }}>
             <LockIcon />
           </span>
-        </p>
+        </p> */}
+        {this.renderScheduleMessage()}
         <div style={{ display: 'flex', 'margin-top': '25px' }}>
           <VirusesCheckIcon />
           <div style={{ display: 'flex', 'flex-direction': 'column', 'margin-left': '20px', 'justify-content': 'center' }}>
@@ -48,4 +64,14 @@ export class Preview {
       </Host>
     );
   }
+
+  renderScheduleMessage = () =>
+    this.store.catScheduledActions ? (
+      <p class="next-check">
+        Следующая проверка: 04.06.2019 Ежедневно
+        <span style={{ 'margin-left': '5px', 'vertical-align': 'middle' }}>
+          <LockIcon />
+        </span>
+      </p>
+    ) : null;
 }

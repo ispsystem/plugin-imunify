@@ -10,6 +10,9 @@ import {
   ButtonType,
   ThemePalette,
 } from './components/button/button.interface';
+import {
+  AntivirusModel,
+} from './models/Antivirus';
 
 export namespace Components {
   interface AntivirusCard {}
@@ -31,7 +34,9 @@ export namespace Components {
       active: boolean;
     }[];
   }
-  interface AntivirusCardPreview {}
+  interface AntivirusCardPreview {
+    'store': AntivirusModel;
+  }
   interface AntivirusCardSwitcher {}
   interface AntivirusCardSwitcherOption {
     'active': boolean;
@@ -133,7 +138,9 @@ declare namespace LocalJSX {
     }[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
-  interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {}
+  interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {
+    'store'?: AntivirusModel;
+  }
   interface AntivirusCardSwitcher extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherElement> {}
   interface AntivirusCardSwitcherOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherOptionElement> {
     'active'?: boolean;
