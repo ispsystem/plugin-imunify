@@ -38,7 +38,14 @@ antivirus-card-preview {
   }
 }
 
-.viruses-found {
-  &.viruses-found_no {
-  }
+.antivirus-card-preview__container {
+  display: flex;
+  margin-top: 25px;
+}
+
+.antivirus-card-preview__container-msg {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  justify-content: center;
 }

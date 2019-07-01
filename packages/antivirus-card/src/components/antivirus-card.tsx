@@ -1,6 +1,12 @@
-import { Component, h, Host, State, JSX, Listen } from '@stencil/core';
+import '@stencil/redux';
+
+import { Component, h, Host, State, JSX, Listen, Prop } from '@stencil/core';
 import { FreeIcon } from './icons/free';
-import { AntivirusModel } from '../models/antivirus';
+import { Store } from '@stencil/redux';
+import { configureStore } from '../redux/store';
+import { RootState } from '../redux/reducers';
+import { ActionTypes } from '../redux/actions';
+import { AntivirusState } from '../models/antivirus.reducers';
 
 /**
  *
@@ -28,20 +34,9 @@ export class AntivirusCard {
     }
   ];
 
-  constructor() {
-    setTimeout(() => {
-      this.store.catScheduledActions = true;
-      console.log(111111);
-    }, 2000);
-  }
-
   /** selected period */
   @State()
   selectedPeriod = 0;
-
-  /** flag - is current version is FREE or not */
-  @State()
-  store = new AntivirusModel();
 
   /** nested components */
   @State()
@@ -53,7 +48,7 @@ export class AntivirusCard {
     {
       label: 'Обзор',
       active: true,
-      component: () => <antivirus-card-preview store={this.store} />
+      component: () => <antivirus-card-preview />
     },
     {
       label: 'Заражённые файлы',
@@ -67,6 +62,20 @@ export class AntivirusCard {
     }
   ];
 
+  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+
+  componentWillLoad() {
+    this.store.setStore(
+      configureStore({
+        antivirus: {
+          lastScan: 'сегодня в 06:00',
+          hasScheduledActions: false,
+          infectedFiles: []
+        } as AntivirusState
+      })
+    );
+  }
+
   /**
    * Litening event to open buy modal
    */
@@ -79,6 +88,7 @@ export class AntivirusCard {
    * Handle click by an item
    * @param e - event
    */
+  @Listen('clickItem')
   handleClickItem(e: MouseEvent) {
     const beforeIndex = this.items.findIndex(item => item.active);
     this.items[beforeIndex].active = false;
@@ -91,7 +101,7 @@ export class AntivirusCard {
     return (
       <Host>
         <h2 class="title">Антивирус imunifyAV</h2>
-        <antivirus-card-navigation items={this.items} onClickItem={this.handleClickItem.bind(this)} />
+        <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
           <span class="title">Подписка Imunify Pro</span>
