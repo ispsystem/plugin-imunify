@@ -1,0 +1,36 @@
+.antivirus-card-spinner-round {
+  position: relative;
+  margin: 0 auto;
+  width: var(--spinner-round__width, 25px);
+  &:before {
+    content: '';
+    display: block;
+    padding-top: 100%;
+  }
+  &__linear-gradient-stop {
+    stop-color: var(--spinner-round__color, #555);
+  }
+  .circular {
+    animation: antivirus-card-spinner-round__rotate 2s linear infinite;
+    height: 100%;
+    transform-origin: center center;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
+  .path {
+    stroke-dasharray: 1, 50, 50;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+  }
+}
+
+@keyframes antivirus-card-spinner-round__rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
