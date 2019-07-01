@@ -4,18 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "dev": "concurrently \"npm:start\" \"npm:watch\"",
-    "start": "browser-sync 'public' -w"
+    "dev:ac": "lerna run --stream --scope antivirus-card dev",
+    "dev:aw": "lerna run --stream --scope antivirus-widget dev",
+    "dev:am": "lerna run --stream --scope antivirus-menu start"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "browser-sync": "^2.26.5",
+    "browser-sync": "^2.26.7",
     "concurrently": "^4.1.0",
+    "lerna": "^3.15.0",
+    "postcss-import": "^12.0.1",
+    "postcss-preset-env": "^6.6.0",
     "rollup": "^1.13.1",
+    "rollup-plugin-minify-html-literals": "^1.2.2",
     "rollup-plugin-node-resolve": "^5.0.1",
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-terser": "^5.0.0",
@@ -24,7 +27,7 @@
     "typescript": "^3.5.1"
   },
   "dependencies": {
-    "abstract-element": "^4.4.1",
-    "lit-html": "^1.1.0"
+    "antivirus-card": "file:packages/antivirus-card",
+    "antivirus-widget": "file:packages/antivirus-widget"
   }
 }

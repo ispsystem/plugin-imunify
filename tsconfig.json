@@ -10,6 +10,8 @@
     "allowSyntheticDefaultImports": true,
     "target": "es6",
     "module": "esnext",
+    "rootDir": "./",
+    "baseUrl": "./",
     "lib": [
       "dom",
       "dom.iterable",
@@ -17,15 +19,16 @@
     ],
     "sourceMap": true,
     "allowJs": true,
-    "rootDir": "src",
     "moduleResolution": "node"
   },
   "exclude": [
     "node_modules",
     "babel.config.js",
-    "rollup.config.js",
+    "**/rollup.config.js",
     "dist",
-    "public",
+    "**/public/**/*.js",
+    "**/__tests__/**.*.js",
+    "**/lib",
     "build"
   ]
 }

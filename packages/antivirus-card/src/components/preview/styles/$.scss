@@ -1,0 +1,51 @@
+antivirus-card-preview {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  padding: 20px;
+  font-family: 'Ubuntu', sans-serif;
+  color: #344a5e;
+  line-height: normal;
+  width: 475px;
+  border: 1px solid #d8d8d8;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.before-check {
+  margin: 0px;
+  line-height: 16px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.next-check {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+  line-height: 14px;
+  color: #979797;
+}
+
+/* not used */
+.show-history-link {
+  background: none;
+  border: none;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  &:focus {
+    outline: 0;
+  }
+}
+
+.antivirus-card-preview__container {
+  display: flex;
+  margin-top: 25px;
+}
+
+.antivirus-card-preview__container-msg {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  justify-content: center;
+}

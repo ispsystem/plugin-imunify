@@ -1,0 +1,11 @@
+.ngispui-switcher {
+  display: inline-flex;
+  overflow: inherit;
+
+  vertical-align: middle;
+
+  border: solid 1px var(--ngispui-switcher__border_color, var(--switcher-border-color, #d9d9d9));
+  border-radius: 3px;
+}
+
+@import '__option/ngispui-switcher__option';

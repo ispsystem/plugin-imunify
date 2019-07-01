@@ -1,0 +1,5 @@
+::slotted([selected-disabled]) {
+  cursor: not-allowed;
+
+  background: var(--ngispui-switcher__option_selected-disabled, var(--isp-color__default-font, #d9d9d9));
+}

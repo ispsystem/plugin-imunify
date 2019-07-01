@@ -2,7 +2,12 @@ import typescript from 'rollup-plugin-typescript';
 import resolve from 'rollup-plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
+import minifyLiteralsHTML from 'rollup-plugin-minify-html-literals';
+// import postcssPresetEnv from 'postcss-preset-env';
+const postcssPresetEnv = require('postcss-preset-env');
+var atImport = require("postcss-import")
 
+console.log(postcssPresetEnv);
 // `npm run build` -> `production` is true
 // `npm run dev` -> `production` is false
 const production = !process.env.ROLLUP_WATCH;
@@ -11,30 +16,40 @@ const pluginsCommon = [
   typescript(),
   resolve(), // tells Rollup how to find date-fns in node_modules
   postcss({
-    inject: false
+    inject: false,
+    extensions: ['.css', '.pcss'],
+    plugins: [
+      atImport(),
+      postcssPresetEnv({
+        /* use stage 3 features + css nesting rules */
+        stage: 0,
+        // features: {
+        //   'nesting-rules': true
+        // }
+      })
+    ]
   })
 ];
 
-const dev = {
-  input: './src/index.ts',
+export const dev = (input, file) => ({
+  input,
   output: {
-    file: 'public/bundle.js',
+    file,
     format: 'iife', // immediately-invoked function expression — suitable for <script> tags
     sourcemap: true
   },
   plugins: pluginsCommon
-};
+});
 
-const prod = {
-  input: './src/plugin/index.ts',
+export const prod = (input, file) => ({
+  input,
   output: {
-    file: 'dist/plugin.js',
+    file,
     format: 'es'
   },
-  plugins: [
-    ...pluginsCommon,
-    terser() // minify, but only in production
-  ]
-};
+  plugins: [...pluginsCommon, terser(), minifyLiteralsHTML()]
+});
 
-export default (production ? prod : dev);
+export default input => {
+  return production ? prod(input) : dev(input);
+};

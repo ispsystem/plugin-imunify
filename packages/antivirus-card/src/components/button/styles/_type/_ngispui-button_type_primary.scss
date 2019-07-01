@@ -1,0 +1,19 @@
+.ngispui-button_type_primary {
+  color: var(--ngispui-button__primary_text_regular, var(--isp-color__action-button_text_regular, #ffffff));
+  border-color: var(--ngispui-button__primary_border_regular, var(--isp-color__action-button_border_regular, transparent));
+  background-color: var(--ngispui-button__primary_background_regular, var(--isp-color__action-button_background_regular, #0279c0));
+
+  &:hover {
+    color: var(--ngispui-button__primary_text_hover, var(--isp-color__action-button_text_hover, #ffffff));
+    border-color: var(--ngispui-button__primary_border_hover, var(--isp-color__action-button_border_hover, transparent));
+    background-color: var(--ngispui-button__primary_background_hover, var(--isp-color__action-button_background_hover, #0891e2));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.44);
+  }
+
+  &:active {
+    color: var(--ngispui-button__primary_text_active, var(--isp-color__action-button_text_active, #ffffff));
+    border-color: var(--ngispui-button__primary_border_active, var(--isp-color__action-button_border_active, transparent));
+    background-color: var(--ngispui-button__primary_background_active, var(--isp-color__action-button_background_active, #025b90));
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.44);
+  }
+}
