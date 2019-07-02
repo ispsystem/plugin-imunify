@@ -1,8 +1,0 @@
-.ngispui-table-header {
-  &.isp-table-header_theme_light {
-    --ngispui-table__header-background-color: var(
-      --ngispui-table__header-background-color-light,
-      var(--isp-color__table-head-background-light, #ffffff)
-    );
-  }
-}
