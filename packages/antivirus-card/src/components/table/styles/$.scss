@@ -1,0 +1,26 @@
+@import './table-body/table-body.scss';
+@import './table-footer/table-footer.scss';
+@import './table-header/table-header.scss';
+
+:host {
+  min-width: 680px;
+
+  color: var(--isp-color__basic-text, #344a5e);
+  font-size: var(--isp-font-size-default, 14px);
+  font-family: Ubuntu, sans-serif;
+
+
+  display: table;
+
+  width: 100%;
+  margin: 0;
+  padding: 0;
+
+  table-layout: fixed;
+
+  border: none;
+  border-collapse: collapse;
+  border-radius: 5px;
+
+  min-width: 680px;
+}

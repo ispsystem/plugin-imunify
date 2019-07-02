@@ -1,0 +1,47 @@
+&[action-hover] {
+  &:hover {
+    --ngispui-table__cell-background-color: #fffabb;
+
+    a.main-text {
+      &:hover {
+        text-decoration: underline;
+
+        color: #0991e2;
+
+        .isp-text-tooltip__content {
+          text-decoration: underline;
+        }
+      }
+
+      &:active,
+      :visited {
+        text-decoration: underline;
+
+        color: #035b90;
+
+        .isp-text-tooltip__content {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    &:first-child {
+      a.main-text {
+        text-decoration: underline;
+
+        color: #0991e2;
+
+        .isp-text-tooltip__content {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    a.add-text {
+      &:visited,
+      &:active {
+        color: #888888;
+      }
+    }
+  }
+}

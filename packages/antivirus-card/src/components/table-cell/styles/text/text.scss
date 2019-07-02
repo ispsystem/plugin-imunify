@@ -1,0 +1,32 @@
+.main-text {
+  display: block;
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  line-height: 17px;
+}
+
+a.main-text {
+  text-decoration: none;
+  color: #0279c0;
+}
+
+.add-text {
+  display: block;
+  overflow: hidden;
+
+  margin-top: 3px;
+
+  text-overflow: ellipsis;
+
+  color: #9b9b9b;
+
+  font-size: 12px;
+  line-height: 13px;
+}
+
+a.add-text {
+  text-decoration: underline;
+}
