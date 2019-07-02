@@ -1,8 +1,7 @@
 :host {
-  --spinner-round__color: #ED81B5;
+  --spinner-round__color: #ed81b5;
   --spinner-round__width: 25px;
 }
-
 
 antivirus-card-preview {
   display: flex;
@@ -16,6 +15,20 @@ antivirus-card-preview {
   border: 1px solid #d8d8d8;
   box-sizing: border-box;
   border-radius: 2px;
+
+  .popover {
+    --sapUiShadowLevel2: 0 10px 14px 0 var(--isp-color__default-shadow, rgba(0, 0, 0, 0.4)), 0 0 0 1px var(--isp-color__border, #d9d9d9);
+
+    .modal-close {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      cursor: pointer;
+    }
+  }
+  .popover-content {
+    padding: 20px 30px 30px 20px;
+  }
 }
 
 .before-check {
@@ -61,4 +74,3 @@ antivirus-card-preview {
   margin-left: 10px;
   height: 0;
 }
-

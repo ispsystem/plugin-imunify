@@ -1,4 +1,5 @@
 import '@stencil/redux';
+import '@ui5/webcomponents/dist/Popover';
 
 import { Component, h, Host, State, Prop, Event, EventEmitter } from '@stencil/core';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
@@ -14,12 +15,21 @@ import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
 import { declOfNum } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
+import { CloseIcon } from '../icons/close';
 
+/**
+ * Preview component for antivirus-card
+ */
 @Component({
   tag: 'antivirus-card-preview',
   styleUrl: 'styles/$.scss'
 })
 export class Preview {
+  public popoverEl!: HTMLElement & {
+    openBy: (control: HTMLElement | EventTarget) => void;
+    close: () => void;
+  };
+
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() lastScan: AntivirusState['lastScan'];
   @State() scanning: AntivirusState['scanning'];
@@ -58,6 +68,15 @@ export class Preview {
     }
   }
 
+  handleBlackListsHelpClick(ev: MouseEvent) {
+    const popoverContainer: HTMLDivElement = this.popoverEl.shadowRoot.querySelector('span > div');
+
+    popoverContainer.style['max-width'] = '330px';
+    (popoverContainer.querySelector('.sapMPopupScroll') as HTMLDivElement).style.padding = '0';
+
+    this.popoverEl.openBy(ev.currentTarget);
+  }
+
   render() {
     return (
       <Host>
@@ -72,13 +91,28 @@ export class Preview {
         <div class="link" onClick={this.scanVirus.bind(this)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon />
         </div>
+
+        <ui5-popover class="popover" ref={el => (this.popoverEl = el)} no-header>
+          <span class="modal-close" onClick={() => this.popoverEl.close()}>
+            <CloseIcon />
+          </span>
+          <div class="popover-content">
+            <p style={{ margin: '0' }}>
+              Сайт найден в чёрных списках Роскомнадзора, Яндекса и Google. Причиной могла стать хакерская атака на сайт, некачественное или
+              запрещённое содержимое сайта.
+            </p>
+            <p style={{ margin: '20px 0 0 0' }}>
+              Рекомендуем вылечить вирусы, и переиндексировать сайт. Индексация сайта может занять от 3 до 72 часов.
+            </p>
+          </div>
+        </ui5-popover>
       </Host>
     );
   }
 
   renderStatus = () => {
     return this.scanning ? (
-      <div style={{display: 'flex'}}>
+      <div style={{ display: 'flex' }}>
         <p class="before-check">Идёт проверка сайта, ещё примерно 10 минут</p>
         <div class="antivirus-card-preview__spinner">
           <antivirus-card-spinner-round />
@@ -150,7 +184,9 @@ export class Preview {
         <div class="antivirus-card-preview__container-msg">
           <span>Сайт находится в чёных списках</span>
           <div style={{ display: 'inline' }}>
-            <a class="link link_small">Как исправить</a>
+            <a onClick={this.handleBlackListsHelpClick.bind(this)} class="link link_small">
+              Как исправить
+            </a>
           </div>
         </div>
       </div>
