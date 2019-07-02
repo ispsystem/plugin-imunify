@@ -31,6 +31,10 @@ graph TD;
   antivirus-card --> antivirus-card-button
   antivirus-card-preview --> antivirus-card-spinner-round
   antivirus-card-infected-files --> antivirus-card-button
+  antivirus-card-history --> antivirus-card-table
+  antivirus-card-history --> antivirus-card-table-row
+  antivirus-card-history --> antivirus-card-table-cell
+  antivirus-card-history --> antivirus-card-table-pagination
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
