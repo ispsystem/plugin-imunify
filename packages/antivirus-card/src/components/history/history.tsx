@@ -29,12 +29,12 @@ export class History {
             </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
-        <div slot="table-footer" style={{ display: 'contents' }}>
+        {/* <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
             <span>1 запись</span>
             <antivirus-card-table-pagination />
           </div>
-        </div>
+        </div> */}
       </antivirus-card-table>
     );
   }
