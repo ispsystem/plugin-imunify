@@ -18,11 +18,13 @@
 ### Used by
 
  - [antivirus-card-history](../history)
+ - [antivirus-card-infected-files](../infected-files)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card-history --> antivirus-card-table-row
+  antivirus-card-infected-files --> antivirus-card-table-row
   style antivirus-card-table-row fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -21,6 +21,8 @@ export class ButtonComponent {
     return (
       <Host>
         {(this.infectedFiles && this.infectedFiles.length) > 0 ? (
+          this.renderInfectedFilesTable()
+        ) : (
           <div style={{ display: 'contents' }}>
             <p class="stub-text">
               Сейчас всё хорошо, заражённых файлов нет. В случае появления вирусов, информация о них будет храниться в этой вкладке. Для
@@ -31,8 +33,6 @@ export class ButtonComponent {
               Оформить подписку на Imunify Pro
             </antivirus-card-button>
           </div>
-        ) : (
-          this.renderInfectedFilesTable()
         )}
       </Host>
     );

@@ -70,7 +70,16 @@ export class AntivirusCard {
         antivirus: {
           lastScan: 'сегодня в 06:00',
           hasScheduledActions: false,
-          infectedFiles: []
+          infectedFiles: [{
+            name: '1',
+            status: '2',
+            type: '3',
+            path: '4',
+            datedetectionDate: 5,
+            createdDate: 6,
+            lastChangeDate: 7,
+          }],
+          inBlackLists: true,
           // scanning: true,
         } as AntivirusState
       })

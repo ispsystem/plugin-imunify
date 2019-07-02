@@ -5,10 +5,10 @@ interface InfectedFile {
   name: string;
   status: string;
   type: string;
-  date: number;
   path: string;
-  created: number;
-  lastChange?: number;
+  datedetectionDate: number;
+  createdDate: number;
+  lastChangeDate?: number;
 }
 
 export interface AntivirusState {
