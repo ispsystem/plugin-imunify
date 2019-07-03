@@ -69,7 +69,7 @@ export class Preview {
 
         {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
 
-        <div class="link" style={{ 'margin-top': '25px', height: '28px' }}>
+        <div class="link" onClick={this.scanVirus.bind(this)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon />
         </div>
       </Host>
@@ -78,7 +78,12 @@ export class Preview {
 
   renderStatus = () => {
     return this.scanning ? (
-      <p class="before-check">Идёт проверка сайта, ещё примерно 10 минут</p>
+      <div style={{display: 'flex'}}>
+        <p class="before-check">Идёт проверка сайта, ещё примерно 10 минут</p>
+        <div class="antivirus-card-preview__spinner">
+          <antivirus-card-spinner-round />
+        </div>
+      </div>
     ) : (
       <p class="before-check">Последняя проверка {this.lastScan}</p>
     );

@@ -32,6 +32,7 @@ export namespace Components {
     }[];
   }
   interface AntivirusCardPreview {}
+  interface AntivirusCardSpinnerRound {}
   interface AntivirusCardSwitcher {}
   interface AntivirusCardSwitcherOption {
     'active': boolean;
@@ -86,6 +87,12 @@ declare global {
     new (): HTMLAntivirusCardPreviewElement;
   };
 
+  interface HTMLAntivirusCardSpinnerRoundElement extends Components.AntivirusCardSpinnerRound, HTMLStencilElement {}
+  var HTMLAntivirusCardSpinnerRoundElement: {
+    prototype: HTMLAntivirusCardSpinnerRoundElement;
+    new (): HTMLAntivirusCardSpinnerRoundElement;
+  };
+
   interface HTMLAntivirusCardSwitcherElement extends Components.AntivirusCardSwitcher, HTMLStencilElement {}
   var HTMLAntivirusCardSwitcherElement: {
     prototype: HTMLAntivirusCardSwitcherElement;
@@ -105,6 +112,7 @@ declare global {
     'antivirus-card-modal': HTMLAntivirusCardModalElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
+    'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
     'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
     'antivirus-card-switcher-option': HTMLAntivirusCardSwitcherOptionElement;
   }
@@ -137,6 +145,7 @@ declare namespace LocalJSX {
     'onClickItem'?: (event: CustomEvent<any>) => void;
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
+  interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {}
   interface AntivirusCardSwitcher extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherElement> {}
   interface AntivirusCardSwitcherOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherOptionElement> {
     'active'?: boolean;
@@ -154,6 +163,7 @@ declare namespace LocalJSX {
     'antivirus-card-modal': AntivirusCardModal;
     'antivirus-card-navigation': AntivirusCardNavigation;
     'antivirus-card-preview': AntivirusCardPreview;
+    'antivirus-card-spinner-round': AntivirusCardSpinnerRound;
     'antivirus-card-switcher': AntivirusCardSwitcher;
     'antivirus-card-switcher-option': AntivirusCardSwitcherOption;
   }

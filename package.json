@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:ac": "lerna run --stream --scope antivirus-card dev",
+    "dev:ac": "lerna run --stream --scope antivirus-card start",
     "dev:aw": "lerna run --stream --scope antivirus-widget dev",
     "dev:am": "lerna run --stream --scope antivirus-menu start"
   },

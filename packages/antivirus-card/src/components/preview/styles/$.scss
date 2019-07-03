@@ -1,3 +1,9 @@
+:host {
+  --spinner-round__color: #ED81B5;
+  --spinner-round__width: 25px;
+}
+
+
 antivirus-card-preview {
   display: flex;
   position: relative;
@@ -49,3 +55,10 @@ antivirus-card-preview {
   margin-left: 20px;
   justify-content: center;
 }
+
+.antivirus-card-preview__spinner {
+  margin-top: -3px;
+  margin-left: 10px;
+  height: 0;
+}
+
