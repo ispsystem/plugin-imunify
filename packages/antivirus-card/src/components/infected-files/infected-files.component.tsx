@@ -3,6 +3,7 @@ import { AntivirusState } from '../../models/antivirus.reducers';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
+import { pad } from '../../utils/tools';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -38,6 +39,14 @@ export class ButtonComponent {
     );
   }
 
+  getDayMonthYearAsStr(date: Date) {
+    return `${pad(date.getDay())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+  }
+
+  getTimeAsStr(date: Date) {
+    return `${date.getHours()}.${pad(date.getMinutes())}`;
+  }
+
   renderInfectedFilesTable = () => {
     return (
       <antivirus-card-table>
@@ -50,22 +59,30 @@ export class ButtonComponent {
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
-          <antivirus-card-table-row action-hover>
-            <antivirus-card-table-cell doubleline>
-              <span class="main-text">beregovoi_orcestr.bat</span>
-              <span class="add-text">заражён</span>
-            </antivirus-card-table-cell>
-            <antivirus-card-table-cell doubleline>
-              <span class="isp-table-cell__main-text">Troyan.enspect</span>
-            </antivirus-card-table-cell>
-            <antivirus-card-table-cell doubleline>
-              <span class="isp-table-cell__main-text">27.05.2018</span>
-            </antivirus-card-table-cell>
-            <antivirus-card-table-cell doubleline>
-              <span class="main-text">sanin/save</span>
-              <span class="add-text">изменён 29.05.2019 в 9:15</span>
-            </antivirus-card-table-cell>
-          </antivirus-card-table-row>
+          {this.infectedFiles.map(file => (
+            <antivirus-card-table-row action-hover>
+              <antivirus-card-table-cell doubleline>
+                <span class="main-text">{file.name}</span>
+                <span class="add-text">{file.status}</span>
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <span class="isp-table-cell__main-text">{file.type}</span>
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <span class="isp-table-cell__main-text">{this.getDayMonthYearAsStr(new Date(file.datedetectionDate))}</span>
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <span class="main-text">{file.path}</span>
+                <span class="add-text">
+                  {file.lastChangeDate
+                    ? `изменён ${this.getDayMonthYearAsStr(new Date(file.lastChangeDate))} в ${this.getTimeAsStr(
+                        new Date(file.lastChangeDate)
+                      )}`
+                    : `создан ${this.getDayMonthYearAsStr(new Date(file.createdDate))} в ${this.getTimeAsStr(new Date(file.createdDate))}`}
+                </span>
+              </antivirus-card-table-cell>
+            </antivirus-card-table-row>
+          ))}
         </div>
         {/* <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">

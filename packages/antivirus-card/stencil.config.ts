@@ -19,5 +19,5 @@ export const config: Config = {
     sass({
       injectGlobalPaths: ['src/theme.scss']
     })
-  ],
+  ]
 };

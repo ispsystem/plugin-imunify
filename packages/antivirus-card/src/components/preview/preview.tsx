@@ -31,7 +31,7 @@ export class Preview {
   };
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
-  @State() lastScan: AntivirusState['lastScan'];
+  @State() lastScan;//: AntivirusState['lastScan'];
   @State() scanning: AntivirusState['scanning'];
   @State() hasScheduledActions: AntivirusState['hasScheduledActions'];
   @State() isProVersion: AntivirusState['isProVersion'];
@@ -54,11 +54,11 @@ export class Preview {
     });
   }
 
-  componentDidLoad() {
-    if (this.lastScan === undefined) {
-      this.scanVirus();
-    }
-  }
+  // componentDidLoad() {
+  //   if (this.lastScan === undefined) {
+  //     this.scanVirus();
+  //   }
+  // }
 
   disinfectVirusFiles() {
     if (this.isProVersion) {
@@ -84,7 +84,7 @@ export class Preview {
         {this.renderStatus()}
         {this.renderScheduleMessage()}
 
-        {this.infectedFiles.length > 0 ? this.renderHasInfectedFiles(this.infectedFiles.length) : this.renderHasNotInfectedFiles()}
+        {this.infectedFiles && this.infectedFiles.length > 0 ? this.renderHasInfectedFiles(this.infectedFiles.length) : this.renderHasNotInfectedFiles()}
 
         {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
 

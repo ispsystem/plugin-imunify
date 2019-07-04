@@ -1,46 +1,73 @@
 import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './antivirus.actions';
 
-
+/**
+ * Infected file
+ */
 interface InfectedFile {
+  // file name, e.g. "beregovoi_orcestr.bat"
   name: string;
+  // file status, e.g. "заражён"
   status: string;
+  // type of threat, e.g. "Troyan.enspect"
   type: string;
+  // path to file
   path: string;
+  // date and time when the file was detected (timestamp)
   datedetectionDate: number;
+  // date and time when the file was created (timestamp)
   createdDate: number;
+  // date and time when the file was changed (timestamp)
   lastChangeDate?: number;
 }
 
-export interface AntivirusState {
-  error: any;
-
-  isProVersion: boolean;
-  hasScheduledActions: boolean;
-  lastScan: string;
-
-  scanning: boolean;
-  infectedFiles: InfectedFile[];
-  inBlackLists: boolean;
+/**
+ * History list item
+ */
+interface HistoryItem {
+  // verification date and time (timestamp)
+  date: number;
+  // check type, e.g "полная"
+  checkType: string;
+  // count infected files
+  infectedFilesCount: number;
 }
 
-const getInitialState = () => {
+/**
+ * Global antivirus state
+ */
+export interface AntivirusState {
+  // global state error
+  error: any;
+
+  // features
+  isProVersion: boolean;
+  hasScheduledActions: boolean;
+
+  // scanning flag
+  scanning: boolean;
+  // domain in black list
+  inBlackLists: boolean;
+
+  infectedFiles: InfectedFile[];
+  history: HistoryItem[];
+}
+
+const getInitialState = (): AntivirusState => {
   return {
     error: null,
+    // lastScan: undefined,
 
     isProVersion: false,
     hasScheduledActions: false,
-    lastScan: undefined,
 
     scanning: false,
     infectedFiles: [],
     inBlackLists: false,
+    history: []
   };
 };
 
-export const antivirusReducer = (
-  state: AntivirusState = getInitialState(),
-  action: AntivirusActionTypes
-) => {
+export const antivirusReducer = (state: AntivirusState = getInitialState(), action: AntivirusActionTypes) => {
   switch (action.type) {
     case ANTIVIRUS_ACTION.SCAN_BEGIN: {
       return {
@@ -54,7 +81,7 @@ export const antivirusReducer = (
       return {
         ...state,
         scanning: false,
-        items: action.payload.data
+        scanResult: action.payload.data
       };
     }
 
@@ -62,6 +89,27 @@ export const antivirusReducer = (
       return {
         ...state,
         scanning: false,
+        error: action.payload.error
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_STATE_BEGIN: {
+      return {
+        ...state,
+        error: null
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_STATE_SUCCESS: {
+      return {
+        ...state,
+        ...action.payload.data
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_STATE_FAILURE: {
+      return {
+        ...state,
         error: action.payload.error
       };
     }
