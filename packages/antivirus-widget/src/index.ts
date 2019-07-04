@@ -1,4 +1,4 @@
-import { AbstractElement } from 'abstract-element';
+import { AbstractElement, attr } from 'abstract-element';
 import litRender from 'abstract-element/render/lit';
 import { html, TemplateResult } from 'lit-html';
 import styles from './styles.css';
@@ -9,6 +9,9 @@ import styles from './styles.css';
 export default class PluginImunifyAvWidget extends AbstractElement<TemplateResult> {
   title = 'Антивирус';
   state = this._changeStatus(true);
+
+  @attr('url')
+  url: string;
 
   constructor() {
     super(litRender, true);
@@ -85,6 +88,8 @@ export default class PluginImunifyAvWidget extends AbstractElement<TemplateResul
   handleClickSection(event: MouseEvent) {
     event.preventDefault();
     event.stopPropagation();
+
+    location.href = this.url;
 
     this.state = this._changeStatus(this.state.isProcessing);
   }
