@@ -1,7 +1,7 @@
 import '@stencil/redux';
 import '@ui5/webcomponents/dist/Popover';
 
-import { Component, h, Host, State, Prop, Event, EventEmitter } from '@stencil/core';
+import { Component, h, Host, State, Prop, Event, EventEmitter, Watch } from '@stencil/core';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
 import { StartCheckIcon } from '../icons/start-check';
 import { SettingsIcon } from '../icons/settings';
@@ -12,7 +12,7 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { AntivirusActions } from '../../models/antivirus.actions';
 import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
-import { declOfNum } from '../../utils/tools';
+import { declOfNum, pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { CloseIcon } from '../icons/close';
@@ -31,12 +31,14 @@ export class Preview {
   };
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
-  @State() lastScan;//: AntivirusState['lastScan'];
   @State() scanning: AntivirusState['scanning'];
   @State() hasScheduledActions: AntivirusState['hasScheduledActions'];
   @State() isProVersion: AntivirusState['isProVersion'];
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() inBlackLists: AntivirusState['inBlackLists'];
+  @State() history: AntivirusState['history'];
+
+  @State() lastScan: string;
 
   @Event() openBuyModal: EventEmitter;
   @Event({
@@ -52,13 +54,23 @@ export class Preview {
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan
     });
+
+    this.setLastScan(this.history);
   }
 
-  // componentDidLoad() {
-  //   if (this.lastScan === undefined) {
-  //     this.scanVirus();
-  //   }
-  // }
+  @Watch('history')
+  setLastScan(newValue: AntivirusState['history']) {
+    const date = newValue[newValue.length - 1].date;
+    this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
+  }
+
+  getDayMonthYearAsStr(date: Date) {
+    return `${pad(date.getDay())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+  }
+
+  getTimeAsStr(date: Date) {
+    return `${date.getHours()}.${pad(date.getMinutes())}`;
+  }
 
   disinfectVirusFiles() {
     if (this.isProVersion) {
@@ -84,7 +96,9 @@ export class Preview {
         {this.renderStatus()}
         {this.renderScheduleMessage()}
 
-        {this.infectedFiles && this.infectedFiles.length > 0 ? this.renderHasInfectedFiles(this.infectedFiles.length) : this.renderHasNotInfectedFiles()}
+        {this.infectedFiles && this.infectedFiles.length > 0
+          ? this.renderHasInfectedFiles(this.infectedFiles.length)
+          : this.renderHasNotInfectedFiles()}
 
         {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
 
