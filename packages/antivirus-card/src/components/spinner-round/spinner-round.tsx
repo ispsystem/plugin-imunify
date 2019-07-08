@@ -1,4 +1,4 @@
-import { Component, Prop, h, State } from '@stencil/core';
+import { Component, h, State } from '@stencil/core';
 import { uuidv4 } from '../../utils/tools';
 
 @Component({

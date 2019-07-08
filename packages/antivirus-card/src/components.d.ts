@@ -40,6 +40,21 @@ export namespace Components {
     'last': boolean;
     'selectedDisabled': boolean;
   }
+  interface AntivirusCardTable {}
+  interface AntivirusCardTableCell {
+    'alignLeft': boolean;
+    'alignRight': boolean;
+    'doubleline': boolean;
+    'singleline': boolean;
+  }
+  interface AntivirusCardTablePagination {
+    'actionHover': boolean;
+    'disabled': boolean;
+  }
+  interface AntivirusCardTableRow {
+    'actionHover': boolean;
+    'disabled': boolean;
+  }
 }
 
 declare global {
@@ -104,6 +119,30 @@ declare global {
     prototype: HTMLAntivirusCardSwitcherOptionElement;
     new (): HTMLAntivirusCardSwitcherOptionElement;
   };
+
+  interface HTMLAntivirusCardTableElement extends Components.AntivirusCardTable, HTMLStencilElement {}
+  var HTMLAntivirusCardTableElement: {
+    prototype: HTMLAntivirusCardTableElement;
+    new (): HTMLAntivirusCardTableElement;
+  };
+
+  interface HTMLAntivirusCardTableCellElement extends Components.AntivirusCardTableCell, HTMLStencilElement {}
+  var HTMLAntivirusCardTableCellElement: {
+    prototype: HTMLAntivirusCardTableCellElement;
+    new (): HTMLAntivirusCardTableCellElement;
+  };
+
+  interface HTMLAntivirusCardTablePaginationElement extends Components.AntivirusCardTablePagination, HTMLStencilElement {}
+  var HTMLAntivirusCardTablePaginationElement: {
+    prototype: HTMLAntivirusCardTablePaginationElement;
+    new (): HTMLAntivirusCardTablePaginationElement;
+  };
+
+  interface HTMLAntivirusCardTableRowElement extends Components.AntivirusCardTableRow, HTMLStencilElement {}
+  var HTMLAntivirusCardTableRowElement: {
+    prototype: HTMLAntivirusCardTableRowElement;
+    new (): HTMLAntivirusCardTableRowElement;
+  };
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
@@ -115,6 +154,10 @@ declare global {
     'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
     'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
     'antivirus-card-switcher-option': HTMLAntivirusCardSwitcherOptionElement;
+    'antivirus-card-table': HTMLAntivirusCardTableElement;
+    'antivirus-card-table-cell': HTMLAntivirusCardTableCellElement;
+    'antivirus-card-table-pagination': HTMLAntivirusCardTablePaginationElement;
+    'antivirus-card-table-row': HTMLAntivirusCardTableRowElement;
   }
 }
 
@@ -154,6 +197,21 @@ declare namespace LocalJSX {
     'onSelected'?: (event: CustomEvent<any>) => void;
     'selectedDisabled'?: boolean;
   }
+  interface AntivirusCardTable extends JSXBase.HTMLAttributes<HTMLAntivirusCardTableElement> {}
+  interface AntivirusCardTableCell extends JSXBase.HTMLAttributes<HTMLAntivirusCardTableCellElement> {
+    'alignLeft'?: boolean;
+    'alignRight'?: boolean;
+    'doubleline'?: boolean;
+    'singleline'?: boolean;
+  }
+  interface AntivirusCardTablePagination extends JSXBase.HTMLAttributes<HTMLAntivirusCardTablePaginationElement> {
+    'actionHover'?: boolean;
+    'disabled'?: boolean;
+  }
+  interface AntivirusCardTableRow extends JSXBase.HTMLAttributes<HTMLAntivirusCardTableRowElement> {
+    'actionHover'?: boolean;
+    'disabled'?: boolean;
+  }
 
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
@@ -166,6 +224,10 @@ declare namespace LocalJSX {
     'antivirus-card-spinner-round': AntivirusCardSpinnerRound;
     'antivirus-card-switcher': AntivirusCardSwitcher;
     'antivirus-card-switcher-option': AntivirusCardSwitcherOption;
+    'antivirus-card-table': AntivirusCardTable;
+    'antivirus-card-table-cell': AntivirusCardTableCell;
+    'antivirus-card-table-pagination': AntivirusCardTablePagination;
+    'antivirus-card-table-row': AntivirusCardTableRow;
   }
 }
 

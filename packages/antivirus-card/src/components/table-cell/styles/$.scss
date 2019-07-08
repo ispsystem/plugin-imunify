@@ -1,8 +1,4 @@
-@import './_align/_left/isp-table-cell_align_left.scss';
-@import './_align/_right/isp-table-cell_align_right.scss';
-@import './_row-selected/isp-table-cell_row-selected.scss';
-
-.ngispui-table-cell {
+antivirus-card-table-cell {
   position: relative;
 
   display: table-cell;
@@ -23,24 +19,7 @@
     padding-right: 20px;
   }
 
-  &.isp-table-cell_doubleline {
-    --ngispui-checkbox__border-color: #9b9b9b;
-    padding-top: 20px;
-    padding-bottom: 10px;
-
-    vertical-align: top;
-
-    line-height: 8px;
-  }
-
-  &.isp-table-cell_singleline {
-    --ngispui-checkbox__border-color: #9b9b9b;
-    height: 50px;
-
-    vertical-align: middle;
-  }
-
-  &.isp-table-cell_header {
+  [slot='table-header'] & {
     --ngispui-table__cell-font-size: var(--ngispui-table__header-font-size, var(--isp-font-size-small, 12px));
     --ngispui-table__cell-color: var(--ngispui-table__header-color, var(--isp-color__additional-text, #9b9b9b));
     --ngispui-table__cell-background-color: var(
@@ -61,38 +40,33 @@
       border-top-right-radius: 5px;
     }
   }
+
+  &[doubleline] {
+    --ngispui-checkbox__border-color: #9b9b9b;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    vertical-align: top;
+    line-height: 8px;
+  }
+
+  &[singleline] {
+    --ngispui-checkbox__border-color: #9b9b9b;
+    height: 50px;
+    vertical-align: middle;
+  }
+
+
+  &[align-left] {
+    text-align: left;
+  }
+  
+  &[align-right] {
+    text-align: right;
+  }
+
+
+  @import 'text/text';
 }
 
-.isp-table-cell__main-text {
-  display: block;
-  overflow: hidden;
 
-  white-space: nowrap;
-  text-overflow: ellipsis;
 
-  line-height: 17px;
-}
-
-a.isp-table-cell__main-text {
-  text-decoration: none;
-
-  color: #0279c0;
-}
-
-.isp-table-cell__add-text {
-  display: block;
-  overflow: hidden;
-
-  margin-top: 3px;
-
-  text-overflow: ellipsis;
-
-  color: #9b9b9b;
-
-  font-size: 12px;
-  line-height: 13px;
-}
-
-a.isp-table-cell__add-text {
-  text-decoration: underline;
-}

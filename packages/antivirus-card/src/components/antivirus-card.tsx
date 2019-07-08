@@ -14,7 +14,7 @@ import { AntivirusState } from '../models/antivirus.reducers';
  */
 @Component({
   tag: 'antivirus-card',
-  styleUrl: 'styles/$.scss',
+  styleUrl: 'style.scss',
   shadow: true
 })
 export class AntivirusCard {
@@ -71,6 +71,7 @@ export class AntivirusCard {
           lastScan: 'сегодня в 06:00',
           hasScheduledActions: false,
           infectedFiles: []
+          // scanning: true,
         } as AntivirusState
       })
     );

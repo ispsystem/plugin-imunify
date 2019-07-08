@@ -5,13 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-| Property | Attribute | Description | Type     | Default  |
-| -------- | --------- | ----------- | -------- | -------- |
-| `width`  | `width`   |             | `string` | `'30px'` |
-
-
 ## Dependencies
 
 ### Used by
