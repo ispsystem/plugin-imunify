@@ -1,4 +1,5 @@
 import { AntivirusState } from './antivirus.reducers';
+import { INotifier } from '../redux/reducers';
 
 // import { sleep } from '../utils/tools';
 
@@ -6,7 +7,7 @@ const isDevMode = process.env.NODE_ENV !== 'production';
 const endpoint = isDevMode ? 'http://localhost:8000' : '';
 
 export namespace AntivirusActions {
-  export function scan() {
+  export function scan(notifier: INotifier) {
     return async dispatch => {
       dispatch(scanBegin());
 
@@ -26,13 +27,20 @@ export namespace AntivirusActions {
           // mode: 'no-cors',
           // headers: plHeaders,
           // headers: [['Content-Type', 'application/json'], ['Content-Type', 'text/plain']],
-          body: JSON.stringify({ value: '1s' })
+          body: JSON.stringify({ value: '5s' })
         };
 
         let response = await fetch(`${endpoint}/plugin/api/imunify/scan`, requestInit);
         handleErrors(response);
 
         let json = await response.json();
+
+        console.log(3333, json, notifier)
+
+        notifier
+        .ids([json.task_id])
+        .delete$()
+        .subscribe(d => console.log('Scan result', d));
 
         dispatch(scanSuccess(json));
         return json.items;
