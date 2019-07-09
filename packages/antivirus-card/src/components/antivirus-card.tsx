@@ -73,8 +73,7 @@ export class AntivirusCard {
 
   componentWillLoad() {
     this.store.setStore(
-      configureStore(
-        {
+      configureStore({
         notifier: this.notifier,
         antivirus: {
           history: [
@@ -85,8 +84,7 @@ export class AntivirusCard {
             }
           ]
         } as AntivirusState
-      }
-      )
+      })
     );
 
     this.store.mapDispatchToProps(this, {
@@ -94,11 +92,13 @@ export class AntivirusCard {
       updateState: AntivirusActions.updateState
     });
 
-    this.checkFeatures()
+    this.checkFeatures();
 
     if (this.notifier) {
       console.log(typeof this.notifier);
       console.log('notifire ', this.notifier);
+
+      this.notifier.taskList$().subscribe(d => console.log('taskList ', d));
 
       this.notifier.create$().subscribe(d => {
         console.log(d);
