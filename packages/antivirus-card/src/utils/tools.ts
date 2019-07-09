@@ -45,3 +45,12 @@ export function uuidv4() {
   const crypto = window.crypto || window['msCrypto']; // for IE 11
   return hash.replace(/[018]/g, c => (c ^ (crypto.getRandomValues(new Uint8Array(1))![0] & (15 >> (c / 4)))).toString(16));
 }
+
+/**
+ * Add leading zeroes to date
+ * 
+ * @param n - day or time number
+ */
+export function pad(n: number) {
+  return n < 10 ? '0' + n : n;
+}

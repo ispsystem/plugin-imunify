@@ -7,12 +7,17 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
+  Observable,
+} from 'rxjs';
+import {
   ButtonType,
   ThemePalette,
 } from './components/button/button.interface';
 
 export namespace Components {
-  interface AntivirusCard {}
+  interface AntivirusCard {
+    'notifier': Observable<any>;
+  }
   interface AntivirusCardButton {
     'btnType': ButtonType;
     'customCSSClass': string;
@@ -162,7 +167,9 @@ declare global {
 }
 
 declare namespace LocalJSX {
-  interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {}
+  interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
+    'notifier'?: Observable<any>;
+  }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;
     'customCSSClass'?: string;

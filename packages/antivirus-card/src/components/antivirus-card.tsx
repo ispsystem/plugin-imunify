@@ -6,6 +6,9 @@ import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
 import { RootState } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
+import { Observable } from 'rxjs';
+import { AntivirusActions } from '../models/antivirus.actions';
+import { ProIcon } from './icons/pro';
 import { AntivirusState } from '../models/antivirus.reducers';
 
 /**
@@ -62,28 +65,98 @@ export class AntivirusCard {
     }
   ];
 
+  @Prop() notifier: Observable<any>;
+
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+
+  checkFeatures: typeof AntivirusActions.feature;
+  updateState: typeof AntivirusActions.updateState;
 
   componentWillLoad() {
     this.store.setStore(
       configureStore({
         antivirus: {
-          lastScan: 'сегодня в 06:00',
-          hasScheduledActions: false,
-          infectedFiles: [{
-            name: '1',
-            status: '2',
-            type: '3',
-            path: '4',
-            datedetectionDate: 5,
-            createdDate: 6,
-            lastChangeDate: 7,
-          }],
-          inBlackLists: true,
-          // scanning: true,
+          history: [
+            {
+              date: new Date(Date.now() - 864e5).getTime(),
+              checkType: 'полная',
+              infectedFilesCount: 0
+            }
+          ]
         } as AntivirusState
       })
     );
+
+    this.store.mapDispatchToProps(this, {
+      checkFeatures: AntivirusActions.feature,
+      updateState: AntivirusActions.updateState
+    });
+
+    this.checkFeatures();
+
+    if (this.notifier) {
+      console.log(typeof this.notifier);
+      console.log(this.notifier);
+
+      this.notifier.subscribe(d => {
+        console.log(d);
+
+        if(this.store.getState().antivirus.history.length===1) {
+          this.updateState({
+            ...this.store.getState().antivirus,
+            error: null,
+            history: [
+              ...this.store.getState().antivirus.history,
+              {
+                date: Date.now(),
+                checkType: 'полная',
+                infectedFilesCount: 3
+              }
+            ],
+            infectedFiles: [
+              {
+                name: 'beregovoi_orcestr.bat',
+                status: 'заражён',
+                type: 'Troyan.enspect',
+                createdDate: new Date(Date.now() - 864e5).getTime(),
+                path: 'sanin/save',
+                datedetectionDate: Date.now()
+              },
+              {
+                name: 'yua_ne_virus.r',
+                status: 'заражён',
+                type: 'Atos_7vers',
+                createdDate: new Date(Date.now() - 864e5).getTime(),
+                path: 'sanin/doc/look_today_or_die...',
+                datedetectionDate: Date.now()
+              },
+              {
+                name: 'posilka_from_ust-kut.malazip',
+                status: 'заражён',
+                type: 'Plachuschii_Virus',
+                createdDate: new Date(Date.now() - 864e5).getTime(),
+                path: 'sanin/doc/verryy',
+                datedetectionDate: Date.now()
+              }
+            ],
+          });
+        } else {
+          this.updateState({
+            ...this.store.getState().antivirus,
+            history: [
+              ...this.store.getState().antivirus.history,
+              {
+                date: Date.now(),
+                checkType: 'полная',
+                infectedFilesCount: 3
+              }
+            ],
+            inBlackLists: true
+          });
+        }
+
+      });
+    }
   }
 
   /**
@@ -127,9 +200,9 @@ export class AntivirusCard {
           <LableForByModal text="Ежедневное сканирование сайта" />
           <LableForByModal text="Обновление вирусных баз" />
           <LableForByModal text="Поиск сайта в черных списках" />
-          <LableForByModal text="Лечение заражённых файлов" />
-          <LableForByModal text="Сканирование по расписанию" />
-          <LableForByModal text="Оповещения об угрозах на почту" />
+          <LableForByModal pro text="Лечение заражённых файлов" />
+          <LableForByModal pro text="Сканирование по расписанию" />
+          <LableForByModal pro text="Оповещения об угрозах на почту" />
           <div class="button-container">
             <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
               Оформить подписку за {this.proPeriods[this.selectedPeriod].fullCost}
@@ -151,9 +224,7 @@ export class AntivirusCard {
  */
 const LableForByModal = props => (
   <div style={{ margin: '10px 0' }}>
-    <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>
-      <FreeIcon />
-    </span>
+    <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{props.pro ? <ProIcon /> : <FreeIcon />}</span>
     <span>{props.text}</span>
   </div>
 );

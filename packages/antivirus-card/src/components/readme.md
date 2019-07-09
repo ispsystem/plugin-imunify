@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property   | Attribute | Description | Type              | Default     |
+| ---------- | --------- | ----------- | ----------------- | ----------- |
+| `notifier` | --        |             | `Observable<any>` | `undefined` |
+
+
 ## Dependencies
 
 ### Depends on
