@@ -8,7 +8,7 @@ import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
 import { CheckListBadIcon } from '../icons/check-list-bad';
 import { Store } from '@stencil/redux';
-import { RootState } from '../../redux/reducers';
+import { RootState, INotifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { AntivirusActions } from '../../models/antivirus.actions';
 import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
@@ -37,6 +37,7 @@ export class Preview {
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() inBlackLists: AntivirusState['inBlackLists'];
   @State() history: AntivirusState['history'];
+  @State() notifier: INotifier;
 
   @State() lastScan: string;
 
@@ -50,7 +51,7 @@ export class Preview {
   scanVirus: typeof AntivirusActions.scan;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan
     });
@@ -102,7 +103,7 @@ export class Preview {
 
         {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
 
-        <div class="link" onClick={this.scanVirus.bind(this)} style={{ 'margin-top': '25px', height: '28px' }}>
+        <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon />
         </div>
 

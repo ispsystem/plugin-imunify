@@ -7,8 +7,8 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
-  Observable,
-} from 'rxjs';
+  INotifier,
+} from './redux/reducers';
 import {
   ButtonType,
   ThemePalette,
@@ -16,7 +16,7 @@ import {
 
 export namespace Components {
   interface AntivirusCard {
-    'notifier': Observable<any>;
+    'notifier': INotifier;
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -168,7 +168,7 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
-    'notifier'?: Observable<any>;
+    'notifier'?: INotifier;
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;

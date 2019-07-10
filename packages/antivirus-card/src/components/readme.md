@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property   | Attribute | Description | Type              | Default     |
-| ---------- | --------- | ----------- | ----------------- | ----------- |
-| `notifier` | --        |             | `Observable<any>` | `undefined` |
+| Property   | Attribute | Description | Type        | Default     |
+| ---------- | --------- | ----------- | ----------- | ----------- |
+| `notifier` | --        |             | `INotifier` | `undefined` |
 
 
 ## Dependencies

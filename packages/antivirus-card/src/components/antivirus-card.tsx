@@ -4,9 +4,8 @@ import { Component, h, Host, State, JSX, Listen, Prop } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
-import { RootState } from '../redux/reducers';
+import { RootState, INotifier } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
-import { Observable } from 'rxjs';
 import { AntivirusActions } from '../models/antivirus.actions';
 import { ProIcon } from './icons/pro';
 import { AntivirusState } from '../models/antivirus.reducers';
@@ -65,7 +64,7 @@ export class AntivirusCard {
     }
   ];
 
-  @Prop() notifier: Observable<any>;
+  @Prop() notifier: INotifier;
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
@@ -74,7 +73,9 @@ export class AntivirusCard {
 
   componentWillLoad() {
     this.store.setStore(
-      configureStore({
+      configureStore(
+        {
+        notifier: this.notifier,
         antivirus: {
           history: [
             {
@@ -84,7 +85,8 @@ export class AntivirusCard {
             }
           ]
         } as AntivirusState
-      })
+      }
+      )
     );
 
     this.store.mapDispatchToProps(this, {
@@ -92,16 +94,16 @@ export class AntivirusCard {
       updateState: AntivirusActions.updateState
     });
 
-    this.checkFeatures();
+    this.checkFeatures()
 
     if (this.notifier) {
       console.log(typeof this.notifier);
-      console.log(this.notifier);
+      console.log('notifire ', this.notifier);
 
-      this.notifier.subscribe(d => {
+      this.notifier.create$().subscribe(d => {
         console.log(d);
 
-        if(this.store.getState().antivirus.history.length===1) {
+        if (this.store.getState().antivirus.history.length === 1) {
           this.updateState({
             ...this.store.getState().antivirus,
             error: null,
@@ -138,7 +140,7 @@ export class AntivirusCard {
                 path: 'sanin/doc/verryy',
                 datedetectionDate: Date.now()
               }
-            ],
+            ]
           });
         } else {
           this.updateState({
@@ -154,7 +156,6 @@ export class AntivirusCard {
             inBlackLists: true
           });
         }
-
       });
     }
   }
