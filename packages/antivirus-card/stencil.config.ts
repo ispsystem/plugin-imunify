@@ -7,12 +7,19 @@ export const config: Config = {
     {
       type: 'dist',
       esmLoaderPath: '../loader',
+      copy: [
+        {
+          src: 'assets',
+          dest: '../esm/assets',
+          warn: true
+        }
+      ]
     },
     {
       type: 'docs-readme'
     },
     {
-      type: 'www',
+      type: 'www'
     }
   ],
   plugins: [

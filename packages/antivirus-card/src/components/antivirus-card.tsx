@@ -9,6 +9,8 @@ import { ActionTypes } from '../redux/actions';
 import { AntivirusActions } from '../models/antivirus.actions';
 import { ProIcon } from './icons/pro';
 import { AntivirusState } from '../models/antivirus.reducers';
+import { TranslateActions } from '../models/translate.actions';
+import { ITranslate } from '../models/translate.reducers';
 
 /**
  *
@@ -39,6 +41,9 @@ export class AntivirusCard {
   /** selected period */
   @State()
   selectedPeriod = 0;
+  /** translate object */
+  @State()
+  translate: ITranslate;
 
   /** nested components */
   @State()
@@ -70,8 +75,9 @@ export class AntivirusCard {
 
   checkFeatures: typeof AntivirusActions.feature;
   updateState: typeof AntivirusActions.updateState;
+  loadTranslate: typeof TranslateActions.load;
 
-  componentWillLoad() {
+  async componentWillLoad() {
     this.store.setStore(
       configureStore({
         notifier: this.notifier,
@@ -87,12 +93,23 @@ export class AntivirusCard {
       })
     );
 
+    this.store.mapStateToProps(this, state => ({ translate: state.translate }));
+
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
-      updateState: AntivirusActions.updateState
+      updateState: AntivirusActions.updateState,
+      loadTranslate: TranslateActions.load
     });
 
-    this.checkFeatures();
+    await this.loadTranslate('ru');
+
+    setTimeout(() => {
+      this.loadTranslate('en');
+    },4000);
+
+    console.log(11111, this.translate.loading, this.translate.polyglot.locale());
+
+    await this.checkFeatures();
 
     if (this.notifier) {
       console.log(typeof this.notifier);
@@ -184,7 +201,7 @@ export class AntivirusCard {
   render() {
     return (
       <Host>
-        <h2 class="title">Антивирус imunifyAV</h2>
+        <h2 class="title">{this.translate.polyglot.t('title')}</h2>
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
