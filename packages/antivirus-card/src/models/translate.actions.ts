@@ -1,8 +1,8 @@
 import Polyglot from 'node-polyglot';
-import { endpoint } from '../constants';
+import { endpoint, languageTypes } from '../constants';
 
 export namespace TranslateActions {
-  export function load(lang: 'ru' | 'en') {
+  export function load(lang: languageTypes) {
     return async dispatch => {
       dispatch(loadBegin());
 

@@ -11,6 +11,8 @@ import { ProIcon } from './icons/pro';
 import { AntivirusState } from '../models/antivirus.reducers';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
+import { Observable } from 'rxjs';
+import { defaultLang, languageTypes, languages } from '../constants';
 
 /**
  *
@@ -70,6 +72,7 @@ export class AntivirusCard {
   ];
 
   @Prop() notifier: INotifier;
+  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
@@ -101,13 +104,19 @@ export class AntivirusCard {
       loadTranslate: TranslateActions.load
     });
 
-    await this.loadTranslate('ru');
+    const getNestedObject = (nestedObj, pathArr) => {
+      return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
+    };
 
-    setTimeout(() => {
-      this.loadTranslate('en');
-    },4000);
+    await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
 
-    console.log(11111, this.translate.loading, this.translate.polyglot.locale());
+    if (this.translateService) {
+      this.translateService.onLangChange.subscribe(d => {
+        if (d.lang in languages) {
+          this.loadTranslate(d.lang);
+        }
+      });
+    }
 
     await this.checkFeatures();
 
