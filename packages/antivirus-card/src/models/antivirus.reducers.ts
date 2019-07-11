@@ -55,7 +55,6 @@ export interface AntivirusState {
 const getInitialState = (): AntivirusState => {
   return {
     error: null,
-    // lastScan: undefined,
 
     isProVersion: false,
     hasScheduledActions: false,
