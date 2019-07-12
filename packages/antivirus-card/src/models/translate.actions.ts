@@ -10,7 +10,7 @@ export namespace TranslateActions {
         const requestInit: RequestInit = {
           method: 'GET'
         };
-        let response = await fetch(`${endpoint}/plugin/imunify/antivirus-card/assets/i18n/${lang}.json`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
         handleErrors(response);
         let json = await response.json();
 
