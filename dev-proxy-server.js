@@ -12,15 +12,21 @@ proxy.on('proxyRes', function(proxyRes, req, res) {
 
 // Listen for the `error` event on `proxy`.
 proxy.on('error', function(err, req, res) {
-  res.writeHead(500, {
-    'Content-Type': 'text/plain'
-  });
+  console.warn(req.headers.origin + req.url);
 
-  res.end('Something went wrong. And we are reporting a custom error message.');
+  if (req.headers.origin && req.url) {
+    res.setHeader('access-control-allow-origin', '*');
+    res.writeHead(301, { Location: req.headers.origin + req.url });
+    res.end();
+  } else {
+    res.writeHead(500, {
+      'Content-Type': 'text/plain'
+    });
+    res.end('Something went wrong. And we are reporting a custom error message.');
+  }
 });
 
 const server = http.createServer(function(req, res) {
-
   // console.log(req.headers);
 
   proxy.web(req, res, {
