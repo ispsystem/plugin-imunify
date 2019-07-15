@@ -1,25 +1,40 @@
 import Polyglot from 'node-polyglot';
-import { endpoint, languageTypes } from '../constants';
+import { endpoint, languageTypes, isDevMode } from '../constants';
 
 export namespace TranslateActions {
   export function load(lang: languageTypes) {
     return async dispatch => {
       dispatch(loadBegin());
-
       try {
-        const requestInit: RequestInit = {
-          method: 'GET'
-        };
-        let response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
-        handleErrors(response);
-        let json = await response.json();
+        let json = {};
+        if (isDevMode) {
+          json = import(`../i18n/ru`);
+        } else {
+          const requestInit: RequestInit = {
+            method: 'GET'
+          };
+          let response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
+          handleErrors(response);
+          json = await response.json();
+        }
 
-        dispatch(loadSuccess(new Polyglot({ phrases: { ...json }, locale: lang })));
+        const _polyglot = new Polyglot({ phrases: { ...json }, locale: lang });
+
+        dispatch(loadSuccess(msg.bind(null, _polyglot)));
         return json;
       } catch (error) {
         dispatch(loadFailure(error));
       }
     };
+  }
+
+  function msg(polyglot: Polyglot, keys: string[]) {
+    if (Array.isArray(keys)) {
+      return polyglot.t(keys.join('.'));
+    }
+
+    console.warn(keys);
+    return '';
   }
 
   function handleErrors(response) {
