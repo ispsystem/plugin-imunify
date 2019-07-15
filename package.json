@@ -5,10 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev:ac": "concurrently \"lerna run --stream --scope antivirus-card start\" \"npm:proxy\"",
+    "build:ac": "lerna run --stream --scope antivirus-card build && npm run lang",
     "dev:aw": "lerna run --stream --scope antivirus-widget dev",
     "build:aw": "lerna run --stream --scope antivirus-widget build",
     "dev:am": "lerna run --stream --scope antivirus-menu start",
-    "proxy": "node dev-proxy-server"
+    "proxy": "node scripts/dev-proxy-server",
+    "lang": "node scripts/prepare-lang"
   },
   "keywords": [],
   "author": "",
@@ -16,8 +18,11 @@
   "devDependencies": {
     "browser-sync": "^2.26.7",
     "concurrently": "^4.1.0",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.4",
     "http-proxy": "^1.17.0",
     "lerna": "^3.15.0",
+    "lodash": "^4.17.14",
     "postcss-import": "^12.0.1",
     "postcss-preset-env": "^6.6.0",
     "rollup": "^1.13.1",
