@@ -7,6 +7,7 @@ export interface INotifier {
   ids: (ids$: number[] | Observable<number[]>) => INotifier;
   create$: () => Observable<any>;
   delete$: () => Observable<any>;
+  taskList$: () => Observable<any>;
 }
 
 // This interface represents app state by nesting feature states.
