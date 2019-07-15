@@ -26,26 +26,15 @@ import { defaultLang, languageTypes, languages } from '../constants';
 export class AntivirusCard {
   /** reference to modal element */
   public buyModal: HTMLAntivirusCardModalElement;
-  /** previods for PRO version */
-  public proPeriods = [
-    {
-      msg: 'Месячная',
-      monthCost: '4.9 €/мес',
-      fullCost: '4.9 €'
-    },
-    {
-      msg: 'Годовая',
-      monthCost: '4.08 €/мес при оплате за год',
-      fullCost: '49 €'
-    }
-  ];
+  /** periods for PRO version */
+  public proPeriods;
 
   /** selected period */
   @State()
   selectedPeriod = 0;
   /** translate object */
   @State()
-  translate: ITranslate;
+  t: ITranslate;
 
   /** nested components */
   @State()
@@ -121,9 +110,6 @@ export class AntivirusCard {
     await this.checkFeatures();
 
     if (this.notifier) {
-      console.log(typeof this.notifier);
-      console.log('notifire ', this.notifier);
-
       this.notifier.taskList$().subscribe(d => console.log('taskList ', d));
 
       this.notifier.create$().subscribe(d => {
@@ -184,10 +170,23 @@ export class AntivirusCard {
         }
       });
     }
+
+    this.proPeriods = [
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
+        monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
+        fullCost: '4.9 €'
+      },
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
+        monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
+        fullCost: '49 €'
+      }
+    ];
   }
 
   /**
-   * Litening event to open buy modal
+   * Listening event to open buy modal
    */
   @Listen('openBuyModal')
   openBuyModal() {
@@ -210,7 +209,7 @@ export class AntivirusCard {
   render() {
     return (
       <Host>
-        <h2 class="title">{this.translate.polyglot.t('title')}</h2>
+        <h2 class="title">{this.t.msg(['TITLE'])}</h2>
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
