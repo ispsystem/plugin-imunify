@@ -10,7 +10,7 @@
     "build:aw": "lerna run --stream --scope antivirus-widget build",
     "dev:am": "lerna run --stream --scope antivirus-menu start",
     "proxy": "node scripts/dev-proxy-server",
-    "lang": "node scripts/prepare-lang"
+    "lang": "node --experimental-modules scripts/prepare-lang.js"
   },
   "keywords": [],
   "author": "",

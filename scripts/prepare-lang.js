@@ -13,11 +13,11 @@ const PATHS = {
 // minify files
 const jsFiles = glob.sync(path.join(PATHS.packages, '**/i18n/*.js'), { ignore: ['**/node_modules/**', './node_modules/**'] });
 
-jsFiles.forEach(filePath => {
+jsFiles.forEach(async filePath => {
   const langFilePath = path.resolve(PATHS.i18n, filePath.split('/').pop() + 'on');
 
   let fileCommonLang = {};
-  let filePackageLang = require(`../${filePath}`);
+  let filePackageLang = (await import(`../${filePath}`)).default;
 
   if (fs.pathExistsSync(langFilePath)) {
     fileCommonLang = require(langFilePath);
