@@ -12,10 +12,11 @@ import { RootState, INotifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { AntivirusActions } from '../../models/antivirus.actions';
 import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
-import { declOfNum, pad } from '../../utils/tools';
+import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { CloseIcon } from '../icons/close';
+import { ITranslate } from '../../models/translate.reducers';
 
 /**
  * Preview component for antivirus-card
@@ -38,6 +39,8 @@ export class Preview {
   @State() inBlackLists: AntivirusState['inBlackLists'];
   @State() history: AntivirusState['history'];
   @State() notifier: INotifier;
+  /** translate object */
+  @State() t: ITranslate;
 
   @State() lastScan: string;
 
@@ -51,7 +54,7 @@ export class Preview {
   scanVirus: typeof AntivirusActions.scan;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan
     });
@@ -112,13 +115,8 @@ export class Preview {
             <CloseIcon />
           </span>
           <div class="popover-content">
-            <p style={{ margin: '0' }}>
-              Сайт найден в чёрных списках Роскомнадзора, Яндекса и Google. Причиной могла стать хакерская атака на сайт, некачественное или
-              запрещённое содержимое сайта.
-            </p>
-            <p style={{ margin: '20px 0 0 0' }}>
-              Рекомендуем вылечить вирусы, и переиндексировать сайт. Индексация сайта может занять от 3 до 72 часов.
-            </p>
+            <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
+            <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
           </div>
         </ui5-popover>
       </Host>
@@ -128,20 +126,22 @@ export class Preview {
   renderStatus = () => {
     return this.scanning ? (
       <div style={{ display: 'flex' }}>
-        <p class="before-check">Идёт проверка сайта, ещё примерно 10 минут</p>
+        <p class="before-check">{this.t.msg(['PREVIEW', 'WAIT_CHECK'])}</p>
         <div class="antivirus-card-preview__spinner">
           <antivirus-card-spinner-round />
         </div>
       </div>
     ) : (
-      <p class="before-check">Последняя проверка {this.lastScan}</p>
+      <p class="before-check">
+        {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
+      </p>
     );
   };
 
   renderScheduleMessage = () => {
     return this.hasScheduledActions ? (
       <p class="next-check">
-        Следующая проверка: 04.06.2019 Ежедневно
+        {this.t.msg(['PREVIEW', 'NEXT_CHECK'])}
         <span style={{ 'margin-left': '5px', 'vertical-align': 'middle' }}>
           <LockIcon />
         </span>
@@ -158,22 +158,20 @@ export class Preview {
   };
 
   renderHasInfectedFiles = (infectedFilesCount: number) => {
-    const infectedFilesWord1 = declOfNum(infectedFilesCount, ['Заражен', 'Заражено', 'Заражено']);
-    const infectedFilesWord2 = declOfNum(infectedFilesCount, ['файл', 'файла', 'файлов']);
-
     return (
       <div class="antivirus-card-preview__container">
         <VirusesCheckBadIcon />
         <div class="antivirus-card-preview__container-msg">
           <span>
-            {infectedFilesWord1} {infectedFilesCount} {infectedFilesWord2}
+            {this.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_1'], infectedFilesCount)} {infectedFilesCount}{' '}
+            {this.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_2'], infectedFilesCount)}
           </span>
           <div style={{ display: 'inline' }}>
             <a class="link link_small link_indent-right" onClick={this.disinfectVirusFiles.bind(this)}>
-              Лечить
+              {this.t.msg(['PREVIEW', 'CURE'])}
             </a>
             <a class="link link_small" onClick={() => this.clickItem.emit(1)}>
-              Подробнее
+              {this.t.msg(['PREVIEW', 'DETAIL'])}
             </a>
           </div>
         </div>
@@ -186,7 +184,7 @@ export class Preview {
       <div class="antivirus-card-preview__container">
         <VirusesCheckGoodIcon />
         <div class="antivirus-card-preview__container-msg">
-          <span>Вирусов не обнаружили</span>
+          <span>{this.t.msg(['PREVIEW', 'NOT_INFECTED_FILES'])}</span>
         </div>
       </div>
     );
@@ -197,10 +195,10 @@ export class Preview {
       <div class="antivirus-card-preview__container">
         <CheckListBadIcon />
         <div class="antivirus-card-preview__container-msg">
-          <span>Сайт находится в чёных списках</span>
+          <span>{this.t.msg(['PREVIEW', 'IN_BLACK_LISTS'])}</span>
           <div style={{ display: 'inline' }}>
             <a onClick={this.handleBlackListsHelpClick.bind(this)} class="link link_small">
-              Как исправить
+              {this.t.msg(['PREVIEW', 'HOW_TO_FIX'])}
             </a>
           </div>
         </div>
@@ -213,7 +211,7 @@ export class Preview {
       <div class="antivirus-card-preview__container">
         <CheckListGoodIcon />
         <div class="antivirus-card-preview__container-msg">
-          <span>Сайта в чёрных списках нет</span>
+          <span>{this.t.msg(['PREVIEW', 'NOT_IN_BLACK_LISTS'])}</span>
         </div>
       </div>
     );
