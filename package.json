@@ -16,11 +16,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
     "browser-sync": "^2.26.7",
+    "commitizen": "^3.1.1",
     "concurrently": "^4.1.0",
     "fs-extra": "^8.1.0",
+    "git-cz": "^3.2.1",
     "glob": "^7.1.4",
     "http-proxy": "^1.17.0",
+    "husky": "^3.0.0",
     "lerna": "^3.15.0",
     "lodash": "^4.17.14",
     "postcss-import": "^12.0.1",
@@ -37,5 +42,15 @@
   "dependencies": {
     "antivirus-card": "file:packages/antivirus-card",
     "antivirus-widget": "file:packages/antivirus-widget"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g './commitlint.config.js'"
+    }
   }
 }
