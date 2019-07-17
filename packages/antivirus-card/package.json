@@ -20,7 +20,6 @@
     "build": "stencil build --docs && npm run index.esm",
     "start": "stencil build --dev --watch --serve",
     "prod": "stencil build --prod --watch --serve",
-    "watch:index": "reflex -s -r './dist/collection/index.js' cp './dist/collection/index.js' './www/build'",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
