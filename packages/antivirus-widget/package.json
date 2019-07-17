@@ -1,30 +1,32 @@
 {
   "name": "antivirus-widget",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Den Sumbaev <d.sumbaev@ispsystem.com>",
-  "license": "ISC",
-  "main": "lib/antivirus-widget.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
+  "version": "0.0.1",
+  "description": "Stencil Component Starter",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/antivirus-widget/antivirus-widget.js",
   "files": [
-    "lib"
+    "dist/",
+    "loader/"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab-dev.ispsystem.net:ispsystem/plugin/imunify.git"
-  },
+  "type": "module",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
-    "dev": "concurrently \"npm:start\" \"npm:watch\"",
-    "start": "browser-sync 'public' -w --port 8082",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "index.esm": "cat index.esm.js >> dist/esm/index.mjs",
+    "build": "stencil build --docs && npm run index.esm",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll"
   },
-  "dependencies": {
-    "abstract-element": "^4.4.1",
-    "lit-html": "^1.1.0"
-  }
+  "devDependencies": {
+    "@stencil/core": "1.1.7",
+    "@stencil/sass": "^1.0.1",
+    "@types/node-polyglot": "^0.4.33",
+    "node-polyglot": "^2.3.1"
+  },
+  "license": "MIT"
 }
