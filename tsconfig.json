@@ -23,12 +23,16 @@
   },
   "exclude": [
     "node_modules",
+    "scripts/**/*.js",
     "babel.config.js",
     "**/rollup.config.js",
-    "dist",
+    "**/dist",
+    "**/www",
+    "**/build",
+    "**/loader",
+    "**/index.esm.js",
     "**/public/**/*.js",
     "**/__tests__/**.*.js",
     "**/lib",
-    "build"
   ]
 }

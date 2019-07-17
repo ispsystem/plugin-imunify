@@ -6,13 +6,20 @@ export const config: Config = {
   outputTargets: [
     {
       type: 'dist',
-      esmLoaderPath: '../loader',
+      esmLoaderPath: '../loader'
     },
     {
       type: 'docs-readme'
     },
     {
       type: 'www',
+      copy: [
+        {
+          src: '../../../i18n',
+          dest: 'plugin/imunify/i18n',
+          warn: true
+        }
+      ]
     }
   ],
   plugins: [

@@ -9,6 +9,10 @@ import { ActionTypes } from '../redux/actions';
 import { AntivirusActions } from '../models/antivirus.actions';
 import { ProIcon } from './icons/pro';
 import { AntivirusState } from '../models/antivirus.reducers';
+import { TranslateActions } from '../models/translate.actions';
+import { ITranslate } from '../models/translate.reducers';
+import { Observable } from 'rxjs';
+import { defaultLang, languageTypes, languages } from '../constants';
 
 /**
  *
@@ -22,23 +26,15 @@ import { AntivirusState } from '../models/antivirus.reducers';
 export class AntivirusCard {
   /** reference to modal element */
   public buyModal: HTMLAntivirusCardModalElement;
-  /** previods for PRO version */
-  public proPeriods = [
-    {
-      msg: 'Месячная',
-      monthCost: '4.9 €/мес',
-      fullCost: '4.9 €'
-    },
-    {
-      msg: 'Годовая',
-      monthCost: '4.08 €/мес при оплате за год',
-      fullCost: '49 €'
-    }
-  ];
+  /** periods for PRO version */
+  public proPeriods;
 
   /** selected period */
   @State()
   selectedPeriod = 0;
+  /** translate object */
+  @State()
+  t: ITranslate;
 
   /** nested components */
   @State()
@@ -65,13 +61,15 @@ export class AntivirusCard {
   ];
 
   @Prop() notifier: INotifier;
+  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   checkFeatures: typeof AntivirusActions.feature;
   updateState: typeof AntivirusActions.updateState;
+  loadTranslate: typeof TranslateActions.load;
 
-  componentWillLoad() {
+  async componentWillLoad() {
     this.store.setStore(
       configureStore({
         notifier: this.notifier,
@@ -87,17 +85,31 @@ export class AntivirusCard {
       })
     );
 
+    this.store.mapStateToProps(this, state => ({ translate: state.translate }));
+
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
-      updateState: AntivirusActions.updateState
+      updateState: AntivirusActions.updateState,
+      loadTranslate: TranslateActions.load
     });
 
-    this.checkFeatures();
+    const getNestedObject = (nestedObj, pathArr) => {
+      return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
+    };
+
+    await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+
+    if (this.translateService) {
+      this.translateService.onLangChange.subscribe(d => {
+        if (d.lang in languages) {
+          this.loadTranslate(d.lang);
+        }
+      });
+    }
+
+    await this.checkFeatures();
 
     if (this.notifier) {
-      console.log(typeof this.notifier);
-      console.log('notifire ', this.notifier);
-
       this.notifier.taskList$().subscribe(d => console.log('taskList ', d));
 
       this.notifier.create$().subscribe(d => {
@@ -158,10 +170,23 @@ export class AntivirusCard {
         }
       });
     }
+
+    this.proPeriods = [
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
+        monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
+        fullCost: '4.9 €'
+      },
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
+        monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
+        fullCost: '49 €'
+      }
+    ];
   }
 
   /**
-   * Litening event to open buy modal
+   * Listening event to open buy modal
    */
   @Listen('openBuyModal')
   openBuyModal() {
@@ -184,7 +209,7 @@ export class AntivirusCard {
   render() {
     return (
       <Host>
-        <h2 class="title">Антивирус imunifyAV</h2>
+        <h2 class="title">{this.t.msg(['TITLE'])}</h2>
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>

@@ -10,6 +10,12 @@ import {
   INotifier,
 } from './redux/reducers';
 import {
+  Observable,
+} from 'rxjs';
+import {
+  languageTypes,
+} from './constants';
+import {
   ButtonType,
   ThemePalette,
 } from './components/button/button.interface';
@@ -17,6 +23,7 @@ import {
 export namespace Components {
   interface AntivirusCard {
     'notifier': INotifier;
+    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -169,6 +176,7 @@ declare global {
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
     'notifier'?: INotifier;
+    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;

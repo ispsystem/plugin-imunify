@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property   | Attribute | Description | Type        | Default     |
-| ---------- | --------- | ----------- | ----------- | ----------- |
-| `notifier` | --        |             | `INotifier` | `undefined` |
+| Property           | Attribute | Description | Type                                                                          | Default     |
+| ------------------ | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
+| `notifier`         | --        |             | `INotifier`                                                                   | `undefined` |
+| `translateService` | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
 
 
 ## Dependencies

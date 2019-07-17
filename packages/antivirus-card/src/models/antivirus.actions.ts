@@ -1,10 +1,6 @@
 import { AntivirusState } from './antivirus.reducers';
 import { INotifier } from '../redux/reducers';
-
-// import { sleep } from '../utils/tools';
-
-const isDevMode = process.env.NODE_ENV !== 'production';
-const endpoint = isDevMode ? 'http://localhost:8000' : '';
+import { endpoint } from '../constants';
 
 export namespace AntivirusActions {
   export function scan(notifier: INotifier) {

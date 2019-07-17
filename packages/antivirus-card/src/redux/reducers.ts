@@ -1,7 +1,9 @@
-import { AntivirusState, antivirusReducer } from '../models/antivirus.reducers';
-
 import { combineReducers } from 'redux';
 import { Observable } from 'rxjs';
+
+import { AntivirusState, antivirusReducer } from '../models/antivirus.reducers';
+import { translateReducer, ITranslate } from '../models/translate.reducers';
+
 
 export interface INotifier {
   ids: (ids$: number[] | Observable<number[]>) => INotifier;
@@ -14,10 +16,12 @@ export interface INotifier {
 export interface RootState {
   antivirus: AntivirusState;
   notifier: INotifier;
+  translate: ITranslate
 }
 
 // Combine feature reducers into a single root reducer
 export const rootReducer = combineReducers({
   antivirus: antivirusReducer,
-  notifier: (state: INotifier = null) => state
+  notifier: (state: INotifier = null) => state,
+  translate: translateReducer
 });
