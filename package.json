@@ -8,10 +8,8 @@
     "build:ac": "lerna run --stream --scope antivirus-card build && npm run lang",
     "dev:am": "concurrently \"lerna run --stream --scope antivirus-menu start\" \"npm:proxy\"",
     "build:am": "lerna run --stream --scope antivirus-menu build && npm run lang",
-
-    "dev:aw": "lerna run --stream --scope antivirus-widget dev",
-    "build:aw": "lerna run --stream --scope antivirus-widget build",
-    
+    "dev:aw": "concurrently \"lerna run --stream --scope antivirus-widget start\" \"npm:proxy\"",
+    "build:aw": "lerna run --stream --scope antivirus-widget build && npm run lang",
     "proxy": "node scripts/dev-proxy-server",
     "lang": "node --experimental-modules scripts/prepare-lang.js"
   },
