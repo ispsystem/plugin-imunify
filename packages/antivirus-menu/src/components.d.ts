@@ -9,10 +9,14 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   Observable,
 } from 'rxjs';
+import {
+  languageTypes,
+} from './constants';
 
 export namespace Components {
   interface AntivirusMenu {
     'routerChangeEvent': Observable<any>;
+    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     'url': string;
   }
   interface AntivirusMenuVmenuItem {
@@ -45,6 +49,7 @@ declare global {
 declare namespace LocalJSX {
   interface AntivirusMenu extends JSXBase.HTMLAttributes<HTMLAntivirusMenuElement> {
     'routerChangeEvent'?: Observable<any>;
+    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     'url'?: string;
   }
   interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {

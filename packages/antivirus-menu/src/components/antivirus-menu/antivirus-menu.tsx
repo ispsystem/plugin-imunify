@@ -1,5 +1,7 @@
 import { Component, h, Prop, State } from '@stencil/core';
 import { Observable } from 'rxjs';
+import { languageTypes, defaultLang, languages } from '../../constants';
+import { loadTranslate, getNestedObject, ITranslate } from '../../utils/utils';
 
 @Component({
   tag: 'antivirus-menu',
@@ -8,13 +10,31 @@ import { Observable } from 'rxjs';
 export class AntivirusMenu {
   @Prop() url: string;
   @Prop() routerChangeEvent: Observable<any>;
-  @State() isAtiveVmenuItem: boolean;
+  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
 
-  constructor() {
-    this.isAtiveVmenuItem = location.href.startsWith(this.url);
+  @State() isActiveVmenuItem: boolean;
+  /** translate object */
+  @State()
+  t: ITranslate;
+
+  async componentWillLoad() {
+    this.isActiveVmenuItem = location.href.startsWith(this.url);
+
+    if (this.routerChangeEvent !== undefined) {
     this.routerChangeEvent.subscribe(() => {
-      this.isAtiveVmenuItem = location.href.startsWith(this.url);
+        this.isActiveVmenuItem = location.href.startsWith(this.url);
+      });
+    }
+
+    this.t = await loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+
+    if (this.translateService) {
+      this.translateService.onLangChange.subscribe(async d => {
+        if (d.lang in languages) {
+          this.t = await loadTranslate(d.lang);
+        }
     });
+  }
   }
 
   render() {
