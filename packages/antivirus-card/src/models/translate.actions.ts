@@ -31,8 +31,10 @@ export namespace TranslateActions {
   function msg(polyglot: Polyglot, keys: string[], options?: number | Polyglot.InterpolationOptions) {
     if (Array.isArray(keys)) {
       return polyglot.t(keys.join('.'), options);
+    } else if (typeof keys === 'string') {
+      return polyglot.t(keys, options);
     }
-
+  
     console.warn(keys);
     return '';
   }
