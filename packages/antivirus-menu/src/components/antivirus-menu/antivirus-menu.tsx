@@ -21,7 +21,7 @@ export class AntivirusMenu {
     this.isActiveVmenuItem = location.href.startsWith(this.url);
 
     if (this.routerChangeEvent !== undefined) {
-    this.routerChangeEvent.subscribe(() => {
+      this.routerChangeEvent.subscribe(() => {
         this.isActiveVmenuItem = location.href.startsWith(this.url);
       });
     }
@@ -33,13 +33,13 @@ export class AntivirusMenu {
         if (d.lang in languages) {
           this.t = await loadTranslate(d.lang);
         }
-    });
-  }
+      });
+    }
   }
 
   render() {
     return (
-      <antivirus-menu-vmenu-item onClick={this.handleClickLink.bind(this)} active={this.isAtiveVmenuItem}>
+      <antivirus-menu-vmenu-item onClick={this.handleClickLink.bind(this)} active={this.isActiveVmenuItem}>
         <div slot="ngispui-vmenu-icon">
           <svg width="20" height="20" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M26.5911 22.0457L22.8447 34.1363L27.4236 31.2179L32.4188 33.3025L26.5911 22.0457Z" stroke="#344A5E" />
@@ -52,7 +52,7 @@ export class AntivirusMenu {
             <path d="M23.5327 26.6297L12.0208 31.8568L17.2405 33.346L19.0031 38.4704L23.5327 26.6297Z" stroke="#344A5E" />
           </svg>
         </div>
-        <div slot="ngispui-vmenu-label">Антивирус ImunifyAV</div>
+        <div slot="ngispui-vmenu-label">{this.t.msg('MENU_ITEM')}</div>
       </antivirus-menu-vmenu-item>
     );
   }
