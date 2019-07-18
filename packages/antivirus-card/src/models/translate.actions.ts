@@ -8,7 +8,7 @@ export namespace TranslateActions {
       try {
         let json = {};
         if (isDevMode) {
-          json = import(`../i18n/ru`);
+          json = (await import(`../i18n/ru`)).default;
         } else {
           const requestInit: RequestInit = {
             method: 'GET'
@@ -28,9 +28,9 @@ export namespace TranslateActions {
     };
   }
 
-  function msg(polyglot: Polyglot, keys: string[]) {
+  function msg(polyglot: Polyglot, keys: string[], options?: number | Polyglot.InterpolationOptions) {
     if (Array.isArray(keys)) {
-      return polyglot.t(keys.join('.'));
+      return polyglot.t(keys.join('.'), options);
     }
 
     console.warn(keys);

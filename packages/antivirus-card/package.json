@@ -14,6 +14,7 @@
     "dist/",
     "loader/"
   ],
+  "type": "module",
   "scripts": {
     "index.esm": "cat index.esm.js >> dist/esm/index.mjs",
     "build": "stencil build --docs && npm run index.esm",

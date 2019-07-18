@@ -2,7 +2,6 @@ import { Component, h, Host, Prop, Event, EventEmitter, Listen } from '@stencil/
 
 @Component({
   tag: 'antivirus-card-switcher-option',
-  // styleUrl: 'styles/$.scss',
   shadow: true
 })
 export class SwitcherOption {
@@ -14,7 +13,7 @@ export class SwitcherOption {
   @Event() selected: EventEmitter;
 
   /**
-   * Метод выбора элемента по инициативе пользователя
+   * The method of selecting an item initiated by the user
    */
   @Listen('click', { capture: true })
   selectViaInteraction(): void {

@@ -1,10 +1,12 @@
+import Polyglot from 'node-polyglot';
 import { TranslateActionTypes, TRANSLATE_ACTION } from './translate.actions';
 import { Lang } from '../i18n/ru';
 import { Path } from '../utils/types';
 
 export interface ITranslate {
   msg<T extends Lang, L extends Path<T, L>>(
-    params: L
+    params: L,
+    options?: number | Polyglot.InterpolationOptions
   ): string;
   error: any;
   loading: boolean;

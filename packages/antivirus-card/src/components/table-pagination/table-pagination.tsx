@@ -10,6 +10,7 @@ export class History {
   @Prop({ reflect: true, attribute: 'action-hover' })
   actionHover: boolean;
 
+  /** @todo: need to send labels as params */
   render() {
     return (
       <Host>

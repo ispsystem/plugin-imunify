@@ -42,23 +42,7 @@ export class AntivirusCard {
     label: string;
     active: boolean;
     component: () => JSX.Element;
-  }[] = [
-    {
-      label: 'Обзор',
-      active: true,
-      component: () => <antivirus-card-preview />
-    },
-    {
-      label: 'Заражённые файлы',
-      active: false,
-      component: () => <antivirus-card-infected-files />
-    },
-    {
-      label: 'История сканирований',
-      active: false,
-      component: () => <antivirus-card-history />
-    }
-  ];
+  }[];
 
   @Prop() notifier: INotifier;
   @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
@@ -74,18 +58,29 @@ export class AntivirusCard {
       configureStore({
         notifier: this.notifier,
         antivirus: {
+          inBlackLists: true,
+          infectedFiles: [
+            {
+              name: 'beregovoi_orcestr.bat',
+              status: 'заражён',
+              type: 'Troyan.enspect',
+              createdDate: new Date(Date.now() - 864e5).getTime(),
+              path: 'sanin/save',
+              datedetectionDate: Date.now()
+            },
+          ],
           history: [
             {
               date: new Date(Date.now() - 864e5).getTime(),
               checkType: 'полная',
-              infectedFilesCount: 0
+              infectedFilesCount: 3
             }
           ]
         } as AntivirusState
       })
     );
 
-    this.store.mapStateToProps(this, state => ({ translate: state.translate }));
+    this.store.mapStateToProps(this, state => ({ t: state.translate }));
 
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
@@ -183,6 +178,24 @@ export class AntivirusCard {
         fullCost: '49 €'
       }
     ];
+
+    this.items = [
+      {
+        label: this.t.msg(['MENU_ITEMS', 'PREVIEW']),
+        active: true,
+        component: () => <antivirus-card-preview />
+      },
+      {
+        label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
+        active: false,
+        component: () => <antivirus-card-infected-files />
+      },
+      {
+        label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
+        active: false,
+        component: () => <antivirus-card-history />
+      }
+    ];
   }
 
   /**
@@ -213,7 +226,7 @@ export class AntivirusCard {
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
-          <span class="title">Подписка Imunify Pro</span>
+          <span class="title">{this.t.msg(['BUY_MODAL', 'TITLE'])}</span>
           <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
             <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>
               {this.proPeriods[0].msg}
@@ -223,18 +236,18 @@ export class AntivirusCard {
             </antivirus-card-switcher-option>
           </antivirus-card-switcher>
           <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p>
-          <LableForByModal text="Ежедневное сканирование сайта" />
-          <LableForByModal text="Обновление вирусных баз" />
-          <LableForByModal text="Поиск сайта в черных списках" />
-          <LableForByModal pro text="Лечение заражённых файлов" />
-          <LableForByModal pro text="Сканирование по расписанию" />
-          <LableForByModal pro text="Оповещения об угрозах на почту" />
+          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
+          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
+          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} />
+          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
+          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
+          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
           <div class="button-container">
             <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
-              Оформить подписку за {this.proPeriods[this.selectedPeriod].fullCost}
+              {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => (this.buyModal.visible = false)}>
-              Нет, не сейчас
+              {this.t.msg(['NOT_NOW'])}
             </a>
           </div>
         </antivirus-card-modal>
@@ -245,10 +258,10 @@ export class AntivirusCard {
 
 /**
  *
- * LableForByModal Functional Components
+ * LabelForByModal Functional Components
  * @param props - properties
  */
-const LableForByModal = props => (
+const LabelForByModal = props => (
   <div style={{ margin: '10px 0' }}>
     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{props.pro ? <ProIcon /> : <FreeIcon />}</span>
     <span>{props.text}</span>

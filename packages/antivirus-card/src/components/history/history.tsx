@@ -1,9 +1,11 @@
 import { Component, h, Prop, State } from '@stencil/core';
+import { Store } from '@stencil/redux';
+
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { Store } from '@stencil/redux';
 import { AntivirusState } from '../../models/antivirus.reducers';
 import { pad } from '../../utils/tools';
+import { ITranslate } from '../../models/translate.reducers';
 
 @Component({
   tag: 'antivirus-card-history',
@@ -12,9 +14,11 @@ import { pad } from '../../utils/tools';
 export class History {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() history: AntivirusState['history'];
+  /** translate object */
+  @State() t: ITranslate;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
   }
 
   getDayMonthYearAsStr(date: Date) {
@@ -30,9 +34,15 @@ export class History {
       <antivirus-card-table>
         <div slot="table-header" style={{ display: 'contents' }}>
           <antivirus-card-table-row style={{ height: '50px', 'vertical-align': 'middle' }}>
-            <antivirus-card-table-cell style={{ width: 220 - 40 + 'px' }}>Дата проверки</antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 200 - 20 + 'px' }}>Тип</antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>Найдено угроз</antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 220 - 40 + 'px' }}>
+              {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_1'])}
+            </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 200 - 20 + 'px' }}>
+              {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_2'])}
+            </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
+              {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
+            </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -51,7 +61,8 @@ export class History {
             </antivirus-card-table-row>
           ))}
         </div>
-        {/* <div slot="table-footer" style={{ display: 'contents' }}>
+        {/** @todo: change when backend will can work with pagination */
+        /* <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
             <span>1 запись</span>
             <antivirus-card-table-pagination />

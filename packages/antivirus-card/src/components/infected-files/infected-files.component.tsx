@@ -4,6 +4,7 @@ import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
+import { ITranslate } from '../../models/translate.reducers';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -12,10 +13,12 @@ import { pad } from '../../utils/tools';
 export class ButtonComponent {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
+  /** translate object */
+  @State() t: ITranslate;
   @Event() openBuyModal: EventEmitter;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
   }
 
   render() {
@@ -25,13 +28,10 @@ export class ButtonComponent {
           this.renderInfectedFilesTable()
         ) : (
           <div style={{ display: 'contents' }}>
-            <p class="stub-text">
-              Сейчас всё хорошо, заражённых файлов нет. В случае появления вирусов, информация о них будет храниться в этой вкладке. Для
-              лечения вирусов вам понадобится Imunify Pro. Оформить подписку можно сейчас.
-            </p>
+            <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
 
             <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
-              Оформить подписку на Imunify Pro
+              {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
             </antivirus-card-button>
           </div>
         )}
@@ -52,10 +52,18 @@ export class ButtonComponent {
       <antivirus-card-table>
         <div slot="table-header" style={{ display: 'contents' }}>
           <antivirus-card-table-row style={{ height: '50px', 'vertical-align': 'middle' }}>
-            <antivirus-card-table-cell style={{ width: 250 - 40 + 'px' }}>Имя файла</antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 130 - 20 + 'px' }}>Название угрозы</antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 130 - 20 + 'px' }}>Обнаружен</antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 370 - 20 + 'px' }}>Расположение файла</antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 250 - 40 + 'px' }}>
+              {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_1'])}
+            </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 130 - 20 + 'px' }}>
+              {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_2'])}
+            </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 130 - 20 + 'px' }}>
+              {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_3'])}
+            </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 370 - 20 + 'px' }}>
+              {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_4'])}
+            </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -75,16 +83,21 @@ export class ButtonComponent {
                 <span class="main-text">{file.path}</span>
                 <span class="add-text">
                   {file.lastChangeDate
-                    ? `изменён ${this.getDayMonthYearAsStr(new Date(file.lastChangeDate))} в ${this.getTimeAsStr(
-                        new Date(file.lastChangeDate)
-                      )}`
-                    : `создан ${this.getDayMonthYearAsStr(new Date(file.createdDate))} в ${this.getTimeAsStr(new Date(file.createdDate))}`}
+                    ? this.t.msg(['DATETIME_CHANGED'], {
+                        date: this.getDayMonthYearAsStr(new Date(file.lastChangeDate)),
+                        time: this.getTimeAsStr(new Date(file.lastChangeDate))
+                      })
+                    : this.t.msg(['DATETIME_CREATED'], {
+                        date: this.getDayMonthYearAsStr(new Date(file.createdDate)),
+                        time: this.getTimeAsStr(new Date(file.createdDate))
+                      })}
                 </span>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}
         </div>
-        {/* <div slot="table-footer" style={{ display: 'contents' }}>
+        {/** @todo: change when backend will can work with pagination */
+        /* <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
             <span>1 запись</span>
             <antivirus-card-table-pagination />
