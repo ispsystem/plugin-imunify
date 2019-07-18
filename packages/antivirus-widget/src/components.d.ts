@@ -6,10 +6,16 @@
 
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
-
+import {
+  Observable,
+} from 'rxjs';
+import {
+  languageTypes,
+} from './constants';
 
 export namespace Components {
   interface AntivirusWidget {
+    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     'url': string;
   }
 }
@@ -29,6 +35,7 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusWidget extends JSXBase.HTMLAttributes<HTMLAntivirusWidgetElement> {
+    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     'url'?: string;
   }
 

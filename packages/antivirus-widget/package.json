@@ -2,6 +2,7 @@
   "name": "antivirus-widget",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
+  "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "es2015": "dist/esm/index.mjs",
@@ -25,8 +26,10 @@
   "devDependencies": {
     "@stencil/core": "1.1.7",
     "@stencil/sass": "^1.0.1",
-    "@types/node-polyglot": "^0.4.33",
-    "node-polyglot": "^2.3.1"
+    "@types/node-polyglot": "^0.4.33"
   },
-  "license": "MIT"
+  "dependencies": {
+    "rxjs": "^6.5.2",
+    "node-polyglot": "^2.3.1"
+  }
 }

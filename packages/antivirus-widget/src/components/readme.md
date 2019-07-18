@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `url`    | `url`     |             | `string` | `undefined` |
+| Property           | Attribute | Description | Type                                                                          | Default     |
+| ------------------ | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
+| `translateService` | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `url`              | `url`     |             | `string`                                                                      | `undefined` |
 
 
 ----------------------------------------------
