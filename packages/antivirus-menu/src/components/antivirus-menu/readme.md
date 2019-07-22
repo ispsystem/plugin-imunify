@@ -7,10 +7,11 @@
 
 ## Properties
 
-| Property            | Attribute | Description | Type              | Default     |
-| ------------------- | --------- | ----------- | ----------------- | ----------- |
-| `routerChangeEvent` | --        |             | `Observable<any>` | `undefined` |
-| `url`               | `url`     |             | `string`          | `undefined` |
+| Property            | Attribute | Description | Type                                                                          | Default     |
+| ------------------- | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
+| `routerChangeEvent` | --        |             | `Observable<any>`                                                             | `undefined` |
+| `translateService`  | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `url`               | `url`     |             | `string`                                                                      | `undefined` |
 
 
 ## Dependencies

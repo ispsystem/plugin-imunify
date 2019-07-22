@@ -14,6 +14,7 @@
     "dist/",
     "loader/"
   ],
+  "type": "module",
   "scripts": {
     "index.esm": "cat index.esm.js >> dist/esm/index.mjs",
     "build": "stencil build --docs && npm run index.esm",
@@ -22,8 +23,10 @@
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
   "devDependencies": {
-    "@stencil/core": "1.1.2",
-    "@stencil/sass": "^1.0.0"
+    "@stencil/core": "1.1.7",
+    "@stencil/sass": "^1.0.0",
+    "@types/node-polyglot": "^0.4.33",
+    "node-polyglot": "^2.3.1"
   },
   "license": "MIT",
   "dependencies": {
