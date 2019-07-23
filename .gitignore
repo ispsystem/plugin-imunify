@@ -12,6 +12,7 @@ yarn.lock
 /tmp
 /out-tsc
 lib
+/build
 
 # dependencies
 node_modules
