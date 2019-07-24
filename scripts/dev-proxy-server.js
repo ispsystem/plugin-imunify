@@ -1,10 +1,40 @@
+const path = require('path');
+const fs = require('fs-extra');
 const http = require('http');
 const httpProxy = require('http-proxy');
 
-//
-// Create a proxy server with custom application logic
-//
-var proxy = httpProxy.createProxyServer({});
+/**
+ * Proxy config object
+ */
+let SETTINGS = {
+  cookie: 'ses6=A0746ACA5062C51F7DD54170',
+  target: 'https://vepp-1.vepp.evm.ru',
+  port: 8000
+};
+const customSettingsPath = path.join(process.cwd(), 'proxy.conf.json');
+
+try {
+  SETTINGS = require(customSettingsPath);
+} catch (error) {
+  fs.writeJsonSync(customSettingsPath, SETTINGS, { spaces: 2 });
+  console.log(customSettingsPath, 'successfully created!');
+}
+
+/** debug settings */
+console.log('Proxy config object:', SETTINGS);
+/************************************************************************/
+
+/**
+ *
+ *
+ * Create a proxy server with custom application logic
+ *
+ */
+const proxy = httpProxy.createProxyServer({});
+
+proxy.on('proxyReq', function(proxyReq, req, res, options) {
+  proxyReq.setHeader('cookie', SETTINGS.cookie);
+});
 
 proxy.on('proxyRes', function(proxyRes, req, res) {
   res.setHeader('access-control-allow-origin', '*');
@@ -30,10 +60,10 @@ const server = http.createServer(function(req, res) {
   // console.log(req.headers);
 
   proxy.web(req, res, {
-    target: 'https://vepp-1.vepp.evm.ru',
+    target: SETTINGS.target,
     secure: false
   });
 });
 
-console.log('The proxy dev server is listening on port 8000');
-server.listen(8000);
+console.log(`The proxy dev server is listening on port ${SETTINGS.port}...`);
+server.listen(SETTINGS.port);
