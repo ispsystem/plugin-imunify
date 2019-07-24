@@ -70,7 +70,8 @@ const lang = {
       CELL_2: 'Тип',
       CELL_3: 'Найдено угроз'
     }
-  }
+  },
+  NEW_SCAN_BTN: 'Новое сканирование'
 };
 
 export default lang;

@@ -28,8 +28,11 @@
 
   &:hover {
     color: #0991e2;
-    & path:not([fill-rule='evenodd']) {
+    & path:not([fill-rule='evenodd']), text {
       fill: #0991e2;
+    }
+    & rect {
+      stroke: #0991e2;
     }
   }
 }

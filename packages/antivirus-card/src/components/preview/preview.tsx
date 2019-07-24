@@ -107,7 +107,7 @@ export class Preview {
         {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
 
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
-          <StartCheckIcon />
+          <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
 
         <ui5-popover class="popover" ref={el => (this.popoverEl = el)} no-header>
