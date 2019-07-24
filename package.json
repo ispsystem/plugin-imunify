@@ -14,7 +14,7 @@
     
     "proxy": "node scripts/dev-proxy-server",
     "lang": "node --experimental-modules scripts/prepare-lang.js",
-    "build:all": "chmod +x ./scripts/build.sh && ./scripts/build.sh build"
+    "build": "chmod +x ./scripts/build.sh && ./scripts/build.sh build"
   },
   "keywords": [],
   "author": "",
