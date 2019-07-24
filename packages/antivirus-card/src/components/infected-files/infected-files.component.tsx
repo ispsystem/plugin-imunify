@@ -74,10 +74,10 @@ export class ButtonComponent {
                 <span class="add-text">{file.status}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{file.type}</span>
+                <span class="isp-table-cell__main-text">{file.threatName}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{this.getDayMonthYearAsStr(new Date(file.datedetectionDate))}</span>
+                <span class="isp-table-cell__main-text">{this.getDayMonthYearAsStr(new Date(file.detectionDate))}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">{file.path}</span>

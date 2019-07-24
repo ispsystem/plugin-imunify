@@ -4,16 +4,17 @@ import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './antivirus.actions';
  * Infected file
  */
 interface InfectedFile {
+  id: number;
   // file name, e.g. "beregovoi_orcestr.bat"
   name: string;
   // file status, e.g. "заражён"
-  status: string;
+  status: 'infected' | 'cured' | 'excepted' | 'healing';
   // type of threat, e.g. "Troyan.enspect"
-  type: string;
+  threatName: string;
   // path to file
   path: string;
   // date and time when the file was detected (timestamp)
-  datedetectionDate: number;
+  detectionDate: number;
   // date and time when the file was created (timestamp)
   createdDate: number;
   // date and time when the file was changed (timestamp)
@@ -26,10 +27,59 @@ interface InfectedFile {
 interface HistoryItem {
   // verification date and time (timestamp)
   date: number;
-  // check type, e.g "полная"
-  checkType: string;
+  // check type
+  checkType: 'full' | 'partial';
   // count infected files
   infectedFilesCount: number;
+  // count cured files
+  curedFilesCount: number;
+
+  scanOptionId: number;
+}
+
+/**
+ * Scan option list item
+ */
+export interface ScanOption {
+  id: number;
+  path: string[];
+  checkMask: string[];
+  excludeMask: string[];
+  intensity: 'low' | 'medium' | 'high';
+  scheduleTime: {
+    daily: {
+      hour: number;
+      minutes: number;
+    };
+    single: {
+      date: number;
+    };
+    weekly: {
+      day: number;
+      time: {
+        hour: number;
+        minutes: number;
+      };
+    };
+    monthly: {
+      day: number;
+      time: {
+        hour: number;
+        minutes: number;
+      };
+    };
+  };
+  checkFileTypes: 'critical' | 'all' | 'except_media';
+  saveCopyFilesDay: number;
+  cureFoundFiles: boolean;
+  removeInfectedFileContent: boolean;
+  checkDomainReputation: boolean;
+  email: string;
+  parallelChecks: number;
+  ramForCheck: number;
+  fullLogDetails: boolean;
+  maxScanTime: number;
+  autoUpdate: boolean;
 }
 
 /**
