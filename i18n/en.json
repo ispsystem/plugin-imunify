@@ -1,3 +1,87 @@
 {
-  "title": "Imunify Security"
+  "TITLE": "Anti ImunifyAV",
+  "PRO_PERIODS": {
+    "MONTH": {
+      "SHORT": "month",
+      "LONG": "Monthly"
+    },
+    "YEAR": {
+      "SHORT": "year",
+      "LONG": "Annual",
+      "DESCRIPTION": "when paying for the year"
+    }
+  },
+  "MENU_ITEMS": {
+    "PREVIEW": "Overview",
+    "INFECTED_FILES": "Infected files",
+    "HISTORY": "Scan History"
+  },
+  "CHECK_TYPE": {
+    "FULL": "full"
+  },
+  "BUY_MODAL": {
+    "TITLE": "Subscription Imunify Pro",
+    "LABEL_1": "Daily site scan",
+    "LABEL_2": "Update virus databases",
+    "LABEL_3": "Search site in blacklists",
+    "LABEL_PRO_1": "Cure infected files",
+    "LABEL_PRO_2": "Scheduled Scan",
+    "LABEL_PRO_3": "Mail Alert Notifications"
+  },
+  "NOT_NOW": "Not now",
+  "SUBSCRIBE_FOR": "Subscribe for",
+  "TABLE": {
+    "ON_PAGE_LABEL": "On the page"
+  },
+  "PREVIEW": {
+    "HELP": "Site found in the blacklists of Roskomnadzor, Yandex and Google. The reason could be a hacker attack on the site, poor quality or prohibited content of the site.",
+    "HELP_RECOMMENDATION": "We recommend to cure viruses, and re-index the site. Site indexing can take from 3 to 72 hours.",
+    "WAIT_CHECK": "Checking the site, about 10 more minutes",
+    "LAST_CHECK": "Last check",
+    "NEXT_CHECK": "Next check: 04/06/2019 Daily",
+    "INFECTED_FILES_WORD_1": "Infected |||| Infected |||| Infected",
+    "INFECTED_FILES_WORD_2": "file |||| File |||| files",
+    "CURE": "Treat",
+    "DETAIL": "Read more",
+    "NOT_INFECTED_FILES": "No viruses were found",
+    "IN_BLACK_LISTS": "The site is in black lists",
+    "HOW_TO_FIX": "How to fix",
+    "NOT_IN_BLACK_LISTS": "There is no blacklist site"
+  },
+  "INFECTED_FILES": {
+    "NOT_FOUND": "Now everything is fine, there are no infected files. In the case of viruses, information about them will be stored in this tab. To cure viruses, you will need Imunify Pro. You can subscribe now.",
+    "SUBSCRIBE_TO_PRO": "Subscribe to Imunify Pro",
+    "TABLE_HEADER": {
+      "CELL_1": "File name",
+      "CELL_2": "Threat name",
+      "CELL_3": "Detected",
+      "CELL_4": "File location"
+    }
+  },
+  "DATETIME_CREATED": "created %{date} in %{time}",
+  "DATETIME_CHANGED": "changed %{date} in %{time}",
+  "HISTORY_TAB": {
+    "TABLE_HEADER": {
+      "CELL_1": "Inspection date",
+      "CELL_2": "Type of",
+      "CELL_3": "Found threats"
+    }
+  },
+  "MENU_ITEM": "Antivirus ImunifyAV",
+  "WIDGET": {
+    "ANTIVIRUS": "Antivirus",
+    "STATUS_MSG": {
+      "SAFELY": "no threats detected",
+      "IN_PROCESS": "check the site for viruses"
+    },
+    "DESC_MSG": {
+      "HISTORY": "last check: today",
+      "WAIT": "about 10 minutes"
+    },
+    "ACTION_MSG": {
+      "AGAIN": "Check again",
+      "REPORT": "Report"
+    }
+  },
+  "NEW_SCAN_BTN": "New scan"
 }
