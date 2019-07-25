@@ -51,6 +51,7 @@ export class AntivirusCard {
 
   checkFeatures: typeof AntivirusActions.feature;
   updateState: typeof AntivirusActions.updateState;
+  waitScanResult: typeof AntivirusActions.waitScanResult;
   loadTranslate: typeof TranslateActions.load;
 
   async componentWillLoad() {
@@ -60,11 +61,14 @@ export class AntivirusCard {
       })
     );
 
-    this.store.mapStateToProps(this, state => ({ t: state.translate }));
+    this.store.mapStateToProps(this, state => ({
+      t: state.translate
+    }));
 
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
       updateState: AntivirusActions.updateState,
+      waitScanResult: AntivirusActions.waitScanResult,
       loadTranslate: TranslateActions.load
     });
 
@@ -81,63 +85,23 @@ export class AntivirusCard {
     await this.checkFeatures();
 
     if (this.notifier) {
-      this.notifier.taskList$().subscribe(d => console.log('taskList ', d));
-
-      this.notifier.create$().subscribe(d => {
-        console.log(d);
-
-        if (this.store.getState().antivirus.history.length === 1) {
-          this.updateState({
-            ...this.store.getState().antivirus,
-            error: null,
-            history: [
-              ...this.store.getState().antivirus.history,
-              {
-                date: Date.now(),
-                checkType: 'полная',
-                infectedFilesCount: 3
+      this.notifier.taskList$().subscribe((d: ISPNotifierEvent[]) => {
+        if (d && Array.isArray(d) && d.length > 0) {
+          const runningPluginTasks = d
+            .map(n => {
+              if (
+                n.additional_data &&
+                (n.additional_data.status === 'created' ||
+                  n.additional_data.status === 'running' ||
+                  n.additional_data.status === 'deferred')
+              ) {
+                return n.id;
               }
-            ],
-            infectedFiles: [
-              {
-                name: 'beregovoi_orcestr.bat',
-                status: 'заражён',
-                type: 'Troyan.enspect',
-                createdDate: new Date(Date.now() - 864e5).getTime(),
-                path: 'sanin/save',
-                datedetectionDate: Date.now()
-              },
-              {
-                name: 'yua_ne_virus.r',
-                status: 'заражён',
-                type: 'Atos_7vers',
-                createdDate: new Date(Date.now() - 864e5).getTime(),
-                path: 'sanin/doc/look_today_or_die...',
-                datedetectionDate: Date.now()
-              },
-              {
-                name: 'posilka_from_ust-kut.malazip',
-                status: 'заражён',
-                type: 'Plachuschii_Virus',
-                createdDate: new Date(Date.now() - 864e5).getTime(),
-                path: 'sanin/doc/verryy',
-                datedetectionDate: Date.now()
-              }
-            ]
-          });
-        } else {
-          this.updateState({
-            ...this.store.getState().antivirus,
-            history: [
-              ...this.store.getState().antivirus.history,
-              {
-                date: Date.now(),
-                checkType: 'полная',
-                infectedFilesCount: 3
-              }
-            ],
-            inBlackLists: true
-          });
+            })
+            .filter(id => id !== undefined);
+          if (runningPluginTasks.length > 0) {
+            this.waitScanResult(this.notifier, runningPluginTasks);
+          }
         }
       });
     }

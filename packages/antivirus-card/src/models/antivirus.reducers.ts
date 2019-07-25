@@ -116,9 +116,17 @@ const getInitialState = (): AntivirusState => {
   };
 };
 
-export const antivirusReducer = (state: AntivirusState = getInitialState(), action: AntivirusActionTypes) => {
+export const antivirusReducer = (state: AntivirusState = getInitialState(), action: AntivirusActionTypes): AntivirusState => {
   switch (action.type) {
     case ANTIVIRUS_ACTION.SCAN_BEGIN: {
+      return {
+        ...state,
+        scanning: true,
+        error: null
+      };
+    }
+
+    case ANTIVIRUS_ACTION.SCANNING: {
       return {
         ...state,
         scanning: true,
@@ -130,7 +138,10 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       return {
         ...state,
         scanning: false,
-        scanResult: action.payload.data
+        infectedFiles: [
+          // merge infected files with new scan result
+          ...new Map((state.infectedFiles || []).concat(action.payload.data).map(item => [item.id, item])).values()
+        ]
       };
     }
 

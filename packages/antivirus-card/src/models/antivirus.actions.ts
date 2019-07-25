@@ -1,29 +1,17 @@
 import { AntivirusState } from './antivirus.reducers';
-import { INotifier } from '../redux/reducers';
+import { INotifier, ISPNotifierEvent } from '../redux/reducers';
 import { endpoint } from '../constants';
+import { Observable } from 'rxjs';
+import { getNestedObject } from '../utils/tools';
 
 export namespace AntivirusActions {
   export function scan(notifier: INotifier) {
     return async dispatch => {
       dispatch(scanBegin());
-
-      // const plHeaders = new Headers({
-      //   'Accept': 'application/json',
-      //   'content-type': 'application/json'
-      // });
       try {
-        // const plHeaders = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
         const requestInit: RequestInit = {
           method: 'POST',
-          // headers: {
-          //   // 'Accept': '*/*',
-          //   // 'Content-Type': 'application/x-www-form-urlencoded',
-          //   'Content-Type': 'application/json'
-          // },
-          // mode: 'no-cors',
-          // headers: plHeaders,
-          // headers: [['Content-Type', 'application/json'], ['Content-Type', 'text/plain']],
-          body: JSON.stringify({ value: '5s' })
+          body: JSON.stringify({ scan_path: '/var/www/www-root/', site_id: 1 })
         };
 
         let response = await fetch(`${endpoint}/plugin/api/imunify/scan`, requestInit);
@@ -31,15 +19,31 @@ export namespace AntivirusActions {
 
         let json = await response.json();
 
-        console.log(3333, json, notifier)
+        notifier.ids([json.task_id]).delete$();
+      } catch (error) {
+        dispatch(scanFailure(error));
+      }
+    };
+  }
 
+  /**
+   * Wait when scan tasks finish
+   * 
+   * @param notifier - notifier from main app
+   * @param ids - tasks
+   */
+  export function waitScanResult(notifier: INotifier, ids: number[] | Observable<number[]>) {
+    return async dispatch => {
+      dispatch(scanning());
+      try {
         notifier
-        .ids([json.task_id])
-        .delete$()
-        .subscribe(d => console.log('Scan result', d));
+          .ids(ids)
+          .delete$()
+          .subscribe(async d => {
+            const scanResult = await getScanResult(d);
 
-        dispatch(scanSuccess(json));
-        return json.items;
+            dispatch(scanSuccess(scanResult));
+          });
       } catch (error) {
         dispatch(scanFailure(error));
       }
@@ -69,6 +73,26 @@ export namespace AntivirusActions {
   export function updateState(state: AntivirusState) {
     return dispatch => {
       dispatch(getStateSuccess(state));
+    };
+  }
+
+  /**
+   * Get scan result
+   * 
+   * @param notify - result from notifier
+   */
+  async function getScanResult(notify: { event: ISPNotifierEvent }) {
+    const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
+    const task_id = notify.event.id;
+    if (started !== undefined && task_id !== undefined) {
+      let response = await fetch(
+        `${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${
+          notify.event.additional_data.output.content.scan.started
+        }`
+      );
+      handleErrors(response);
+
+      return await response.json();
     }
   }
 
@@ -79,16 +103,16 @@ export namespace AntivirusActions {
     const contentType = response.headers.get('content-type');
 
     if (contentType === undefined || !contentType.includes('application/json')) {
-      throw new TypeError("Oops, we haven't got JSON with a plugin service list!");
+      throw new TypeError('Oops, we have not got JSON with a plugin service list!');
     }
 
     return response;
   }
 }
 
-
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
+  SCANNING = 'SCANNING',
   SCAN_SUCCESS = 'SCAN_SUCCESS',
   SCAN_FAILURE = 'SCAN_FAILURE',
 
@@ -100,6 +124,12 @@ export enum ANTIVIRUS_ACTION {
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_BEGIN
+  });
+};
+
+export const scanning = () => async (dispatch: (obj: ScanningAction) => any, _getState) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SCANNING
   });
 };
 
@@ -140,6 +170,9 @@ export const getStateFailure = error => async (dispatch: (obj: GetStateFailureAc
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
 }
+interface ScanningAction {
+  type: ANTIVIRUS_ACTION.SCANNING;
+}
 
 interface ScanSuccessAction {
   type: ANTIVIRUS_ACTION.SCAN_SUCCESS;
@@ -167,6 +200,7 @@ interface GetStateFailureAction {
 
 export type AntivirusActionTypes =
   | ScanBeginAction
+  | ScanningAction
   | ScanSuccessAction
   | ScanFailureAction
   | GetStateBeginAction
