@@ -7,8 +7,8 @@ import { translateReducer, ITranslate } from '../models/translate.reducers';
 /** @todo: move to common plugin lib */
 export interface INotifier {
   ids: (ids$: number[] | Observable<number[]>) => INotifier;
-  create$: () => Observable<any>;
-  delete$: () => Observable<any>;
+  create$: (action?: string) => Observable<any>;
+  delete$: (action?: string) => Observable<any>;
   taskList$: () => Observable<any>;
 }
 
@@ -25,6 +25,7 @@ export interface ISPNotifierEvent {
   // если нотификация по задаче (сущность 'task')
   additional_data?: {
     id?: number; // id задачи
+    output?: any;
     name: string; // название задачи
     status: 'created' | 'deferred' | 'running' | 'failed' | 'complete'; // статус задачи
     // прогресс задачи, такой формат вроде как формализован на BE но может быть что угодно

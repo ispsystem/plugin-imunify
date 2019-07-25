@@ -8,7 +8,7 @@ interface InfectedFile {
   // file name, e.g. "beregovoi_orcestr.bat"
   name: string;
   // file status, e.g. "заражён"
-  status: 'infected' | 'cured' | 'excepted' | 'healing';
+  status: 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING';
   // type of threat, e.g. "Troyan.enspect"
   threatName: string;
   // path to file
@@ -28,7 +28,7 @@ interface HistoryItem {
   // verification date and time (timestamp)
   date: number;
   // check type
-  checkType: 'full' | 'partial';
+  checkType: 'FULL' | 'PARTIAL';
   // count infected files
   infectedFilesCount: number;
   // count cured files
@@ -45,23 +45,23 @@ export interface ScanOption {
   path: string[];
   checkMask: string[];
   excludeMask: string[];
-  intensity: 'low' | 'medium' | 'high';
+  intensity: 'LOW' | 'MEDIUM' | 'HIGH';
   scheduleTime: {
-    daily: {
+    daily?: {
       hour: number;
       minutes: number;
     };
-    single: {
+    single?: {
       date: number;
     };
-    weekly: {
+    weekly?: {
       day: number;
       time: {
         hour: number;
         minutes: number;
       };
     };
-    monthly: {
+    monthly?: {
       day: number;
       time: {
         hour: number;
@@ -69,7 +69,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'critical' | 'all' | 'except_media';
+  checkFileTypes: 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;
