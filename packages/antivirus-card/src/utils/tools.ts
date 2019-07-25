@@ -36,6 +36,16 @@ export function declOfNum(num: number, listMsgs: string[]): string {
 }
 
 /**
+ * Return nested object or undefined
+ * 
+ * @param object - root object
+ * @param pathArr - path to nested object as string array
+ */
+export function getNestedObject(object: object, pathArr: string[]) {
+  return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), object);
+}
+
+/**
  * Создание уникального идентификатора
  * https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */
@@ -48,7 +58,7 @@ export function uuidv4() {
 
 /**
  * Add leading zeroes to date
- * 
+ *
  * @param n - day or time number
  */
 export function pad(n: number) {
