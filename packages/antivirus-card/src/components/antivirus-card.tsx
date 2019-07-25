@@ -4,15 +4,15 @@ import { Component, h, Host, State, JSX, Listen, Prop } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
-import { RootState, INotifier } from '../redux/reducers';
+import { RootState, INotifier, ISPNotifierEvent } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
 import { AntivirusActions } from '../models/antivirus.actions';
 import { ProIcon } from './icons/pro';
-import { AntivirusState } from '../models/antivirus.reducers';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
 import { Observable } from 'rxjs';
 import { defaultLang, languageTypes, languages } from '../constants';
+import { getNestedObject } from '../utils/tools';
 
 /**
  *
@@ -57,26 +57,6 @@ export class AntivirusCard {
     this.store.setStore(
       configureStore({
         notifier: this.notifier,
-        antivirus: {
-          inBlackLists: true,
-          infectedFiles: [
-            {
-              name: 'beregovoi_orcestr.bat',
-              status: 'заражён',
-              type: 'Troyan.enspect',
-              createdDate: new Date(Date.now() - 864e5).getTime(),
-              path: 'sanin/save',
-              datedetectionDate: Date.now()
-            },
-          ],
-          history: [
-            {
-              date: new Date(Date.now() - 864e5).getTime(),
-              checkType: 'полная',
-              infectedFilesCount: 3
-            }
-          ]
-        } as AntivirusState
       })
     );
 
@@ -87,10 +67,6 @@ export class AntivirusCard {
       updateState: AntivirusActions.updateState,
       loadTranslate: TranslateActions.load
     });
-
-    const getNestedObject = (nestedObj, pathArr) => {
-      return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
-    };
 
     await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
 
@@ -236,12 +212,12 @@ export class AntivirusCard {
             </antivirus-card-switcher-option>
           </antivirus-card-switcher>
           <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p>
-          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
-          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
-          <LabelForByModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} />
-          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
-          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
-          <LabelForByModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
+          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
+          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
+          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} />
+          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
+          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
+          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
           <div class="button-container">
             <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
@@ -258,10 +234,10 @@ export class AntivirusCard {
 
 /**
  *
- * LabelForByModal Functional Components
+ * LabelForBuyModal Functional Components
  * @param props - properties
  */
-const LabelForByModal = props => (
+const LabelForBuyModal = props => (
   <div style={{ margin: '10px 0' }}>
     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{props.pro ? <ProIcon /> : <FreeIcon />}</span>
     <span>{props.text}</span>

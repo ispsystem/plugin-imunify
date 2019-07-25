@@ -64,8 +64,10 @@ export class Preview {
 
   @Watch('history')
   setLastScan(newValue: AntivirusState['history']) {
-    const date = newValue[newValue.length - 1].date;
-    this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
+    if (Array.isArray(newValue) && newValue.length > 0) {
+      const date = newValue[newValue.length - 1].date;
+      this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
+    }
   }
 
   getDayMonthYearAsStr(date: Date) {
