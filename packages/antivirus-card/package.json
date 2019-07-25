@@ -37,7 +37,6 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "rxjs": "^6.5.2",
-    "@ispui/input": "git+ssh://git@gitlab-dev.ispsystem.net:frontend/common/isp-ui-builds.git#input_0.1.1_d8c003ea"
+    "rxjs": "^6.5.2"
   }
 }

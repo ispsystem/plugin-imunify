@@ -10,14 +10,17 @@ import { getValidator, Validator, defaultValidator } from '../../utils/validator
   shadow: true
 })
 export class Input {
+  /** Field with merged custom validators */
+  private _validator: Validator<string> = defaultValidator;
+
+  /** State with result of validate */
+  @State() validateResult = true;
+
   /** Value for input field */
   @Prop({mutable: true}) value: string;
 
   /** List of custom validators */
   @Prop() validator: Validator<string> | Array<Validator<string>>;
-  
-  /** Field with merged custom validators */
-  _validator: Validator<string> = defaultValidator;
   
   /** Value for input placeholder */
   @Prop({reflect: true}) placeholder: string;
@@ -25,24 +28,37 @@ export class Input {
   /** Event for input value changed */
   @Event() changed: EventEmitter<string>;
 
-  /** State with result of validate */
-  @State() validateResult: boolean = true;
-
   componentWillLoad() {
-    this._validator = Array.isArray(this.validator) ? getValidator<string>(this.validator) : getValidator<string>([this.validator]);
+    this._validator = this.validator && (Array.isArray(this.validator) 
+      ? getValidator<string>(this.validator) 
+      : getValidator<string>([this.validator]));
   }
 
+  /**
+   * Method for update validation result
+   * @param value - value for validation
+   */
   updateValidator(value: string) {
-    this.validateResult = this._validator.validate(value);
+    if (this._validator) {
+      this.validateResult = this._validator.validate(value);
+    }
   }
 
   /**
    * Method to emit new value of input
-   * @param event event from input field
+   * @param event - event from input field
    */
-  handleChange(event) {
-    this.value = event.target ? event.target.value : null;
+  inputChanged(event: Event) {
+    this.value = event.target ? (event.target as HTMLInputElement).value : null;
     this.changed.emit(this.value);
+  }
+
+  /**
+   * Method for render validation error
+   */
+  renderValidation = () => {
+    /** @todo: add validation error dropdown this */
+    return null
   }
 
   render() {
@@ -52,17 +68,12 @@ export class Input {
           value={this.value}
           placeholder={this.placeholder}
           class={`input-form ${this.validateResult ? "" : "input-form_accent"}`}
-          onInput={(event) => this.handleChange(event)}
+          onInput={(event) => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}
         />
         {this.renderValidation()}
       </Host>
     );
-  }
-
-  renderValidation = () => {
-    // @TODO add validation error dropdown this
-    return null
   }
 
 }
