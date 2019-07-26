@@ -44,6 +44,10 @@ class BaseEnum(Enum):
         types_str = ','.join(["'{}'".format(status) for status in cls])
         return "ENUM ({})".format(types_str)
 
+    @classmethod
+    def has_value(cls, value):
+        return any(value == item.value for item in cls)
+
 
 # TODO(d.vitvitskii) To upper case
 class FileStatus(BaseEnum):
@@ -53,8 +57,8 @@ class FileStatus(BaseEnum):
 
 
 class ScanType(BaseEnum):
-    full = "full"
-    partial = "partial"
+    full = "FULL"
+    partial = "PARTIAL"
 
 
 class Value:
@@ -430,6 +434,30 @@ class Imunify:
         return web.Response(text=dumps(file_list))
 
     @staticmethod
+    async def _preset(info: HandlerInfo):
+        request_body = await info.body
+        site_id = request_body.get("site_id")
+        scan_type = request_body.get("scan_type")
+        preset = request_body.get("preset")
+
+        preset_info = {
+            "instance": info.instance_id,
+            "site_id": site_id,
+            "type": scan_type,
+            "preset": dumps(preset),
+            "date_use": get_utc_timestamp()
+        }
+
+        try:
+            # TODO(d.vitvitskii) Уйти от этой конструкции. Обработку ошибки сделать в insert()
+            preset_id = insert(table="presets", data=preset_info)
+        except Exception as e:
+            log.error("Error while creating preset: '{}'".format(e))
+            return web.Response(text="Error while creating preset", status=500, content_type='text')
+        result = {"preset_id": preset_id}
+        return web.Response(text=dumps(result))
+
+    @staticmethod
     def scan_done(task_info: dict, instance_id: str, site_id: int, started: int):
         """
         Callback которы будет вызван после завершения задачи на сканирование
@@ -610,9 +638,10 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
+                    make_get('/infected'),
                     make_get('/scan/history/{site}'),
                     make_get('/scan/result'),
-                    make_get('/infected'),
+                    make_post('/preset'),
                     make_post('/scan')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
@@ -644,7 +673,8 @@ if __name__ == '__main__':
               DbField("instance", "INT"),
               DbField("site_id", "INT"),
               DbField("type", ScanType.to_sql_enum()),
-              DbField("preset", "JSON")]
+              DbField("preset", "JSON"),
+              DbField("date_use", "BIGINT")]
     create_table("presets", fields)
     install_imunufy()
 
