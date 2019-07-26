@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "name": "imunify",
+  "author": "ISPsystem",
+  "product": "vepp",
+  "repository": "",
+  "tags": ["plugin", "imunify", "antivirus"],
+  "details": {
+    "ru": {
+      "description": "Imunify плагин для vepp",
+      "link": ""
+    },
+    "en": {
+      "description": "Imunify vepp plugin",
+      "link": ""
+    }
+  },
+  "frontend": {
+    "components": {
+      "antivirus-widget": {
+        "type": "webcomponent",
+        "place": "instead",
+        "preload": false,
+        "hidden": false
+      },
+      "antivirus-card": {
+        "type": "webcomponent",
+        "place": "instead",
+        "preload": false,
+        "hidden": false
+      },
+      "antivirus-menu": {
+        "type": "webcomponent",
+        "place": "instead",
+        "preload": false,
+        "hidden": false
+      }
+    }
+  },
+  "backend": {
+    "service": [
+      {
+        "uri": "",
+        "type": "webservice",
+        "commands": {
+          "service": "{path}/imunify.py --socket {unixsocket}"
+        }
+      }
+    ]
+  }
+}
