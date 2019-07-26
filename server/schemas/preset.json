@@ -186,7 +186,7 @@
       },
       "required": ["path", "checkMask", "excludeMask", "intensity", "scheduleTime",
                    "checkFileTypes", "saveCopyFilesDay", "cureFoundFiles",
-                   "removeInfectedFileContent", "checkDomainReputation", "email",
+                   "removeInfectedFileContent", "checkDomainReputation",
                    "parallelChecks", "ramForCheck", "fullLogDetails", "maxScanTime", "autoUpdate"]
     }
   },
