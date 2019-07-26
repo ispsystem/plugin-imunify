@@ -505,11 +505,17 @@ class Imunify:
         return web.Response(text=str(List(result)))
 
     @staticmethod
-    async def _scan_history(info: HandlerInfo):
+    async def _scan_history_site(info: HandlerInfo):
+        report_list = list()
+        try:
+            site_id = int(info.path_params.get("site"))
+        except ValueError:
+            return web.Response(text=str(List(report_list)))
+
         reports = select(table="report",
                          table_fields=["report", "scan_date"],
-                         where="instance={}".format(info.instance_id))
-        report_list = list()
+                         where="instance={} AND site_id={}".format(info.instance_id, site_id))
+
         for scan in reports:
             report = loads(scan["report"])
             report_list.append({
@@ -604,7 +610,7 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
-                    make_get('/scan/history'),
+                    make_get('/scan/history/{site}'),
                     make_get('/scan/result'),
                     make_get('/infected'),
                     make_post('/scan')])
