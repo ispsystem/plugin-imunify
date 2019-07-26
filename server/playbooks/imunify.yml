@@ -1,0 +1,45 @@
+- hosts: "{{targets|default('all')}}"
+  gather_facts: false
+  vars:
+    download_dir: "/tmp"
+    imunify_installation_script_name: "imav-deploy.sh"
+    imunify_installation_script_url: "https://repo.imunify360.cloudlinux.com/defence360/{{imunify_installation_script_name}}"
+    scan_script_path: "/opt/ispsystem/plugin/imunify/scan.py"
+
+  tasks:
+  - name: "Check that imunify is installed"
+    stat:
+      path: /bin/imunify-antivirus
+    register: imunify
+
+  - name: "Check that scan script is installed"
+    stat:
+      path: scan_script_path
+    register: scan_script
+
+  - name: "Download installation script"
+    get_url:
+      url: "{{imunify_installation_script_url}}"
+      dest: "{{download_dir}}"
+      remote_src: yes
+    when: imunify.stat.exists == False
+
+  - name: "Install imunify"
+    command: bash {{download_dir}}/{{imunify_installation_script_name}} --beta
+    when: imunify.stat.exists == False
+
+  - name: "Creates directory /opt/ispsystem/plugin/imunify"
+    file:
+      path: /opt/ispsystem/plugin/imunify
+      state: directory
+    when: scan_script.stat.exists == False
+
+  - name: "Copy scan script"
+    copy:
+      src: "{{ lookup('env', 'SCRIPT_PATH') }}"
+      dest: "{{scan_script_path}}"
+
+  - name: "Create hook"
+    command: imunify-antivirus hook add-native --event malware-scanning --path /opt/ispsystem/plugin/imunify/scan.py
+    ignore_errors: True
+    when: imunify.stat.exists == False
