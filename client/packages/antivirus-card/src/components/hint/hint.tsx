@@ -12,6 +12,7 @@ export class Hint {
   /** Ref for dropdown element */
   public dropdownEl!: DropdownElType;
 
+  /** Flag for display accent icon */
   @Prop({reflect: true}) accent: boolean;
 
   render() {

@@ -3,7 +3,7 @@ import '@ui5/webcomponents/dist/Popover';
 import { Component, h, Host, Method, Prop } from '@stencil/core';
 import { CloseIcon } from '../icons/close';
 
-/** Type for popover component */
+/** Type for popover element */
 export type PopoverElType = HTMLElement & {
   opened: boolean;
   openBy: (control: HTMLElement | EventTarget) => void;

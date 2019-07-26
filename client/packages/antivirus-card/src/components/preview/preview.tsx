@@ -25,6 +25,7 @@ import { DropdownElType } from '../dropdown/dropdown';
   styleUrl: 'styles/$.scss'
 })
 export class Preview {
+  /** Ref for dropdown element */
   public dropdownEl!: DropdownElType;
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;

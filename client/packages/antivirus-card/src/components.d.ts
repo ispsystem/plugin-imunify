@@ -45,6 +45,9 @@ export namespace Components {
     'toogle': (event: Event) => Promise<void>;
   }
   interface AntivirusCardHint {
+    /**
+    * Flag for display accent icon
+    */
     'accent': boolean;
   }
   interface AntivirusCardHistory {}
@@ -246,6 +249,9 @@ declare namespace LocalJSX {
     'maxWidth'?: string;
   }
   interface AntivirusCardHint extends JSXBase.HTMLAttributes<HTMLAntivirusCardHintElement> {
+    /**
+    * Flag for display accent icon
+    */
     'accent'?: boolean;
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}

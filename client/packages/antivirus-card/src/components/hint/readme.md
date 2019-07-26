@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type      | Default     |
-| -------- | --------- | ----------- | --------- | ----------- |
-| `accent` | `accent`  |             | `boolean` | `undefined` |
+| Property | Attribute | Description                  | Type      | Default     |
+| -------- | --------- | ---------------------------- | --------- | ----------- |
+| `accent` | `accent`  | Flag for display accent icon | `boolean` | `undefined` |
 
 
 ## Dependencies
