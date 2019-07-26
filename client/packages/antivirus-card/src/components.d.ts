@@ -61,7 +61,7 @@ export namespace Components {
   interface AntivirusCardNavigation {
     'items': {
       label: string;
-      active: boolean;
+      active?: boolean;
     }[];
   }
   interface AntivirusCardPreview {}
@@ -245,7 +245,7 @@ declare namespace LocalJSX {
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
     'items'?: {
       label: string;
-      active: boolean;
+      active?: boolean;
     }[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }

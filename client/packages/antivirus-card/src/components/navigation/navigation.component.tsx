@@ -9,7 +9,7 @@ export class ButtonComponent {
   @Prop()
   public items: {
     label: string;
-    active: boolean;
+    active?: boolean;
   }[] = [];
 
   @Event({

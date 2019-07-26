@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, JSX, Listen, Prop } from '@stencil/core';
+import { Component, h, Host, State, JSX, Listen, Prop, Watch } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -40,7 +40,7 @@ export class AntivirusCard {
   @State()
   items: {
     label: string;
-    active: boolean;
+    active?: boolean;
     component: () => JSX.Element;
   }[];
 
@@ -49,15 +49,51 @@ export class AntivirusCard {
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
-  checkFeatures: typeof AntivirusActions.feature;
-  updateState: typeof AntivirusActions.updateState;
-  waitScanResult: typeof AntivirusActions.waitScanResult;
-  loadTranslate: typeof TranslateActions.load;
+  /**
+   * Update messages when change translate object
+   */
+  @Watch('t')
+  updateMessages() {
+    this.proPeriods = [
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
+        monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
+        fullCost: '4.9 €'
+      },
+      {
+        msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
+        monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
+        fullCost: '49 €'
+      }
+    ];
+
+    let activeIndex = 0;
+    if (Array.isArray(this.items) && this.items.length > 0) {
+      activeIndex = this.items.findIndex(item => item.active);
+    }
+
+    this.items = [
+      {
+        label: this.t.msg(['MENU_ITEMS', 'PREVIEW']),
+        component: () => <antivirus-card-preview />
+      },
+      {
+        label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
+        component: () => <antivirus-card-infected-files />
+      },
+      {
+        label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
+        component: () => <antivirus-card-history />
+      }
+    ];
+
+    this.items[activeIndex].active = true;
+  }
 
   async componentWillLoad() {
     this.store.setStore(
       configureStore({
-        notifier: this.notifier,
+        notifier: this.notifier
       })
     );
 
@@ -105,37 +141,6 @@ export class AntivirusCard {
         }
       });
     }
-
-    this.proPeriods = [
-      {
-        msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
-        monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
-        fullCost: '4.9 €'
-      },
-      {
-        msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
-        monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
-        fullCost: '49 €'
-      }
-    ];
-
-    this.items = [
-      {
-        label: this.t.msg(['MENU_ITEMS', 'PREVIEW']),
-        active: true,
-        component: () => <antivirus-card-preview />
-      },
-      {
-        label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
-        active: false,
-        component: () => <antivirus-card-infected-files />
-      },
-      {
-        label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
-        active: false,
-        component: () => <antivirus-card-history />
-      }
-    ];
   }
 
   /**
@@ -158,6 +163,15 @@ export class AntivirusCard {
 
     this.items = [...this.items];
   }
+
+  /** Method to get available antivirus features */
+  checkFeatures: typeof AntivirusActions.feature;
+  /** Method to update global state */
+  updateState: typeof AntivirusActions.updateState;
+  /** Method to wait a scan result */
+  waitScanResult: typeof AntivirusActions.waitScanResult;
+  /** Method to load translates from server */
+  loadTranslate: typeof TranslateActions.load;
 
   render() {
     return (
