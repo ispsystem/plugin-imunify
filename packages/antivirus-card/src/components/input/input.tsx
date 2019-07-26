@@ -24,6 +24,9 @@ export class Input {
   
   /** Value for input placeholder */
   @Prop({reflect: true}) placeholder: string;
+
+  /** Flag for disable input field */
+  @Prop({reflect: true}) disabled: boolean;
   
   /** Event for input value changed */
   @Event() changed: EventEmitter<string>;
@@ -67,6 +70,7 @@ export class Input {
         <input
           value={this.value}
           placeholder={this.placeholder}
+          disabled={this.disabled}
           class={`input-form ${this.validateResult ? "" : "input-form_accent"}`}
           onInput={(event) => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}

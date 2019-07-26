@@ -38,6 +38,10 @@ export namespace Components {
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardInput {
     /**
+    * Flag for disable input field
+    */
+    'disabled': boolean;
+    /**
     * Value for input placeholder
     */
     'placeholder': string;
@@ -213,6 +217,10 @@ declare namespace LocalJSX {
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardInput extends JSXBase.HTMLAttributes<HTMLAntivirusCardInputElement> {
+    /**
+    * Flag for disable input field
+    */
+    'disabled'?: boolean;
     /**
     * Event for input value changed
     */
