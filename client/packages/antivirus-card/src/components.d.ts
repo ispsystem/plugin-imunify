@@ -19,6 +19,9 @@ import {
   ButtonType,
   ThemePalette,
 } from './components/button/button.interface';
+import {
+  Validator,
+} from './utils/validators';
 
 export namespace Components {
   interface AntivirusCard {
@@ -33,6 +36,24 @@ export namespace Components {
   }
   interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
+  interface AntivirusCardInput {
+    /**
+    * Flag for disable input field
+    */
+    'disabled': boolean;
+    /**
+    * Value for input placeholder
+    */
+    'placeholder': string;
+    /**
+    * List of custom validators
+    */
+    'validator': Validator<string> | Array<Validator<string>>;
+    /**
+    * Value for input field
+    */
+    'value': string;
+  }
   interface AntivirusCardModal {
     'modalWidth': string;
     'visible': boolean;
@@ -94,6 +115,12 @@ declare global {
   var HTMLAntivirusCardInfectedFilesElement: {
     prototype: HTMLAntivirusCardInfectedFilesElement;
     new (): HTMLAntivirusCardInfectedFilesElement;
+  };
+
+  interface HTMLAntivirusCardInputElement extends Components.AntivirusCardInput, HTMLStencilElement {}
+  var HTMLAntivirusCardInputElement: {
+    prototype: HTMLAntivirusCardInputElement;
+    new (): HTMLAntivirusCardInputElement;
   };
 
   interface HTMLAntivirusCardModalElement extends Components.AntivirusCardModal, HTMLStencilElement {}
@@ -160,6 +187,7 @@ declare global {
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
+    'antivirus-card-input': HTMLAntivirusCardInputElement;
     'antivirus-card-modal': HTMLAntivirusCardModalElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
@@ -187,6 +215,28 @@ declare namespace LocalJSX {
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+  }
+  interface AntivirusCardInput extends JSXBase.HTMLAttributes<HTMLAntivirusCardInputElement> {
+    /**
+    * Flag for disable input field
+    */
+    'disabled'?: boolean;
+    /**
+    * Event for input value changed
+    */
+    'onChanged'?: (event: CustomEvent<string>) => void;
+    /**
+    * Value for input placeholder
+    */
+    'placeholder'?: string;
+    /**
+    * List of custom validators
+    */
+    'validator'?: Validator<string> | Array<Validator<string>>;
+    /**
+    * Value for input field
+    */
+    'value'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
     'modalWidth'?: string;
@@ -233,6 +283,7 @@ declare namespace LocalJSX {
     'antivirus-card-button': AntivirusCardButton;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
+    'antivirus-card-input': AntivirusCardInput;
     'antivirus-card-modal': AntivirusCardModal;
     'antivirus-card-navigation': AntivirusCardNavigation;
     'antivirus-card-preview': AntivirusCardPreview;

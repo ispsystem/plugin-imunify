@@ -11,7 +11,8 @@
     "dev:aw": "concurrently \"lerna run --stream --scope antivirus-widget start\" \"npm:proxy\"",
     "build:aw": "lerna run --stream --scope antivirus-widget build && npm run lang",
     "proxy": "node scripts/dev-proxy-server",
-    "lang": "node --experimental-modules scripts/prepare-lang.js"
+    "lang": "node --experimental-modules scripts/prepare-lang.js",
+    "build": "chmod +x ./scripts/build.sh && ./scripts/build.sh build"
   },
   "keywords": [],
   "author": "",
