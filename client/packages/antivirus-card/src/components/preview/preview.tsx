@@ -1,5 +1,4 @@
 import '@stencil/redux';
-import '@ui5/webcomponents/dist/Popover';
 
 import { Component, h, Host, State, Prop, Event, EventEmitter, Watch } from '@stencil/core';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
@@ -15,8 +14,8 @@ import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
 import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
-import { CloseIcon } from '../icons/close';
 import { ITranslate } from '../../models/translate.reducers';
+import { DropdownElType } from '../dropdown/dropdown';
 
 /**
  * Preview component for antivirus-card
@@ -26,10 +25,7 @@ import { ITranslate } from '../../models/translate.reducers';
   styleUrl: 'styles/$.scss'
 })
 export class Preview {
-  public popoverEl!: HTMLElement & {
-    openBy: (control: HTMLElement | EventTarget) => void;
-    close: () => void;
-  };
+  public dropdownEl!: DropdownElType;
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() scanning: AntivirusState['scanning'];
@@ -71,7 +67,7 @@ export class Preview {
   }
 
   getDayMonthYearAsStr(date: Date) {
-    return `${pad(date.getDay())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
   }
 
   getTimeAsStr(date: Date) {
@@ -87,12 +83,7 @@ export class Preview {
   }
 
   handleBlackListsHelpClick(ev: MouseEvent) {
-    const popoverContainer: HTMLDivElement = this.popoverEl.shadowRoot.querySelector('span > div');
-
-    popoverContainer.style['max-width'] = '330px';
-    (popoverContainer.querySelector('.sapMPopupScroll') as HTMLDivElement).style.padding = '0';
-
-    this.popoverEl.openBy(ev.currentTarget);
+    this.dropdownEl.toogle(ev);
   }
 
   render() {
@@ -111,16 +102,10 @@ export class Preview {
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
-
-        <ui5-popover class="popover" ref={el => (this.popoverEl = el)} no-header>
-          <span class="modal-close" onClick={() => this.popoverEl.close()}>
-            <CloseIcon />
-          </span>
-          <div class="popover-content">
-            <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
-            <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
-          </div>
-        </ui5-popover>
+        <antivirus-card-dropdown ref={(el: DropdownElType) => this.dropdownEl = el}>
+          <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
+          <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
+        </antivirus-card-dropdown>
       </Host>
     );
   }
@@ -134,10 +119,10 @@ export class Preview {
         </div>
       </div>
     ) : (
-      <p class="before-check">
-        {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
-      </p>
-    );
+        <p class="before-check">
+          {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
+        </p>
+      );
   };
 
   renderScheduleMessage = () => {
