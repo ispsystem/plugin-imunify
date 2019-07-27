@@ -4,15 +4,15 @@ import { Component, h, Host, State, JSX, Listen, Prop, Watch } from '@stencil/co
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
-import { RootState, INotifier, ISPNotifierEvent } from '../redux/reducers';
+import { RootState, Notifier, NotifierEvent } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
-import { AntivirusActions } from '../models/antivirus.actions';
 import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
 import { Observable } from 'rxjs';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject } from '../utils/tools';
+import { AntivirusActions } from '../models/antivirus/actions';
 
 /**
  *
@@ -21,7 +21,7 @@ import { getNestedObject } from '../utils/tools';
 @Component({
   tag: 'antivirus-card',
   styleUrl: 'style.scss',
-  shadow: true
+  shadow: true,
 })
 export class AntivirusCard {
   /** reference to modal element */
@@ -31,40 +31,43 @@ export class AntivirusCard {
 
   /** selected period */
   @State()
-  selectedPeriod = 0;
+  public selectedPeriod = 0;
   /** translate object */
   @State()
-  t: ITranslate;
+  public t: ITranslate;
 
   /** nested components */
   @State()
-  items: {
+  public items: {
     label: string;
     active?: boolean;
     component: () => JSX.Element;
   }[];
 
-  @Prop() notifier: INotifier;
-  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+  @Prop()
+  public notifier: Notifier;
+  @Prop()
+  public translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
 
-  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+  @Prop({ context: 'store' })
+  public store: Store<RootState, ActionTypes>;
 
   /**
    * Update messages when change translate object
    */
   @Watch('t')
-  updateMessages() {
+  updateMessages(): void {
     this.proPeriods = [
       {
         msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
         monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
-        fullCost: '4.9 €'
+        fullCost: '4.9 €',
       },
       {
         msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
         monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
-        fullCost: '49 €'
-      }
+        fullCost: '49 €',
+      },
     ];
 
     let activeIndex = 0;
@@ -75,37 +78,37 @@ export class AntivirusCard {
     this.items = [
       {
         label: this.t.msg(['MENU_ITEMS', 'PREVIEW']),
-        component: () => <antivirus-card-preview />
+        component: () => <antivirus-card-preview />,
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
-        component: () => <antivirus-card-infected-files />
+        component: () => <antivirus-card-infected-files />,
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
-        component: () => <antivirus-card-history />
-      }
+        component: () => <antivirus-card-history />,
+      },
     ];
 
     this.items[activeIndex].active = true;
   }
 
-  async componentWillLoad() {
+  async componentWillLoad(): Promise<void> {
     this.store.setStore(
       configureStore({
-        notifier: this.notifier
-      })
+        notifier: this.notifier,
+      }),
     );
 
     this.store.mapStateToProps(this, state => ({
-      t: state.translate
+      t: state.translate,
     }));
 
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
       updateState: AntivirusActions.updateState,
       waitScanResult: AntivirusActions.waitScanResult,
-      loadTranslate: TranslateActions.load
+      loadTranslate: TranslateActions.load,
     });
 
     await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
@@ -120,8 +123,8 @@ export class AntivirusCard {
 
     await this.checkFeatures();
 
-    if (this.notifier) {
-      this.notifier.taskList$().subscribe((d: ISPNotifierEvent[]) => {
+    if (this.notifier !== undefined) {
+      this.notifier.taskList$().subscribe((d: NotifierEvent[]) => {
         if (d && Array.isArray(d) && d.length > 0) {
           const runningPluginTasks = d
             .map(n => {
@@ -147,7 +150,7 @@ export class AntivirusCard {
    * Listening event to open buy modal
    */
   @Listen('openBuyModal')
-  openBuyModal() {
+  openBuyModal(): void {
     this.buyModal.visible = true;
   }
 
@@ -156,7 +159,7 @@ export class AntivirusCard {
    * @param e - event
    */
   @Listen('clickItem')
-  handleClickItem(e: MouseEvent) {
+  handleClickItem(e: MouseEvent): void {
     const beforeIndex = this.items.findIndex(item => item.active);
     this.items[beforeIndex].active = false;
     this.items[e.detail].active = true;
@@ -165,13 +168,13 @@ export class AntivirusCard {
   }
 
   /** Method to get available antivirus features */
-  checkFeatures: typeof AntivirusActions.feature;
+  public checkFeatures: typeof AntivirusActions.feature;
   /** Method to update global state */
-  updateState: typeof AntivirusActions.updateState;
+  public updateState: typeof AntivirusActions.updateState;
   /** Method to wait a scan result */
-  waitScanResult: typeof AntivirusActions.waitScanResult;
+  public waitScanResult: typeof AntivirusActions.waitScanResult;
   /** Method to load translates from server */
-  loadTranslate: typeof TranslateActions.load;
+  public loadTranslate: typeof TranslateActions.load;
 
   render() {
     return (
@@ -215,7 +218,7 @@ export class AntivirusCard {
  * LabelForBuyModal Functional Components
  * @param props - properties
  */
-const LabelForBuyModal = props => (
+const LabelForBuyModal = (props: { pro?: boolean; text: string }) => (
   <div style={{ margin: '10px 0' }}>
     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{props.pro ? <ProIcon /> : <FreeIcon />}</span>
     <span>{props.text}</span>
