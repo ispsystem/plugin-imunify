@@ -8,22 +8,22 @@ import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
 import { CheckListBadIcon } from '../icons/check-list-bad';
 import { Store } from '@stencil/redux';
-import { RootState, INotifier } from '../../redux/reducers';
+import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { AntivirusActions } from '../../models/antivirus.actions';
-import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
 import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { CloseIcon } from '../icons/close';
 import { ITranslate } from '../../models/translate.reducers';
+import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 /**
  * Preview component for antivirus-card
  */
 @Component({
   tag: 'antivirus-card-preview',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class Preview {
   public popoverEl!: HTMLElement & {
@@ -38,7 +38,7 @@ export class Preview {
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() inBlackLists: AntivirusState['inBlackLists'];
   @State() history: AntivirusState['history'];
-  @State() notifier: INotifier;
+  @State() notifier: Notifier;
   /** translate object */
   @State() t: ITranslate;
 
@@ -47,7 +47,7 @@ export class Preview {
   @Event() openBuyModal: EventEmitter;
   @Event({
     bubbles: true,
-    composed: true
+    composed: true,
   })
   clickItem: EventEmitter;
 
@@ -56,7 +56,7 @@ export class Preview {
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
     this.store.mapDispatchToProps(this, {
-      scanVirus: AntivirusActions.scan
+      scanVirus: AntivirusActions.scan,
     });
 
     this.setLastScan(this.history);

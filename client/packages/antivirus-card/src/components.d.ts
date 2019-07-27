@@ -7,7 +7,7 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
-  INotifier,
+  Notifier,
 } from './redux/reducers';
 import {
   Observable,
@@ -25,7 +25,7 @@ import {
 
 export namespace Components {
   interface AntivirusCard {
-    'notifier': INotifier;
+    'notifier': Notifier;
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
@@ -203,7 +203,7 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
-    'notifier'?: INotifier;
+    'notifier'?: Notifier;
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {

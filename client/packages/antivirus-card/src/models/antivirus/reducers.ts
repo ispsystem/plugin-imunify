@@ -1,5 +1,5 @@
-import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './antivirus.actions';
-import { AntivirusState } from './antivirus.model';
+import { AntivirusState } from './state';
+import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
 
 const getInitialState = (): AntivirusState => {
   return {
