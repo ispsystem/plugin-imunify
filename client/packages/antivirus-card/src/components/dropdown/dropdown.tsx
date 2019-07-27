@@ -10,11 +10,6 @@ export type PopoverElType = HTMLElement & {
   close: () => void;
 };
 
-/** Type for dropdown element */
-export type DropdownElType = HTMLElement & {
-  toogle: (event?: Event) => void;
-}
-
 /**
  * Custom dropdown component
  */

@@ -15,7 +15,6 @@ import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { ITranslate } from '../../models/translate.reducers';
-import { DropdownElType } from '../dropdown/dropdown';
 
 /**
  * Preview component for antivirus-card
@@ -26,7 +25,7 @@ import { DropdownElType } from '../dropdown/dropdown';
 })
 export class Preview {
   /** Ref for dropdown element */
-  public dropdownEl!: DropdownElType;
+  public dropdownEl!: HTMLAntivirusCardDropdownElement;
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() scanning: AntivirusState['scanning'];
@@ -103,7 +102,7 @@ export class Preview {
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
-        <antivirus-card-dropdown ref={(el: DropdownElType) => this.dropdownEl = el}>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => this.dropdownEl = el}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
         </antivirus-card-dropdown>

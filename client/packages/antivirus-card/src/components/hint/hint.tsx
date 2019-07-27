@@ -1,6 +1,5 @@
 import { Component, h, Host, Prop } from '@stencil/core';
 import { QuestionIcon } from '../icons/question';
-import { DropdownElType } from '../dropdown/dropdown';
 import { QuestionAccentIcon } from '../icons/question-accent';
 
 @Component({
@@ -10,7 +9,7 @@ import { QuestionAccentIcon } from '../icons/question-accent';
 })
 export class Hint {
   /** Ref for dropdown element */
-  public dropdownEl!: DropdownElType;
+  public dropdownEl!: HTMLAntivirusCardDropdownElement;
 
   /** Flag for display accent icon */
   @Prop({reflect: true}) accent: boolean;
@@ -24,7 +23,7 @@ export class Hint {
         >
           {this.accent ? <QuestionAccentIcon /> : <QuestionIcon />}
         </div>
-        <antivirus-card-dropdown ref={(el: DropdownElType) => this.dropdownEl = el}>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => this.dropdownEl = el}>
           <slot />
         </antivirus-card-dropdown>
       </Host>
