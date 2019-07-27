@@ -23,15 +23,23 @@
     "@stencil/core": "1.2.1",
     "@stencil/sass": "^1.0.1",
     "@types/node-polyglot": "^0.4.33",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
     "commitizen": "^3.1.1",
     "concurrently": "^4.1.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "fs-extra": "^8.1.0",
     "git-cz": "^3.2.1",
     "glob": "^7.1.4",
     "http-proxy": "^1.17.0",
     "husky": "^3.0.0",
     "lerna": "^3.15.0",
+    "lint-staged": "^9.2.1",
     "lodash": "^4.17.14",
+    "prettier": "^1.18.2",
     "workbox-build": "4.3.1"
   },
   "dependencies": {
@@ -47,7 +55,14 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g 'commitlint.config.js'"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g 'commitlint.config.js'",
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.ts?(x)": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
