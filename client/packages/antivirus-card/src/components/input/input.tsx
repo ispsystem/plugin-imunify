@@ -27,9 +27,11 @@ export class Input {
 
   /** Flag for disable input field */
   @Prop({reflect: true}) disabled: boolean;
+
+  @Prop({reflect: true}) inlineBlock: boolean;
   
   /** Event for input value changed */
-  @Event() changed: EventEmitter<string>;
+  @Event({ bubbles: false }) changed: EventEmitter<string>;
 
   componentWillLoad() {
     this._validator = this.validator && (Array.isArray(this.validator) 
@@ -74,6 +76,7 @@ export class Input {
           class={`input-form ${this.validateResult ? "" : "input-form_accent"}`}
           onInput={(event) => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}
+          style={this.inlineBlock && {display: 'inline-block'}}
         />
         {this.renderValidation()}
       </Host>
