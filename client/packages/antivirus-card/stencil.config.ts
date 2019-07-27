@@ -1,5 +1,7 @@
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
+import { postcss } from '@stencil/postcss';
+import { default as inlineSvg } from 'postcss-inline-svg';
 
 export const config: Config = {
   namespace: 'antivirus-card',
@@ -24,8 +26,10 @@ export const config: Config = {
   ],
   plugins: [
     sass({
-      injectGlobalPaths: ['src/theme.scss'],
-      includePaths: ['node_modules']
+      injectGlobalPaths: ['src/theme.scss']
+    }),
+    postcss({
+      plugins: [inlineSvg()]
     })
   ]
 };

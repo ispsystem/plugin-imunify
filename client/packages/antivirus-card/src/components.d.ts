@@ -34,6 +34,28 @@ export namespace Components {
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
+  interface AntivirusCardCheckbox {
+    /**
+    * Flag fore display type block
+    */
+    'block': boolean;
+    /**
+    * Bold highlight active checkbox text
+    */
+    'bold': boolean;
+    /**
+    * Value for checkbox
+    */
+    'checked': boolean;
+    /**
+    * Make read only available
+    */
+    'readonly': boolean;
+    /**
+    * Text wrapping around the checkbox
+    */
+    'unwrap': boolean;
+  }
   interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardInput {
@@ -103,6 +125,12 @@ declare global {
   var HTMLAntivirusCardButtonElement: {
     prototype: HTMLAntivirusCardButtonElement;
     new (): HTMLAntivirusCardButtonElement;
+  };
+
+  interface HTMLAntivirusCardCheckboxElement extends Components.AntivirusCardCheckbox, HTMLStencilElement {}
+  var HTMLAntivirusCardCheckboxElement: {
+    prototype: HTMLAntivirusCardCheckboxElement;
+    new (): HTMLAntivirusCardCheckboxElement;
   };
 
   interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
@@ -185,6 +213,7 @@ declare global {
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
+    'antivirus-card-checkbox': HTMLAntivirusCardCheckboxElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-input': HTMLAntivirusCardInputElement;
@@ -211,6 +240,32 @@ declare namespace LocalJSX {
     'customCSSClass'?: string;
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
+  }
+  interface AntivirusCardCheckbox extends JSXBase.HTMLAttributes<HTMLAntivirusCardCheckboxElement> {
+    /**
+    * Flag fore display type block
+    */
+    'block'?: boolean;
+    /**
+    * Bold highlight active checkbox text
+    */
+    'bold'?: boolean;
+    /**
+    * Value for checkbox
+    */
+    'checked'?: boolean;
+    /**
+    * Event by change checkbox value
+    */
+    'onСhanged'?: (event: CustomEvent<boolean>) => void;
+    /**
+    * Make read only available
+    */
+    'readonly'?: boolean;
+    /**
+    * Text wrapping around the checkbox
+    */
+    'unwrap'?: boolean;
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
@@ -281,6 +336,7 @@ declare namespace LocalJSX {
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
+    'antivirus-card-checkbox': AntivirusCardCheckbox;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-input': AntivirusCardInput;
