@@ -34,6 +34,22 @@ export namespace Components {
     'isDisabled': boolean;
     'theme': ThemePalette;
   }
+  interface AntivirusCardDropdown {
+    /**
+    * Max width for dropdown content
+    */
+    'maxWidth': string;
+    /**
+    * Toogle dropdown state
+    */
+    'toogle': (event: Event) => Promise<void>;
+  }
+  interface AntivirusCardHint {
+    /**
+    * Flag for display accent icon
+    */
+    'accent': boolean;
+  }
   interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
   interface AntivirusCardInput {
@@ -103,6 +119,18 @@ declare global {
   var HTMLAntivirusCardButtonElement: {
     prototype: HTMLAntivirusCardButtonElement;
     new (): HTMLAntivirusCardButtonElement;
+  };
+
+  interface HTMLAntivirusCardDropdownElement extends Components.AntivirusCardDropdown, HTMLStencilElement {}
+  var HTMLAntivirusCardDropdownElement: {
+    prototype: HTMLAntivirusCardDropdownElement;
+    new (): HTMLAntivirusCardDropdownElement;
+  };
+
+  interface HTMLAntivirusCardHintElement extends Components.AntivirusCardHint, HTMLStencilElement {}
+  var HTMLAntivirusCardHintElement: {
+    prototype: HTMLAntivirusCardHintElement;
+    new (): HTMLAntivirusCardHintElement;
   };
 
   interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
@@ -185,6 +213,8 @@ declare global {
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
+    'antivirus-card-dropdown': HTMLAntivirusCardDropdownElement;
+    'antivirus-card-hint': HTMLAntivirusCardHintElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-input': HTMLAntivirusCardInputElement;
@@ -211,6 +241,18 @@ declare namespace LocalJSX {
     'customCSSClass'?: string;
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
+  }
+  interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
+    /**
+    * Max width for dropdown content
+    */
+    'maxWidth'?: string;
+  }
+  interface AntivirusCardHint extends JSXBase.HTMLAttributes<HTMLAntivirusCardHintElement> {
+    /**
+    * Flag for display accent icon
+    */
+    'accent'?: boolean;
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
@@ -281,6 +323,8 @@ declare namespace LocalJSX {
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
+    'antivirus-card-dropdown': AntivirusCardDropdown;
+    'antivirus-card-hint': AntivirusCardHint;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-input': AntivirusCardInput;

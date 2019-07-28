@@ -38,6 +38,7 @@ graph TD;
   antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
   antivirus-card-preview --> antivirus-card-spinner-round
+  antivirus-card-preview --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
