@@ -25,7 +25,13 @@ import {
 
 export namespace Components {
   interface AntivirusCard {
+    /**
+    * global notifier object
+    */
     'notifier': Notifier;
+    /**
+    * main app translate service
+    */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
@@ -271,7 +277,13 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
+    /**
+    * global notifier object
+    */
     'notifier'?: Notifier;
+    /**
+    * main app translate service
+    */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
