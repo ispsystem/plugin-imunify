@@ -10,6 +10,9 @@
 # IDE - VSCode
 .vscode/*
 
+# Build directories
+/build
+
 # System Files
 .DS_Store
 Thumbs.db
