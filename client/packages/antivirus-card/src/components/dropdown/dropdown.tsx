@@ -16,7 +16,7 @@ export type PopoverElType = HTMLElement & {
 @Component({
   tag: 'antivirus-card-dropdown',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Dropdown {
   /** Ref for ui5-popover element */
@@ -26,15 +26,15 @@ export class Dropdown {
   @Prop({ reflect: true }) maxWidth: string = '330px';
 
   componentDidLoad() {
-    this.popoverEl.addEventListener('beforeClose', () => this.popoverEl.opened = false);
+    this.popoverEl.addEventListener('beforeClose', () => (this.popoverEl.opened = false));
   }
-  
+
   /**
-   * Toogle dropdown state
+   * Toggle dropdown state
    * @param event - DOM event
    */
   @Method()
-  async toogle(event: Event) {
+  async toggle(event: Event) {
     if (this.popoverEl.opened) {
       this.popoverEl.close();
     } else {
@@ -50,7 +50,7 @@ export class Dropdown {
           <span class="modal-close" onClick={() => this.popoverEl.close()}>
             <CloseIcon />
           </span>
-          <div class="popover-content" style={{'max-width': this.maxWidth}}>
+          <div class="popover-content" style={{ 'max-width': this.maxWidth }}>
             <slot />
           </div>
         </ui5-popover>

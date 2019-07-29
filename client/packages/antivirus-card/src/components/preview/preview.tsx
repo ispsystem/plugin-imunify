@@ -83,7 +83,7 @@ export class Preview {
   }
 
   handleBlackListsHelpClick(ev: MouseEvent) {
-    this.dropdownEl.toogle(ev);
+    this.dropdownEl.toggle(ev);
   }
 
   render() {
