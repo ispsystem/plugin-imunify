@@ -49,11 +49,11 @@ class BaseEnum(Enum):
         return any(value == item.value for item in cls)
 
 
-# TODO(d.vitvitskii) To upper case
 class FileStatus(BaseEnum):
-    infected = "infected"
-    cured = "cured"
-    added_to_exceptions = "added-to-exceptions"
+    infected = "INFECTED"
+    cured = "CURED"
+    added_to_exceptions = "EXCEPTED"
+    healing = "HEALING"
 
 
 class ScanType(BaseEnum):
@@ -607,6 +607,35 @@ class Imunify:
         return web.Response(text=str(List(report_list)))
 
 
+    @staticmethod
+    async def _files_site_type(info: HandlerInfo):
+        file_list = list()
+        try:
+            site_id = int(info.path_params.get("site"))
+        except ValueError:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        file_type = info.path_params.get("type").upper()
+        if not FileStatus.has_value(file_type):
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created",  "last_modified"]
+        files = select(table="files", table_fields=table_fields,  where="site_id={} AND instance={}".format(site_id, info.instance_id))
+
+        for file_info in files:
+            file = {
+                "id": file_info["id"],
+                "name": file_info["file"],
+                "status": file_info["status"],
+                "threatName": file_info["malicious_type"],
+                "path": file_info["path"],
+                "detectionDate": file_info["detected"],
+                "createdDate": file_info["created"],
+                "lastChangeDate": file_info["last_modified"]
+            }
+            file_list.append(file)
+        return web.Response(text=str(List(file_list)))
+
 imunify = Imunify()
 
 
@@ -691,6 +720,7 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
+                    make_get('/files/{site}/{type}'),
                     make_get('/infected'),
                     make_get('/presets/{site}'),
                     make_get('/scan/history/{site}'),
