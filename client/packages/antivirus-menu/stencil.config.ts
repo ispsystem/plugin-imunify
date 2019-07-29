@@ -21,4 +21,7 @@ export const config: Config = {
       injectGlobalPaths: ['src/theme.scss']
     })
   ],
+  devServer: {
+    openBrowser: false
+  }
 };
