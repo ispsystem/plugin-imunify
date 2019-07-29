@@ -14,14 +14,15 @@ build_plugin () {
   echo "\e[1;35m >> start build client"
   cd ./client
 
-  # lerna boostrap
-  (npm i && lerna exec npm i)
+  lerna bootstrap
 
   for package in $(find ./packages/ -maxdepth 1 -mindepth 1 -type d -printf "%f\n") 
   do
-    lerna run --stream --scope $package build && npm run lang 
-    cp -R ./packages/$package/dist/esm/. ../$build_folder/$package
-    echo "export * from \"./$package/index.mjs"\" > ../$build_folder/$package".js"
+    if [ $package != "node_modules" ]; then
+      lerna run --stream --scope $package build && npm run lang 
+      cp -R ./packages/$package/dist/esm/. ../$build_folder/$package
+      echo "export * from \"./$package/index.mjs"\" > ../$build_folder/$package".js"
+    fi
   done
 
   echo "\e[1;35m copy translate ... \e[0m"
