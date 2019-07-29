@@ -102,7 +102,7 @@ export class Preview {
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
-        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => this.dropdownEl = el}>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
         </antivirus-card-dropdown>
@@ -119,10 +119,10 @@ export class Preview {
         </div>
       </div>
     ) : (
-        <p class="before-check">
-          {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
-        </p>
-      );
+      <p class="before-check">
+        {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
+      </p>
+    );
   };
 
   renderScheduleMessage = () => {

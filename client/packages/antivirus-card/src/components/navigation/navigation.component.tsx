@@ -3,7 +3,7 @@ import { Component, Prop, Event, h, EventEmitter } from '@stencil/core';
 @Component({
   tag: 'antivirus-card-navigation',
   styleUrl: 'styles/$.scss',
-  shadow: false
+  shadow: false,
 })
 export class ButtonComponent {
   @Prop()
@@ -14,7 +14,7 @@ export class ButtonComponent {
 
   @Event({
     bubbles: true,
-    composed: true
+    composed: true,
   })
   clickItem: EventEmitter;
 

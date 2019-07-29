@@ -20,7 +20,8 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
-    "@stencil/core": "1.2.1",
+    "@stencil/core": "1.1.6",
+    "@stencil/postcss": "^1.0.1",
     "@stencil/sass": "^1.0.1",
     "@types/node-polyglot": "^0.4.33",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
@@ -39,6 +40,7 @@
     "lerna": "^3.15.0",
     "lint-staged": "^9.2.1",
     "lodash": "^4.17.14",
+    "postcss-inline-svg": "^4.1.0",
     "prettier": "^1.18.2",
     "workbox-build": "4.3.1"
   },
