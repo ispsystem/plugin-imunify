@@ -39,6 +39,7 @@ module.exports = {
         overrides: {
           constructors: 'no-public',
           methods: 'no-public',
+          properties: 'no-public',
         },
       },
     ],
