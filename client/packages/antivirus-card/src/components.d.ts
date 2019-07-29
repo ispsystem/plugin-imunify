@@ -56,6 +56,7 @@ export namespace Components {
     */
     'unwrap': boolean;
   }
+  interface AntivirusCardDashboard {}
   interface AntivirusCardDropdown {
     /**
     * Max width for dropdown content
@@ -63,6 +64,7 @@ export namespace Components {
     'maxWidth': string;
     /**
     * Toogle dropdown state
+    * @param event - DOM event
     */
     'toogle': (event: Event) => Promise<void>;
   }
@@ -147,6 +149,12 @@ declare global {
   var HTMLAntivirusCardCheckboxElement: {
     prototype: HTMLAntivirusCardCheckboxElement;
     new (): HTMLAntivirusCardCheckboxElement;
+  };
+
+  interface HTMLAntivirusCardDashboardElement extends Components.AntivirusCardDashboard, HTMLStencilElement {}
+  var HTMLAntivirusCardDashboardElement: {
+    prototype: HTMLAntivirusCardDashboardElement;
+    new (): HTMLAntivirusCardDashboardElement;
   };
 
   interface HTMLAntivirusCardDropdownElement extends Components.AntivirusCardDropdown, HTMLStencilElement {}
@@ -242,6 +250,7 @@ declare global {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
     'antivirus-card-checkbox': HTMLAntivirusCardCheckboxElement;
+    'antivirus-card-dashboard': HTMLAntivirusCardDashboardElement;
     'antivirus-card-dropdown': HTMLAntivirusCardDropdownElement;
     'antivirus-card-hint': HTMLAntivirusCardHintElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
@@ -296,6 +305,12 @@ declare namespace LocalJSX {
     * Text wrapping around the checkbox
     */
     'unwrap'?: boolean;
+  }
+  interface AntivirusCardDashboard extends JSXBase.HTMLAttributes<HTMLAntivirusCardDashboardElement> {
+    /**
+    * open ImunifyAV+ buy modal
+    */
+    'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
@@ -379,6 +394,7 @@ declare namespace LocalJSX {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
     'antivirus-card-checkbox': AntivirusCardCheckbox;
+    'antivirus-card-dashboard': AntivirusCardDashboard;
     'antivirus-card-dropdown': AntivirusCardDropdown;
     'antivirus-card-hint': AntivirusCardHint;
     'antivirus-card-history': AntivirusCardHistory;
