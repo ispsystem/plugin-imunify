@@ -1,14 +1,14 @@
 import { Component, h, Host, Event, EventEmitter, State, Prop } from '@stencil/core';
-import { AntivirusState } from '../../models/antivirus.reducers';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
+import { AntivirusState } from '../../models/antivirus/state';
 
 @Component({
   tag: 'antivirus-card-infected-files',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class ButtonComponent {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -85,11 +85,11 @@ export class ButtonComponent {
                   {file.lastChangeDate
                     ? this.t.msg(['DATETIME_CHANGED'], {
                         date: this.getDayMonthYearAsStr(new Date(file.lastChangeDate)),
-                        time: this.getTimeAsStr(new Date(file.lastChangeDate))
+                        time: this.getTimeAsStr(new Date(file.lastChangeDate)),
                       })
                     : this.t.msg(['DATETIME_CREATED'], {
                         date: this.getDayMonthYearAsStr(new Date(file.createdDate)),
-                        time: this.getTimeAsStr(new Date(file.createdDate))
+                        time: this.getTimeAsStr(new Date(file.createdDate)),
                       })}
                 </span>
               </antivirus-card-table-cell>

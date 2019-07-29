@@ -23,13 +23,8 @@
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
-  "devDependencies": {
-    "@stencil/core": "1.1.7",
-    "@stencil/sass": "^1.0.1",
-    "@types/node-polyglot": "^0.4.33"
-  },
   "dependencies": {
-    "rxjs": "^6.5.2",
-    "node-polyglot": "^2.3.1"
+    "node-polyglot": "^2.3.1",
+    "rxjs": "^6.5.2"
   }
 }

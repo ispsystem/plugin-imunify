@@ -1,5 +1,4 @@
 import '@stencil/redux';
-import '@ui5/webcomponents/dist/Popover';
 
 import { Component, h, Host, State, Prop, Event, EventEmitter, Watch } from '@stencil/core';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
@@ -8,28 +7,25 @@ import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
 import { CheckListBadIcon } from '../icons/check-list-bad';
 import { Store } from '@stencil/redux';
-import { RootState, INotifier } from '../../redux/reducers';
+import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { AntivirusActions } from '../../models/antivirus.actions';
-import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
 import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
-import { CloseIcon } from '../icons/close';
 import { ITranslate } from '../../models/translate.reducers';
+import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 /**
  * Preview component for antivirus-card
  */
 @Component({
   tag: 'antivirus-card-preview',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class Preview {
-  public popoverEl!: HTMLElement & {
-    openBy: (control: HTMLElement | EventTarget) => void;
-    close: () => void;
-  };
+  /** Ref for dropdown element */
+  public dropdownEl!: HTMLAntivirusCardDropdownElement;
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() scanning: AntivirusState['scanning'];
@@ -38,7 +34,7 @@ export class Preview {
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() inBlackLists: AntivirusState['inBlackLists'];
   @State() history: AntivirusState['history'];
-  @State() notifier: INotifier;
+  @State() notifier: Notifier;
   /** translate object */
   @State() t: ITranslate;
 
@@ -47,7 +43,7 @@ export class Preview {
   @Event() openBuyModal: EventEmitter;
   @Event({
     bubbles: true,
-    composed: true
+    composed: true,
   })
   clickItem: EventEmitter;
 
@@ -56,7 +52,7 @@ export class Preview {
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
     this.store.mapDispatchToProps(this, {
-      scanVirus: AntivirusActions.scan
+      scanVirus: AntivirusActions.scan,
     });
 
     this.setLastScan(this.history);
@@ -71,7 +67,7 @@ export class Preview {
   }
 
   getDayMonthYearAsStr(date: Date) {
-    return `${pad(date.getDay())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
   }
 
   getTimeAsStr(date: Date) {
@@ -87,12 +83,7 @@ export class Preview {
   }
 
   handleBlackListsHelpClick(ev: MouseEvent) {
-    const popoverContainer: HTMLDivElement = this.popoverEl.shadowRoot.querySelector('span > div');
-
-    popoverContainer.style['max-width'] = '330px';
-    (popoverContainer.querySelector('.sapMPopupScroll') as HTMLDivElement).style.padding = '0';
-
-    this.popoverEl.openBy(ev.currentTarget);
+    this.dropdownEl.toogle(ev);
   }
 
   render() {
@@ -111,16 +102,10 @@ export class Preview {
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
-
-        <ui5-popover class="popover" ref={el => (this.popoverEl = el)} no-header>
-          <span class="modal-close" onClick={() => this.popoverEl.close()}>
-            <CloseIcon />
-          </span>
-          <div class="popover-content">
-            <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
-            <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
-          </div>
-        </ui5-popover>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
+          <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
+          <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
+        </antivirus-card-dropdown>
       </Host>
     );
   }
