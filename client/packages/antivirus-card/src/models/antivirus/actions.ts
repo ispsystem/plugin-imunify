@@ -34,9 +34,7 @@ async function getScanResult(notify: { event: NotifierEvent }): Promise<Infected
   const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
   const taskId = notify.event.id;
   if (started !== undefined && taskId !== undefined) {
-    let response = await fetch(
-      `${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${notify.event.additional_data.output.content.scan.started}`,
-    );
+    let response = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`);
     handleErrors(response);
 
     return await response.json();

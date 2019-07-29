@@ -46,6 +46,7 @@ module.exports = {
     '@typescript-eslint/no-namespace': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/jsx-key': 'off',
+    'react/prop-types': 'off',
     'react/no-unknown-property': [
       'warn',
       {
