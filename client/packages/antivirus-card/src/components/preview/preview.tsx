@@ -7,21 +7,21 @@ import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
 import { CheckListBadIcon } from '../icons/check-list-bad';
 import { Store } from '@stencil/redux';
-import { RootState, INotifier } from '../../redux/reducers';
+import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { AntivirusActions } from '../../models/antivirus.actions';
-import { AntivirusState } from 'antivirus-card/src/models/antivirus.reducers';
 import { pad } from '../../utils/tools';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { ITranslate } from '../../models/translate.reducers';
+import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 /**
  * Preview component for antivirus-card
  */
 @Component({
   tag: 'antivirus-card-preview',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class Preview {
   /** Ref for dropdown element */
@@ -34,7 +34,7 @@ export class Preview {
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() inBlackLists: AntivirusState['inBlackLists'];
   @State() history: AntivirusState['history'];
-  @State() notifier: INotifier;
+  @State() notifier: Notifier;
   /** translate object */
   @State() t: ITranslate;
 
@@ -43,7 +43,7 @@ export class Preview {
   @Event() openBuyModal: EventEmitter;
   @Event({
     bubbles: true,
-    composed: true
+    composed: true,
   })
   clickItem: EventEmitter;
 
@@ -52,7 +52,7 @@ export class Preview {
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
     this.store.mapDispatchToProps(this, {
-      scanVirus: AntivirusActions.scan
+      scanVirus: AntivirusActions.scan,
     });
 
     this.setLastScan(this.history);
@@ -102,7 +102,7 @@ export class Preview {
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
-        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => this.dropdownEl = el}>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
         </antivirus-card-dropdown>
@@ -119,10 +119,10 @@ export class Preview {
         </div>
       </div>
     ) : (
-        <p class="before-check">
-          {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
-        </p>
-      );
+      <p class="before-check">
+        {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
+      </p>
+    );
   };
 
   renderScheduleMessage = () => {

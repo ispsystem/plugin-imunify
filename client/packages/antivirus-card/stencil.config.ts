@@ -8,10 +8,10 @@ export const config: Config = {
   outputTargets: [
     {
       type: 'dist',
-      esmLoaderPath: '../loader'
+      esmLoaderPath: '../loader',
     },
     {
-      type: 'docs-readme'
+      type: 'docs-readme',
     },
     {
       type: 'www',
@@ -19,17 +19,20 @@ export const config: Config = {
         {
           src: '../../../i18n',
           dest: 'plugin/imunify/i18n',
-          warn: true
-        }
-      ]
-    }
+          warn: true,
+        },
+      ],
+    },
   ],
   plugins: [
     sass({
-      injectGlobalPaths: ['src/theme.scss']
+      injectGlobalPaths: ['src/theme.scss'],
     }),
     postcss({
-      plugins: [inlineSvg()]
-    })
-  ]
+      plugins: [inlineSvg()],
+    }),
+  ],
+  devServer: {
+    openBrowser: false,
+  },
 };
