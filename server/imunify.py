@@ -557,7 +557,7 @@ class Imunify:
         where_statement = "date_use IN (SELECT MAX(date_use) FROM imunify_presets " \
                           "WHERE site_id={site} AND instance={instance} GROUP BY type) " \
                           "AND site_id={site} AND instance={instance}".format(site=site_id, instance=info.instance_id)
-        presets = select(table="presets", table_fields=["id", "type", "preset"], where=where_statement)
+        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
 
         presets_list = dict()
         if not presets:
@@ -574,6 +574,7 @@ class Imunify:
             }
             preset_id = insert(table="presets", data=preset_info)
             default_preset["id"] = preset_id
+            default_preset["isActive"] = True
             presets_list["full"] = default_preset
             return web.Response(text=dumps(presets_list))
 
@@ -581,9 +582,9 @@ class Imunify:
             preset = loads(data["preset"])
             type = "full" if data["type"] == str(ScanType.full) else str(ScanType.partial)
             preset["id"] = data["id"]
+            preset["isActive"] = bool(data["is_active"])
             presets_list[type] = preset
         return web.Response(text=dumps(presets_list))
-
 
     @staticmethod
     async def _scan_history_site(info: HandlerInfo):
@@ -648,15 +649,18 @@ def make_post(name):
 
 
 class DbField:
-    def __init__(self, name: str, field_type: str, size=None):
+    def __init__(self, name: str, field_type: str, size=None, default=None):
         self._name = name.lower()
         self._type = field_type.upper()
         self._size = size
+        self._default = default
 
     def __str__(self):
         data = "{} {}".format(self._name, self._type)
         if self._size:
             data += '(' + str(self._size) + ')'
+        if self._default:
+            data += " DEFAULT {}".format(str(self._default))
         return data
 
 
@@ -758,7 +762,8 @@ if __name__ == '__main__':
               DbField("site_id", "INT"),
               DbField("type", ScanType.to_sql_enum()),
               DbField("preset", "JSON"),
-              DbField("date_use", "BIGINT")]
+              DbField("date_use", "BIGINT"),
+              DbField("is_active", "TINYINT", size=1, default="1")]
     create_table("presets", fields)
     install_imunufy()
 
