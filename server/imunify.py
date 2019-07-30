@@ -153,6 +153,26 @@ def insert(table: str, data: dict):
     return id
 
 
+def update(table: str, data: dict, where=None):
+    cur = DB_CONNECTION.cursor()
+
+    key_values_str = str()
+    for field, value in data.items():
+        if key_values_str:
+            key_values_str += ', '
+        value = "'{}'".format(value) if type(value) is str else str(value)
+        key_values_str += "{}={}".format(field, value)
+
+    query = "UPDATE {} SET {}".format(DB_PREFIX + table, key_values_str)
+    if where:
+        query += " WHERE {}".format(where)
+
+    log.debug("Execute query: '{}'".format(query))
+    cur.execute(query)
+    DB_CONNECTION.commit()
+    cur.close()
+
+
 def get_settings_value(name, default=""):
     log.info("Get value '{}' from settings table".format(name))
 
@@ -470,6 +490,20 @@ class Imunify:
         return web.Response(text=dumps(result))
 
     @staticmethod
+    async def _preset_id_status(info: HandlerInfo):
+        request_body = await info.body
+        try:
+            preset_id = int(info.path_params.get("id"))
+            is_active = bool(request_body.get("is_active"))
+        except ValueError:
+            return web.HTTPBadRequest(text="Bad request")
+
+        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
+        fields = {"is_active": is_active}
+        update(table='presets', data=fields, where=where_statement)
+        return web.Response(text="")
+
+    @staticmethod
     def scan_done(task_info: dict, instance_id: str, site_id: int, started: int):
         """
         Callback которы будет вызван после завершения задачи на сканирование
@@ -760,6 +794,7 @@ if __name__ == '__main__':
                     make_get('/scan/history/{site}'),
                     make_get('/scan/result'),
                     make_post('/preset'),
+                    make_post('/preset/{id}/status'),
                     make_post('/scan')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
