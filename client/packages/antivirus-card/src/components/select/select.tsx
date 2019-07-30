@@ -16,6 +16,9 @@ export interface SelectedOption<T = any> {
   shadow: true,
 })
 export class Select {
+  /** Ref for select container element */
+  private _selectContainer: HTMLDivElement;
+
   /** Host element */
   @Element()
   private _host: HTMLElement;
@@ -64,9 +67,6 @@ export class Select {
   changeSelectOption(event: CustomEvent<SelectedOption>): void {
     this.selectedValue = event.detail;
     this.changed.emit(this.selectedValue.v);
-    if (this.openPanel) {
-      this.openPanel = false;
-    }
   }
 
   /**
@@ -77,15 +77,13 @@ export class Select {
   @Listen('click', { target: 'document' })
   clickOutside(event: Event): void {
     const composedPath = event.composedPath()[0] as Node;
-    if (this.openPanel && !(this._host.contains(composedPath) || this._host.shadowRoot.contains(composedPath))) {
-      this.openPanel = false;
-    }
+    this.openPanel = this._selectContainer.contains(composedPath) ? !this.openPanel : this._host.shadowRoot.contains(composedPath);
   }
 
   render() {
     return (
       <Host>
-        <div onClick={() => (this.openPanel = !this.openPanel)} class="select-container">
+        <div ref={(el: HTMLDivElement) => (this._selectContainer = el)} class={`select-container ${this.disabled && 'disabled'}`}>
           <span class="select__value">
             <span class="select__value-text">{this.selectedValue ? this.selectedValue.k : null}</span>
           </span>

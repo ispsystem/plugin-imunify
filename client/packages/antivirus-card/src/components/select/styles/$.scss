@@ -24,7 +24,7 @@
   font-size: var(--isp-font-size-default, 14px);
   line-height: 17px;
 
-  &[disabled] {
+  &.disabled {
     max-width: var(--ngispui-select-panel__max-width, 600px);
 
     cursor: not-allowed;
