@@ -6,11 +6,8 @@
   "properties": {
     "scan_path": {
       "type": "string"
-    },
-    "site_id": {
-      "type": "integer"
     }
   },
-  "required": ["site_id"],
+  "required": ["scan_path"],
   "additionalProperties": false
 }
