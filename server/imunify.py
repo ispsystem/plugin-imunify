@@ -587,6 +587,35 @@ class Imunify:
         return web.Response(text=dumps(presets_list))
 
     @staticmethod
+    async def _presets_default_site(info: HandlerInfo):
+        try:
+            # TODO(d.vitvitskii) Проверять существует ли такой сайт
+            site_id = int(info.path_params.get("site"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        try:
+            with open("etc/default_preset.json", "r") as default_preset_file:
+                default_preset = loads(default_preset_file.read())
+        except IOError as e:
+            log.error("Can not open default preset file: '{}'".format(e))
+            return web.Response(text="Bad request", status=400, content_type="text")
+        except ValueError as e:
+            log.error("Can not parse preset file: '{}'".format(e))
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        site_info = get_site_info(info.instance_id, site_id)
+        if not site_info:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        # TODO(d.vitvitskii) Пока хардкодим. Нужно обсудить как формировать путь
+        path = "/www/{}".format(site_info["docroot"])
+        default_preset["docroot"] = path
+
+        return web.Response(text=dumps(default_preset))
+
+    @staticmethod
     async def _scan_history_site(info: HandlerInfo):
         report_list = list()
         try:
@@ -727,6 +756,7 @@ if __name__ == '__main__':
                     make_get('/files/{site}/{type}'),
                     make_get('/infected'),
                     make_get('/presets/{site}'),
+                    make_get('/presets/default/{site}'),
                     make_get('/scan/history/{site}'),
                     make_get('/scan/result'),
                     make_post('/preset'),
