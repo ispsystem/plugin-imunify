@@ -9,9 +9,31 @@
 2. Запуск разработки `npm run dev`.
 3. Сборка `npm run build`.
 
+
+
 ## Code style
 
+
+### Порядок свойств методов и других элементов в компоненте:
+
+1. Приватные и собственные свойства класса.
+1. Свойства с декоратором @Element().
+1. Свойства с декоратором @Prop().
+1. Свойства с декоратором @State().
+1. Свойства с декоратором @Event().
+1. Методы с декоратором @Watch.
+1. Методы с декоратором @Listen.
+1. Методы с декоратором @Method.
+1. Actions глобального state, если используется Redux.
+1. Методы событий жизненного цикла (Component lifecycle events).
+1. Другие методы класса (обработчики событий или вспомогательные методы).
+1. Метод render.
+
+
+### Линтеры и форматирование
+
 В проекте используется [ESLint](https://eslint.org) и [Prettier](https://prettier.io). Каждый коммит проходит проверку на соответствие принятому формату кода. Замечания по стилям и формату написания делятся на два вида: ошибки, предупреждения. **Ошибки** не позволят выполнить коммит. **Предупреждения** в идеале также должны отсутствовать, но они не будут останавливать процесс коммита изменений.
+
 
 ### Изменение настроек Code style
 
@@ -22,7 +44,6 @@
 1. [Configuring ESLint](https://eslint.org/docs/user-guide/configuring).
 1. [Using ESLint and Prettier in a TypeScript Project](https://dev.to/robertcoopercode/using-eslint-and-prettier-in-a-typescript-project-53jb).
 1. [Configuring ESLint on a TypeScript project](https://javascriptplayground.com/typescript-eslint/).
-
 
 
 ### Особенности Code style данного проекта
