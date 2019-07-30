@@ -323,6 +323,10 @@ declare namespace LocalJSX {
     * open ImunifyAV+ buy modal
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * @todo : open new scan modal
+    */
+    'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
@@ -374,7 +378,13 @@ declare namespace LocalJSX {
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {
+    /**
+    * to change selected tab item (horizontal menu)
+    */
     'onClickItem'?: (event: CustomEvent<any>) => void;
+    /**
+    * to open buy modal
+    */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {}
