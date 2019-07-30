@@ -26,7 +26,8 @@ export class Preview {
   private _dropdownEl!: HTMLAntivirusCardDropdownElement;
 
   /** global stile */
-  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+  @Prop({ context: 'store' })
+  store: Store<RootState, ActionTypes>;
 
   /** scan loading */
   @State() scanning: AntivirusState['scanning'];
@@ -36,7 +37,7 @@ export class Preview {
   @State() isProVersion: AntivirusState['isProVersion'];
   /** list infected files */
   @State() infectedFiles: AntivirusState['infectedFiles'];
-  /** flag if a domain is in black lista */
+  /** flag if a domain is in black lists */
   @State() inBlackLists: AntivirusState['inBlackLists'];
   /** history list */
   @State() history: AntivirusState['history'];
