@@ -46,6 +46,7 @@
   | **sid** | integer | Идентификатор сайта |
 
   POST-параметры:
+
   | Params | Type | Description |
   | ------------- |:-------------| :-----|
   | **scan_type** | string, enum | Тип пресета: FULL или PARTIAL |
@@ -109,6 +110,7 @@
   | **sid** | integer | Идентификатор сайта |
 
   POST-параметры:
+  
   | Params | Type | Description |
   | ------------- |:-------------| :-----|
   | **scan_path** | string | Директория для сканирования |
