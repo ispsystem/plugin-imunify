@@ -407,7 +407,6 @@ class Imunify:
         start_scan_time = get_utc_timestamp()
         host = data.get("host", "")
         scan_path = request_body.get("scan_path", "/home")
-        site_id = request_body.get("site_id")
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
                              name='scan',
                              params=["--address", host, "--path", scan_path, "--started", str(start_scan_time)],
@@ -699,8 +698,10 @@ class Imunify:
             report = loads(scan["report"])
             report_list.append({
                 "date": scan["scan_date"],
-                "type": report["type"],
-                "infected": len(report["infected"])
+                "checkType": str(ScanType.full),
+                "infectedFilesCount": len(report["infected"]),
+                "curedFilesCount": 0,
+                "scanOptionId": 1
             })
         return web.Response(text=str(List(report_list)))
 
