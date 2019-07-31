@@ -4,10 +4,6 @@
   "description": "Add scan preset to database for future scanning",
   "type": "object",
   "properties": {
-    "site_id": {
-      "title": "Identifier of site",
-      "type": "integer"
-    },
     "scan_type": {
       "title": "Type of scanning",
       "type": "string",
@@ -190,6 +186,6 @@
                    "parallelChecks", "ramForCheck", "fullLogDetails", "maxScanTime", "autoUpdate"]
     }
   },
-  "required": ["site_id", "scan_type", "preset"],
+  "required": ["scan_type", "preset"],
   "additionalProperties": false
 }
