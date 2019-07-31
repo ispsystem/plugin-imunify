@@ -1,13 +1,14 @@
 {
-  "title": "start scan handler",
+  "title": "Start scanning handler",
   "$schema": "http://json-schema.org/draft-04/hyper-schema",
-  "description": "handler starts scan files in scan_path on site_id",
+  "description": "Starts scanning using preset",
   "type": "object",
   "properties": {
-    "scan_path": {
-      "type": "string"
+    "preset_id": {
+      "type": "integer",
+      "title": "The identifier of the scan preset"
     }
   },
-  "required": ["scan_path"],
+  "required": ["preset_id"],
   "additionalProperties": false
 }
