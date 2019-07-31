@@ -1,11 +1,11 @@
 import '@ui5/webcomponents/dist/Popover';
 
-import { Component, h, Host, Method, Prop } from '@stencil/core';
+import { Component, h, Host, Method, Prop, Element } from '@stencil/core';
 import { CloseIcon } from '../icons/close';
 
 /** Type for popover element */
 export type PopoverElType = HTMLElement & {
-  opened: boolean;
+  _isOpen: boolean;
   openBy: (control: HTMLElement | EventTarget) => void;
   close: () => void;
 };
@@ -16,31 +16,38 @@ export type PopoverElType = HTMLElement & {
 @Component({
   tag: 'antivirus-card-dropdown',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Dropdown {
   /** Ref for ui5-popover element */
-  public popoverEl!: PopoverElType;
+  popoverEl: PopoverElType;
+  // public popoverElBody!: PopoverElType;
+  @Element() host: HTMLAntivirusCardDropdownElement;
+
+  /** Element for attaching dropdown component, by default is root component */
+  @Prop() attachNode: HTMLElement = document.querySelector('antivirus-card');
 
   /** Max width for dropdown content */
   @Prop({ reflect: true }) maxWidth: string = '330px';
 
-  componentDidLoad() {
-    this.popoverEl.addEventListener('beforeClose', () => this.popoverEl.opened = false);
-  }
-  
   /**
-   * Toogle dropdown state
+   * Toggle dropdown state
    * @param event - DOM event
    */
   @Method()
-  async toogle(event: Event) {
-    if (this.popoverEl.opened) {
+  async toggle(event: Event) {
+    if (this.popoverEl._isOpen) {
       this.popoverEl.close();
     } else {
-      this.popoverEl.opened = true;
       this.popoverEl.openBy(event.currentTarget);
     }
+  }
+
+  componentDidLoad() {
+    setTimeout(() => {
+      // Move dropdown element on attach node
+      this.attachNode.shadowRoot.appendChild(this.host);
+    });
   }
 
   render() {
@@ -50,7 +57,7 @@ export class Dropdown {
           <span class="modal-close" onClick={() => this.popoverEl.close()}>
             <CloseIcon />
           </span>
-          <div class="popover-content" style={{'max-width': this.maxWidth}}>
+          <div class="popover-content" style={{ 'max-width': this.maxWidth }}>
             <slot />
           </div>
         </ui5-popover>

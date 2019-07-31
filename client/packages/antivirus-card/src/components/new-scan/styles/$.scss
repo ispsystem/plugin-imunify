@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+
+  antivirus-card-hint {
+    margin-left: 10px;
+  }
+}
+
+.form-label {
+  padding: 7px 0;
+}
+
+// DELETE THIS
+.link {
+  font-size: 14px;
+  line-height: 14px;
+  align-items: center;
+
+  color: #187abd;
+  cursor: pointer;
+
+  &_small {
+    font-size: 12px;
+  }
+
+  &_indent-left {
+    margin-left: 20px;
+  }
+
+  &_indent-right {
+    margin-right: 20px;
+  }
+
+  &:hover {
+    color: #0991e2;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+
+    & path:not([fill-rule='evenodd']),
+    text {
+      fill: #0991e2;
+    }
+
+    & rect {
+      stroke: #0991e2;
+    }
+  }
+}

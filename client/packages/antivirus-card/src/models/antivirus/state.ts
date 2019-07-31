@@ -36,14 +36,20 @@ interface HistoryItem {
 }
 
 /**
+ * Type for scanning intensity
+ */
+export type IntensityType = 'LOW' | 'MEDIUM' | 'HIGH';
+
+/**
  * Scan option list item
  */
 export interface ScanOption {
   id: number;
   path: string[];
+  docroot: string;
   checkMask: string[];
   excludeMask: string[];
-  intensity: 'LOW' | 'MEDIUM' | 'HIGH';
+  intensity: IntensityType;
   scheduleTime: {
     daily?: {
       hour: number;

@@ -108,7 +108,7 @@ export class Preview {
    * @param ev - mouse click
    */
   handleBlackListsHelpClick(ev: MouseEvent) {
-    this._dropdownEl.toogle(ev);
+    this._dropdownEl.toggle(ev);
   }
 
   render() {

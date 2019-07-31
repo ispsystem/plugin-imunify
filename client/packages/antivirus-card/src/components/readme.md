@@ -7,10 +7,17 @@
 
 ## Properties
 
-| Property           | Attribute | Description | Type                                                                          | Default     |
-| ------------------ | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
-| `notifier`         | --        |             | `Notifier`                                                                    | `undefined` |
-| `translateService` | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| Property           | Attribute | Description                | Type                                                                          | Default     |
+| ------------------ | --------- | -------------------------- | ----------------------------------------------------------------------------- | ----------- |
+| `notifier`         | --        | global notifier object     | `Notifier`                                                                    | `undefined` |
+| `translateService` | --        | main app translate service | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+
+
+## Events
+
+| Event              | Description | Type               |
+| ------------------ | ----------- | ------------------ |
+| `openNewScanModal` |             | `CustomEvent<any>` |
 
 
 ## Dependencies
@@ -25,6 +32,7 @@
 - [antivirus-card-switcher](switcher)
 - [antivirus-card-switcher-option](switcher-option)
 - [antivirus-card-button](button)
+- [antivirus-card-new-scan](new-scan)
 
 ### Graph
 ```mermaid
@@ -37,6 +45,7 @@ graph TD;
   antivirus-card --> antivirus-card-switcher
   antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
+  antivirus-card --> antivirus-card-new-scan
   antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-preview --> antivirus-card-dropdown
   antivirus-card-preview --> antivirus-card-spinner-round
@@ -47,6 +56,16 @@ graph TD;
   antivirus-card-history --> antivirus-card-table
   antivirus-card-history --> antivirus-card-table-row
   antivirus-card-history --> antivirus-card-table-cell
+  antivirus-card-new-scan --> antivirus-card-input
+  antivirus-card-new-scan --> antivirus-card-hint
+  antivirus-card-new-scan --> antivirus-card-switcher
+  antivirus-card-new-scan --> antivirus-card-switcher-option
+  antivirus-card-new-scan --> antivirus-card-preloader
+  antivirus-card-new-scan --> antivirus-card-button
+  antivirus-card-new-scan --> antivirus-card-checkbox
+  antivirus-card-new-scan --> antivirus-card-input
+  antivirus-card-hint --> antivirus-card-dropdown
+  antivirus-card-preloader --> antivirus-card-spinner-round
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

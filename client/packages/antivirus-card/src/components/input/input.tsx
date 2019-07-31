@@ -7,9 +7,12 @@ import { getValidator, Validator, defaultValidator } from '../../utils/validator
 @Component({
   tag: 'antivirus-card-input',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Input {
+  private _prefixElement: HTMLSpanElement;
+
+  private _inputElement: HTMLInputElement;
   /** Field with merged custom validators */
   private _validator: Validator<string> = defaultValidator;
 
@@ -17,24 +20,34 @@ export class Input {
   @State() validateResult = true;
 
   /** Value for input field */
-  @Prop({mutable: true}) value: string;
+  @Prop({ mutable: true }) value: string;
+
+  /** Style width for input field */
+
+  @Prop({ reflect: true }) width: string = '280px';
 
   /** List of custom validators */
-  @Prop() validator: Validator<string> | Array<Validator<string>>;
-  
+  @Prop() validator: Validator<string> | Validator<string>[];
+
   /** Value for input placeholder */
-  @Prop({reflect: true}) placeholder: string;
+  @Prop({ reflect: true }) placeholder: string;
 
   /** Flag for disable input field */
-  @Prop({reflect: true}) disabled: boolean;
-  
+  @Prop({ reflect: true }) disabled: boolean;
+
+  /** Text prefix  */
+  @Prop({ reflect: true }) textPrefix: string;
+
   /** Event for input value changed */
   @Event() changed: EventEmitter<string>;
 
   componentWillLoad() {
-    this._validator = this.validator && (Array.isArray(this.validator) 
-      ? getValidator<string>(this.validator) 
-      : getValidator<string>([this.validator]));
+    this._validator =
+      this.validator && (Array.isArray(this.validator) ? getValidator<string>(this.validator) : getValidator<string>([this.validator]));
+  }
+
+  componentDidLoad() {
+    this._inputElement.style.paddingLeft = 10 + (this._prefixElement && this._prefixElement.clientWidth) + 'px';
   }
 
   /**
@@ -61,23 +74,29 @@ export class Input {
    */
   renderValidation = () => {
     /** @todo: add validation error dropdown this */
-    return null
-  }
+    return null;
+  };
 
   render() {
     return (
       <Host>
+        {this.textPrefix && (
+          <span ref={(el: HTMLSpanElement) => (this._prefixElement = el)} class="input-prefix__span">
+            {this.textPrefix}
+          </span>
+        )}
         <input
+          ref={(el: HTMLInputElement) => (this._inputElement = el)}
           value={this.value}
           placeholder={this.placeholder}
           disabled={this.disabled}
-          class={`input-form ${this.validateResult ? "" : "input-form_accent"}`}
-          onInput={(event) => this.inputChanged(event)}
+          class={`input-form ${this.validateResult ? '' : 'input-form_accent'}`}
+          onInput={event => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}
+          style={{ width: this.width }}
         />
         {this.renderValidation()}
       </Host>
     );
   }
-
 }

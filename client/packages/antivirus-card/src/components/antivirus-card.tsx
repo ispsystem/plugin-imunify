@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, JSX, Listen, Prop, Watch } from '@stencil/core';
+import { Component, h, Host, State, JSX, Listen, Prop, Watch, Event, EventEmitter } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -24,6 +24,7 @@ import { AntivirusActions } from '../models/antivirus/actions';
   shadow: true,
 })
 export class AntivirusCard {
+  newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
@@ -95,6 +96,13 @@ export class AntivirusCard {
   @Listen('openBuyModal')
   openBuyModal(): void {
     this.buyModal.visible = true;
+  }
+
+  @Event() openNewScanModal: EventEmitter;
+
+  @Listen('openNewScanModal')
+  tmp(): void {
+    this.newScanModal.visible = true;
   }
 
   /**
@@ -203,6 +211,23 @@ export class AntivirusCard {
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>
+        </antivirus-card-modal>
+        <p onClick={() => this.openNewScanModal.emit()}>OPEN NEW SCAN</p>
+        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={(el: HTMLAntivirusCardModalElement) => (this.newScanModal = el)}>
+          <antivirus-card-new-scan
+            settingsModel={{
+              id: 1,
+              intensity: 'LOW',
+              path: ['kek/lol'],
+              docroot: 'www/example.com',
+              checkMask: ['*.php'],
+              excludeMask: ['*.*tmp'],
+            }}
+          >
+            <span class="title" slot="title">
+              Новое сканирование
+            </span>
+          </antivirus-card-new-scan>
         </antivirus-card-modal>
       </Host>
     );

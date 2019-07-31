@@ -6,7 +6,7 @@ import { Component, h, Prop, Host, Event, Listen, EventEmitter } from '@stencil/
 @Component({
   tag: 'antivirus-card-checkbox',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Checkbox {
   /** Value for checkbox */
@@ -25,31 +25,26 @@ export class Checkbox {
   @Prop() readonly: boolean;
 
   /** Event by change checkbox value */
-  @Event() сhanged: EventEmitter<boolean>;
+  @Event() changed: EventEmitter<boolean>;
 
-  /** 
+  /**
    * Listen onclick on host element
    */
   @Listen('click', { capture: true })
   onClick() {
-    if (!this.readonly){
+    if (!this.readonly) {
       this.checked = !this.checked;
-      this.сhanged.emit(this.checked)
+      this.changed.emit(this.checked);
     }
   }
 
   render() {
     return (
       <Host>
-        <input
-          class="checkbox__element"
-          type="checkbox"
-          checked={this.checked}
-          disabled={this.readonly}
-        />
+        <input class="checkbox__element" type="checkbox" checked={this.checked} disabled={this.readonly} />
         <label class="checkbox__control">
           <span class="checkbox__control-text">
-            <slot/>
+            <slot />
           </span>
         </label>
       </Host>

@@ -22,6 +22,12 @@ import {
 import {
   Validator,
 } from './utils/validators';
+import {
+  NewScanOption,
+} from './components/new-scan/new-scan';
+import {
+  ViewType,
+} from './components/preloader/preloader';
 
 export namespace Components {
   interface AntivirusCard {
@@ -65,14 +71,18 @@ export namespace Components {
   interface AntivirusCardDashboard {}
   interface AntivirusCardDropdown {
     /**
+    * Element for attaching dropdown component, by default is root component
+    */
+    'attachNode': HTMLElement;
+    /**
     * Max width for dropdown content
     */
     'maxWidth': string;
     /**
-    * Toogle dropdown state
+    * Toggle dropdown state
     * @param event - DOM event
     */
-    'toogle': (event: Event) => Promise<void>;
+    'toggle': (event: Event) => Promise<void>;
   }
   interface AntivirusCardHint {
     /**
@@ -92,13 +102,21 @@ export namespace Components {
     */
     'placeholder': string;
     /**
+    * Text prefix
+    */
+    'textPrefix': string;
+    /**
     * List of custom validators
     */
-    'validator': Validator<string> | Array<Validator<string>>;
+    'validator': Validator<string> | Validator<string>[];
     /**
     * Value for input field
     */
     'value': string;
+    /**
+    * Style width for input field
+    */
+    'width': string;
   }
   interface AntivirusCardModal {
     'modalWidth': string;
@@ -110,8 +128,49 @@ export namespace Components {
       active?: boolean;
     }[];
   }
+  interface AntivirusCardNewScan {
+    /**
+    * Model settings for new scan
+    */
+    'settingsModel': NewScanOption;
+  }
+  interface AntivirusCardPreloader {
+    /**
+    * Value for css style height
+    */
+    'height': string;
+    /**
+    * Value for css style left
+    */
+    'left': string;
+    /**
+    * Flag for loading
+    */
+    'loading': boolean;
+    /**
+    * Spinner size type
+    */
+    'size': 'large' | 'medium' | 'small';
+    /**
+    * Value for css style top
+    */
+    'top': string;
+    /**
+    * Preloader type
+    */
+    'type': ViewType;
+    /**
+    * Value for css style width
+    */
+    'width': string;
+  }
   interface AntivirusCardPreview {}
-  interface AntivirusCardSpinnerRound {}
+  interface AntivirusCardSpinnerRound {
+    /**
+    * Width style for spinner
+    */
+    'width': string;
+  }
   interface AntivirusCardSwitcher {}
   interface AntivirusCardSwitcherOption {
     'active': boolean;
@@ -205,6 +264,18 @@ declare global {
     new (): HTMLAntivirusCardNavigationElement;
   };
 
+  interface HTMLAntivirusCardNewScanElement extends Components.AntivirusCardNewScan, HTMLStencilElement {}
+  var HTMLAntivirusCardNewScanElement: {
+    prototype: HTMLAntivirusCardNewScanElement;
+    new (): HTMLAntivirusCardNewScanElement;
+  };
+
+  interface HTMLAntivirusCardPreloaderElement extends Components.AntivirusCardPreloader, HTMLStencilElement {}
+  var HTMLAntivirusCardPreloaderElement: {
+    prototype: HTMLAntivirusCardPreloaderElement;
+    new (): HTMLAntivirusCardPreloaderElement;
+  };
+
   interface HTMLAntivirusCardPreviewElement extends Components.AntivirusCardPreview, HTMLStencilElement {}
   var HTMLAntivirusCardPreviewElement: {
     prototype: HTMLAntivirusCardPreviewElement;
@@ -264,6 +335,8 @@ declare global {
     'antivirus-card-input': HTMLAntivirusCardInputElement;
     'antivirus-card-modal': HTMLAntivirusCardModalElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
+    'antivirus-card-new-scan': HTMLAntivirusCardNewScanElement;
+    'antivirus-card-preloader': HTMLAntivirusCardPreloaderElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
     'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
     'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
@@ -281,6 +354,7 @@ declare namespace LocalJSX {
     * global notifier object
     */
     'notifier'?: Notifier;
+    'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
     /**
     * main app translate service
     */
@@ -308,7 +382,7 @@ declare namespace LocalJSX {
     /**
     * Event by change checkbox value
     */
-    'onСhanged'?: (event: CustomEvent<boolean>) => void;
+    'onChanged'?: (event: CustomEvent<boolean>) => void;
     /**
     * Make read only available
     */
@@ -325,6 +399,10 @@ declare namespace LocalJSX {
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
+    /**
+    * Element for attaching dropdown component, by default is root component
+    */
+    'attachNode'?: HTMLElement;
     /**
     * Max width for dropdown content
     */
@@ -354,13 +432,21 @@ declare namespace LocalJSX {
     */
     'placeholder'?: string;
     /**
+    * Text prefix
+    */
+    'textPrefix'?: string;
+    /**
     * List of custom validators
     */
-    'validator'?: Validator<string> | Array<Validator<string>>;
+    'validator'?: Validator<string> | Validator<string>[];
     /**
     * Value for input field
     */
     'value'?: string;
+    /**
+    * Style width for input field
+    */
+    'width'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
     'modalWidth'?: string;
@@ -373,11 +459,58 @@ declare namespace LocalJSX {
     }[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
+  interface AntivirusCardNewScan extends JSXBase.HTMLAttributes<HTMLAntivirusCardNewScanElement> {
+    /**
+    * Model settings for new scan
+    */
+    'settingsModel': NewScanOption;
+  }
+  interface AntivirusCardPreloader extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreloaderElement> {
+    /**
+    * Value for css style height
+    */
+    'height'?: string;
+    /**
+    * Value for css style left
+    */
+    'left'?: string;
+    /**
+    * Flag for loading
+    */
+    'loading'?: boolean;
+    /**
+    * Spinner size type
+    */
+    'size'?: 'large' | 'medium' | 'small';
+    /**
+    * Value for css style top
+    */
+    'top'?: string;
+    /**
+    * Preloader type
+    */
+    'type'?: ViewType;
+    /**
+    * Value for css style width
+    */
+    'width'?: string;
+  }
   interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {
+    /**
+    * to change selected tab item (horizontal menu)
+    */
     'onClickItem'?: (event: CustomEvent<any>) => void;
+    /**
+    * to open buy modal
+    */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
-  interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {}
+  interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {
+    /**
+    * Width style for spinner
+    */
+    'width'?: string;
+  }
   interface AntivirusCardSwitcher extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherElement> {}
   interface AntivirusCardSwitcherOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherOptionElement> {
     'active'?: boolean;
@@ -414,6 +547,8 @@ declare namespace LocalJSX {
     'antivirus-card-input': AntivirusCardInput;
     'antivirus-card-modal': AntivirusCardModal;
     'antivirus-card-navigation': AntivirusCardNavigation;
+    'antivirus-card-new-scan': AntivirusCardNewScan;
+    'antivirus-card-preloader': AntivirusCardPreloader;
     'antivirus-card-preview': AntivirusCardPreview;
     'antivirus-card-spinner-round': AntivirusCardSpinnerRound;
     'antivirus-card-switcher': AntivirusCardSwitcher;
