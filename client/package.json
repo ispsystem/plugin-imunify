@@ -20,7 +20,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
-    "@stencil/core": "1.1.6",
+    "@stencil/core": "1.2.2",
     "@stencil/postcss": "^1.0.1",
     "@stencil/sass": "^1.0.1",
     "@types/node-polyglot": "^0.4.33",

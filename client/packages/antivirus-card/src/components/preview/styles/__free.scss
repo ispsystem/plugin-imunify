@@ -1,0 +1,27 @@
+@import '../../shared';
+
+
+.antivirus-card-preview__free {
+  @extend .antivirus-card-preview;
+  justify-content: center;
+  background-color: #def3ff;
+  cursor: pointer;
+}
+
+
+.antivirus-card-preview__free-title {
+  color: #0279c0;
+  text-align: center;
+  margin: 0px;
+  line-height: 16px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.antivirus-card-preview__free-msg {
+  text-align: center;
+}
+
+.antivirus-card-preview__free-icon {
+  text-align: center;
+}

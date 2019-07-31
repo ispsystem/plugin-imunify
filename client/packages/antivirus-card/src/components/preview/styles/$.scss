@@ -1,20 +1,14 @@
+@import '../../shared';
+@import './_free';
+
+
 :host {
   --spinner-round__color: #ed81b5;
   --spinner-round__width: 25px;
 }
 
 antivirus-card-preview {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  padding: 20px;
-  font-family: 'Ubuntu', sans-serif;
-  color: #344a5e;
-  line-height: normal;
-  width: 475px;
-  border: 1px solid #d8d8d8;
-  box-sizing: border-box;
-  border-radius: 2px;
+  @extend .antivirus-card-preview;
 
   .popover {
     --sapUiShadowLevel2: 0 10px 14px 0 var(--isp-color__default-shadow, rgba(0, 0, 0, 0.4)), 0 0 0 1px var(--isp-color__border, #d9d9d9);
