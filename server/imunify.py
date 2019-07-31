@@ -8,6 +8,7 @@ from jsonschema import validate, ValidationError, SchemaError
 from mysql import connector
 from os import getenv, environ, remove, getcwd, path
 from datetime import datetime
+import base64
 import calendar
 import logging as log
 import requests
@@ -256,7 +257,7 @@ def create_task(exec_bin, name, instance_id, params=[], task_env={}, notify={}, 
     return subprocess.check_output(cmd, env=env).decode()
 
 
-async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, started: int, callback):
+async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, started: int, preset_id: int, callback):
     log.debug("Begin task {} wait".format(task_id))
     entities = {
         "entities": [
@@ -278,7 +279,7 @@ async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, sta
 
         result = await ws.recv()
         task_info = loads(result)
-        callback(task_info, instance_id, site_id, started)
+        callback(task_info, instance_id, site_id, started, preset_id)
 
 
 def get_utc_timestamp():
@@ -406,17 +407,30 @@ class Imunify:
         log.debug(dumps(data))
         start_scan_time = get_utc_timestamp()
         host = data.get("host", "")
-        scan_path = request_body.get("scan_path", "/home")
+        preset_id = request_body.get("preset_id")
+
+        where_statement = "id={}".format(preset_id)
+        table_fields = ['preset']
+        result = select(table='presets', table_fields=table_fields, where=where_statement)
+
+        if not result:
+            return web.Response(text="No such preset", status=404, content_type='text')
+
+        # TODO (d.vitvitskii) Сделать через base64
+        preset = "'{}'".format(result[0]["preset"])
+        log.debug("Scan params: {}".format(preset))
+        preset = base64.b64encode(result[0]["preset"].encode("utf-8"))
+        log.debug("Scan params: {}".format(preset))
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
                              name='scan',
-                             params=["--address", host, "--path", scan_path, "--started", str(start_scan_time)],
+                             params=["--address", host, "--params", preset.decode(), "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
 
         result = loads(output)
         loop = asyncio.get_event_loop()
-        loop.create_task(task_wait(result['task_id'], info.instance_id, site_id, info.ses6, start_scan_time, self.scan_done))
+        loop.create_task(task_wait(result['task_id'], info.instance_id, site_id, info.ses6, start_scan_time, preset_id, self.scan_done))
         result["started"] = start_scan_time
         return web.Response(text=dumps(result))
 
@@ -514,7 +528,7 @@ class Imunify:
         return web.Response(text="")
 
     @staticmethod
-    def scan_done(task_info: dict, instance_id: str, site_id: int, started: int):
+    def scan_done(task_info: dict, instance_id: str, site_id: int, started: int, preset_id: int):
         """
         Callback которы будет вызван после завершения задачи на сканирование
         :param task_info: Таска
@@ -531,9 +545,14 @@ class Imunify:
             "instance": int(instance_id),
             "site_id": site_id,
             "task_id": task_info["id"],
-            "scan_date": started
+            "scan_date": started,
+            "preset_id": preset_id
         }
-        report = {"type": "full", "infected": []}
+
+        where_statement = "id={}".format(preset_id)
+        presets = select(table='presets', table_fields=['type'], where=where_statement)
+
+        report = {"type": presets[0]["type"], "infected": []}
 
         for infected_file in scan_report.get("infected", []):
             # TODO(pirozhok) Унести получение docroot в scan на момент старта
@@ -691,17 +710,17 @@ class Imunify:
             return web.Response(text=str(List(report_list)))
 
         reports = select(table="report",
-                         table_fields=["report", "scan_date"],
+                         table_fields=["report", "scan_date", "preset_id"],
                          where="instance={} AND site_id={}".format(info.instance_id, site_id))
 
         for scan in reports:
             report = loads(scan["report"])
             report_list.append({
                 "date": scan["scan_date"],
-                "checkType": str(ScanType.full),
+                "checkType": report["type"],
                 "infectedFilesCount": len(report["infected"]),
                 "curedFilesCount": 0,
-                "scanOptionId": 1
+                "scanOptionId": scan["preset_id"]
             })
         return web.Response(text=str(List(report_list)))
 
@@ -828,8 +847,8 @@ if __name__ == '__main__':
                     make_get('/site/{sid}/presets/default'),
                     make_get('/site/{sid}/scan/history'),
                     make_get('/scan/result'),
-                    make_post('/site/{sid}/preset'),
                     make_post('/preset/{id}/status'),
+                    make_post('/site/{sid}/preset'),
                     make_post('/site/{sid}/scan')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
@@ -840,7 +859,8 @@ if __name__ == '__main__':
               DbField("site_id", "INT"),
               DbField("task_id", "INT"),
               DbField("report", "JSON"),
-              DbField("scan_date", "BIGINT")]
+              DbField("scan_date", "BIGINT"),
+              DbField("preset_id", "BIGINT")]
     create_table("report", fields)
 
     fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),

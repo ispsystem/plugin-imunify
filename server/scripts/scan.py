@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from datetime import datetime
+import base64
 import calendar
 import json
 import os
@@ -37,15 +38,57 @@ class Fifo:
         os.unlink(self.name)
 
 
-def scan(path):
+def get_scan_args(scan_params):
+    params = list()
+    params.append("/bin/imunify-antivirus")
+
+    log_level = "DEBUG" if scan_params.get("fullLogDetails", True) else "INFO"
+    params.append("--console-log-level")
+    params.append(log_level)
+    params.append("malware")
+    params.append("on-demand")
+    params.append("start")
+
+    # TODO(d.vitvitskii) Временное решение. Нужно научиться обрабатывать несколько директорий.
+    #  Для этого нужно переписать всю логику
+    scan_paths = scan_params.get("path", [])
+    if not scan_paths or not scan_paths[0]:
+        scan_path = "/"
+    else:
+        scan_path = scan_paths[0]
+    params.append("--path")
+    params.append(scan_path)
+
+    file_mask_list = scan_params.get("checkMask", [])
+    if file_mask_list:
+        file_mask = ",".join(file_mask_list)
+        params.append("--file-mask")
+        params.append(file_mask)
+
+    ignore_mask_list = scan_params.get("excludeMask", [])
+    if ignore_mask_list:
+        ignore_mask = ",".join(ignore_mask_list)
+        params.append("--ignore-mask")
+        params.append(ignore_mask)
+
+    intensity_ram = scan_params.get("ramForCheck", 1024)
+    params.append("--intensity-ram")
+    params.append(str(intensity_ram))
+
+    intensity_io = scan_params.get("parallelChecks", 1)
+    params.append("--intensity-io")
+    params.append(str(intensity_io))
+
+    return params
+
+
+def scan(scan_params):
     """
     Start scan
-    :param path: Scan directory
+    :param scan_params: Scan params
     :return: Process exit code
     """
-    process = subprocess.Popen(["/bin/imunify-antivirus", "malware", "on-demand", "start", "--path", path],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+    process = subprocess.Popen(get_scan_args(scan_params), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     return process.returncode
 
@@ -55,10 +98,11 @@ def get_utc_timestamp():
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
 
 
-def process(path, start_date):
+def process(params, start_date):
     """
     Scan process
-    :param path: Scan path
+    :param params: Scan params
+    :param start_date: Date time when scanning was started
     :return: Dictionary that present scan result: status, result, scan_id etc.
     """
     scan_result = {
@@ -67,9 +111,16 @@ def process(path, start_date):
     }
 
     try:
+        scan_params = json.loads(base64.b64decode(params))
+    except ValueError as e:
+        scan_result["status"] = SCAN_STATUS_FAILED
+        scan_result["reason"] = "Error while parsing scan params: '{}'".format(e)
+        return scan_result
+
+    try:
         started = int(start_date)
         fifo = Fifo()
-        scan(path)
+        scan(scan_params)
     except Exception as e:
         scan_result["status"] = SCAN_STATUS_FAILED
         scan_result["reason"] = "Error while execute scan process: '{}'".format(e)
@@ -129,10 +180,10 @@ def im_hook(dict_param):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("-p", "--path", help="Scan path")
+    parser.add_argument("-p", "--params", help="Scan params")
     parser.add_argument("-s", "--started", help="Started date time")
     args = parser.parse_args()
 
-    if args.path is not None and args.started is not None:
-        scan_result = process(args.path, args.started)
+    if args.params and args.started:
+        scan_result = process(args.params, args.started)
         print(json.dumps(scan_result))
