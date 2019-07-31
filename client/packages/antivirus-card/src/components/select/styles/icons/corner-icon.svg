@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="8px" height="6px" viewBox="0 0 8 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <polyline id="path-1" points="1 1 4.01580108 4.5 7.03160215 1"></polyline>
+    </defs>
+    <g id="UI-full" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="UI-FUll" transform="translate(-811.000000, -522.000000)">
+            <g id="galka_down_dark-blue" transform="translate(811.000000, 523.000000)">
+                <use stroke="#FFFFFF" stroke-width="2" xlink:href="#path-1"></use>
+                <use stroke="#344A5E" stroke-width="1" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

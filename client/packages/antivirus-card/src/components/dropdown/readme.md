@@ -14,9 +14,9 @@
 
 ## Methods
 
-### `toogle(event: Event) => Promise<void>`
+### `toggle(event: Event) => Promise<void>`
 
-Toogle dropdown state
+Toggle dropdown state
 
 #### Returns
 
