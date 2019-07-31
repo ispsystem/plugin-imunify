@@ -28,6 +28,12 @@ import {
 import {
   ViewType,
 } from './components/preloader/preloader';
+import {
+  SelectedOption,
+} from './components/select/select';
+import {
+  SelectedOption as SelectedOption1,
+} from './components/select/select';
 
 export namespace Components {
   interface AntivirusCard {
@@ -165,6 +171,30 @@ export namespace Components {
     'width': string;
   }
   interface AntivirusCardPreview {}
+  interface AntivirusCardSelect {
+    /**
+    * Disabled key for select field
+    */
+    'disabled': boolean;
+    /**
+    * Placeholder for select field
+    */
+    'placeholder': string;
+    /**
+    * Selected value
+    */
+    'selectedValue': SelectedOption;
+  }
+  interface AntivirusCardSelectOption {
+    /**
+    * Key for active selected value
+    */
+    'selected': boolean;
+    /**
+    * Option value
+    */
+    'value': SelectedOption['v'];
+  }
   interface AntivirusCardSpinnerRound {
     /**
     * Width style for spinner
@@ -282,6 +312,18 @@ declare global {
     new (): HTMLAntivirusCardPreviewElement;
   };
 
+  interface HTMLAntivirusCardSelectElement extends Components.AntivirusCardSelect, HTMLStencilElement {}
+  var HTMLAntivirusCardSelectElement: {
+    prototype: HTMLAntivirusCardSelectElement;
+    new (): HTMLAntivirusCardSelectElement;
+  };
+
+  interface HTMLAntivirusCardSelectOptionElement extends Components.AntivirusCardSelectOption, HTMLStencilElement {}
+  var HTMLAntivirusCardSelectOptionElement: {
+    prototype: HTMLAntivirusCardSelectOptionElement;
+    new (): HTMLAntivirusCardSelectOptionElement;
+  };
+
   interface HTMLAntivirusCardSpinnerRoundElement extends Components.AntivirusCardSpinnerRound, HTMLStencilElement {}
   var HTMLAntivirusCardSpinnerRoundElement: {
     prototype: HTMLAntivirusCardSpinnerRoundElement;
@@ -338,6 +380,8 @@ declare global {
     'antivirus-card-new-scan': HTMLAntivirusCardNewScanElement;
     'antivirus-card-preloader': HTMLAntivirusCardPreloaderElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
+    'antivirus-card-select': HTMLAntivirusCardSelectElement;
+    'antivirus-card-select-option': HTMLAntivirusCardSelectOptionElement;
     'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
     'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
     'antivirus-card-switcher-option': HTMLAntivirusCardSwitcherOptionElement;
@@ -505,6 +549,38 @@ declare namespace LocalJSX {
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
+  interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
+    /**
+    * Disabled key for select field
+    */
+    'disabled'?: boolean;
+    /**
+    * Handle for change selected value
+    */
+    'onChanged'?: (event: CustomEvent<SelectedOption['v']>) => void;
+    /**
+    * Placeholder for select field
+    */
+    'placeholder'?: string;
+    /**
+    * Selected value
+    */
+    'selectedValue'?: SelectedOption;
+  }
+  interface AntivirusCardSelectOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectOptionElement> {
+    /**
+    * Event by change selected status
+    */
+    'onChangedSelectStatus'?: (event: CustomEvent<SelectedOption>) => void;
+    /**
+    * Key for active selected value
+    */
+    'selected'?: boolean;
+    /**
+    * Option value
+    */
+    'value'?: SelectedOption['v'];
+  }
   interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {
     /**
     * Width style for spinner
@@ -550,6 +626,8 @@ declare namespace LocalJSX {
     'antivirus-card-new-scan': AntivirusCardNewScan;
     'antivirus-card-preloader': AntivirusCardPreloader;
     'antivirus-card-preview': AntivirusCardPreview;
+    'antivirus-card-select': AntivirusCardSelect;
+    'antivirus-card-select-option': AntivirusCardSelectOption;
     'antivirus-card-spinner-round': AntivirusCardSpinnerRound;
     'antivirus-card-switcher': AntivirusCardSwitcher;
     'antivirus-card-switcher-option': AntivirusCardSwitcherOption;

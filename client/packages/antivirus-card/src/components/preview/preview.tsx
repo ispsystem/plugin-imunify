@@ -23,7 +23,7 @@ import { PreviewInBlackLists } from './PreviewInBlackLists';
 })
 export class Preview {
   /** ref for dropdown element */
-  private _dropdownEl!: HTMLAntivirusCardDropdownElement;
+  dropdownEl: HTMLAntivirusCardDropdownElement;
 
   /** global stile */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -108,7 +108,7 @@ export class Preview {
    * @param ev - mouse click
    */
   handleBlackListsHelpClick(ev: MouseEvent) {
-    this._dropdownEl.toggle(ev);
+    this.dropdownEl.toggle(ev);
   }
 
   render() {
@@ -148,7 +148,7 @@ export class Preview {
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
 
-        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this._dropdownEl = el)}>
+        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
         </antivirus-card-dropdown>

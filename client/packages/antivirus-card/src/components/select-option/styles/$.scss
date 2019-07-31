@@ -1,0 +1,20 @@
+:host {
+  display: block;
+
+  width: 100%;
+  padding: var(--ngispui-select-option__padding, 0 0 0 10px);
+
+  cursor: pointer;
+
+  color: var(--ngispui-select-option__text-color, var(--ngispui-color__select_option_text, var(--isp-color__basic-text, $isp-color__basic-text)));
+
+  line-height: 25px;
+
+  @at-root #{&}(:hover) {
+    background-color: var(--isp-color__active-switch, #FFFBBC);
+  }
+
+  @at-root #{&}([selected]) {
+    font-weight: bold;
+  }
+}

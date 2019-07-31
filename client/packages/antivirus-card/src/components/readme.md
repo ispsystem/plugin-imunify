@@ -11,6 +11,7 @@
 | ------------------ | --------- | -------------------------- | ----------------------------------------------------------------------------- | ----------- |
 | `notifier`         | --        | global notifier object     | `Notifier`                                                                    | `undefined` |
 | `translateService` | --        | main app translate service | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+<<<<<<< HEAD
 
 
 ## Events
@@ -18,6 +19,8 @@
 | Event              | Description | Type               |
 | ------------------ | ----------- | ------------------ |
 | `openNewScanModal` |             | `CustomEvent<any>` |
+=======
+>>>>>>> master
 
 
 ## Dependencies
