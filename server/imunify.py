@@ -661,6 +661,29 @@ class Imunify:
         return web.Response(text=dumps(default_preset))
 
     @staticmethod
+    async def _site_sid_preset_id(info: HandlerInfo):
+        try:
+            preset_id = int(info.path_params.get("id"))
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        # TODO(d.vtvitskii) Оптимизировать запрос
+        where_statement = "id={} AND site_id={} AND instance={}".format(preset_id, site_id, info.instance_id)
+        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
+
+        if not presets:
+            return web.HTTPNotFound(text="Preset not found")
+
+        preset_info = presets[0]
+        preset = loads(preset_info["preset"])
+        preset["id"] = preset_info["id"]
+        preset["isActive"] = preset_info["is_active"]
+
+        return web.Response(text=dumps(preset))
+
+    @staticmethod
     async def _site_sid_scan_history(info: HandlerInfo):
         report_list = list()
         try:
@@ -799,6 +822,7 @@ if __name__ == '__main__':
     app.add_routes([make_get('/feature'),
                     make_get('/infected'),
                     make_get('/site/{sid}/files/{type}'),
+                    make_get('/site/{sid}/preset/{id}'),
                     make_get('/site/{sid}/presets'),
                     make_get('/site/{sid}/presets/default'),
                     make_get('/site/{sid}/scan/history'),
