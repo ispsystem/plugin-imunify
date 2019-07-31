@@ -144,8 +144,8 @@ export class Preview {
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
         ></PreviewInBlackLists>
-
-        <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
+        {/* @TODO change this parametrs */}
+        <div class="link" onClick={() => this.scanVirus(this.notifier, 1, 1)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
 

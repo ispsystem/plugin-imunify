@@ -10,6 +10,7 @@ export enum ANTIVIRUS_ACTION {
 
   GET_HISTORY_SUCCESS = 'GET_HISTORY_SUCCESS',
   GET_HISTORY_FAILURE = 'GET_HISTORY_FAILURE',
+  SAVE_PARTIAL_PRESET_SUCCESS = 'SAVE_PARTIAL_PRESET_SUCCESS',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -64,6 +65,12 @@ export const getHistorySuccess = data => async (dispatch: (obj: GetHistorySucces
     payload: { data },
   });
 };
+export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccess) => any, _getState) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS,
+    payload: { data },
+  });
+};
 
 export const getHistoryFailure = error => async (dispatch: (obj: GetHistoryFailureAction) => void) => {
   return dispatch({
@@ -98,6 +105,11 @@ interface GetStateSuccessAction {
   payload: any;
 }
 
+interface SavePartialPresetSuccess {
+  type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS;
+  payload: any;
+}
+
 interface GetStateFailureAction {
   type: ANTIVIRUS_ACTION.GET_STATE_FAILURE;
   payload: any;
@@ -122,4 +134,5 @@ export type AntivirusActionTypes =
   | GetStateSuccessAction
   | GetStateFailureAction
   | GetHistorySuccessAction
-  | GetHistoryFailureAction;
+  | GetHistoryFailureAction
+  | SavePartialPresetSuccess;

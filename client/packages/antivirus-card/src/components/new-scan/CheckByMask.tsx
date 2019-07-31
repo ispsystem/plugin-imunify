@@ -3,7 +3,7 @@ import { FunctionalComponent, h } from '@stencil/core';
 /**
  * CheckMask component props
  */
-interface CheckMaskBlockProps {
+interface CheckByMaskProps {
   msg: string;
   isActive: boolean;
   values: string[];
@@ -16,7 +16,7 @@ interface CheckMaskBlockProps {
  *
  * @param props - properties
  */
-export const CheckMaskBlock: FunctionalComponent<CheckMaskBlockProps> = (props, children) => [
+export const CheckByMask: FunctionalComponent<CheckByMaskProps> = (props, children) => [
   <CheckMaskCheckbox msg={props.msg} handleChangeCheckbox={props.handleChangeCheckbox} isActive={props.isActive} />,
   <div class="flex-container" style={!props.isActive && { display: 'none' }}>
     <CheckMaskInput handleChangeInput={props.handleChangeInput} values={props.values} />
@@ -29,7 +29,7 @@ export const CheckMaskBlock: FunctionalComponent<CheckMaskBlockProps> = (props, 
  *
  * @param props - properties
  */
-const CheckMaskCheckbox: FunctionalComponent<Pick<CheckMaskBlockProps, 'handleChangeCheckbox' | 'msg' | 'isActive'>> = props => (
+const CheckMaskCheckbox: FunctionalComponent<Omit<CheckByMaskProps, 'values' | 'handleChangeInput'>> = props => (
   <antivirus-card-checkbox
     class="form-label"
     checked={props.isActive}
@@ -47,7 +47,7 @@ const CheckMaskCheckbox: FunctionalComponent<Pick<CheckMaskBlockProps, 'handleCh
  *
  * @param props - properties
  */
-const CheckMaskInput: FunctionalComponent<Pick<CheckMaskBlockProps, 'handleChangeInput' | 'values'>> = props => (
+const CheckMaskInput: FunctionalComponent<Pick<CheckByMaskProps, 'handleChangeInput' | 'values'>> = props => (
   <antivirus-card-input
     onChanged={event => {
       props.handleChangeInput(event.detail);

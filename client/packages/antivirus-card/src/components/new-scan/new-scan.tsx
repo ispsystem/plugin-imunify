@@ -1,15 +1,16 @@
 import { Component, h, Host, State, Prop } from '@stencil/core';
 import { ITranslate } from '../../models/translate.reducers';
-import { RootState } from '../../redux/reducers';
+import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
 import { ScanOption, IntensityType } from '../../models/antivirus/state';
-import { CheckMaskBlock } from './CheckMaskBlock';
+import { CheckByMask } from './CheckByMask';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 /** Type for new scan options */
-export type NewScanOption = Pick<ScanOption, 'id' | 'intensity' | 'path' | 'checkMask' | 'excludeMask' | 'docroot'>;
+// export type NewScanOption = Pick<ScanOption, 'id' | 'intensity' | 'path' | 'checkMask' | 'excludeMask' | 'docroot'>;
 /** Type for submitting data on create new scanning */
-export type NewScanSubmitOption = Omit<NewScanOption, 'id' | 'docroot'>;
+// export type NewScanSubmitOption = Omit<NewScanOption, 'id' | 'docroot'>;
 
 /**
  * New scan settings component
@@ -23,8 +24,13 @@ export class NewScan {
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
+  /** global notifier object */
+  @State() notifier: Notifier;
+
+  @Prop() closeModal: () => void = () => {};
+
   /** Model settings for new scan */
-  @Prop({ mutable: true }) settingsModel!: NewScanOption;
+  @Prop({ mutable: true }) preset!: ScanOption;
 
   /** Translate object */
   @State() t: ITranslate;
@@ -40,13 +46,23 @@ export class NewScan {
     submit: boolean;
   } = { submit: false };
 
-  componentDidLoad() {
-    this.useCheckMask = this.settingsModel.checkMask.length > 0;
-    this.useExcludeMask = this.settingsModel.excludeMask.length > 0;
-  }
+  /** Method to update global state */
+  savePreset: typeof AntivirusActions.savePreset;
+
+  /** Action scan */
+  scanVirus: typeof AntivirusActions.scan;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, notifier: state.notifier }));
+    this.store.mapDispatchToProps(this, {
+      savePreset: AntivirusActions.savePreset,
+      scanVirus: AntivirusActions.scan,
+    });
+  }
+
+  componentDidLoad() {
+    this.useCheckMask = this.preset.checkMask.length > 0;
+    this.useExcludeMask = this.preset.excludeMask.length > 0;
   }
 
   /**
@@ -55,8 +71,8 @@ export class NewScan {
    * @param intensity - new intensity
    */
   handleChangeIntensity(intensity: IntensityType): void {
-    this.settingsModel = {
-      ...this.settingsModel,
+    this.preset = {
+      ...this.preset,
       intensity,
     };
   }
@@ -67,8 +83,8 @@ export class NewScan {
    * @param checkMask - new checkMask
    */
   handleChangeCheckMask(checkMask: string) {
-    this.settingsModel = {
-      ...this.settingsModel,
+    this.preset = {
+      ...this.preset,
       checkMask: checkMask.split(','),
     };
   }
@@ -79,8 +95,8 @@ export class NewScan {
    * @param excludeMask - new excludeMask
    */
   handleChangeExcludeMask(excludeMask: string) {
-    this.settingsModel = {
-      ...this.settingsModel,
+    this.preset = {
+      ...this.preset,
       excludeMask: excludeMask.split(','),
     };
   }
@@ -92,37 +108,41 @@ export class NewScan {
    */
   handleChangePath(path: string) {
     /** @TODO add handling for path as array, after this feature realise in backend */
-    this.settingsModel.path[0] = path;
-    this.settingsModel = { ...this.settingsModel };
+    this.preset.path[0] = path;
+    this.preset = { ...this.preset };
   }
 
   /**
    * Handle for use click scan button
    */
-  handleScan() {
-    /** @TODO add fetch query for this handle */
+  async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
-    const model = this._prepareDataForSubmit(this.settingsModel);
-    console.log(model);
-    this.isPreloader = { ...this.isPreloader, submit: false };
+    const preset = this._prepareDataForSubmit(this.preset);
+    await this.savePreset(preset)(null).then(presetId => async () => {
+      console.log(presetId);
+      await this.scanVirus(this.notifier, 1);
+      this.isPreloader = { ...this.isPreloader, submit: false };
+      this.closeModal();
+    });
   }
 
   /**
    * Handle for use click save button
    */
-  handleSave() {
-    /** @TODO add fetch query for this handle */
+  async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
-    const model = this._prepareDataForSubmit(this.settingsModel);
-    console.log(model);
+    const preset = this._prepareDataForSubmit(this.preset);
+    const presetId = await this.savePreset(preset);
+    console.log(presetId);
     this.isPreloader = { ...this.isPreloader, submit: false };
+    this.closeModal();
   }
-
   /**
    * Method for prepare data in desired form before submit
    */
-  private _prepareDataForSubmit(model: NewScanOption): NewScanSubmitOption {
-    return {
+  private _prepareDataForSubmit(model: ScanOption): Omit<ScanOption, 'id'> {
+    const preset: ScanOption = {
+      ...model,
       checkMask: this.useCheckMask
         ? model.checkMask.reduce((res: string[], el) => {
             el = el.trim();
@@ -140,6 +160,10 @@ export class NewScan {
       intensity: model.intensity,
       path: model.path,
     };
+
+    delete preset.id;
+    delete preset.docroot;
+    return preset;
   }
 
   render() {
@@ -150,10 +174,10 @@ export class NewScan {
         <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'CHECK_FOLDER'])}</span>
 
         <div class="flex-container form-label">
-          <span style={{ 'margin-right': '10px' }}>{this.settingsModel.docroot}/</span>
+          <span style={{ 'margin-right': '10px' }}>{this.preset.docroot}/</span>
           <antivirus-card-input
             width="310px"
-            value={this.settingsModel.path[0]}
+            value={this.preset.path[0]}
             onChanged={e => {
               this.handleChangePath(e.detail);
               e.stopPropagation();
@@ -161,25 +185,25 @@ export class NewScan {
           ></antivirus-card-input>
         </div>
 
-        <CheckMaskBlock
+        <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_CHECK_FILES'])}
           isActive={this.useCheckMask}
-          values={this.settingsModel.checkMask}
+          values={this.preset.checkMask}
           handleChangeCheckbox={(checked: boolean) => (this.useCheckMask = checked)}
           handleChangeInput={this.handleChangeCheckMask.bind(this)}
         >
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_MASK_HINT'])}</antivirus-card-hint>
-        </CheckMaskBlock>
+        </CheckByMask>
 
-        <CheckMaskBlock
+        <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_IGNORE_FILES'])}
           isActive={this.useExcludeMask}
-          values={this.settingsModel.excludeMask}
+          values={this.preset.excludeMask}
           handleChangeCheckbox={(checked: boolean) => (this.useExcludeMask = checked)}
           handleChangeInput={this.handleChangeExcludeMask.bind(this)}
         >
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_MASK_HINT'])}</antivirus-card-hint>
-        </CheckMaskBlock>
+        </CheckByMask>
 
         <div class="flex-container form-label" style={{ 'margin-top': '15px' }}>
           <span>{this.t.msg(['SCAN_SETTINGS', 'INSPECTION_INTENSITY', 'TEXT'])}</span>
@@ -188,7 +212,7 @@ export class NewScan {
 
         <antivirus-card-switcher>
           {['LOW', 'MEDIUM', 'HIGH'].map((type: IntensityType) => (
-            <antivirus-card-switcher-option active={this.settingsModel.intensity === type} onClick={() => this.handleChangeIntensity(type)}>
+            <antivirus-card-switcher-option active={this.preset.intensity === type} onClick={() => this.handleChangeIntensity(type)}>
               {this.t.msg(['SCAN_SETTINGS', 'INSPECTION_INTENSITY', type])}
             </antivirus-card-switcher-option>
           ))}
@@ -203,8 +227,12 @@ export class NewScan {
               {this.t.msg(['SCAN_SETTINGS', 'BUTTON_SAVE'])}
             </a>
           </antivirus-card-preloader>
-          {/** @TODO add handle for cancel button */}
-          <a class="link link_indent-left" onClick={() => {}}>
+          <a
+            class="link link_indent-left"
+            onClick={() => {
+              this.closeModal();
+            }}
+          >
             {this.t.msg(['SCAN_SETTINGS', 'BUTTON_CANCEL'])}
           </a>
         </div>

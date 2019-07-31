@@ -1,4 +1,4 @@
-# antivirus-card-new-scan
+# antivirus-card-scan-settings
 
 
 
@@ -15,36 +15,22 @@
 
 ## Dependencies
 
-### Used by
-
- - [antivirus-card-dashboard](../dashboard)
-
 ### Depends on
 
-- [antivirus-card-input](../input)
-- [antivirus-card-hint](../hint)
 - [antivirus-card-switcher](../switcher)
 - [antivirus-card-switcher-option](../switcher-option)
 - [antivirus-card-preloader](../preloader)
 - [antivirus-card-button](../button)
-- [antivirus-card-checkbox](../checkbox)
-- [antivirus-card-input](../input)
 
 ### Graph
 ```mermaid
 graph TD;
-  antivirus-card-new-scan --> antivirus-card-input
-  antivirus-card-new-scan --> antivirus-card-hint
-  antivirus-card-new-scan --> antivirus-card-switcher
-  antivirus-card-new-scan --> antivirus-card-switcher-option
-  antivirus-card-new-scan --> antivirus-card-preloader
-  antivirus-card-new-scan --> antivirus-card-button
-  antivirus-card-new-scan --> antivirus-card-checkbox
-  antivirus-card-new-scan --> antivirus-card-input
-  antivirus-card-hint --> antivirus-card-dropdown
+  antivirus-card-scan-settings --> antivirus-card-switcher
+  antivirus-card-scan-settings --> antivirus-card-switcher-option
+  antivirus-card-scan-settings --> antivirus-card-preloader
+  antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-preloader --> antivirus-card-spinner-round
-  antivirus-card-dashboard --> antivirus-card-new-scan
-  style antivirus-card-new-scan fill:#f9f,stroke:#333,stroke-width:4px
+  style antivirus-card-scan-settings fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

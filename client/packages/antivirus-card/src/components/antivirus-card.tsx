@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, JSX, Listen, Prop, Watch, Event, EventEmitter } from '@stencil/core';
+import { Component, h, Host, State, JSX, Listen, Prop, Watch } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -15,7 +15,6 @@ import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 
 /**
- *
  * AntivirusCard component
  */
 @Component({
@@ -97,14 +96,7 @@ export class AntivirusCard {
    */
   @Listen('openBuyModal')
   openBuyModal(): void {
-    this.buyModal.visible = true;
-  }
-
-  @Event() openNewScanModal: EventEmitter;
-
-  @Listen('openNewScanModal')
-  tmp(): void {
-    this.newScanModal.visible = true;
+    this.buyModal.toggle(true);
   }
 
   /**
@@ -212,30 +204,13 @@ export class AntivirusCard {
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
           <div class="button-container">
-            <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
+            <antivirus-card-button btn-theme="accent" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
-            <a class="link link_indent-left" onClick={() => (this.buyModal.visible = false)}>
+            <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>
-        </antivirus-card-modal>
-        <p onClick={() => this.openNewScanModal.emit()}>OPEN NEW SCAN</p>
-        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={(el: HTMLAntivirusCardModalElement) => (this.newScanModal = el)}>
-          <antivirus-card-new-scan
-            settingsModel={{
-              id: 1,
-              intensity: 'LOW',
-              path: ['kek/lol'],
-              docroot: 'www/example.com',
-              checkMask: ['*.php'],
-              excludeMask: ['*.*tmp'],
-            }}
-          >
-            <span class="title" slot="title">
-              Новое сканирование
-            </span>
-          </antivirus-card-new-scan>
         </antivirus-card-modal>
       </Host>
     );

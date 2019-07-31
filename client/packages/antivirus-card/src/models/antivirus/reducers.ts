@@ -5,7 +5,7 @@ const getInitialState = (): AntivirusState => {
   return {
     error: null,
 
-    isProVersion: false,
+    isProVersion: true,
     hasScheduledActions: false,
 
     scanning: false,
@@ -84,6 +84,17 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       return {
         ...state,
         error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS: {
+      return {
+        ...state,
+        scanPreset: {
+          ...state.scanPreset,
+          partial: action.payload.data,
+        },
+        error: null,
       };
     }
   }

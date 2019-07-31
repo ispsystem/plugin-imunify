@@ -12,16 +12,6 @@
 | `notifier`         | --        | global notifier object     | `Notifier`                                                                    | `undefined` |
 | `siteId`           | `site-id` | site ID from vepp          | `number`                                                                      | `undefined` |
 | `translateService` | --        | main app translate service | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
-<<<<<<< HEAD
-
-
-## Events
-
-| Event              | Description | Type               |
-| ------------------ | ----------- | ------------------ |
-| `openNewScanModal` |             | `CustomEvent<any>` |
-=======
->>>>>>> master
 
 
 ## Dependencies
@@ -36,7 +26,6 @@
 - [antivirus-card-switcher](switcher)
 - [antivirus-card-switcher-option](switcher-option)
 - [antivirus-card-button](button)
-- [antivirus-card-new-scan](new-scan)
 
 ### Graph
 ```mermaid
@@ -49,17 +38,11 @@ graph TD;
   antivirus-card --> antivirus-card-switcher
   antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
-  antivirus-card --> antivirus-card-new-scan
   antivirus-card-dashboard --> antivirus-card-preview
+  antivirus-card-dashboard --> antivirus-card-modal
+  antivirus-card-dashboard --> antivirus-card-new-scan
   antivirus-card-preview --> antivirus-card-dropdown
   antivirus-card-preview --> antivirus-card-spinner-round
-  antivirus-card-infected-files --> antivirus-card-table
-  antivirus-card-infected-files --> antivirus-card-table-row
-  antivirus-card-infected-files --> antivirus-card-table-cell
-  antivirus-card-infected-files --> antivirus-card-button
-  antivirus-card-history --> antivirus-card-table
-  antivirus-card-history --> antivirus-card-table-row
-  antivirus-card-history --> antivirus-card-table-cell
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-new-scan --> antivirus-card-hint
   antivirus-card-new-scan --> antivirus-card-switcher
@@ -70,6 +53,13 @@ graph TD;
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-hint --> antivirus-card-dropdown
   antivirus-card-preloader --> antivirus-card-spinner-round
+  antivirus-card-infected-files --> antivirus-card-table
+  antivirus-card-infected-files --> antivirus-card-table-row
+  antivirus-card-infected-files --> antivirus-card-table-cell
+  antivirus-card-infected-files --> antivirus-card-button
+  antivirus-card-history --> antivirus-card-table
+  antivirus-card-history --> antivirus-card-table-row
+  antivirus-card-history --> antivirus-card-table-cell
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
