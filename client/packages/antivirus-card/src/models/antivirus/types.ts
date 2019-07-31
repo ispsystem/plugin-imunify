@@ -10,6 +10,9 @@ export enum ANTIVIRUS_ACTION {
 
   GET_HISTORY_SUCCESS = 'GET_HISTORY_SUCCESS',
   GET_HISTORY_FAILURE = 'GET_HISTORY_FAILURE',
+
+  GET_INFECTED_FILES_SUCCESS = 'GET_INFECTED_FILES_SUCCESS',
+  GET_INFECTED_FILES_FAILURE = 'GET_INFECTED_FILES_FAILURE',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -72,6 +75,20 @@ export const getHistoryFailure = error => async (dispatch: (obj: GetHistoryFailu
   });
 };
 
+export const getInfectedFilesSuccess = data => async (dispatch: (obj: GetInfectedFilesSuccessAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS,
+    payload: { data },
+  });
+};
+
+export const getInfectedFilesFailure = error => async (dispatch: (obj: GetInfectedFilesFailureAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_FAILURE,
+    payload: { error },
+  });
+};
+
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
 }
@@ -113,6 +130,16 @@ interface GetHistoryFailureAction {
   payload: any;
 }
 
+interface GetInfectedFilesSuccessAction {
+  type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS;
+  payload: any;
+}
+
+interface GetInfectedFilesFailureAction {
+  type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_FAILURE;
+  payload: any;
+}
+
 export type AntivirusActionTypes =
   | ScanBeginAction
   | ScanningAction
@@ -122,4 +149,6 @@ export type AntivirusActionTypes =
   | GetStateSuccessAction
   | GetStateFailureAction
   | GetHistorySuccessAction
-  | GetHistoryFailureAction;
+  | GetHistoryFailureAction
+  | GetInfectedFilesSuccessAction
+  | GetInfectedFilesFailureAction;
