@@ -7,9 +7,10 @@
 
 ## Events
 
-| Event          | Description               | Type               |
-| -------------- | ------------------------- | ------------------ |
-| `openBuyModal` | open ImunifyAV+ buy modal | `CustomEvent<any>` |
+| Event              | Description               | Type               |
+| ------------------ | ------------------------- | ------------------ |
+| `openBuyModal`     | open ImunifyAV+ buy modal | `CustomEvent<any>` |
+| `openNewScanModal` |                           | `CustomEvent<any>` |
 
 
 ## Dependencies
