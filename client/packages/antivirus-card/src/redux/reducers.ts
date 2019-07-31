@@ -1,19 +1,20 @@
 import { combineReducers } from 'redux';
 import { Observable } from 'rxjs';
 
-import { AntivirusState, antivirusReducer } from '../models/antivirus.reducers';
 import { translateReducer, ITranslate } from '../models/translate.reducers';
+import { AntivirusState } from '../models/antivirus/state';
+import { antivirusReducer } from '../models/antivirus/reducers';
 
 /** @todo: move to common plugin lib */
-export interface INotifier {
-  ids: (ids$: number[] | Observable<number[]>) => INotifier;
+export interface Notifier {
+  ids: (ids$: number[] | Observable<number[]>) => Notifier;
   create$: (action?: string) => Observable<any>;
   delete$: (action?: string) => Observable<any>;
   taskList$: () => Observable<any>;
 }
 
 /** @todo: move to common plugin lib */
-export interface ISPNotifierEvent {
+export interface NotifierEvent {
   entity: string; // название сущности
   id: number; // id сущности
   path: string; // путь до сущности (например host/1/image/1 или host/1)
@@ -43,14 +44,16 @@ export interface ISPNotifierEvent {
 
 // This interface represents app state by nesting feature states.
 export interface RootState {
-  antivirus: AntivirusState;
-  notifier: INotifier;
-  translate: ITranslate;
+  siteId: number;
+  antivirus?: AntivirusState;
+  notifier: Notifier;
+  translate?: ITranslate;
 }
 
 // Combine feature reducers into a single root reducer
 export const rootReducer = combineReducers({
+  siteId: (state: number = null) => state,
   antivirus: antivirusReducer,
-  notifier: (state: INotifier = null) => state,
-  translate: translateReducer
+  notifier: (state: Notifier = null) => state,
+  translate: translateReducer,
 });

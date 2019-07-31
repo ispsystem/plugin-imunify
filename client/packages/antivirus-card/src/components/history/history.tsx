@@ -3,13 +3,13 @@ import { Store } from '@stencil/redux';
 
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { AntivirusState } from '../../models/antivirus.reducers';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
+import { AntivirusState } from '../../models/antivirus/state';
 
 @Component({
   tag: 'antivirus-card-history',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class History {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -53,7 +53,7 @@ export class History {
                 <span class="add-text">{this.getTimeAsStr(new Date(historyItem.date))}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{historyItem.checkType}</span>
+                <span class="isp-table-cell__main-text">{this.t.msg(['HISTORY_TAB', 'CHECK_TYPE', historyItem.checkType])}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>

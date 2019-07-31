@@ -1,14 +1,16 @@
-export type Lang = typeof lang;
-
 const lang = {
   TITLE: 'Антивирус ImunifyAV',
   MENU_ITEMS: {
-    PREVIEW: 'Обзор',
+    DASHBOARD: 'Обзор',
     INFECTED_FILES: 'Заражённые файлы',
-    HISTORY: 'История сканирований'
+    HISTORY: 'История сканирований',
+  },
+  DASHBOARD: {
+    TITLE: 'Купить ImunifyAV+ за 5 €/мес',
+    TEXT: 'для лечения файлов, проверки репутации, настройки расписания и уведомлений о вирусах на почту.',
   },
   CHECK_TYPE: {
-    FULL: 'полная'
+    FULL: 'полная',
   },
   BUY_MODAL: {
     TITLE: 'Подписка Imunify Pro',
@@ -17,23 +19,23 @@ const lang = {
     LABEL_3: 'Поиск сайта в черных списках',
     LABEL_PRO_1: 'Лечение заражённых файлов',
     LABEL_PRO_2: 'Сканирование по расписанию',
-    LABEL_PRO_3: 'Оповещения об угрозах на почту'
+    LABEL_PRO_3: 'Оповещения об угрозах на почту',
   },
   NOT_NOW: 'Нет, не сейчас',
   SUBSCRIBE_FOR: 'Оформить подписку за',
   PRO_PERIODS: {
     MONTH: {
       SHORT: 'мес',
-      LONG: 'Месячная'
+      LONG: 'Месячная',
     },
     YEAR: {
       SHORT: 'год',
       LONG: 'Годовая',
-      DESCRIPTION: 'при оплате за год'
-    }
+      DESCRIPTION: 'при оплате за год',
+    },
   },
   TABLE: {
-    ON_PAGE_LABEL: 'На странице'
+    ON_PAGE_LABEL: 'На странице',
   },
   PREVIEW: {
     HELP:
@@ -49,7 +51,7 @@ const lang = {
     NOT_INFECTED_FILES: 'Вирусов не обнаружили',
     IN_BLACK_LISTS: 'Сайт находится в чёных списках',
     HOW_TO_FIX: 'Как исправить',
-    NOT_IN_BLACK_LISTS: 'Сайта в чёрных списках нет'
+    NOT_IN_BLACK_LISTS: 'Сайта в чёрных списках нет',
   },
   INFECTED_FILES: {
     NOT_FOUND:
@@ -59,8 +61,8 @@ const lang = {
       CELL_1: 'Имя файла',
       CELL_2: 'Название угрозы',
       CELL_3: 'Обнаружен',
-      CELL_4: 'Расположение файла'
-    }
+      CELL_4: 'Расположение файла',
+    },
   },
   DATETIME_CREATED: 'создан %{date} в %{time}',
   DATETIME_CHANGED: 'изменён %{date} в %{time}',
@@ -68,10 +70,15 @@ const lang = {
     TABLE_HEADER: {
       CELL_1: 'Дата проверки',
       CELL_2: 'Тип',
-      CELL_3: 'Найдено угроз'
-    }
+      CELL_3: 'Найдено угроз',
+    },
+    CHECK_TYPE: {
+      FULL: 'полная',
+      PARTIAL: 'выборочная',
+    },
   },
-  NEW_SCAN_BTN: 'Новое сканирование'
+  NEW_SCAN_BTN: 'Новое сканирование',
 };
 
+export type Lang = typeof lang;
 export default lang;

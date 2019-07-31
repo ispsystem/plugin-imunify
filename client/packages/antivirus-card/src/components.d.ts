@@ -7,7 +7,7 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
-  INotifier,
+  Notifier,
 } from './redux/reducers';
 import {
   Observable,
@@ -22,10 +22,26 @@ import {
 import {
   Validator,
 } from './utils/validators';
+import {
+  SelectedOption,
+} from './components/select/select';
+import {
+  SelectedOption as SelectedOption1,
+} from './components/select/select';
 
 export namespace Components {
   interface AntivirusCard {
-    'notifier': INotifier;
+    /**
+    * global notifier object
+    */
+    'notifier': Notifier;
+    /**
+    * site ID from vepp
+    */
+    'siteId': number;
+    /**
+    * main app translate service
+    */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
@@ -33,6 +49,46 @@ export namespace Components {
     'customCSSClass': string;
     'isDisabled': boolean;
     'theme': ThemePalette;
+  }
+  interface AntivirusCardCheckbox {
+    /**
+    * Flag fore display type block
+    */
+    'block': boolean;
+    /**
+    * Bold highlight active checkbox text
+    */
+    'bold': boolean;
+    /**
+    * Value for checkbox
+    */
+    'checked': boolean;
+    /**
+    * Make read only available
+    */
+    'readonly': boolean;
+    /**
+    * Text wrapping around the checkbox
+    */
+    'unwrap': boolean;
+  }
+  interface AntivirusCardDashboard {}
+  interface AntivirusCardDropdown {
+    /**
+    * Max width for dropdown content
+    */
+    'maxWidth': string;
+    /**
+    * Toggle dropdown state
+    * @param event - DOM event
+    */
+    'toggle': (event: Event) => Promise<void>;
+  }
+  interface AntivirusCardHint {
+    /**
+    * Flag for display accent icon
+    */
+    'accent': boolean;
   }
   interface AntivirusCardHistory {}
   interface AntivirusCardInfectedFiles {}
@@ -62,10 +118,34 @@ export namespace Components {
   interface AntivirusCardNavigation {
     'items': {
       label: string;
-      active: boolean;
+      active?: boolean;
     }[];
   }
   interface AntivirusCardPreview {}
+  interface AntivirusCardSelect {
+    /**
+    * Disabled key for select field
+    */
+    'disabled': boolean;
+    /**
+    * Placeholder for select field
+    */
+    'placeholder': string;
+    /**
+    * Selected value
+    */
+    'selectedValue': SelectedOption;
+  }
+  interface AntivirusCardSelectOption {
+    /**
+    * Key for active selected value
+    */
+    'selected': boolean;
+    /**
+    * Option value
+    */
+    'value': SelectedOption['v'];
+  }
   interface AntivirusCardSpinnerRound {}
   interface AntivirusCardSwitcher {}
   interface AntivirusCardSwitcherOption {
@@ -112,6 +192,30 @@ declare global {
     new (): HTMLAntivirusCardButtonElement;
   };
 
+  interface HTMLAntivirusCardCheckboxElement extends Components.AntivirusCardCheckbox, HTMLStencilElement {}
+  var HTMLAntivirusCardCheckboxElement: {
+    prototype: HTMLAntivirusCardCheckboxElement;
+    new (): HTMLAntivirusCardCheckboxElement;
+  };
+
+  interface HTMLAntivirusCardDashboardElement extends Components.AntivirusCardDashboard, HTMLStencilElement {}
+  var HTMLAntivirusCardDashboardElement: {
+    prototype: HTMLAntivirusCardDashboardElement;
+    new (): HTMLAntivirusCardDashboardElement;
+  };
+
+  interface HTMLAntivirusCardDropdownElement extends Components.AntivirusCardDropdown, HTMLStencilElement {}
+  var HTMLAntivirusCardDropdownElement: {
+    prototype: HTMLAntivirusCardDropdownElement;
+    new (): HTMLAntivirusCardDropdownElement;
+  };
+
+  interface HTMLAntivirusCardHintElement extends Components.AntivirusCardHint, HTMLStencilElement {}
+  var HTMLAntivirusCardHintElement: {
+    prototype: HTMLAntivirusCardHintElement;
+    new (): HTMLAntivirusCardHintElement;
+  };
+
   interface HTMLAntivirusCardHistoryElement extends Components.AntivirusCardHistory, HTMLStencilElement {}
   var HTMLAntivirusCardHistoryElement: {
     prototype: HTMLAntivirusCardHistoryElement;
@@ -146,6 +250,18 @@ declare global {
   var HTMLAntivirusCardPreviewElement: {
     prototype: HTMLAntivirusCardPreviewElement;
     new (): HTMLAntivirusCardPreviewElement;
+  };
+
+  interface HTMLAntivirusCardSelectElement extends Components.AntivirusCardSelect, HTMLStencilElement {}
+  var HTMLAntivirusCardSelectElement: {
+    prototype: HTMLAntivirusCardSelectElement;
+    new (): HTMLAntivirusCardSelectElement;
+  };
+
+  interface HTMLAntivirusCardSelectOptionElement extends Components.AntivirusCardSelectOption, HTMLStencilElement {}
+  var HTMLAntivirusCardSelectOptionElement: {
+    prototype: HTMLAntivirusCardSelectOptionElement;
+    new (): HTMLAntivirusCardSelectOptionElement;
   };
 
   interface HTMLAntivirusCardSpinnerRoundElement extends Components.AntivirusCardSpinnerRound, HTMLStencilElement {}
@@ -198,12 +314,18 @@ declare global {
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
+    'antivirus-card-checkbox': HTMLAntivirusCardCheckboxElement;
+    'antivirus-card-dashboard': HTMLAntivirusCardDashboardElement;
+    'antivirus-card-dropdown': HTMLAntivirusCardDropdownElement;
+    'antivirus-card-hint': HTMLAntivirusCardHintElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
     'antivirus-card-infected-files': HTMLAntivirusCardInfectedFilesElement;
     'antivirus-card-input': HTMLAntivirusCardInputElement;
     'antivirus-card-modal': HTMLAntivirusCardModalElement;
     'antivirus-card-navigation': HTMLAntivirusCardNavigationElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
+    'antivirus-card-select': HTMLAntivirusCardSelectElement;
+    'antivirus-card-select-option': HTMLAntivirusCardSelectOptionElement;
     'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
     'antivirus-card-switcher': HTMLAntivirusCardSwitcherElement;
     'antivirus-card-switcher-option': HTMLAntivirusCardSwitcherOptionElement;
@@ -217,7 +339,17 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
-    'notifier'?: INotifier;
+    /**
+    * global notifier object
+    */
+    'notifier'?: Notifier;
+    /**
+    * site ID from vepp
+    */
+    'siteId'?: number;
+    /**
+    * main app translate service
+    */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
@@ -225,6 +357,54 @@ declare namespace LocalJSX {
     'customCSSClass'?: string;
     'isDisabled'?: boolean;
     'theme'?: ThemePalette;
+  }
+  interface AntivirusCardCheckbox extends JSXBase.HTMLAttributes<HTMLAntivirusCardCheckboxElement> {
+    /**
+    * Flag fore display type block
+    */
+    'block'?: boolean;
+    /**
+    * Bold highlight active checkbox text
+    */
+    'bold'?: boolean;
+    /**
+    * Value for checkbox
+    */
+    'checked'?: boolean;
+    /**
+    * Event by change checkbox value
+    */
+    'onСhanged'?: (event: CustomEvent<boolean>) => void;
+    /**
+    * Make read only available
+    */
+    'readonly'?: boolean;
+    /**
+    * Text wrapping around the checkbox
+    */
+    'unwrap'?: boolean;
+  }
+  interface AntivirusCardDashboard extends JSXBase.HTMLAttributes<HTMLAntivirusCardDashboardElement> {
+    /**
+    * open ImunifyAV+ buy modal
+    */
+    'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * @todo : open new scan modal
+    */
+    'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
+  }
+  interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
+    /**
+    * Max width for dropdown content
+    */
+    'maxWidth'?: string;
+  }
+  interface AntivirusCardHint extends JSXBase.HTMLAttributes<HTMLAntivirusCardHintElement> {
+    /**
+    * Flag for display accent icon
+    */
+    'accent'?: boolean;
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
@@ -260,13 +440,51 @@ declare namespace LocalJSX {
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
     'items'?: {
       label: string;
-      active: boolean;
+      active?: boolean;
     }[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {
+    /**
+    * to change selected tab item (horizontal menu)
+    */
     'onClickItem'?: (event: CustomEvent<any>) => void;
+    /**
+    * to open buy modal
+    */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+  }
+  interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
+    /**
+    * Disabled key for select field
+    */
+    'disabled'?: boolean;
+    /**
+    * Handle for change selected value
+    */
+    'onChanged'?: (event: CustomEvent<SelectedOption['v']>) => void;
+    /**
+    * Placeholder for select field
+    */
+    'placeholder'?: string;
+    /**
+    * Selected value
+    */
+    'selectedValue'?: SelectedOption;
+  }
+  interface AntivirusCardSelectOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectOptionElement> {
+    /**
+    * Event by change selected status
+    */
+    'onChangedSelectStatus'?: (event: CustomEvent<SelectedOption>) => void;
+    /**
+    * Key for active selected value
+    */
+    'selected'?: boolean;
+    /**
+    * Option value
+    */
+    'value'?: SelectedOption['v'];
   }
   interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {}
   interface AntivirusCardSwitcher extends JSXBase.HTMLAttributes<HTMLAntivirusCardSwitcherElement> {}
@@ -306,12 +524,18 @@ declare namespace LocalJSX {
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
+    'antivirus-card-checkbox': AntivirusCardCheckbox;
+    'antivirus-card-dashboard': AntivirusCardDashboard;
+    'antivirus-card-dropdown': AntivirusCardDropdown;
+    'antivirus-card-hint': AntivirusCardHint;
     'antivirus-card-history': AntivirusCardHistory;
     'antivirus-card-infected-files': AntivirusCardInfectedFiles;
     'antivirus-card-input': AntivirusCardInput;
     'antivirus-card-modal': AntivirusCardModal;
     'antivirus-card-navigation': AntivirusCardNavigation;
     'antivirus-card-preview': AntivirusCardPreview;
+    'antivirus-card-select': AntivirusCardSelect;
+    'antivirus-card-select-option': AntivirusCardSelectOption;
     'antivirus-card-spinner-round': AntivirusCardSpinnerRound;
     'antivirus-card-switcher': AntivirusCardSwitcher;
     'antivirus-card-switcher-option': AntivirusCardSwitcherOption;

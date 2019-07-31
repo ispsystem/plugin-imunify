@@ -10,9 +10,10 @@
     "build:am": "lerna run --stream --scope antivirus-menu build && npm run lang",
     "dev:aw": "concurrently \"lerna run --stream --scope antivirus-widget start\" \"npm:proxy\"",
     "build:aw": "lerna run --stream --scope antivirus-widget build && npm run lang",
+    "build": "concurrently \"npm:build:ac\" \"npm:build:am\" \"npm:build:aw\" && node scripts/.make",
     "proxy": "node scripts/dev-proxy-server",
-    "lang": "node --experimental-modules scripts/prepare-lang.js",
-    "build": "chmod +x ./scripts/build.sh && ./scripts/build.sh build"
+    "cz": "git cz",
+    "lang": "node --experimental-modules scripts/prepare-lang.js"
   },
   "keywords": [],
   "author": "",
@@ -20,28 +21,50 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
-    "commitizen": "^3.1.1",
+    "@stencil/core": "1.2.2",
+    "@stencil/postcss": "^1.0.1",
+    "@stencil/sass": "^1.0.1",
+    "@types/node-polyglot": "^0.4.33",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "commitizen": "^3.1.2",
     "concurrently": "^4.1.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
     "fs-extra": "^8.1.0",
     "git-cz": "^3.2.1",
     "glob": "^7.1.4",
     "http-proxy": "^1.17.0",
     "husky": "^3.0.0",
     "lerna": "^3.15.0",
-    "lodash": "^4.17.14"
+    "lint-staged": "^9.2.1",
+    "lodash": "^4.17.14",
+    "postcss-inline-svg": "^4.1.0",
+    "prettier": "^1.18.2",
+    "workbox-build": "4.3.1"
   },
   "dependencies": {
     "antivirus-card": "file:packages/antivirus-card",
+    "antivirus-menu": "file:packages/antivirus-menu",
     "antivirus-widget": "file:packages/antivirus-widget"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/git-cz"
-    }
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g './commitlint.config.js'"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g 'commitlint.config.js'",
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts?(x)": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "client/git-cz/cz.js"
     }
   }
 }

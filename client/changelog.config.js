@@ -1,78 +1,85 @@
 module.exports = {
-  "disableEmoji": false,
-  "list": [
-    "test",
-    "feat",
-    "fix",
-    "chore",
-    "docs",
-    "refactor",
-    "style",
-    "ci",
-    "perf"
-  ],
-  "maxMessageLength": 64,
-  "minMessageLength": 3,
-  "questions": [
-    "type",
-    "scope",
-    "subject",
-    "body",
-    "breaking",
-    "issues",
-    "lerna"
-  ],
-  "scopes": [],
-  "types": {
-    "chore": {
-      "description": "Build process or auxiliary tool changes",
-      "emoji": "🔩",
-      "value": "chore"
+  disableEmoji: false,
+  list: ['feat', 'refactor', 'fix', 'docs', 'test', 'perf', 'review', 'chore', 'style', 'wip', 'ci', 'release', 'lint', 'merge', 'mv'],
+  maxMessageLength: 80,
+  minMessageLength: 3,
+  questions: ['type', 'scope', 'subject', 'body', 'breaking', 'issues'],
+  scopes: ['', 'antivirus-card', 'antivirus-menu', 'antivirus-widget'],
+  types: {
+    feat: {
+      description: 'A new feature',
+      emoji: '🌟',
+      value: 'feat',
     },
-    "ci": {
-      "description": "CI related changes",
-      "emoji": "🎡",
-      "value": "ci"
+    refactor: {
+      description: 'A code change that neither fixes a bug or adds a feature',
+      emoji: '💡',
+      value: 'refactor',
     },
-    "docs": {
-      "description": "Documentation only changes",
-      "emoji": "📚",
-      "value": "docs"
+    fix: {
+      description: 'A bug fix',
+      emoji: '🐛',
+      value: 'fix',
     },
-    "feat": {
-      "description": "A new feature",
-      "emoji": "🌟",
-      "value": "feat"
+    review: {
+      description: 'Updating code due to code review changes',
+      emoji: '👌',
+      value: 'review',
     },
-    "fix": {
-      "description": "A bug fix",
-      "emoji": "🚨",
-      "value": "fix"
+    chore: {
+      description: 'Build process or auxiliary tool changes',
+      emoji: '🔧',
+      value: 'chore',
     },
-    "perf": {
-      "description": "A code change that improves performance",
-      "emoji": "⚡️",
-      "value": "perf"
+    perf: {
+      description: 'A code change that improves performance',
+      emoji: '⚡️',
+      value: 'perf',
     },
-    "refactor": {
-      "description": "A code change that neither fixes a bug or adds a feature",
-      "emoji": "💡",
-      "value": "refactor"
+    test: {
+      description: 'Adding missing tests',
+      emoji: '👷',
+      value: 'test',
     },
-    "release": {
-      "description": "Create a release commit",
-      "emoji": "🏁",
-      "value": "release"
+    docs: {
+      description: 'Documentation only changes',
+      emoji: '📚',
+      value: 'docs',
     },
-    "style": {
-      "description": "Markup, white-space, formatting, missing semi-colons...",
-      "emoji": "🎨",
-      "value": "style"
+    style: {
+      description: 'Markup, white-space, formatting, missing semi-colons...',
+      emoji: '🎨',
+      value: 'style',
     },
-    "test": {
-      "description": "Adding missing tests",
-      "emoji": "👷",
-      "value": "test"
-    }
-  }
+    wip: {
+      description: 'Work in progress',
+      emoji: '🚧',
+      value: 'wip',
+    },
+    ci: {
+      description: 'CI related changes',
+      emoji: '🎡',
+      value: 'ci',
+    },
+    release: {
+      description: 'Releasing / Version tags',
+      emoji: '🔖',
+      value: 'release',
+    },
+    lint: {
+      description: 'Change linter rules',
+      emoji: '🚨',
+      value: 'lint',
+    },
+    merge: {
+      description: 'Merging branches',
+      emoji: '🔀',
+      value: 'merge',
+    },
+    mv: {
+      description: 'Moving or renaming files',
+      emoji: '🚚',
+      value: 'mv',
+    },
+  },
 };

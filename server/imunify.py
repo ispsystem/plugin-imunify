@@ -8,6 +8,7 @@ from jsonschema import validate, ValidationError, SchemaError
 from mysql import connector
 from os import getenv, environ, remove, getcwd, path
 from datetime import datetime
+import base64
 import calendar
 import logging as log
 import requests
@@ -44,17 +45,21 @@ class BaseEnum(Enum):
         types_str = ','.join(["'{}'".format(status) for status in cls])
         return "ENUM ({})".format(types_str)
 
+    @classmethod
+    def has_value(cls, value):
+        return any(value == item.value for item in cls)
 
-# TODO(d.vitvitskii) To upper case
+
 class FileStatus(BaseEnum):
-    infected = "infected"
-    cured = "cured"
-    added_to_exceptions = "added-to-exceptions"
+    infected = "INFECTED"
+    cured = "CURED"
+    added_to_exceptions = "EXCEPTED"
+    healing = "HEALING"
 
 
 class ScanType(BaseEnum):
-    full = "full"
-    partial = "partial"
+    full = "FULL"
+    partial = "PARTIAL"
 
 
 class Value:
@@ -149,6 +154,26 @@ def insert(table: str, data: dict):
     return id
 
 
+def update(table: str, data: dict, where=None):
+    cur = DB_CONNECTION.cursor()
+
+    key_values_str = str()
+    for field, value in data.items():
+        if key_values_str:
+            key_values_str += ', '
+        value = "'{}'".format(value) if type(value) is str else str(value)
+        key_values_str += "{}={}".format(field, value)
+
+    query = "UPDATE {} SET {}".format(DB_PREFIX + table, key_values_str)
+    if where:
+        query += " WHERE {}".format(where)
+
+    log.debug("Execute query: '{}'".format(query))
+    cur.execute(query)
+    DB_CONNECTION.commit()
+    cur.close()
+
+
 def get_settings_value(name, default=""):
     log.info("Get value '{}' from settings table".format(name))
 
@@ -232,7 +257,7 @@ def create_task(exec_bin, name, instance_id, params=[], task_env={}, notify={}, 
     return subprocess.check_output(cmd, env=env).decode()
 
 
-async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, started: int, callback):
+async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, started: int, preset_id: int, callback):
     log.debug("Begin task {} wait".format(task_id))
     entities = {
         "entities": [
@@ -254,7 +279,7 @@ async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, sta
 
         result = await ws.recv()
         task_info = loads(result)
-        callback(task_info, instance_id, site_id, started)
+        callback(task_info, instance_id, site_id, started, preset_id)
 
 
 def get_utc_timestamp():
@@ -278,6 +303,18 @@ def get_handler_name(path_: str, path_params: dict):
 
 def get_schema_path(handler: str):
     return SCHEMAS_PATH + handler[1:] + ".json"
+
+
+def get_default_preset():
+    preset = dict()
+    try:
+        with open("etc/default_preset.json", "r") as default_preset_file:
+            preset = loads(default_preset_file.read())
+    except IOError as e:
+        log.error("Can not open default preset file: '{}'".format(e))
+    except ValueError as e:
+        log.error("Can not parse preset file: '{}'".format(e))
+    return preset
 
 
 class HandlerInfo:
@@ -358,25 +395,42 @@ class Imunify:
             return await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
                                  headers={"internal-auth": "on"})
 
-    async def _scan(self, info: HandlerInfo):
+    async def _site_sid_scan(self, info: HandlerInfo):
+        try:
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
         request_body = await info.body
         response = await self.get_instance(info.instance_id)
         data = await response.json()
         log.debug(dumps(data))
         start_scan_time = get_utc_timestamp()
         host = data.get("host", "")
-        scan_path = request_body.get("scan_path", "/home")
-        site_id = request_body.get("site_id")
+        preset_id = request_body.get("preset_id")
+
+        where_statement = "id={}".format(preset_id)
+        table_fields = ['preset']
+        result = select(table='presets', table_fields=table_fields, where=where_statement)
+
+        if not result:
+            return web.Response(text="No such preset", status=404, content_type='text')
+
+        # TODO (d.vitvitskii) Сделать через base64
+        preset = "'{}'".format(result[0]["preset"])
+        log.debug("Scan params: {}".format(preset))
+        preset = base64.b64encode(result[0]["preset"].encode("utf-8"))
+        log.debug("Scan params: {}".format(preset))
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
                              name='scan',
-                             params=["--address", host, "--path", scan_path, "--started", str(start_scan_time)],
+                             params=["--address", host, "--params", preset.decode(), "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
 
         result = loads(output)
         loop = asyncio.get_event_loop()
-        loop.create_task(task_wait(result['task_id'], info.instance_id, site_id, info.ses6, start_scan_time, self.scan_done))
+        loop.create_task(task_wait(result['task_id'], info.instance_id, site_id, info.ses6, start_scan_time, preset_id, self.scan_done))
         result["started"] = start_scan_time
         return web.Response(text=dumps(result))
 
@@ -430,7 +484,51 @@ class Imunify:
         return web.Response(text=dumps(file_list))
 
     @staticmethod
-    def scan_done(task_info: dict, instance_id: str, site_id: int, started: int):
+    async def _site_sid_preset(info: HandlerInfo):
+        request_body = await info.body
+        try:
+            # TODO(d.vitvitskii) Проверять существует ли такой сайт
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        scan_type = request_body.get("scan_type")
+        preset = request_body.get("preset")
+
+        preset_info = {
+            "instance": info.instance_id,
+            "site_id": site_id,
+            "type": scan_type,
+            "preset": dumps(preset),
+            "date_use": get_utc_timestamp()
+        }
+
+        try:
+            # TODO(d.vitvitskii) Уйти от этой конструкции. Обработку ошибки сделать в insert()
+            preset_id = insert(table="presets", data=preset_info)
+        except Exception as e:
+            log.error("Error while creating preset: '{}'".format(e))
+            return web.Response(text="Error while creating preset", status=500, content_type='text')
+        result = {"preset_id": preset_id}
+        return web.Response(text=dumps(result))
+
+    @staticmethod
+    async def _preset_id_status(info: HandlerInfo):
+        request_body = await info.body
+        try:
+            preset_id = int(info.path_params.get("id"))
+            is_active = bool(request_body.get("is_active"))
+        except ValueError:
+            return web.HTTPBadRequest(text="Bad request")
+
+        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
+        fields = {"is_active": is_active}
+        update(table='presets', data=fields, where=where_statement)
+        return web.Response(text="")
+
+    @staticmethod
+    def scan_done(task_info: dict, instance_id: str, site_id: int, started: int, preset_id: int):
         """
         Callback которы будет вызван после завершения задачи на сканирование
         :param task_info: Таска
@@ -447,9 +545,14 @@ class Imunify:
             "instance": int(instance_id),
             "site_id": site_id,
             "task_id": task_info["id"],
-            "scan_date": started
+            "scan_date": started,
+            "preset_id": preset_id
         }
-        report = {"type": "full", "infected": []}
+
+        where_statement = "id={}".format(preset_id)
+        presets = select(table='presets', table_fields=['type'], where=where_statement)
+
+        report = {"type": presets[0]["type"], "infected": []}
 
         for infected_file in scan_report.get("infected", []):
             # TODO(pirozhok) Унести получение docroot в scan на момент старта
@@ -505,20 +608,150 @@ class Imunify:
         return web.Response(text=str(List(result)))
 
     @staticmethod
-    async def _scan_history(info: HandlerInfo):
-        reports = select(table="report",
-                         table_fields=["report", "scan_date"],
-                         where="instance={}".format(info.instance_id))
+    async def _site_sid_presets(info: HandlerInfo):
+        try:
+            # TODO(d.vitvitskii) Проверять существует ли такой сайт
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        # TODO(d.vtvitskii) Оптимизировать запрос
+        where_statement = "date_use IN (SELECT MAX(date_use) FROM imunify_presets " \
+                          "WHERE site_id={site} AND instance={instance} GROUP BY type) " \
+                          "AND site_id={site} AND instance={instance}".format(site=site_id, instance=info.instance_id)
+        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
+
+        presets_list = dict()
+        if not presets:
+            default_preset = get_default_preset()
+            if not default_preset:
+                return web.HTTPNotFound(text="Default preset not found")
+
+            preset_info = {
+                "instance": int(info.instance_id),
+                "site_id": site_id,
+                "type": str(ScanType.full),
+                "preset": str(dumps(default_preset)),
+                "date_use": get_utc_timestamp()
+            }
+            preset_id = insert(table="presets", data=preset_info)
+            default_preset["id"] = preset_id
+            default_preset["isActive"] = True
+            presets_list["full"] = default_preset
+            return web.Response(text=dumps(presets_list))
+
+        for data in presets:
+            preset = loads(data["preset"])
+            type = "full" if data["type"] == str(ScanType.full) else str(ScanType.partial)
+            preset["id"] = data["id"]
+            preset["isActive"] = bool(data["is_active"])
+            presets_list[type] = preset
+        return web.Response(text=dumps(presets_list))
+
+    @staticmethod
+    async def _site_sid_presets_default(info: HandlerInfo):
+        try:
+            # TODO(d.vitvitskii) Проверять существует ли такой сайт
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        try:
+            with open("etc/default_preset.json", "r") as default_preset_file:
+                default_preset = loads(default_preset_file.read())
+        except IOError as e:
+            log.error("Can not open default preset file: '{}'".format(e))
+            return web.Response(text="Bad request", status=400, content_type="text")
+        except ValueError as e:
+            log.error("Can not parse preset file: '{}'".format(e))
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        site_info = get_site_info(info.instance_id, site_id)
+        if not site_info:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        # TODO(d.vitvitskii) Пока хардкодим. Нужно обсудить как формировать путь
+        path = "/www/{}".format(site_info["docroot"])
+        default_preset["docroot"] = path
+
+        return web.Response(text=dumps(default_preset))
+
+    @staticmethod
+    async def _site_sid_preset_id(info: HandlerInfo):
+        try:
+            preset_id = int(info.path_params.get("id"))
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        # TODO(d.vtvitskii) Оптимизировать запрос
+        where_statement = "id={} AND site_id={} AND instance={}".format(preset_id, site_id, info.instance_id)
+        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
+
+        if not presets:
+            return web.HTTPNotFound(text="Preset not found")
+
+        preset_info = presets[0]
+        preset = loads(preset_info["preset"])
+        preset["id"] = preset_info["id"]
+        preset["isActive"] = preset_info["is_active"]
+
+        return web.Response(text=dumps(preset))
+
+    @staticmethod
+    async def _site_sid_scan_history(info: HandlerInfo):
         report_list = list()
+        try:
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            return web.Response(text=str(List(report_list)))
+
+        reports = select(table="report",
+                         table_fields=["report", "scan_date", "preset_id"],
+                         where="instance={} AND site_id={}".format(info.instance_id, site_id))
+
         for scan in reports:
             report = loads(scan["report"])
             report_list.append({
                 "date": scan["scan_date"],
-                "type": report["type"],
-                "infected": len(report["infected"])
+                "checkType": report["type"],
+                "infectedFilesCount": len(report["infected"]),
+                "curedFilesCount": 0,
+                "scanOptionId": scan["preset_id"]
             })
         return web.Response(text=str(List(report_list)))
 
+    @staticmethod
+    async def _site_sid_files_type(info: HandlerInfo):
+        file_list = list()
+        try:
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        file_type = info.path_params.get("type").upper()
+        if not FileStatus.has_value(file_type):
+            return web.Response(text="Bad request", status=400, content_type="text")
+
+        table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created",  "last_modified"]
+        files = select(table="files", table_fields=table_fields,  where="site_id={} AND instance={}".format(site_id, info.instance_id))
+
+        for file_info in files:
+            file = {
+                "id": file_info["id"],
+                "name": file_info["file"],
+                "status": file_info["status"],
+                "threatName": file_info["malicious_type"],
+                "path": file_info["path"],
+                "detectionDate": file_info["detected"],
+                "createdDate": file_info["created"],
+                "lastChangeDate": file_info["last_modified"]
+            }
+            file_list.append(file)
+        return web.Response(text=str(List(file_list)))
 
 imunify = Imunify()
 
@@ -532,15 +765,18 @@ def make_post(name):
 
 
 class DbField:
-    def __init__(self, name: str, field_type: str, size=None):
+    def __init__(self, name: str, field_type: str, size=None, default=None):
         self._name = name.lower()
         self._type = field_type.upper()
         self._size = size
+        self._default = default
 
     def __str__(self):
         data = "{} {}".format(self._name, self._type)
         if self._size:
             data += '(' + str(self._size) + ')'
+        if self._default:
+            data += " DEFAULT {}".format(str(self._default))
         return data
 
 
@@ -604,10 +840,16 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
-                    make_get('/scan/history'),
-                    make_get('/scan/result'),
                     make_get('/infected'),
-                    make_post('/scan')])
+                    make_get('/site/{sid}/files/{type}'),
+                    make_get('/site/{sid}/preset/{id}'),
+                    make_get('/site/{sid}/presets'),
+                    make_get('/site/{sid}/presets/default'),
+                    make_get('/site/{sid}/scan/history'),
+                    make_get('/scan/result'),
+                    make_post('/preset/{id}/status'),
+                    make_post('/site/{sid}/preset'),
+                    make_post('/site/{sid}/scan')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
     create_table("settings", fields)
@@ -617,7 +859,8 @@ if __name__ == '__main__':
               DbField("site_id", "INT"),
               DbField("task_id", "INT"),
               DbField("report", "JSON"),
-              DbField("scan_date", "BIGINT")]
+              DbField("scan_date", "BIGINT"),
+              DbField("preset_id", "BIGINT")]
     create_table("report", fields)
 
     fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
@@ -630,15 +873,17 @@ if __name__ == '__main__':
               DbField("malicious_type", "VARCHAR", 255),
               DbField("last_modified", "BIGINT"),
               DbField("detected", "BIGINT"),
-              DbField("created", "BIGINT"),]
+              DbField("created", "BIGINT")]
     indexes = [DbIndex("UNIQUE INDEX", "files", ["instance", "site_id", "path_hash"])]
     create_table("files", fields, indexes)
 
-    fields = [DbField("id", "INT AUTO_INCREMENT PRIMARY KEY"),
+    fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
               DbField("instance", "INT"),
               DbField("site_id", "INT"),
               DbField("type", ScanType.to_sql_enum()),
-              DbField("preset", "JSON")]
+              DbField("preset", "JSON"),
+              DbField("date_use", "BIGINT"),
+              DbField("is_active", "TINYINT", size=1, default="1")]
     create_table("presets", fields)
     install_imunufy()
 

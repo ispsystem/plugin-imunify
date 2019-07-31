@@ -28,7 +28,8 @@
 
   &:hover {
     color: #0991e2;
-    & path:not([fill-rule='evenodd']), text {
+    & path:not([fill-rule='evenodd']),
+    text {
       fill: #0991e2;
     }
     & rect {
@@ -47,7 +48,6 @@
 .button-container {
   margin-top: 30px;
 }
-
 
 .antivirus-card-table-list__footer {
   position: relative;

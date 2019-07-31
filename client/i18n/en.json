@@ -12,7 +12,7 @@
     }
   },
   "MENU_ITEMS": {
-    "PREVIEW": "Overview",
+    "DASHBOARD": "Overview",
     "INFECTED_FILES": "Infected files",
     "HISTORY": "Scan History"
   },

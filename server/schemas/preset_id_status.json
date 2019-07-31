@@ -1,0 +1,14 @@
+{
+  "title": "Change preset status",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema",
+  "description": "Handler fo changing preset status",
+  "type": "object",
+  "properties": {
+    "is_active": {
+      "type": "boolean",
+      "title": "Is preset active"
+    }
+  },
+  "required": ["is_active"],
+  "additionalProperties": false
+}

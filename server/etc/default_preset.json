@@ -1,5 +1,4 @@
 {
-  "id": null,
   "path": [],
   "checkMask": [],
   "excludeMask": [],
@@ -8,33 +7,15 @@
     "daily": {
       "hour": 15,
       "minutes": 45
-    },
-    "single": {
-      "date": 0
-    },
-    "weekly": {
-      "day": 0,
-      "time": {
-        "hour": 15,
-        "minutes": 45
-      }
-    },
-    "monthly": {
-      "day": 1,
-      "time": {
-        "hour": 15,
-        "minutes": 45
-      }
     }
   },
   "checkFileTypes": "critical",
   "saveCopyFilesDay": 14,
-  "cureFoundFiles": true,
+  "cureFoundFiles": false,
   "removeInfectedFileContent": true,
-  "checkDomainReputation": true,
-  "email": "EMAIL_PLACEHOLDER",
+  "checkDomainReputation": false,
   "parallelChecks": 1,
-  "ramForCheck": 256,
+  "ramForCheck": 1024,
   "fullLogDetails": false,
   "maxScanTime": 1,
   "autoUpdate": true

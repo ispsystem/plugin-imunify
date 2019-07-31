@@ -8,8 +8,8 @@ const httpProxy = require('http-proxy');
  */
 let SETTINGS = {
   cookie: 'ses6=A0746ACA5062C51F7DD54170',
-  target: 'https://vepp-1.vepp.evm.ru',
-  port: 8000
+  host: 'vepp-1.vepp.evm.ru',
+  port: 8000,
 };
 const customSettingsPath = path.join(process.cwd(), 'proxy.conf.json');
 
@@ -17,10 +17,12 @@ try {
   SETTINGS = require(customSettingsPath);
 } catch (error) {
   fs.writeJsonSync(customSettingsPath, SETTINGS, { spaces: 2 });
+  // eslint-disable-next-line no-console
   console.log(customSettingsPath, 'successfully created!');
 }
 
 /** debug settings */
+// eslint-disable-next-line no-console
 console.log('Proxy config object:', SETTINGS);
 /************************************************************************/
 
@@ -33,6 +35,7 @@ console.log('Proxy config object:', SETTINGS);
 const proxy = httpProxy.createProxyServer({});
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
+  proxyReq.setHeader('Host', SETTINGS.host);
   proxyReq.setHeader('cookie', SETTINGS.cookie);
 });
 
@@ -50,7 +53,7 @@ proxy.on('error', function(err, req, res) {
     res.end();
   } else {
     res.writeHead(500, {
-      'Content-Type': 'text/plain'
+      'Content-Type': 'text/plain',
     });
     res.end('Something went wrong. And we are reporting a custom error message.');
   }
@@ -60,10 +63,11 @@ const server = http.createServer(function(req, res) {
   // console.log(req.headers);
 
   proxy.web(req, res, {
-    target: SETTINGS.target,
-    secure: false
+    target: 'https://' + SETTINGS.host,
+    secure: false,
   });
 });
 
+// eslint-disable-next-line no-console
 console.log(`The proxy dev server is listening on port ${SETTINGS.port}...`);
 server.listen(SETTINGS.port);

@@ -1,0 +1,191 @@
+{
+  "title": "Add preset handler",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema",
+  "description": "Add scan preset to database for future scanning",
+  "type": "object",
+  "properties": {
+    "scan_type": {
+      "title": "Type of scanning",
+      "type": "string",
+      "enum": ["FULL", "PARTIAL"]
+    },
+    "preset": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "title": "Directory for scanning",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checkMask": {
+          "title": "Mask for include files for scanning",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludeMask": {
+          "title": "Mask for excluding files for scanning",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "intensity": {
+          "title": "Intensity of scanning",
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "scheduleTime": {
+          "title": "Scan frequency",
+          "type": "object",
+          "properties": {
+            "daily": {
+              "type": "object",
+              "properties": {
+                "hour": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 23
+                },
+                "minutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 59
+                }
+              },
+              "required":["hour", "minutes"]
+            },
+            "single": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 31
+                }
+              },
+              "required":["date"]
+            },
+            "weekly": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 6
+                },
+                "time": {
+                  "type": "object",
+                  "properties": {
+                    "hour": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 23
+                    },
+                    "minutes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 59
+                    }
+                  },
+                  "required":["hour", "minutes"]
+                }
+              },
+              "required":["day", "time"]
+            },
+            "monthly": {
+              "type": "object",
+              "properties": {
+                "day": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 31
+                },
+                "time": {
+                  "type": "object",
+                  "properties": {
+                    "hour": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 23
+                    },
+                    "minutes": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 59
+                    }
+                  },
+                  "required":["hour", "minutes"]
+                }
+              },
+              "required":["day", "time"]
+            }
+          },
+          "oneOf": [{"required": ["daily"]},
+                    {"required": ["single"]},
+                    {"required": ["weekly"]},
+                    {"required": ["monthly"]}]
+        },
+        "checkFileTypes": {
+          "title": "Check files",
+          "type": "string",
+          "enum": ["critical", "all", "except_media"]
+        },
+        "saveCopyFilesDay": {
+          "title": "Keep copies of cured files",
+          "type": "integer",
+          "minimum": 0
+        },
+        "cureFoundFiles": {
+          "title": "Cure found files",
+          "type": "boolean"
+        },
+        "removeInfectedFileContent": {
+          "title": "Remove infected file content",
+          "type": "boolean"
+        },
+        "checkDomainReputation": {
+          "title": "Check domain reputation",
+          "type": "boolean"
+        },
+        "email": {
+          "title": "Email for scan report",
+          "type": "string",
+          "format": "email"
+        },
+        "parallelChecks": {
+          "title": "Number of scan threads",
+          "type": "integer",
+          "minimum": 1
+        },
+        "ramForCheck": {
+          "title": "Ram for check",
+          "type": "integer",
+          "minimum": 1024
+        },
+        "fullLogDetails": {
+          "title": "Detailed log",
+          "type": "boolean"
+        },
+        "maxScanTime": {
+          "title": "Max scan time in hours",
+          "type": "integer",
+          "minimum": 0
+        },
+        "autoUpdate": {
+          "title": "Automatically update antivirus database",
+          "type": "boolean"
+        }
+      },
+      "required": ["path", "checkMask", "excludeMask", "intensity", "scheduleTime",
+                   "checkFileTypes", "saveCopyFilesDay", "cureFoundFiles",
+                   "removeInfectedFileContent", "checkDomainReputation",
+                   "parallelChecks", "ramForCheck", "fullLogDetails", "maxScanTime", "autoUpdate"]
+    }
+  },
+  "required": ["scan_type", "preset"],
+  "additionalProperties": false
+}
