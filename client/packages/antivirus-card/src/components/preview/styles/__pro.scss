@@ -1,0 +1,9 @@
+@import '../../shared';
+
+.antivirus-card-preview__pro {
+  @extend .antivirus-card-preview;
+  justify-content: center;
+  cursor: pointer;
+  text-align: center;
+  color: #187abd;
+}

@@ -12,6 +12,7 @@
     "build:aw": "lerna run --stream --scope antivirus-widget build && npm run lang",
     "build": "concurrently \"npm:build:ac\" \"npm:build:am\" \"npm:build:aw\" && node scripts/.make",
     "proxy": "node scripts/dev-proxy-server",
+    "cz": "git cz",
     "lang": "node --experimental-modules scripts/prepare-lang.js"
   },
   "keywords": [],
@@ -26,7 +27,7 @@
     "@types/node-polyglot": "^0.4.33",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
-    "commitizen": "^3.1.1",
+    "commitizen": "^3.1.2",
     "concurrently": "^4.1.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.0.0",
@@ -49,12 +50,6 @@
     "antivirus-menu": "file:packages/antivirus-menu",
     "antivirus-widget": "file:packages/antivirus-widget"
   },
-  "config": {
-    "commitizen": {
-      "path": "client/node_modules/git-cz",
-      "root": "client"
-    }
-  },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS -g 'commitlint.config.js'",
@@ -66,5 +61,10 @@
       "eslint --fix",
       "git add"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "client/git-cz/cz.js"
+    }
   }
 }

@@ -441,6 +441,10 @@ declare namespace LocalJSX {
     * open ImunifyAV+ buy modal
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * @todo : open new scan modal
+    */
+    'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
