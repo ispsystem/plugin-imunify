@@ -36,6 +36,10 @@ export namespace Components {
     */
     'notifier': Notifier;
     /**
+    * site ID from vepp
+    */
+    'siteId': number;
+    /**
     * main app translate service
     */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
@@ -325,6 +329,10 @@ declare namespace LocalJSX {
     * global notifier object
     */
     'notifier'?: Notifier;
+    /**
+    * site ID from vepp
+    */
+    'siteId'?: number;
     /**
     * main app translate service
     */

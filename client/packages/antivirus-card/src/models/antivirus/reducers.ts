@@ -72,6 +72,20 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         error: action.payload.error,
       };
     }
+
+    case ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS: {
+      return {
+        ...state,
+        history: action.payload.data,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_HISTORY_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
   }
 
   return state;

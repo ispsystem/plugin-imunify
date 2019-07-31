@@ -1,5 +1,15 @@
 import { Notifier, NotifierEvent } from '../../redux/reducers';
-import { scanBegin, scanFailure, scanning, scanSuccess, getStateBegin, getStateSuccess, getStateFailure } from './types';
+import {
+  scanBegin,
+  scanFailure,
+  scanning,
+  scanSuccess,
+  getStateBegin,
+  getStateSuccess,
+  getStateFailure,
+  getHistorySuccess,
+  getHistoryFailure,
+} from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
 import { AntivirusState, InfectedFile } from './state';
@@ -113,9 +123,30 @@ export namespace AntivirusActions {
         let json = await response.json();
 
         dispatch(getStateSuccess(json));
-        return json.items;
       } catch (error) {
         dispatch(getStateFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Get scanning history
+   *
+   * @param siteId - site ID from vepp
+   */
+  export function history(siteId: number) {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(getHistorySuccess(json.list));
+      } catch (error) {
+        dispatch(getHistoryFailure(error));
       }
     };
   }
