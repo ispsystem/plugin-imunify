@@ -15,7 +15,7 @@
   "removeInfectedFileContent": true,
   "checkDomainReputation": false,
   "parallelChecks": 1,
-  "ramForCheck": 256,
+  "ramForCheck": 1024,
   "fullLogDetails": false,
   "maxScanTime": 1,
   "autoUpdate": true

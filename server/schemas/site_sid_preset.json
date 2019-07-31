@@ -13,7 +13,7 @@
       "type": "object",
       "properties": {
         "path": {
-          "title": "Array of directories for scanning",
+          "title": "Directory for scanning",
           "type": "array",
           "items": {
             "type": "string"
@@ -164,7 +164,7 @@
         "ramForCheck": {
           "title": "Ram for check",
           "type": "integer",
-          "minimum": 256
+          "minimum": 1024
         },
         "fullLogDetails": {
           "title": "Detailed log",
