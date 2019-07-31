@@ -31,7 +31,13 @@ import {
 
 export namespace Components {
   interface AntivirusCard {
+    /**
+    * global notifier object
+    */
     'notifier': Notifier;
+    /**
+    * main app translate service
+    */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
@@ -62,6 +68,7 @@ export namespace Components {
     */
     'unwrap': boolean;
   }
+  interface AntivirusCardDashboard {}
   interface AntivirusCardDropdown {
     /**
     * Max width for dropdown content
@@ -69,6 +76,7 @@ export namespace Components {
     'maxWidth': string;
     /**
     * Toggle dropdown state
+    * @param event - DOM event
     */
     'toggle': (event: Event) => Promise<void>;
   }
@@ -179,6 +187,12 @@ declare global {
     new (): HTMLAntivirusCardCheckboxElement;
   };
 
+  interface HTMLAntivirusCardDashboardElement extends Components.AntivirusCardDashboard, HTMLStencilElement {}
+  var HTMLAntivirusCardDashboardElement: {
+    prototype: HTMLAntivirusCardDashboardElement;
+    new (): HTMLAntivirusCardDashboardElement;
+  };
+
   interface HTMLAntivirusCardDropdownElement extends Components.AntivirusCardDropdown, HTMLStencilElement {}
   var HTMLAntivirusCardDropdownElement: {
     prototype: HTMLAntivirusCardDropdownElement;
@@ -284,6 +298,7 @@ declare global {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
     'antivirus-card-checkbox': HTMLAntivirusCardCheckboxElement;
+    'antivirus-card-dashboard': HTMLAntivirusCardDashboardElement;
     'antivirus-card-dropdown': HTMLAntivirusCardDropdownElement;
     'antivirus-card-hint': HTMLAntivirusCardHintElement;
     'antivirus-card-history': HTMLAntivirusCardHistoryElement;
@@ -306,7 +321,13 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusCard extends JSXBase.HTMLAttributes<HTMLAntivirusCardElement> {
+    /**
+    * global notifier object
+    */
     'notifier'?: Notifier;
+    /**
+    * main app translate service
+    */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
@@ -340,6 +361,12 @@ declare namespace LocalJSX {
     * Text wrapping around the checkbox
     */
     'unwrap'?: boolean;
+  }
+  interface AntivirusCardDashboard extends JSXBase.HTMLAttributes<HTMLAntivirusCardDashboardElement> {
+    /**
+    * open ImunifyAV+ buy modal
+    */
+    'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
@@ -391,7 +418,13 @@ declare namespace LocalJSX {
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardPreview extends JSXBase.HTMLAttributes<HTMLAntivirusCardPreviewElement> {
+    /**
+    * to change selected tab item (horizontal menu)
+    */
     'onClickItem'?: (event: CustomEvent<any>) => void;
+    /**
+    * to open buy modal
+    */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
@@ -455,6 +488,7 @@ declare namespace LocalJSX {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
     'antivirus-card-checkbox': AntivirusCardCheckbox;
+    'antivirus-card-dashboard': AntivirusCardDashboard;
     'antivirus-card-dropdown': AntivirusCardDropdown;
     'antivirus-card-hint': AntivirusCardHint;
     'antivirus-card-history': AntivirusCardHistory;

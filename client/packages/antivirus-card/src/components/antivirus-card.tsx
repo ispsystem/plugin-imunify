@@ -25,32 +25,28 @@ import { AntivirusActions } from '../models/antivirus/actions';
 })
 export class AntivirusCard {
   /** reference to modal element */
-  public buyModal: HTMLAntivirusCardModalElement;
+  buyModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
-  public proPeriods;
+  proPeriods;
 
   /** selected period */
-  @State()
-  public selectedPeriod = 0;
+  @State() selectedPeriod = 0;
   /** translate object */
-  @State()
-  public t: ITranslate;
-
+  @State() t: ITranslate;
   /** nested components */
   @State()
-  public items: {
+  items: {
     label: string;
     active?: boolean;
     component: () => JSX.Element;
   }[];
 
-  @Prop()
-  public notifier: Notifier;
-  @Prop()
-  public translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
-
-  @Prop({ context: 'store' })
-  public store: Store<RootState, ActionTypes>;
+  /** global notifier object */
+  @Prop() notifier: Notifier;
+  /** main app translate service */
+  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+  /** global store object */
+  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /**
    * Update messages when change translate object
@@ -77,8 +73,8 @@ export class AntivirusCard {
 
     this.items = [
       {
-        label: this.t.msg(['MENU_ITEMS', 'PREVIEW']),
-        component: () => <antivirus-card-preview />,
+        label: this.t.msg(['MENU_ITEMS', 'DASHBOARD']),
+        component: () => <antivirus-card-dashboard />,
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
@@ -92,6 +88,36 @@ export class AntivirusCard {
 
     this.items[activeIndex].active = true;
   }
+
+  /**
+   * Listening event to open buy modal
+   */
+  @Listen('openBuyModal')
+  openBuyModal(): void {
+    this.buyModal.visible = true;
+  }
+
+  /**
+   * Handle click by an item
+   * @param e - event
+   */
+  @Listen('clickItem')
+  handleClickItem(e: MouseEvent): void {
+    const beforeIndex = this.items.findIndex(item => item.active);
+    this.items[beforeIndex].active = false;
+    this.items[e.detail].active = true;
+
+    this.items = [...this.items];
+  }
+
+  /** Method to get available antivirus features */
+  checkFeatures: typeof AntivirusActions.feature;
+  /** Method to update global state */
+  updateState: typeof AntivirusActions.updateState;
+  /** Method to wait a scan result */
+  waitScanResult: typeof AntivirusActions.waitScanResult;
+  /** Method to load translates from server */
+  loadTranslate: typeof TranslateActions.load;
 
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
@@ -145,36 +171,6 @@ export class AntivirusCard {
       });
     }
   }
-
-  /**
-   * Listening event to open buy modal
-   */
-  @Listen('openBuyModal')
-  openBuyModal(): void {
-    this.buyModal.visible = true;
-  }
-
-  /**
-   * Handle click by an item
-   * @param e - event
-   */
-  @Listen('clickItem')
-  handleClickItem(e: MouseEvent): void {
-    const beforeIndex = this.items.findIndex(item => item.active);
-    this.items[beforeIndex].active = false;
-    this.items[e.detail].active = true;
-
-    this.items = [...this.items];
-  }
-
-  /** Method to get available antivirus features */
-  public checkFeatures: typeof AntivirusActions.feature;
-  /** Method to update global state */
-  public updateState: typeof AntivirusActions.updateState;
-  /** Method to wait a scan result */
-  public waitScanResult: typeof AntivirusActions.waitScanResult;
-  /** Method to load translates from server */
-  public loadTranslate: typeof TranslateActions.load;
 
   render() {
     return (

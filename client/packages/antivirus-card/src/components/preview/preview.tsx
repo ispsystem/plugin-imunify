@@ -1,20 +1,18 @@
 import '@stencil/redux';
 
 import { Component, h, Host, State, Prop, Event, EventEmitter, Watch } from '@stencil/core';
-import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
 import { StartCheckIcon } from '../icons/start-check';
-import { SettingsIcon } from '../icons/settings';
 import { LockIcon } from '../icons/lock';
-import { CheckListBadIcon } from '../icons/check-list-bad';
 import { Store } from '@stencil/redux';
 import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
-import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
-import { CheckListGoodIcon } from '../icons/check-list-good';
 import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
+import { PreviewStatus } from './PreviewStatus';
+import { PreviewInfectedFiles } from './PreviewInfectedFiles';
+import { PreviewInBlackLists } from './PreviewInBlackLists';
 
 /**
  * Preview component for antivirus-card
@@ -24,31 +22,59 @@ import { AntivirusActions } from '../../models/antivirus/actions';
   styleUrl: 'styles/$.scss',
 })
 export class Preview {
-  /** Ref for dropdown element */
-  public dropdownEl!: HTMLAntivirusCardDropdownElement;
+  /** ref for dropdown element */
+  dropdownEl: HTMLAntivirusCardDropdownElement;
 
+  /** global stile */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+
+  /** scan loading */
   @State() scanning: AntivirusState['scanning'];
+  /** flag has schedule */
   @State() hasScheduledActions: AntivirusState['hasScheduledActions'];
+  /** flag if antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
+  /** list infected files */
   @State() infectedFiles: AntivirusState['infectedFiles'];
+  /** flag if a domain is in black lista */
   @State() inBlackLists: AntivirusState['inBlackLists'];
+  /** history list */
   @State() history: AntivirusState['history'];
+  /** global notifier object */
   @State() notifier: Notifier;
   /** translate object */
   @State() t: ITranslate;
-
+  /** last scan date as string */
   @State() lastScan: string;
 
+  /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
+  /** to change selected tab item (horizontal menu) */
   @Event({
     bubbles: true,
     composed: true,
   })
   clickItem: EventEmitter;
 
+  /**
+   * Change last scan date
+   *
+   * @param newValue - new history
+   */
+  @Watch('history')
+  setLastScan(newValue: AntivirusState['history']) {
+    if (Array.isArray(newValue) && newValue.length > 0) {
+      const date = newValue[newValue.length - 1].date;
+      this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
+    }
+  }
+
+  /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
 
+  /**
+   * Lifecycle
+   */
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
     this.store.mapDispatchToProps(this, {
@@ -58,30 +84,29 @@ export class Preview {
     this.setLastScan(this.history);
   }
 
-  @Watch('history')
-  setLastScan(newValue: AntivirusState['history']) {
-    if (Array.isArray(newValue) && newValue.length > 0) {
-      const date = newValue[newValue.length - 1].date;
-      this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
-    }
-  }
-
+  /**
+   * Get day, month and year from Data
+   *
+   * @param date - date obj
+   */
   getDayMonthYearAsStr(date: Date) {
     return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
   }
 
+  /**
+   * Get time from Date
+   *
+   * @param date - date obj
+   */
   getTimeAsStr(date: Date) {
     return `${date.getHours()}.${pad(date.getMinutes())}`;
   }
 
-  disinfectVirusFiles() {
-    if (this.isProVersion) {
-      throw 'disinfectVirusFiles';
-    } else {
-      this.openBuyModal.emit();
-    }
-  }
-
+  /**
+   * Handle click to black list help link
+   *
+   * @param ev - mouse click
+   */
   handleBlackListsHelpClick(ev: MouseEvent) {
     this.dropdownEl.toggle(ev);
   }
@@ -89,19 +114,40 @@ export class Preview {
   render() {
     return (
       <Host>
-        {this.renderScheduleSetting()}
-        {this.renderStatus()}
-        {this.renderScheduleMessage()}
+        <PreviewStatus
+          msgWaitCheck={this.t.msg(['PREVIEW', 'WAIT_CHECK'])}
+          msgLastCheck={this.t.msg(['PREVIEW', 'LAST_CHECK'])}
+          lastScan={this.lastScan}
+          scanning={this.scanning}
+        ></PreviewStatus>
 
-        {this.infectedFiles && this.infectedFiles.length > 0
-          ? this.renderHasInfectedFiles(this.infectedFiles.length)
-          : this.renderHasNotInfectedFiles()}
+        {this.hasScheduledActions ? (
+          <p class="next-check">
+            {this.t.msg(['PREVIEW', 'NEXT_CHECK'])}
+            <span style={{ 'margin-left': '5px', 'vertical-align': 'middle' }}>
+              <LockIcon />
+            </span>
+          </p>
+        ) : null}
 
-        {this.inBlackLists ? this.renderInBlackLists() : this.renderNotInBlackLists()}
+        <PreviewInfectedFiles
+          t={this.t}
+          clickItem={this.clickItem}
+          infectedFilesCount={Array.isArray(this.infectedFiles) ? this.infectedFiles.length : 0}
+          isProVersion={this.isProVersion}
+          openBuyModal={this.openBuyModal}
+        ></PreviewInfectedFiles>
+
+        <PreviewInBlackLists
+          t={this.t}
+          inBlackLists={this.inBlackLists}
+          dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
+        ></PreviewInBlackLists>
 
         <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
+
         <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
@@ -109,98 +155,4 @@ export class Preview {
       </Host>
     );
   }
-
-  renderStatus = () => {
-    return this.scanning ? (
-      <div style={{ display: 'flex' }}>
-        <p class="before-check">{this.t.msg(['PREVIEW', 'WAIT_CHECK'])}</p>
-        <div class="antivirus-card-preview__spinner">
-          <antivirus-card-spinner-round />
-        </div>
-      </div>
-    ) : (
-      <p class="before-check">
-        {this.t.msg(['PREVIEW', 'LAST_CHECK'])} {this.lastScan}
-      </p>
-    );
-  };
-
-  renderScheduleMessage = () => {
-    return this.hasScheduledActions ? (
-      <p class="next-check">
-        {this.t.msg(['PREVIEW', 'NEXT_CHECK'])}
-        <span style={{ 'margin-left': '5px', 'vertical-align': 'middle' }}>
-          <LockIcon />
-        </span>
-      </p>
-    ) : null;
-  };
-
-  renderScheduleSetting = () => {
-    return this.hasScheduledActions ? (
-      <div style={{ position: 'absolute', right: '20px', cursor: 'pointer' }}>
-        <SettingsIcon />
-      </div>
-    ) : null;
-  };
-
-  renderHasInfectedFiles = (infectedFilesCount: number) => {
-    return (
-      <div class="antivirus-card-preview__container">
-        <VirusesCheckBadIcon />
-        <div class="antivirus-card-preview__container-msg">
-          <span>
-            {this.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_1'], infectedFilesCount)} {infectedFilesCount}{' '}
-            {this.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_2'], infectedFilesCount)}
-          </span>
-          <div style={{ display: 'inline' }}>
-            <a class="link link_small link_indent-right" onClick={this.disinfectVirusFiles.bind(this)}>
-              {this.t.msg(['PREVIEW', 'CURE'])}
-            </a>
-            <a class="link link_small" onClick={() => this.clickItem.emit(1)}>
-              {this.t.msg(['PREVIEW', 'DETAIL'])}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  renderHasNotInfectedFiles = () => {
-    return (
-      <div class="antivirus-card-preview__container">
-        <VirusesCheckGoodIcon />
-        <div class="antivirus-card-preview__container-msg">
-          <span>{this.t.msg(['PREVIEW', 'NOT_INFECTED_FILES'])}</span>
-        </div>
-      </div>
-    );
-  };
-
-  renderInBlackLists = () => {
-    return (
-      <div class="antivirus-card-preview__container">
-        <CheckListBadIcon />
-        <div class="antivirus-card-preview__container-msg">
-          <span>{this.t.msg(['PREVIEW', 'IN_BLACK_LISTS'])}</span>
-          <div style={{ display: 'inline' }}>
-            <a onClick={this.handleBlackListsHelpClick.bind(this)} class="link link_small">
-              {this.t.msg(['PREVIEW', 'HOW_TO_FIX'])}
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  renderNotInBlackLists = () => {
-    return (
-      <div class="antivirus-card-preview__container">
-        <CheckListGoodIcon />
-        <div class="antivirus-card-preview__container-msg">
-          <span>{this.t.msg(['PREVIEW', 'NOT_IN_BLACK_LISTS'])}</span>
-        </div>
-      </div>
-    );
-  };
 }

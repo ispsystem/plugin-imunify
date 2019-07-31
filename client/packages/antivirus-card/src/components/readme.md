@@ -7,17 +7,17 @@
 
 ## Properties
 
-| Property           | Attribute | Description | Type                                                                          | Default     |
-| ------------------ | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
-| `notifier`         | --        |             | `Notifier`                                                                    | `undefined` |
-| `translateService` | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| Property           | Attribute | Description                | Type                                                                          | Default     |
+| ------------------ | --------- | -------------------------- | ----------------------------------------------------------------------------- | ----------- |
+| `notifier`         | --        | global notifier object     | `Notifier`                                                                    | `undefined` |
+| `translateService` | --        | main app translate service | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
 
 
 ## Dependencies
 
 ### Depends on
 
-- [antivirus-card-preview](preview)
+- [antivirus-card-dashboard](dashboard)
 - [antivirus-card-infected-files](infected-files)
 - [antivirus-card-history](history)
 - [antivirus-card-navigation](navigation)
@@ -29,7 +29,7 @@
 ### Graph
 ```mermaid
 graph TD;
-  antivirus-card --> antivirus-card-preview
+  antivirus-card --> antivirus-card-dashboard
   antivirus-card --> antivirus-card-infected-files
   antivirus-card --> antivirus-card-history
   antivirus-card --> antivirus-card-navigation
@@ -37,8 +37,9 @@ graph TD;
   antivirus-card --> antivirus-card-switcher
   antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
-  antivirus-card-preview --> antivirus-card-spinner-round
+  antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-preview --> antivirus-card-dropdown
+  antivirus-card-preview --> antivirus-card-spinner-round
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
