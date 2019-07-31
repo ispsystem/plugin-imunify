@@ -44,13 +44,15 @@ export interface NotifierEvent {
 
 // This interface represents app state by nesting feature states.
 export interface RootState {
-  antivirus: AntivirusState;
+  siteId: number;
+  antivirus?: AntivirusState;
   notifier: Notifier;
-  translate: ITranslate;
+  translate?: ITranslate;
 }
 
 // Combine feature reducers into a single root reducer
 export const rootReducer = combineReducers({
+  siteId: (state: number = null) => state,
   antivirus: antivirusReducer,
   notifier: (state: Notifier = null) => state,
   translate: translateReducer,

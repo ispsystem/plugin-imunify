@@ -36,6 +36,10 @@ export namespace Components {
     */
     'notifier': Notifier;
     /**
+    * site ID from vepp
+    */
+    'siteId': number;
+    /**
     * main app translate service
     */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
@@ -326,6 +330,10 @@ declare namespace LocalJSX {
     */
     'notifier'?: Notifier;
     /**
+    * site ID from vepp
+    */
+    'siteId'?: number;
+    /**
     * main app translate service
     */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
@@ -367,10 +375,13 @@ declare namespace LocalJSX {
     * open ImunifyAV+ buy modal
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+<<<<<<< Updated upstream
     /**
     * @todo : open new scan modal
     */
     'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
+=======
+>>>>>>> Stashed changes
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
