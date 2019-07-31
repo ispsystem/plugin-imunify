@@ -53,7 +53,7 @@ export class History {
                 <span class="add-text">{this.getTimeAsStr(new Date(historyItem.date))}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{historyItem.checkType}</span>
+                <span class="isp-table-cell__main-text">{this.t.msg(['HISTORY_TAB', 'CHECK_TYPE', historyItem.checkType])}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>

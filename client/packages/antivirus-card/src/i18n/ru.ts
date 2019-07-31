@@ -72,6 +72,10 @@ const lang = {
       CELL_2: 'Тип',
       CELL_3: 'Найдено угроз',
     },
+    CHECK_TYPE: {
+      FULL: 'полная',
+      PARTIAL: 'выборочная',
+    },
   },
   NEW_SCAN_BTN: 'Новое сканирование',
 };
