@@ -31,7 +31,7 @@ interface HistoryItem {
   infectedFilesCount: number;
   // count cured files
   curedFilesCount: number;
-
+  // scan options preset ID
   scanOptionId: number;
 }
 

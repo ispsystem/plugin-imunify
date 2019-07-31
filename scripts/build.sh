@@ -11,13 +11,13 @@ build() {
   (cd ./client && npm run build)
 
   # Copy server files
-  cp -R ./server/. ./$build_folder/ & cp ./meta.json ./$build_folder/
+  cp -R ./server/. ./$build_folder/ && cp ./meta.json ./$build_folder/
 
 }
 
 # Method for archiving build folder
 archive() {
-  (cd $build_folder && zip plugin -r * )
+  (cd $build_folder && zip -r imunify-plugin.zip * )
 }
 
 case $1 in 

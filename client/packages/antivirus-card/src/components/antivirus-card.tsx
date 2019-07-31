@@ -30,6 +30,15 @@ export class AntivirusCard {
   /** periods for PRO version */
   proPeriods;
 
+  /** site ID from vepp */
+  @Prop() siteId: number;
+  /** global notifier object */
+  @Prop() notifier: Notifier;
+  /** main app translate service */
+  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+  /** global store object */
+  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+
   /** selected period */
   @State() selectedPeriod = 0;
   /** translate object */
@@ -41,13 +50,6 @@ export class AntivirusCard {
     active?: boolean;
     component: () => JSX.Element;
   }[];
-
-  /** global notifier object */
-  @Prop() notifier: Notifier;
-  /** main app translate service */
-  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
-  /** global store object */
-  @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /**
    * Update messages when change translate object
@@ -120,6 +122,8 @@ export class AntivirusCard {
 
   /** Method to get available antivirus features */
   checkFeatures: typeof AntivirusActions.feature;
+  /** Method to get available antivirus features */
+  getScanHistory: typeof AntivirusActions.history;
   /** Method to update global state */
   updateState: typeof AntivirusActions.updateState;
   /** Method to wait a scan result */
@@ -130,6 +134,7 @@ export class AntivirusCard {
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
       configureStore({
+        siteId: this.siteId,
         notifier: this.notifier,
       }),
     );
@@ -140,6 +145,7 @@ export class AntivirusCard {
 
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
+      getScanHistory: AntivirusActions.history,
       updateState: AntivirusActions.updateState,
       waitScanResult: AntivirusActions.waitScanResult,
       loadTranslate: TranslateActions.load,
@@ -156,6 +162,8 @@ export class AntivirusCard {
     }
 
     await this.checkFeatures();
+
+    await this.getScanHistory(this.siteId);
 
     if (this.notifier !== undefined) {
       this.notifier.taskList$().subscribe((d: NotifierEvent[]) => {

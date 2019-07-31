@@ -42,6 +42,10 @@ export namespace Components {
     */
     'notifier': Notifier;
     /**
+    * site ID from vepp
+    */
+    'siteId': number;
+    /**
     * main app translate service
     */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
@@ -399,6 +403,10 @@ declare namespace LocalJSX {
     */
     'notifier'?: Notifier;
     'onOpenNewScanModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * site ID from vepp
+    */
+    'siteId'?: number;
     /**
     * main app translate service
     */
