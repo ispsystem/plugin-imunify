@@ -394,7 +394,12 @@ class Imunify:
             return await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
                                  headers={"internal-auth": "on"})
 
-    async def _scan(self, info: HandlerInfo):
+    async def _site_sid_scan(self, info: HandlerInfo):
+        try:
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            return web.Response(text="Bad request", status=400, content_type="text")
+
         request_body = await info.body
         response = await self.get_instance(info.instance_id)
         data = await response.json()
@@ -466,9 +471,15 @@ class Imunify:
         return web.Response(text=dumps(file_list))
 
     @staticmethod
-    async def _preset(info: HandlerInfo):
+    async def _site_sid_preset(info: HandlerInfo):
         request_body = await info.body
-        site_id = request_body.get("site_id")
+        try:
+            # TODO(d.vitvitskii) Проверять существует ли такой сайт
+            site_id = int(info.path_params.get("sid"))
+        except ValueError:
+            # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
+            return web.Response(text="Bad request", status=400, content_type="text")
+
         scan_type = request_body.get("scan_type")
         preset = request_body.get("preset")
 
@@ -579,10 +590,10 @@ class Imunify:
         return web.Response(text=str(List(result)))
 
     @staticmethod
-    async def _presets_site(info: HandlerInfo):
+    async def _site_sid_presets(info: HandlerInfo):
         try:
             # TODO(d.vitvitskii) Проверять существует ли такой сайт
-            site_id = int(info.path_params.get("site"))
+            site_id = int(info.path_params.get("sid"))
         except ValueError:
             # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
             return web.Response(text="Bad request", status=400, content_type="text")
@@ -621,10 +632,10 @@ class Imunify:
         return web.Response(text=dumps(presets_list))
 
     @staticmethod
-    async def _presets_default_site(info: HandlerInfo):
+    async def _site_sid_presets_default(info: HandlerInfo):
         try:
             # TODO(d.vitvitskii) Проверять существует ли такой сайт
-            site_id = int(info.path_params.get("site"))
+            site_id = int(info.path_params.get("sid"))
         except ValueError:
             # TODO(d.vitvitskii) Определиться с ошибкой и форматом ответа
             return web.Response(text="Bad request", status=400, content_type="text")
@@ -650,10 +661,10 @@ class Imunify:
         return web.Response(text=dumps(default_preset))
 
     @staticmethod
-    async def _scan_history_site(info: HandlerInfo):
+    async def _site_sid_scan_history(info: HandlerInfo):
         report_list = list()
         try:
-            site_id = int(info.path_params.get("site"))
+            site_id = int(info.path_params.get("sid"))
         except ValueError:
             return web.Response(text=str(List(report_list)))
 
@@ -670,12 +681,11 @@ class Imunify:
             })
         return web.Response(text=str(List(report_list)))
 
-
     @staticmethod
-    async def _files_site_type(info: HandlerInfo):
+    async def _site_sid_files_type(info: HandlerInfo):
         file_list = list()
         try:
-            site_id = int(info.path_params.get("site"))
+            site_id = int(info.path_params.get("sid"))
         except ValueError:
             return web.Response(text="Bad request", status=400, content_type="text")
 
@@ -787,15 +797,15 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
-                    make_get('/files/{site}/{type}'),
                     make_get('/infected'),
-                    make_get('/presets/{site}'),
-                    make_get('/presets/default/{site}'),
-                    make_get('/scan/history/{site}'),
+                    make_get('/site/{sid}/files/{type}'),
+                    make_get('/site/{sid}/presets'),
+                    make_get('/site/{sid}/presets/default'),
+                    make_get('/site/{sid}/scan/history'),
                     make_get('/scan/result'),
-                    make_post('/preset'),
+                    make_post('/site/{sid}/preset'),
                     make_post('/preset/{id}/status'),
-                    make_post('/scan')])
+                    make_post('/site/{sid}/scan')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
     create_table("settings", fields)
