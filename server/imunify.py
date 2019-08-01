@@ -472,18 +472,18 @@ class Imunify:
 
         attempt = 0
 
-        result = list()
-        while attempt < MAX_REQUEST_ATTEMPTS and not result:
-            result = select(table='report', table_fields=['report', 'scan_date'], where=where_statement)
+        report_result = list()
+        while attempt < MAX_REQUEST_ATTEMPTS and not report_result:
+            report_result = select(table='report', table_fields=['report', 'scan_date', 'preset_id'], where=where_statement)
             attempt += 1
             time.sleep(0.5)
-        log.debug("Attempt: '{}'. Result: {}".format(attempt, result))
+        log.debug("Attempt: '{}'. Result: {}".format(attempt, report_result))
 
-        if not result:
+        if not report_result:
             return web.Response(text=dumps(list()))
 
         file_list = list()
-        for file_id in loads(result[0]["report"])["infected"]:
+        for file_id in loads(report_result[0]["report"])["infected"]:
             where_statement = "id={}".format(file_id, date)
             table_fields = ['id', 'file', 'status', 'malicious_type', 'path', 'detected', 'created', 'last_modified']
             result = select(table='files', table_fields=table_fields, where=where_statement)
@@ -500,7 +500,21 @@ class Imunify:
                 "lastChangeDate": file["last_modified"]
             }
             file_list.append(infected_file)
-        return web.Response(text=dumps(file_list))
+        report = loads(report_result[0]["report"])
+        response = {
+            "historyItem": {
+                "date": report_result[0]["scan_date"],
+                "checkType": report["type"],
+                "infectedFilesCount": len(file_list),
+                "curedFilesCount": 0,
+                "scanOptionId": report_result[0]["preset_id"]
+            },
+            "infectedFiles": {
+                "list": file_list,
+                "size": len(file_list)
+            }
+        }
+        return web.Response(text=dumps(response))
 
     @staticmethod
     async def _site_sid_preset(info: HandlerInfo):
