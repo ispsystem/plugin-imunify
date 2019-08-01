@@ -176,6 +176,28 @@ export namespace AntivirusActions {
   }
 
   /**
+   * Get active scan presets
+   *
+   * @param siteId - site ID from vepp
+   */
+  export function scanSettingPresets(siteId: number) {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(getInfectedFilesSuccess(json));
+      } catch (error) {
+        dispatch(getInfectedFilesFailure(error));
+      }
+    };
+  }
+
+  /**
    * Update antivirus state
    *
    * @param state - new state

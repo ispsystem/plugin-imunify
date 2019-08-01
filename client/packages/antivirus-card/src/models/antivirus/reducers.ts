@@ -100,6 +100,20 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         error: action.payload.error,
       };
     }
+
+    case ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS: {
+      return {
+        ...state,
+        scanPreset: action.payload.data,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_PRESETS_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
   }
 
   return state;
