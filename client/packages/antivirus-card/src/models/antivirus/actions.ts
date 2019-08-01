@@ -128,7 +128,6 @@ export namespace AntivirusActions {
         let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
         handleErrors(response);
         let json = await response.json();
-        json['isProVersion'] = true;
 
         dispatch(getStateSuccess(json));
       } catch (error) {
