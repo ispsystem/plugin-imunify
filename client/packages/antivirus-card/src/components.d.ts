@@ -171,9 +171,9 @@ export namespace Components {
   }
   interface AntivirusCardZoom {
     /**
-    * Values for initial field values
+    * Values for initial fields
     */
-    'values': Array<string>;
+    'values': string[];
   }
 }
 
@@ -516,9 +516,9 @@ declare namespace LocalJSX {
     */
     'onChanged'?: (event: CustomEvent<string[]>) => void;
     /**
-    * Values for initial field values
+    * Values for initial fields
     */
-    'values'?: Array<string>;
+    'values'?: string[];
   }
 
   interface IntrinsicElements {

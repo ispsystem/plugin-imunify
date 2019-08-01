@@ -7,23 +7,23 @@ import { DeleteIcon } from '../icons/delete';
 @Component({
   tag: 'antivirus-card-zoom',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Zoom {
-
-  /** Values for initial field values */
-  @Prop({ mutable: true }) values: Array<string> = [''];
+  /** Values for initial fields */
+  @Prop({ mutable: true }) values: string[] = [''];
 
   @Watch('values')
   updateValues() {
     this.changed.emit(this.values);
   }
+
   /** Change values event */
   @Event({ bubbles: false }) changed: EventEmitter<string[]>;
 
   /**
    * Method for delete field in values by index
-   * @param index - element index 
+   * @param index - element index
    */
   deleteField(index: number) {
     this.values.splice(index, 1);
@@ -31,7 +31,7 @@ export class Zoom {
   }
 
   /**
-   * Mwthod for update field value by index
+   * Method for update field value by index
    * @param newValue - new value for element
    * @param index - element index
    */
@@ -44,29 +44,29 @@ export class Zoom {
     return (
       <div>
         <div class="fields-container">
-          {
-            this.values.map((value, index) =>
-              <div>
-                <antivirus-card-input
-                  inlineBlock value={value}
-                  onChanged={(event) => { event.stopPropagation(); this.updateValue(event.detail, index) }}
-                />
-                {index !== 0 && <span onClick={() => this.deleteField(index)}><DeleteIcon /></span>
-                }
-              </div>
-            )
-          }
+          {this.values.map((value, index) => (
+            <div>
+              <antivirus-card-input
+                inlineBlock
+                value={value}
+                onChanged={event => {
+                  event.stopPropagation();
+                  this.updateValue(event.detail, index);
+                }}
+              />
+              {index !== 0 && (
+                <span onClick={() => this.deleteField(index)}>
+                  <DeleteIcon />
+                </span>
+              )}
+            </div>
+          ))}
         </div>
-        <a
-          class="isp-link"
-          style={{ 'margin-top': '5px' }}
-          onClick={() => this.values = [...this.values, '']}
-        >
+        <a class="isp-link" style={{ 'margin-top': '5px' }} onClick={() => (this.values = [...this.values, ''])}>
           <slot />
         </a>
         <slot name="additionText" />
       </div>
     );
   }
-
 }

@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description                     | Type       | Default |
-| -------- | --------- | ------------------------------- | ---------- | ------- |
-| `values` | --        | Values for initial field values | `string[]` | `['']`  |
+| Property | Attribute | Description               | Type       | Default |
+| -------- | --------- | ------------------------- | ---------- | ------- |
+| `values` | --        | Values for initial fields | `string[]` | `['']`  |
 
 
 ## Events
