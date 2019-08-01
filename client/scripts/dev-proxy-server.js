@@ -35,7 +35,8 @@ console.log('Proxy config object:', SETTINGS);
 const proxy = httpProxy.createProxyServer({});
 
 proxy.on('proxyReq', function(proxyReq, req, res, options) {
-  proxyReq.setHeader('Host', SETTINGS.host);
+  proxyReq.setHeader('Origin', 'https://' + SETTINGS.host);
+  proxyReq.setHeader('Referer', 'https://' + SETTINGS.host + '/');
   proxyReq.setHeader('cookie', SETTINGS.cookie);
 });
 
@@ -65,6 +66,7 @@ const server = http.createServer(function(req, res) {
   proxy.web(req, res, {
     target: 'https://' + SETTINGS.host,
     secure: false,
+    changeOrigin: true,
   });
 });
 
