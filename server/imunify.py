@@ -145,13 +145,16 @@ def insert(table: str, data: dict):
 
     query = "INSERT INTO {} ({}) VALUES ({})".format(DB_PREFIX + table, fields_str, values_str)
 
-    # TODO(d.vitvitskii) Сделать обработку на Exception во всех запросах
     log.debug("Execute query: '{}'".format(query))
-    cur.execute(query)
-    DB_CONNECTION.commit()
-    id = cur.lastrowid
+    row_id = None
+    try:
+        cur.execute(query)
+        DB_CONNECTION.commit()
+        row_id = cur.lastrowid
+    except Exception as e:
+        log.error("Error while execute query: '{}'".format(e))
     cur.close()
-    return id
+    return row_id
 
 
 def update(table: str, data: dict, where=None):
@@ -257,7 +260,7 @@ def create_task(exec_bin, name, instance_id, params=[], task_env={}, notify={}, 
     return subprocess.check_output(cmd, env=env).decode()
 
 
-async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, started: int, preset_id: int, callback):
+async def task_wait(task_id: int, scan_info: dict, callback):
     log.debug("Begin task {} wait".format(task_id))
     entities = {
         "entities": [
@@ -269,9 +272,9 @@ async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, sta
         ]
     }
 
-    extra_headers = {"Cookie": "ses6=" + ses6}
+    extra_headers = {"Cookie": "ses6=" + scan_info["ses6"]}
     host, port = PROXY_SERVICE.split(':', 1)
-    async with websockets.connect("ws://instance-{}/notifier".format(instance_id),
+    async with websockets.connect("ws://instance-{}/notifier".format(scan_info.get("instance")),
                                   extra_headers=extra_headers,
                                   host=host,
                                   port=port) as ws:
@@ -279,7 +282,7 @@ async def task_wait(task_id: int, instance_id: str, site_id: int, ses6: str, sta
 
         result = await ws.recv()
         task_info = loads(result)
-        callback(task_info, instance_id, site_id, started, preset_id)
+        callback(task_info, scan_info)
 
 
 def get_utc_timestamp():
@@ -399,7 +402,11 @@ class Imunify:
         try:
             site_id = int(info.path_params.get("sid"))
         except ValueError:
-            return web.Response(text="Bad request", status=400, content_type="text")
+            return web.HTTPBadRequest(text="The identifier of the site is not valid")
+
+        site_info = get_site_info(info.instance_id, site_id)
+        if not site_info:
+            return web.HTTPBadRequest(text="The site does not exist or can not be reached")
 
         request_body = await info.body
         response = await self.get_instance(info.instance_id)
@@ -409,18 +416,20 @@ class Imunify:
         host = data.get("host", "")
         preset_id = request_body.get("preset_id")
 
-        where_statement = "id={}".format(preset_id)
+        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
         table_fields = ['preset']
         result = select(table='presets', table_fields=table_fields, where=where_statement)
 
         if not result:
-            return web.Response(text="No such preset", status=404, content_type='text')
+            return web.HTTPNotFound(text="The identifier of the preset for this instance is not valid or does not exist")
 
-        # TODO (d.vitvitskii) Сделать через base64
-        preset = "'{}'".format(result[0]["preset"])
-        log.debug("Scan params: {}".format(preset))
-        preset = base64.b64encode(result[0]["preset"].encode("utf-8"))
-        log.debug("Scan params: {}".format(preset))
+        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
+        fields = {"date_use": start_scan_time}
+        update(table='presets', data=fields, where=where_statement)
+
+        preset_value = result[0]["preset"]
+        log.debug("Scan params: {}".format(preset_value))
+        preset = base64.b64encode(preset_value.encode("utf-8"))
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
                              name='scan',
                              params=["--address", host, "--params", preset.decode(), "--started", str(start_scan_time)],
@@ -430,7 +439,16 @@ class Imunify:
 
         result = loads(output)
         loop = asyncio.get_event_loop()
-        loop.create_task(task_wait(result['task_id'], info.instance_id, site_id, info.ses6, start_scan_time, preset_id, self.scan_done))
+        scan_info = {
+            "instance": info.instance_id,
+            "site_id": site_id,
+            "ses6": info.ses6,
+            "started": start_scan_time,
+            "preset_id": preset_id,
+            "docroot_base": site_info["docroot_base"],
+            "docroot": site_info["docroot"]
+        }
+        loop.create_task(task_wait(result['task_id'], scan_info, self.scan_done))
         result["started"] = start_scan_time
         return web.Response(text=dumps(result))
 
@@ -528,55 +546,49 @@ class Imunify:
         return web.Response(text="")
 
     @staticmethod
-    def scan_done(task_info: dict, instance_id: str, site_id: int, started: int, preset_id: int):
+    def scan_done(task_info: dict, scan_info: dict):
         """
-        Callback которы будет вызван после завершения задачи на сканирование
+        Callback который будет вызван после завершения задачи на сканирование
         :param task_info: Таска
-        :param instance_id: Идентификатор инстанса
-        :param site_id: Идентификатор сайта
-        :param started: Время начала сканирования
+        :param scan_info: Информация о сканировании
         :return:
         """
         log.debug("Task ended. Info: {}".format(dumps(task_info)))
-        site_info = get_site_info(instance_id, site_id)
-
         scan_report = get_value(task_info, "additional_data/output/content/scan", dict())
         report_data = {
-            "instance": int(instance_id),
-            "site_id": site_id,
+            "instance": int(scan_info["instance"]),
+            "site_id": scan_info["site_id"],
             "task_id": task_info["id"],
-            "scan_date": started,
-            "preset_id": preset_id
+            "scan_date": scan_info["started"],
+            "preset_id": scan_info["preset_id"]
         }
 
-        where_statement = "id={}".format(preset_id)
+        where_statement = "id={}".format(scan_info["preset_id"])
         presets = select(table='presets', table_fields=['type'], where=where_statement)
 
         report = {"type": presets[0]["type"], "infected": []}
 
         for infected_file in scan_report.get("infected", []):
-            # TODO(pirozhok) Унести получение docroot в scan на момент старта
-            file = get_file(site_info["docroot_base"], site_info["docroot"], infected_file["file"])
+            file = get_file(scan_info["docroot_base"], scan_info["docroot"], infected_file["file"])
             full_path = file["path"] + file["name"]
 
             path_hash = md5(full_path.encode("utf-8")).hexdigest()
             file_data = {
-                "instance": int(instance_id),
-                "site_id": site_id,
+                "instance": int(scan_info["instance"]),
+                "site_id": scan_info["site_id"],
                 "path_hash": path_hash,
                 "file": file["name"],
                 "path": file["path"],
                 "status": str(FileStatus.infected),
                 "malicious_type": infected_file["malicious_type"],
-                "last_modified": started,
-                "detected": started,
-                "created": scan_report["started"]
+                "last_modified": infected_file["last_modified"],
+                "detected": scan_info["started"],
+                "created": scan_info["started"]  # TODO(d.vitvitskii) Получать дату создания файла
             }
-            try:
-                # TODO(d.vitvitskii) Уйти от этой конструкции. Обработку ошибки сделать в insert()
-                file_id = insert(table="files", data=file_data)
-            except Exception:
-                where_statement = "instance={} AND site_id={} AND path_hash='{}'".format(instance_id, site_id, path_hash)
+
+            file_id = insert(table="files", data=file_data)
+            if not file_id:
+                where_statement = "instance={} AND site_id={} AND path_hash='{}'".format(scan_info["instance"], scan_info["site_id"], path_hash)
                 file_row = select(table="files", table_fields=["id"], where=where_statement)
                 file_id = file_row[0]["id"]
 
