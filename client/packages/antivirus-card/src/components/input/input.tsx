@@ -37,11 +37,14 @@ export class Input {
   /** Flag for disable input field */
   @Prop({ reflect: true }) disabled: boolean;
 
+  /** Flag for display inline */
+  @Prop({ reflect: true }) inlineBlock: boolean;
+
   /** Text prefix  */
   @Prop({ reflect: true }) textPrefix: string;
 
   /** Event for input value changed */
-  @Event() changed: EventEmitter<string>;
+  @Event({ bubbles: false }) changed: EventEmitter<string>;
 
   componentWillLoad() {
     this._validator =
@@ -95,7 +98,7 @@ export class Input {
           class={`input-form ${this.validateResult ? '' : 'input-form_accent'}`}
           onInput={event => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}
-          style={{ width: this.width }}
+          style={{ width: this.width, display: this.inlineBlock ? 'inline-block' : 'block' }}
         />
         {this.renderValidation()}
       </Host>
