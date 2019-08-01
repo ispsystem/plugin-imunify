@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property   | Attribute   | Description                    | Type     | Default   |
-| ---------- | ----------- | ------------------------------ | -------- | --------- |
-| `maxWidth` | `max-width` | Max width for dropdown content | `string` | `'330px'` |
+| Property     | Attribute   | Description                                                            | Type          | Default                                    |
+| ------------ | ----------- | ---------------------------------------------------------------------- | ------------- | ------------------------------------------ |
+| `attachNode` | --          | Element for attaching dropdown component, by default is root component | `HTMLElement` | `document.querySelector('antivirus-card')` |
+| `maxWidth`   | `max-width` | Max width for dropdown content                                         | `string`      | `'330px'`                                  |
 
 
 ## Methods

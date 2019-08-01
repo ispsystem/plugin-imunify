@@ -39,8 +39,20 @@ graph TD;
   antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
   antivirus-card-dashboard --> antivirus-card-preview
+  antivirus-card-dashboard --> antivirus-card-modal
+  antivirus-card-dashboard --> antivirus-card-new-scan
   antivirus-card-preview --> antivirus-card-dropdown
   antivirus-card-preview --> antivirus-card-spinner-round
+  antivirus-card-new-scan --> antivirus-card-input
+  antivirus-card-new-scan --> antivirus-card-hint
+  antivirus-card-new-scan --> antivirus-card-switcher
+  antivirus-card-new-scan --> antivirus-card-switcher-option
+  antivirus-card-new-scan --> antivirus-card-preloader
+  antivirus-card-new-scan --> antivirus-card-button
+  antivirus-card-new-scan --> antivirus-card-checkbox
+  antivirus-card-new-scan --> antivirus-card-input
+  antivirus-card-hint --> antivirus-card-dropdown
+  antivirus-card-preloader --> antivirus-card-spinner-round
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell

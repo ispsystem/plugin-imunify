@@ -4,7 +4,7 @@ import { ButtonType, ThemePalette } from './button.interface';
 @Component({
   tag: 'antivirus-card-button',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class ButtonComponent {
   @Prop({ attribute: 'btn-type' })
