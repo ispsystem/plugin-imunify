@@ -16,6 +16,8 @@ import {
   saveAndScanSuccess,
   getInfectedFilesSuccess,
   getInfectedFilesFailure,
+  getPresetsSuccess,
+  getPresetsFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
@@ -128,7 +130,6 @@ export namespace AntivirusActions {
         let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
         handleErrors(response);
         let json = await response.json();
-        json['isProVersion'] = true;
 
         dispatch(getStateSuccess(json));
       } catch (error) {
@@ -262,9 +263,9 @@ export namespace AntivirusActions {
         handleErrors(response);
         let json = await response.json();
 
-        dispatch(getInfectedFilesSuccess(json));
+        dispatch(getPresetsSuccess(json));
       } catch (error) {
-        dispatch(getInfectedFilesFailure(error));
+        dispatch(getPresetsFailure(error));
       }
     };
   }

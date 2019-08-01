@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property   | Attribute   | Description             | Type                  | Default  |
+| ---------- | ----------- | ----------------------- | --------------------- | -------- |
+| `scanType` | `scan-type` | scan type for this card | `"FULL" \| "PARTIAL"` | `'FULL'` |
+
+
 ## Events
 
 | Event          | Description                                   | Type               |

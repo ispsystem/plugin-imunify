@@ -49,7 +49,7 @@ export namespace Components {
     /**
     * main app translate service
     */
-    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService': { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -429,7 +429,7 @@ declare namespace LocalJSX {
     /**
     * main app translate service
     */
-    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService'?: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;
