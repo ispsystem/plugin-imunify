@@ -10,6 +10,9 @@ import { DeleteIcon } from '../icons/delete';
   shadow: true,
 })
 export class Zoom {
+  /** The number of fields that cannot be deleted */
+  @Prop() notDelCount = 0;
+
   /** Values for initial fields */
   @Prop({ mutable: true }) values: string[] = [''];
 
@@ -20,6 +23,12 @@ export class Zoom {
 
   /** Change values event */
   @Event({ bubbles: false }) changed: EventEmitter<string[]>;
+
+  componentDidLoad() {
+    while (this.values.length < this.notDelCount) {
+      this.values = [...this.values, ''];
+    }
+  }
 
   /**
    * Method for delete field in values by index
@@ -54,7 +63,7 @@ export class Zoom {
                   this.updateValue(event.detail, index);
                 }}
               />
-              {index !== 0 && (
+              {index >= this.notDelCount && (
                 <span onClick={() => this.deleteField(index)}>
                   <DeleteIcon />
                 </span>

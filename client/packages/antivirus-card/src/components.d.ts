@@ -171,6 +171,10 @@ export namespace Components {
   }
   interface AntivirusCardZoom {
     /**
+    * The number of fields that cannot be deleted
+    */
+    'notDelCount': number;
+    /**
     * Values for initial fields
     */
     'values': string[];
@@ -511,6 +515,10 @@ declare namespace LocalJSX {
     'disabled'?: boolean;
   }
   interface AntivirusCardZoom extends JSXBase.HTMLAttributes<HTMLAntivirusCardZoomElement> {
+    /**
+    * The number of fields that cannot be deleted
+    */
+    'notDelCount'?: number;
     /**
     * Change values event
     */
