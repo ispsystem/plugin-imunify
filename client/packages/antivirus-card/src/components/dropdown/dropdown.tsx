@@ -21,7 +21,8 @@ export type PopoverElType = HTMLElement & {
 export class Dropdown {
   /** Ref for ui5-popover element */
   popoverEl: PopoverElType;
-  // public popoverElBody!: PopoverElType;
+
+  /** Host element */
   @Element() host: HTMLAntivirusCardDropdownElement;
 
   /** Element for attaching dropdown component, by default is root component */

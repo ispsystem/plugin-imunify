@@ -17,7 +17,13 @@ import { AntivirusState, ScanOption } from '../../models/antivirus/state';
   styleUrl: 'styles/$.scss',
 })
 export class Dashboard {
+  /** Ref for new scan modal */
   newScanModal: HTMLAntivirusCardModalElement;
+
+  /**
+   *  Its Mock DATA
+   *  @TODO delete after realise handle for get default preset
+   */
   preset: ScanOption = {
     id: 0,
     path: [],
@@ -29,7 +35,7 @@ export class Dashboard {
         date: 1,
       },
     },
-    checkFileTypes: 'critical',
+    checkFileTypes: 'CRITICAL',
     saveCopyFilesDay: 31,
     cureFoundFiles: true,
     removeInfectedFileContent: true,

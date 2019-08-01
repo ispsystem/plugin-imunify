@@ -75,7 +75,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'critical' | 'all' | 'except_media';
+  checkFileTypes: 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;

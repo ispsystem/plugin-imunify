@@ -7,11 +7,6 @@ import { ScanOption, IntensityType } from '../../models/antivirus/state';
 import { CheckByMask } from './CheckByMask';
 import { AntivirusActions } from '../../models/antivirus/actions';
 
-/** Type for new scan options */
-// export type NewScanOption = Pick<ScanOption, 'id' | 'intensity' | 'path' | 'checkMask' | 'excludeMask' | 'docroot'>;
-/** Type for submitting data on create new scanning */
-// export type NewScanSubmitOption = Omit<NewScanOption, 'id' | 'docroot'>;
-
 /**
  * New scan settings component
  */
