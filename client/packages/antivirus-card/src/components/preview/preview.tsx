@@ -77,7 +77,11 @@ export class Preview {
    * Lifecycle
    */
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
+    this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
+      notifier: state.notifier,
+      t: state.translate,
+    }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
     });
