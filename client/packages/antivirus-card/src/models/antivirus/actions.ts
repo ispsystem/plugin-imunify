@@ -156,7 +156,7 @@ export namespace AntivirusActions {
 
         handleErrors(response);
 
-        const json: { preset_id: string } = await response.json();
+        const json: { preset_id: number } = await response.json();
 
         if (scanType === 'PARTIAL') {
           dispatch(savePartialPresetSuccess({ ...preset, id: json.preset_id }));
@@ -164,9 +164,10 @@ export namespace AntivirusActions {
           /** @todo add handle for save full preset */
           // dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
         }
-        return Number(json.preset_id);
+        return json.preset_id;
       } catch (error) {
         dispatch(savePresetFailure(error));
+        /** @todo: need refactoring */
         return { error };
       }
     };
@@ -190,8 +191,9 @@ export namespace AntivirusActions {
       dispatch(saveAndScanBegin());
       try {
         const presetId = await savePreset(preset, siteId, scanType)(dispatch);
+        /** @todo: need refactoring */
         if (typeof presetId === 'number') {
-          await scan(notifier, presetId, siteId);
+          await scan(notifier, presetId, siteId)(dispatch);
         } else {
           dispatch(saveAndScanFailure(presetId['error']));
           return presetId;
