@@ -11,6 +11,9 @@ import {
   getHistoryFailure,
   savePartialPresetSuccess,
   savePresetFailure,
+  saveAndScanFailure,
+  saveAndScanBegin,
+  saveAndScanSuccess,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
@@ -64,11 +67,10 @@ export namespace AntivirusActions {
    *
    * @param notifier - main app notifier object
    */
-  export function scan(notifier: Notifier, presetId: number | ((dispatch) => Promise<number>), siteId: number = 1) {
+  export function scan(notifier: Notifier, presetId: number, siteId: number) {
     return async dispatch => {
       dispatch(scanBegin());
       try {
-        await presetId;
         const requestInit: RequestInit = {
           method: 'POST',
           body: JSON.stringify({ preset_id: presetId }),
@@ -133,10 +135,14 @@ export namespace AntivirusActions {
     };
   }
 
-  /*
+  /**
    * Save new presets for scanning
+   *
+   * @param preset - scan options
+   * @param siteId - site id
+   * @param scanType - check type 'FULL' or 'PARTIAL'
    */
-  export function savePreset(preset: Omit<ScanOption, 'id' | 'docroot'>, scanType: CheckType = 'PARTIAL', siteId: string = '1') {
+  export function savePreset(preset: Omit<ScanOption, 'id' | 'docroot'>, siteId: number, scanType: CheckType = 'PARTIAL') {
     return async dispatch => {
       try {
         const requestInit: RequestInit = {
@@ -158,6 +164,32 @@ export namespace AntivirusActions {
         return Number(json.preset_id);
       } catch (error) {
         dispatch(savePresetFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Save preset and run scan by it
+   *
+   * @param notifier - main app notifier object
+   * @param preset - scan options
+   * @param siteId - site id
+   * @param scanType - check type 'FULL' or 'PARTIAL'
+   */
+  export function saveAndScan(
+    notifier: Notifier,
+    preset: Omit<ScanOption, 'id' | 'docroot'>,
+    siteId: number,
+    scanType: CheckType = 'PARTIAL',
+  ) {
+    return async dispatch => {
+      dispatch(saveAndScanBegin());
+      try {
+        const presetId = await savePreset(preset, siteId, scanType)(dispatch);
+        await scan(notifier, presetId, siteId);
+        dispatch(saveAndScanSuccess());
+      } catch (error) {
+        dispatch(saveAndScanFailure(error));
       }
     };
   }

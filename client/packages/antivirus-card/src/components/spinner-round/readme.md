@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description             | Type     | Default   |
-| -------- | --------- | ----------------------- | -------- | --------- |
-| `width`  | `width`   | Width style for spinner | `string` | `'100px'` |
+| Property | Attribute | Description             | Type     | Default  |
+| -------- | --------- | ----------------------- | -------- | -------- |
+| `width`  | `width`   | Width style for spinner | `string` | `'25px'` |
 
 
 ## Dependencies

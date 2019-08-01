@@ -3,15 +3,16 @@ export enum ANTIVIRUS_ACTION {
   SCANNING = 'SCANNING',
   SCAN_SUCCESS = 'SCAN_SUCCESS',
   SCAN_FAILURE = 'SCAN_FAILURE',
-
   GET_STATE_BEGIN = 'GET_STATE_BEGIN',
   GET_STATE_SUCCESS = 'GET_STATE_SUCCESS',
   GET_STATE_FAILURE = 'GET_STATE_FAILURE',
-
   GET_HISTORY_SUCCESS = 'GET_HISTORY_SUCCESS',
   GET_HISTORY_FAILURE = 'GET_HISTORY_FAILURE',
   SAVE_PARTIAL_PRESET_SUCCESS = 'SAVE_PARTIAL_PRESET_SUCCESS',
   SAVE_PRESET_FAILURE = 'SAVE_PRESET_FAILURE',
+  SAVE_AND_SCAN_BEGIN = 'SAVE_AND_SCAN_BEGIN',
+  SAVE_AND_SCAN_FAILURE = 'SAVE_AND_SCAN_FAILURE',
+  SAVE_AND_SCAN_SUCCESS = 'SAVE_AND_SCAN_SUCCESS,',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -67,14 +68,14 @@ export const getHistorySuccess = data => async (dispatch: (obj: GetHistorySucces
   });
 };
 
-export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccess) => void) => {
+export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccessAction) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS,
     payload: { data },
   });
 };
 
-export const savePresetFailure = error => async (dispatch: (obj: SavePresetFailure) => void) => {
+export const savePresetFailure = error => async (dispatch: (obj: SavePresetFailureAction) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE,
     payload: { error },
@@ -88,11 +89,44 @@ export const getHistoryFailure = error => async (dispatch: (obj: GetHistoryFailu
   });
 };
 
+export const saveAndScanBegin = () => (dispatch: (obj: SaveAndScanBeginAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_BEGIN,
+  });
+};
+
+export const saveAndScanFailure = error => (dispatch: (obj: SaveAndScanFailureAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_FAILURE,
+    payload: { error },
+  });
+};
+
+export const saveAndScanSuccess = () => (dispatch: (obj: SaveAndScanSuccessAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_SUCCESS,
+  });
+};
+
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
 }
+
 interface ScanningAction {
   type: ANTIVIRUS_ACTION.SCANNING;
+}
+
+interface SaveAndScanBeginAction {
+  type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_BEGIN;
+}
+
+interface SaveAndScanFailureAction {
+  type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_FAILURE;
+  payload: any;
+}
+
+interface SaveAndScanSuccessAction {
+  type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_SUCCESS;
 }
 
 interface ScanSuccessAction {
@@ -114,12 +148,12 @@ interface GetStateSuccessAction {
   payload: any;
 }
 
-interface SavePartialPresetSuccess {
+interface SavePartialPresetSuccessAction {
   type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS;
   payload: any;
 }
 
-interface SavePresetFailure {
+interface SavePresetFailureAction {
   type: ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE;
   payload: any;
 }
@@ -149,5 +183,8 @@ export type AntivirusActionTypes =
   | GetStateFailureAction
   | GetHistorySuccessAction
   | GetHistoryFailureAction
-  | SavePartialPresetSuccess
-  | SavePresetFailure;
+  | SavePartialPresetSuccessAction
+  | SavePresetFailureAction
+  | SaveAndScanBeginAction
+  | SaveAndScanFailureAction
+  | SaveAndScanSuccessAction;

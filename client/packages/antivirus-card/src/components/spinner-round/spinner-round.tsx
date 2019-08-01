@@ -10,7 +10,7 @@ export class SpinnerRound {
   @State() uuid = uuidv4();
 
   /** Width style for spinner */
-  @Prop({ reflect: true }) width = '100px';
+  @Prop({ reflect: true }) width = '25px';
 
   render() {
     return (

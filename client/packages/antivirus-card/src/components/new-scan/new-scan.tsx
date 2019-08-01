@@ -30,6 +30,9 @@ export class NewScan {
   /** Translate object */
   @State() t: ITranslate;
 
+  /** Site id */
+  @State() siteId: number;
+
   /** Use check files by mask flag  */
   @State() useCheckMask: boolean;
 
@@ -44,14 +47,14 @@ export class NewScan {
   /** Method to update global state */
   savePreset: typeof AntivirusActions.savePreset;
 
-  /** Action scan */
-  scanVirus: typeof AntivirusActions.scan;
+  /** Action save and scan */
+  saveAndScan: typeof AntivirusActions.saveAndScan;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, notifier: state.notifier }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, notifier: state.notifier, siteId: state.siteId }));
     this.store.mapDispatchToProps(this, {
       savePreset: AntivirusActions.savePreset,
-      scanVirus: AntivirusActions.scan,
+      saveAndScan: AntivirusActions.saveAndScan,
     });
   }
 
@@ -113,8 +116,7 @@ export class NewScan {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this._prepareDataForSubmit(this.preset);
-    const presetId = await this.savePreset(preset);
-    await this.scanVirus(this.notifier, presetId);
+    await this.saveAndScan(this.notifier, preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
     this.closeModal();
   }
@@ -125,7 +127,7 @@ export class NewScan {
   async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this._prepareDataForSubmit(this.preset);
-    await this.savePreset(preset);
+    await this.savePreset(preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
     this.closeModal();
   }

@@ -47,6 +47,8 @@ export class Preview {
   @State() t: ITranslate;
   /** last scan date as string */
   @State() lastScan: string;
+  /** Site id */
+  @State() siteId: number;
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
@@ -77,7 +79,7 @@ export class Preview {
    * Lifecycle
    */
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate, siteId: state.siteId }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
     });
@@ -144,8 +146,8 @@ export class Preview {
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
         ></PreviewInBlackLists>
-        {/* @TODO change this parametrs */}
-        <div class="link" onClick={() => this.scanVirus(this.notifier, 1, 1)} style={{ 'margin-top': '25px', height: '28px' }}>
+        {/** @TODO change presetId parameter */}
+        <div class="link" onClick={() => this.scanVirus(this.notifier, 1, this.siteId)} style={{ 'margin-top': '25px', height: '28px' }}>
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
 
