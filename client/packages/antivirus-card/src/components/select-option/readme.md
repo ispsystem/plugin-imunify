@@ -20,6 +20,19 @@
 | `changedSelectStatus` | Event by change selected status | `CustomEvent<SelectedOption<any>>` |
 
 
+## Dependencies
+
+### Used by
+
+ - [antivirus-card-scan-settings](../scan-settings)
+
+### Graph
+```mermaid
+graph TD;
+  antivirus-card-scan-settings --> antivirus-card-select-option
+  style antivirus-card-select-option fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

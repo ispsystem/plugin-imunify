@@ -17,27 +17,24 @@ export interface SelectedOption<T = any> {
 })
 export class Select {
   /** Ref for select container element */
-  private _selectContainer: HTMLDivElement;
+  selectContainer: HTMLDivElement;
 
   /** Host element */
-  @Element()
-  private _host: HTMLElement;
+  @Element() _host: HTMLElement;
 
   /** State for select panel */
-  @State()
-  public openPanel = false;
+  @State() openPanel = false;
 
   /** Disabled key for select field */
-  @Prop({ reflect: true })
-  public disabled: boolean;
+  @Prop({ reflect: true }) disabled: boolean;
+
+  @Prop({ reflect: true }) width = 280;
 
   /** Placeholder for select field */
-  @Prop({ reflect: true })
-  public placeholder: string;
+  @Prop({ reflect: true }) placeholder: string;
 
   /** Selected value */
-  @Prop({ mutable: true })
-  public selectedValue: SelectedOption;
+  @Prop({ mutable: true }) selectedValue: SelectedOption;
 
   @Watch('selectedValue')
   changeValue(newValue: SelectedOption, oldValue: SelectedOption) {
@@ -55,8 +52,7 @@ export class Select {
   }
 
   /** Handle for change selected value */
-  @Event()
-  public changed: EventEmitter<SelectedOption['v']>;
+  @Event() changed: EventEmitter<SelectedOption['v']>;
 
   /**
    * Listen change selected option status
@@ -77,19 +73,23 @@ export class Select {
   @Listen('click', { target: 'document' })
   clickOutside(event: Event): void {
     const composedPath = event.composedPath()[0] as Node;
-    this.openPanel = this._selectContainer.contains(composedPath) ? !this.openPanel : this._host.shadowRoot.contains(composedPath);
+    this.openPanel = this.selectContainer.contains(composedPath) ? !this.openPanel : this._host.shadowRoot.contains(composedPath);
   }
 
   render() {
     return (
       <Host>
-        <div ref={(el: HTMLDivElement) => (this._selectContainer = el)} class={`select-container ${this.disabled && 'disabled'}`}>
+        <div
+          ref={(el: HTMLDivElement) => (this.selectContainer = el)}
+          class={`select-container${this.disabled ? ' disabled' : ''}`}
+          style={{ width: `${this.width}px` }}
+        >
           <span class="select__value">
             <span class="select__value-text">{this.selectedValue ? this.selectedValue.k : null}</span>
           </span>
           <span class="select__arrow"></span>
         </div>
-        <div class="select__panel" style={!this.openPanel && { display: 'none' }}>
+        <div class="select__panel" style={{ display: !this.openPanel ? 'none' : 'block', width: `${this.width - 20}px` }}>
           <div class="select__options">
             <slot />
           </div>

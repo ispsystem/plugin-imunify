@@ -28,10 +28,12 @@
 
   &:hover {
     color: #0991e2;
+
     & path:not([fill-rule='evenodd']),
     text {
       fill: #0991e2;
     }
+
     & rect {
       stroke: #0991e2;
     }
@@ -55,4 +57,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+
+  antivirus-card-hint {
+    margin-left: 10px;
+  }
 }

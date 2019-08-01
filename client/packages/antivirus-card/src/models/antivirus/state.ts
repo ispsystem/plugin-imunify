@@ -45,6 +45,9 @@ export type CheckType = 'FULL' | 'PARTIAL';
  */
 export type IntensityType = 'LOW' | 'MEDIUM' | 'HIGH';
 
+/** Type for file check */
+export type CheckFileType = 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
+
 /**
  * Scan option list item
  */
@@ -78,7 +81,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'critical' | 'all' | 'except_media';
+  checkFileTypes: CheckFileType;
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;

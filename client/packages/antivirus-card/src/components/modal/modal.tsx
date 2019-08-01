@@ -1,4 +1,4 @@
-import { Component, h, Prop, Method } from '@stencil/core';
+import { Component, h, Prop, Method, Listen } from '@stencil/core';
 import { CloseIcon } from '../icons/close';
 
 @Component({
@@ -7,6 +7,12 @@ import { CloseIcon } from '../icons/close';
   shadow: true,
 })
 export class Modal {
+  /** Ref for modal element */
+  modalElement: HTMLDivElement;
+
+  /** Ref for modal wrapper element */
+  modalWrapper: HTMLDivElement;
+
   /** Modal width */
   @Prop({ attribute: 'modal-width' }) modalWidth: string;
 
@@ -26,19 +32,22 @@ export class Modal {
   }
 
   /**
-   * Handle for click on modal
+   * Listen click for definitions click outside select
    *
-   * @param e - mouse event
+   * @param event - DOM event
    */
-  private handleModalClick = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  @Listen('click', { target: 'document' })
+  clickOutside(event: Event): void {
+    const composedPath = event.composedPath()[0] as Node;
+    if (!this.modalElement.contains(composedPath) && this.modalWrapper.contains(composedPath)) {
+      this.visible = false;
+    }
+  }
 
   render() {
     return (
-      <div class={this.visible ? 'wrapper visible' : 'wrapper'} onClick={() => this.toggle()}>
-        <div style={{ width: this.modalWidth }} class="modal" onClick={this.handleModalClick}>
+      <div class={this.visible ? 'wrapper visible' : 'wrapper'} ref={el => (this.modalWrapper = el)}>
+        <div style={{ width: this.modalWidth }} class="modal" ref={el => (this.modalElement = el)}>
           <span class="modal-close" onClick={() => this.toggle()}>
             <CloseIcon />
           </span>

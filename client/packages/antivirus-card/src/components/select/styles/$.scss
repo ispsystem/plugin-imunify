@@ -2,8 +2,6 @@
   overflow: hidden;
 
   box-sizing: border-box;
-  width: var(--ngispui-select__width, 280px);
-  min-width: var(--ngispui-select__min-width, 280px);
   height: 30px;
   padding: var(--ngispui-select__padding, 6px 25px 6px 10px);
 
@@ -38,7 +36,6 @@
   position: absolute;
   z-index: 1;
 
-  min-width: var(--ngispui-select-panel__min-width, 280px);
   max-width: var(--ngispui-select-panel__max-width, 600px);
 
   margin-top: 10px;

@@ -20,11 +20,11 @@ import {
   ThemePalette,
 } from './components/button/button.interface';
 import {
-  Validator,
-} from './utils/validators';
-import {
   ScanOption,
 } from './models/antivirus/state';
+import {
+  Validator,
+} from './utils/validators';
 import {
   ViewType,
 } from './components/preloader/preloader';
@@ -78,6 +78,11 @@ export namespace Components {
     */
     'unwrap': boolean;
   }
+  interface AntivirusCardCollapse {
+    'isOpen': boolean;
+    'text': { open: string; close: string };
+    'toggle': (value?: boolean) => Promise<void>;
+  }
   interface AntivirusCardDashboard {}
   interface AntivirusCardDropdown {
     /**
@@ -115,6 +120,10 @@ export namespace Components {
     * Text prefix
     */
     'textPrefix': string;
+    /**
+    * Input type in HTML format
+    */
+    'type': 'text' | 'number';
     /**
     * List of custom validators
     */
@@ -189,6 +198,10 @@ export namespace Components {
     'width': string;
   }
   interface AntivirusCardPreview {}
+  interface AntivirusCardScanSettings {
+    'closeModal': () => void;
+    'setPreset': (preset: ScanOption) => Promise<void>;
+  }
   interface AntivirusCardSelect {
     /**
     * Disabled key for select field
@@ -202,6 +215,7 @@ export namespace Components {
     * Selected value
     */
     'selectedValue': SelectedOption;
+    'width': number;
   }
   interface AntivirusCardSelectOption {
     /**
@@ -262,6 +276,12 @@ declare global {
   var HTMLAntivirusCardCheckboxElement: {
     prototype: HTMLAntivirusCardCheckboxElement;
     new (): HTMLAntivirusCardCheckboxElement;
+  };
+
+  interface HTMLAntivirusCardCollapseElement extends Components.AntivirusCardCollapse, HTMLStencilElement {}
+  var HTMLAntivirusCardCollapseElement: {
+    prototype: HTMLAntivirusCardCollapseElement;
+    new (): HTMLAntivirusCardCollapseElement;
   };
 
   interface HTMLAntivirusCardDashboardElement extends Components.AntivirusCardDashboard, HTMLStencilElement {}
@@ -330,6 +350,12 @@ declare global {
     new (): HTMLAntivirusCardPreviewElement;
   };
 
+  interface HTMLAntivirusCardScanSettingsElement extends Components.AntivirusCardScanSettings, HTMLStencilElement {}
+  var HTMLAntivirusCardScanSettingsElement: {
+    prototype: HTMLAntivirusCardScanSettingsElement;
+    new (): HTMLAntivirusCardScanSettingsElement;
+  };
+
   interface HTMLAntivirusCardSelectElement extends Components.AntivirusCardSelect, HTMLStencilElement {}
   var HTMLAntivirusCardSelectElement: {
     prototype: HTMLAntivirusCardSelectElement;
@@ -387,6 +413,7 @@ declare global {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
     'antivirus-card-checkbox': HTMLAntivirusCardCheckboxElement;
+    'antivirus-card-collapse': HTMLAntivirusCardCollapseElement;
     'antivirus-card-dashboard': HTMLAntivirusCardDashboardElement;
     'antivirus-card-dropdown': HTMLAntivirusCardDropdownElement;
     'antivirus-card-hint': HTMLAntivirusCardHintElement;
@@ -398,6 +425,7 @@ declare global {
     'antivirus-card-new-scan': HTMLAntivirusCardNewScanElement;
     'antivirus-card-preloader': HTMLAntivirusCardPreloaderElement;
     'antivirus-card-preview': HTMLAntivirusCardPreviewElement;
+    'antivirus-card-scan-settings': HTMLAntivirusCardScanSettingsElement;
     'antivirus-card-select': HTMLAntivirusCardSelectElement;
     'antivirus-card-select-option': HTMLAntivirusCardSelectOptionElement;
     'antivirus-card-spinner-round': HTMLAntivirusCardSpinnerRoundElement;
@@ -457,11 +485,15 @@ declare namespace LocalJSX {
     */
     'unwrap'?: boolean;
   }
+  interface AntivirusCardCollapse extends JSXBase.HTMLAttributes<HTMLAntivirusCardCollapseElement> {
+    'isOpen'?: boolean;
+    'text': { open: string; close: string };
+  }
   interface AntivirusCardDashboard extends JSXBase.HTMLAttributes<HTMLAntivirusCardDashboardElement> {
     /**
     * open ImunifyAV+ buy modal
     */
-    'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    'onOpenBuyModal'?: (event: CustomEvent<ScanOption>) => void;
   }
   interface AntivirusCardDropdown extends JSXBase.HTMLAttributes<HTMLAntivirusCardDropdownElement> {
     /**
@@ -500,6 +532,10 @@ declare namespace LocalJSX {
     * Text prefix
     */
     'textPrefix'?: string;
+    /**
+    * Input type in HTML format
+    */
+    'type'?: 'text' | 'number';
     /**
     * List of custom validators
     */
@@ -579,6 +615,13 @@ declare namespace LocalJSX {
     * to open buy modal
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * to open scan settings modal
+    */
+    'onOpenScanSettingsModal'?: (event: CustomEvent<any>) => void;
+  }
+  interface AntivirusCardScanSettings extends JSXBase.HTMLAttributes<HTMLAntivirusCardScanSettingsElement> {
+    'closeModal'?: () => void;
   }
   interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
     /**
@@ -597,6 +640,7 @@ declare namespace LocalJSX {
     * Selected value
     */
     'selectedValue'?: SelectedOption;
+    'width'?: number;
   }
   interface AntivirusCardSelectOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectOptionElement> {
     /**
@@ -646,6 +690,7 @@ declare namespace LocalJSX {
     'antivirus-card': AntivirusCard;
     'antivirus-card-button': AntivirusCardButton;
     'antivirus-card-checkbox': AntivirusCardCheckbox;
+    'antivirus-card-collapse': AntivirusCardCollapse;
     'antivirus-card-dashboard': AntivirusCardDashboard;
     'antivirus-card-dropdown': AntivirusCardDropdown;
     'antivirus-card-hint': AntivirusCardHint;
@@ -657,6 +702,7 @@ declare namespace LocalJSX {
     'antivirus-card-new-scan': AntivirusCardNewScan;
     'antivirus-card-preloader': AntivirusCardPreloader;
     'antivirus-card-preview': AntivirusCardPreview;
+    'antivirus-card-scan-settings': AntivirusCardScanSettings;
     'antivirus-card-select': AntivirusCardSelect;
     'antivirus-card-select-option': AntivirusCardSelectOption;
     'antivirus-card-spinner-round': AntivirusCardSpinnerRound;

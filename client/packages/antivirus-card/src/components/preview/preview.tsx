@@ -13,6 +13,7 @@ import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
 import { PreviewInBlackLists } from './PreviewInBlackLists';
+import { MOCK } from '../../utils/mock';
 
 /**
  * Preview component for antivirus-card
@@ -52,6 +53,10 @@ export class Preview {
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
+
+  /** to open scan settings modal */
+  @Event() openScanSettingsModal: EventEmitter;
+
   /** to change selected tab item (horizontal menu) */
   @Event({
     bubbles: true,
@@ -147,8 +152,15 @@ export class Preview {
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
         ></PreviewInBlackLists>
         {/** @todo change presetId parameter */}
-        <div class="link" onClick={() => this.scanVirus(this.notifier, 1, this.siteId)} style={{ 'margin-top': '25px', height: '28px' }}>
-          <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
+        <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
+          <span class="link">
+            <StartCheckIcon onClick={() => this.scanVirus(this.notifier, 1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
+          </span>
+          {this.isProVersion && (
+            <a class="link" onClick={() => this.openScanSettingsModal.emit(MOCK.defaultPreset)} style={{ 'margin-left': '20px' }}>
+              {this.t.msg('CONFIGURE')}
+            </a>
+          )}
         </div>
 
         <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>

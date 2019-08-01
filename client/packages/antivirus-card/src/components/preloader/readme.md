@@ -23,6 +23,7 @@
 ### Used by
 
  - [antivirus-card-new-scan](../new-scan)
+ - [antivirus-card-scan-settings](../scan-settings)
 
 ### Depends on
 
@@ -33,6 +34,7 @@
 graph TD;
   antivirus-card-preloader --> antivirus-card-spinner-round
   antivirus-card-new-scan --> antivirus-card-preloader
+  antivirus-card-scan-settings --> antivirus-card-preloader
   style antivirus-card-preloader fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
