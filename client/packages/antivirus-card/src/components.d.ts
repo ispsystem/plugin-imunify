@@ -107,6 +107,9 @@ export namespace Components {
     * Flag for disable input field
     */
     'disabled': boolean;
+    /**
+    * Flag for display inline
+    */
     'inlineBlock': boolean;
     /**
     * Value for input placeholder
@@ -506,6 +509,9 @@ declare namespace LocalJSX {
     * Flag for disable input field
     */
     'disabled'?: boolean;
+    /**
+    * Flag for display inline
+    */
     'inlineBlock'?: boolean;
     /**
     * Event for input value changed

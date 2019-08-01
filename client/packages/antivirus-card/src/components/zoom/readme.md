@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description               | Type       | Default |
-| -------- | --------- | ------------------------- | ---------- | ------- |
-| `values` | --        | Values for initial fields | `string[]` | `['']`  |
+| Property      | Attribute       | Description                                 | Type       | Default |
+| ------------- | --------------- | ------------------------------------------- | ---------- | ------- |
+| `notDelCount` | `not-del-count` | The number of fields that cannot be deleted | `number`   | `0`     |
+| `values`      | --              | Values for initial fields                   | `string[]` | `['']`  |
 
 
 ## Events
