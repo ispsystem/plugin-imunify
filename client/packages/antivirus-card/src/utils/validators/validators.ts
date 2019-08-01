@@ -7,5 +7,5 @@ export const timeValidator: Validator<string> = {
   validate: (value: string) => {
     return /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/.test(value);
   },
-  // @todo add error message key
+  /** @todo add error message key */
 };
