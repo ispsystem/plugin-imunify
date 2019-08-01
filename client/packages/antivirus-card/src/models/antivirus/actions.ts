@@ -132,28 +132,6 @@ export namespace AntivirusActions {
     };
   }
 
-  /**
-   * Get scanning history
-   *
-   * @param siteId - site ID from vepp
-   */
-  export function history(siteId: number) {
-    return async dispatch => {
-      try {
-        const requestInit: RequestInit = {
-          method: 'GET',
-        };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history`, requestInit);
-        handleErrors(response);
-        let json = await response.json();
-
-        dispatch(getHistorySuccess(json.list));
-      } catch (error) {
-        dispatch(getHistoryFailure(error));
-      }
-    };
-  }
-
   /*
    * Save new presets for scanning
    */
@@ -178,6 +156,28 @@ export namespace AntivirusActions {
         return Number(json.preset_id);
       } catch (error) {
         dispatch(getStateFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Get scanning history
+   *
+   * @param siteId - site ID from vepp
+   */
+  export function history(siteId: number) {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(getHistorySuccess(json.list));
+      } catch (error) {
+        dispatch(getHistoryFailure(error));
       }
     };
   }

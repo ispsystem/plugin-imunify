@@ -65,7 +65,7 @@ export const getHistorySuccess = data => async (dispatch: (obj: GetHistorySucces
     payload: { data },
   });
 };
-export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccess) => any, _getState) => {
+export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccess) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS,
     payload: { data },
