@@ -17,16 +17,12 @@
 
 ### Depends on
 
-- [antivirus-card-switcher](../switcher)
-- [antivirus-card-switcher-option](../switcher-option)
 - [antivirus-card-preloader](../preloader)
 - [antivirus-card-button](../button)
 
 ### Graph
 ```mermaid
 graph TD;
-  antivirus-card-scan-settings --> antivirus-card-switcher
-  antivirus-card-scan-settings --> antivirus-card-switcher-option
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-preloader --> antivirus-card-spinner-round

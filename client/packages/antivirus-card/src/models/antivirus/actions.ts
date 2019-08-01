@@ -63,10 +63,11 @@ export namespace AntivirusActions {
    *
    * @param notifier - main app notifier object
    */
-  export function scan(notifier: Notifier, presetId: number, siteId: number = 1) {
+  export function scan(notifier: Notifier, presetId: number | ((dispatch) => Promise<number>), siteId: number = 1) {
     return async dispatch => {
       dispatch(scanBegin());
       try {
+        await presetId;
         const requestInit: RequestInit = {
           method: 'POST',
           body: JSON.stringify({ preset_id: presetId }),

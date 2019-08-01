@@ -118,12 +118,10 @@ export class NewScan {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this._prepareDataForSubmit(this.preset);
-    await this.savePreset(preset)(null).then(presetId => async () => {
-      console.log(presetId);
-      await this.scanVirus(this.notifier, 1);
-      this.isPreloader = { ...this.isPreloader, submit: false };
-      this.closeModal();
-    });
+    const presetId = await this.savePreset(preset);
+    await this.scanVirus(this.notifier, presetId);
+    this.isPreloader = { ...this.isPreloader, submit: false };
+    this.closeModal();
   }
 
   /**
@@ -132,8 +130,7 @@ export class NewScan {
   async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this._prepareDataForSubmit(this.preset);
-    const presetId = await this.savePreset(preset);
-    console.log(presetId);
+    await this.savePreset(preset);
     this.isPreloader = { ...this.isPreloader, submit: false };
     this.closeModal();
   }
