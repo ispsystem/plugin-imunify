@@ -22,7 +22,6 @@
  - [antivirus-card](..)
  - [antivirus-card-infected-files](../infected-files)
  - [antivirus-card-new-scan](../new-scan)
- - [antivirus-card-scan-settings](../scan-settings)
 
 ### Graph
 ```mermaid
@@ -30,7 +29,6 @@ graph TD;
   antivirus-card --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-button
   antivirus-card-new-scan --> antivirus-card-button
-  antivirus-card-scan-settings --> antivirus-card-button
   style antivirus-card-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

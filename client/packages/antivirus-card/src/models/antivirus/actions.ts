@@ -10,6 +10,7 @@ import {
   getHistorySuccess,
   getHistoryFailure,
   savePartialPresetSuccess,
+  savePresetFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
@@ -151,11 +152,12 @@ export namespace AntivirusActions {
         if (scanType === 'PARTIAL') {
           dispatch(savePartialPresetSuccess({ ...preset, id: json.preset_id }));
         } else if (scanType === 'FULL') {
+          /** @todo add handle for save full preset */
           // dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
         }
         return Number(json.preset_id);
       } catch (error) {
-        dispatch(getStateFailure(error));
+        dispatch(savePresetFailure(error));
       }
     };
   }

@@ -97,6 +97,13 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         error: null,
       };
     }
+
+    case ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
   }
 
   return state;
