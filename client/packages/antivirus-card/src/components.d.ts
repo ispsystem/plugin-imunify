@@ -113,6 +113,10 @@ export namespace Components {
     */
     'disabled': boolean;
     /**
+    * Flag for display inline
+    */
+    'inlineBlock': boolean;
+    /**
     * Value for input placeholder
     */
     'placeholder': string;
@@ -254,6 +258,16 @@ export namespace Components {
   interface AntivirusCardTableRow {
     'actionHover': boolean;
     'disabled': boolean;
+  }
+  interface AntivirusCardZoom {
+    /**
+    * The number of fields that cannot be deleted
+    */
+    'notDelCount': number;
+    /**
+    * Values for initial fields
+    */
+    'values': string[];
   }
 }
 
@@ -409,6 +423,12 @@ declare global {
     prototype: HTMLAntivirusCardTableRowElement;
     new (): HTMLAntivirusCardTableRowElement;
   };
+
+  interface HTMLAntivirusCardZoomElement extends Components.AntivirusCardZoom, HTMLStencilElement {}
+  var HTMLAntivirusCardZoomElement: {
+    prototype: HTMLAntivirusCardZoomElement;
+    new (): HTMLAntivirusCardZoomElement;
+  };
   interface HTMLElementTagNameMap {
     'antivirus-card': HTMLAntivirusCardElement;
     'antivirus-card-button': HTMLAntivirusCardButtonElement;
@@ -435,6 +455,7 @@ declare global {
     'antivirus-card-table-cell': HTMLAntivirusCardTableCellElement;
     'antivirus-card-table-pagination': HTMLAntivirusCardTablePaginationElement;
     'antivirus-card-table-row': HTMLAntivirusCardTableRowElement;
+    'antivirus-card-zoom': HTMLAntivirusCardZoomElement;
   }
 }
 
@@ -520,6 +541,10 @@ declare namespace LocalJSX {
     * Flag for disable input field
     */
     'disabled'?: boolean;
+    /**
+    * Flag for display inline
+    */
+    'inlineBlock'?: boolean;
     /**
     * Event for input value changed
     */
@@ -685,6 +710,20 @@ declare namespace LocalJSX {
     'actionHover'?: boolean;
     'disabled'?: boolean;
   }
+  interface AntivirusCardZoom extends JSXBase.HTMLAttributes<HTMLAntivirusCardZoomElement> {
+    /**
+    * The number of fields that cannot be deleted
+    */
+    'notDelCount'?: number;
+    /**
+    * Change values event
+    */
+    'onChanged'?: (event: CustomEvent<string[]>) => void;
+    /**
+    * Values for initial fields
+    */
+    'values'?: string[];
+  }
 
   interface IntrinsicElements {
     'antivirus-card': AntivirusCard;
@@ -712,6 +751,7 @@ declare namespace LocalJSX {
     'antivirus-card-table-cell': AntivirusCardTableCell;
     'antivirus-card-table-pagination': AntivirusCardTablePagination;
     'antivirus-card-table-row': AntivirusCardTableRow;
+    'antivirus-card-zoom': AntivirusCardZoom;
   }
 }
 
