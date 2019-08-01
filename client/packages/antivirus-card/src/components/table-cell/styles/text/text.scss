@@ -6,6 +6,12 @@
   text-overflow: ellipsis;
 
   line-height: 17px;
+
+  &__ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 a.main-text {
@@ -30,3 +36,6 @@ a.main-text {
 a.add-text {
   text-decoration: underline;
 }
+
+
+

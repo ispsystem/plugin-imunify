@@ -9,6 +9,8 @@ import {
   getStateFailure,
   getHistorySuccess,
   getHistoryFailure,
+  getInfectedFilesSuccess,
+  getInfectedFilesFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
@@ -147,6 +149,28 @@ export namespace AntivirusActions {
         dispatch(getHistorySuccess(json.list));
       } catch (error) {
         dispatch(getHistoryFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Get list infected files
+   *
+   * @param siteId - site ID from vepp
+   */
+  export function infectedFiles(siteId: number) {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(getInfectedFilesSuccess(json.list));
+      } catch (error) {
+        dispatch(getInfectedFilesFailure(error));
       }
     };
   }

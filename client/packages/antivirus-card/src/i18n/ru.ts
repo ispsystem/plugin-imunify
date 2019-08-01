@@ -63,6 +63,12 @@ const lang = {
       CELL_3: 'Обнаружен',
       CELL_4: 'Расположение файла',
     },
+    STATUS: {
+      INFECTED: 'заражён',
+      CURED: 'вылечен',
+      EXCEPTED: 'добавлен в исключения',
+      HEALING: 'лечим',
+    },
   },
   DATETIME_CREATED: 'создан %{date} в %{time}',
   DATETIME_CHANGED: 'изменён %{date} в %{time}',

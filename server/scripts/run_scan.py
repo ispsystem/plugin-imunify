@@ -4,6 +4,13 @@ import os
 
 
 def make_scan(host, params, started):
+    """
+    Запуск сканирования на сервере клиента
+    :param host: Хост
+    :param params: Параметры сканирования
+    :param started: Дата начала сканирования в формате timestamp
+    :return:
+    """
     cmd = "/usr/bin/ssh -o StrictHostKeyChecking=no root@" + host +\
           " '/bin/python3 /opt/ispsystem/plugin/imunify/scan.py --params " + params + " --started " + started + "'"
     os.system(cmd)
