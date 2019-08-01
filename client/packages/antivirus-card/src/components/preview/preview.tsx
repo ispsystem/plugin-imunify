@@ -12,7 +12,6 @@ import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/st
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
-import { PreviewInBlackLists } from './PreviewInBlackLists';
 
 /**
  * Preview component for antivirus-card
@@ -159,11 +158,14 @@ export class Preview {
           openBuyModal={this.openBuyModal}
         ></PreviewInfectedFiles>
 
+        {/** @todo: return when imunify released this feature */
+        /*
         <PreviewInBlackLists
           t={this.t}
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
-        ></PreviewInBlackLists>
+        ></PreviewInBlackLists> 
+        */}
         {/** @todo change presetId parameter */}
         <div
           class="link"
