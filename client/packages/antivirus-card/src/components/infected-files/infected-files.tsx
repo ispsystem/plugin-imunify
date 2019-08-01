@@ -10,7 +10,7 @@ import { AntivirusState } from '../../models/antivirus/state';
   tag: 'antivirus-card-infected-files',
   styleUrl: 'styles/$.scss',
 })
-export class ButtonComponent {
+export class InfectedFiles {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
   /** translate object */
@@ -71,13 +71,13 @@ export class ButtonComponent {
             <antivirus-card-table-row action-hover>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">{file.name}</span>
-                <span class="add-text">{file.status}</span>
+                <span class="add-text">{this.t.msg(['INFECTED_FILES', 'STATUS', file.status])}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{file.threatName}</span>
+                <span class="main-text main-text__ellipsis">{file.threatName}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
-                <span class="isp-table-cell__main-text">{this.getDayMonthYearAsStr(new Date(file.detectionDate))}</span>
+                <span class="main-text">{this.getDayMonthYearAsStr(new Date(file.detectionDate))}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">{file.path}</span>
