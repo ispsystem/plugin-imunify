@@ -1,0 +1,30 @@
+.isp-preloader {
+  position: relative;
+
+  &__loader {
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    transition: opacity 0.5s ease, height 0.2s ease;
+    background:
+      var(--isp-color__header-menu-preloader, rgba(255, 255, 255, 0.7)) no-repeat 50% 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &_transparent {
+      background-color: transparent
+    }
+
+    &_immediately {
+      transition: none;
+    }
+
+    &_contain {
+      background-size: contain;
+    }
+  }
+}

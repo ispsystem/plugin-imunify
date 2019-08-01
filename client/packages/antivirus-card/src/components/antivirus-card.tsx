@@ -15,7 +15,6 @@ import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 
 /**
- *
  * AntivirusCard component
  */
 @Component({
@@ -24,6 +23,7 @@ import { AntivirusActions } from '../models/antivirus/actions';
   shadow: true,
 })
 export class AntivirusCard {
+  newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
@@ -42,6 +42,8 @@ export class AntivirusCard {
   @State() selectedPeriod = 0;
   /** history list */
   @State() history: RootState['antivirus']['history'];
+  /** scan option preset */
+  @State() scanPreset: RootState['antivirus']['scanPreset'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -98,7 +100,7 @@ export class AntivirusCard {
    */
   @Listen('openBuyModal')
   openBuyModal(): void {
-    this.buyModal.visible = true;
+    this.buyModal.toggle(true);
   }
 
   /**
@@ -191,7 +193,7 @@ export class AntivirusCard {
           if (runningPluginTasks.length > 0) {
             this.waitScanResult(this.notifier, runningPluginTasks);
           } else if (this.history.length === 0) {
-            this.scanVirus(this.notifier);
+            this.scanVirus(this.notifier, this.scanPreset.full.id, this.siteId);
           }
         }
       });
@@ -237,7 +239,7 @@ export class AntivirusCard {
             <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
-            <a class="link link_indent-left" onClick={() => (this.buyModal.visible = false)}>
+            <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>

@@ -22,7 +22,7 @@ export class History {
   }
 
   getDayMonthYearAsStr(date: Date) {
-    return `${pad(date.getDay())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
   }
 
   getTimeAsStr(date: Date) {

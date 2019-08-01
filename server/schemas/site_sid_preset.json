@@ -7,7 +7,10 @@
     "scan_type": {
       "title": "Type of scanning",
       "type": "string",
-      "enum": ["FULL", "PARTIAL"]
+      "enum": [
+        "FULL",
+        "PARTIAL"
+      ]
     },
     "preset": {
       "type": "object",
@@ -36,7 +39,11 @@
         "intensity": {
           "title": "Intensity of scanning",
           "type": "string",
-          "enum": ["low", "medium", "high"]
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH"
+          ]
         },
         "scheduleTime": {
           "title": "Scan frequency",
@@ -56,7 +63,10 @@
                   "maximum": 59
                 }
               },
-              "required":["hour", "minutes"]
+              "required": [
+                "hour",
+                "minutes"
+              ]
             },
             "single": {
               "type": "object",
@@ -67,7 +77,9 @@
                   "maximum": 31
                 }
               },
-              "required":["date"]
+              "required": [
+                "date"
+              ]
             },
             "weekly": {
               "type": "object",
@@ -91,10 +103,16 @@
                       "maximum": 59
                     }
                   },
-                  "required":["hour", "minutes"]
+                  "required": [
+                    "hour",
+                    "minutes"
+                  ]
                 }
               },
-              "required":["day", "time"]
+              "required": [
+                "day",
+                "time"
+              ]
             },
             "monthly": {
               "type": "object",
@@ -118,21 +136,49 @@
                       "maximum": 59
                     }
                   },
-                  "required":["hour", "minutes"]
+                  "required": [
+                    "hour",
+                    "minutes"
+                  ]
                 }
               },
-              "required":["day", "time"]
+              "required": [
+                "day",
+                "time"
+              ]
             }
           },
-          "oneOf": [{"required": ["daily"]},
-                    {"required": ["single"]},
-                    {"required": ["weekly"]},
-                    {"required": ["monthly"]}]
+          "oneOf": [
+            {
+              "required": [
+                "daily"
+              ]
+            },
+            {
+              "required": [
+                "single"
+              ]
+            },
+            {
+              "required": [
+                "weekly"
+              ]
+            },
+            {
+              "required": [
+                "monthly"
+              ]
+            }
+          ]
         },
         "checkFileTypes": {
           "title": "Check files",
           "type": "string",
-          "enum": ["critical", "all", "except_media"]
+          "enum": [
+            "critical",
+            "all",
+            "except_media"
+          ]
         },
         "saveCopyFilesDay": {
           "title": "Keep copies of cured files",
@@ -180,12 +226,28 @@
           "type": "boolean"
         }
       },
-      "required": ["path", "checkMask", "excludeMask", "intensity", "scheduleTime",
-                   "checkFileTypes", "saveCopyFilesDay", "cureFoundFiles",
-                   "removeInfectedFileContent", "checkDomainReputation",
-                   "parallelChecks", "ramForCheck", "fullLogDetails", "maxScanTime", "autoUpdate"]
+      "required": [
+        "path",
+        "checkMask",
+        "excludeMask",
+        "intensity",
+        "scheduleTime",
+        "checkFileTypes",
+        "saveCopyFilesDay",
+        "cureFoundFiles",
+        "removeInfectedFileContent",
+        "checkDomainReputation",
+        "parallelChecks",
+        "ramForCheck",
+        "fullLogDetails",
+        "maxScanTime",
+        "autoUpdate"
+      ]
     }
   },
-  "required": ["scan_type", "preset"],
+  "required": [
+    "scan_type",
+    "preset"
+  ],
   "additionalProperties": false
 }

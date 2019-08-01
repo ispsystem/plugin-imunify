@@ -8,7 +8,7 @@ import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
@@ -29,6 +29,10 @@ export class Preview {
   @Prop({ context: 'store' })
   store: Store<RootState, ActionTypes>;
 
+  /** scan type for this card */
+  @Prop()
+  scanType: CheckType = 'FULL';
+
   /** scan loading */
   @State() scanning: AntivirusState['scanning'];
   /** flag has schedule */
@@ -47,6 +51,10 @@ export class Preview {
   @State() t: ITranslate;
   /** last scan date as string */
   @State() lastScan: string;
+  /** Site id */
+  @State() siteId: number;
+  /** scan option preset */
+  @State() scanPreset: RootState['antivirus']['scanPreset'];
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
@@ -56,6 +64,13 @@ export class Preview {
     composed: true,
   })
   clickItem: EventEmitter;
+
+  /**
+   * scan option for this card
+   */
+  get scanOption(): ScanOption {
+    return this.scanType === 'PARTIAL' ? this.scanPreset.partial : this.scanPreset.full;
+  }
 
   /**
    * Change last scan date
@@ -81,6 +96,7 @@ export class Preview {
       ...state.antivirus,
       notifier: state.notifier,
       t: state.translate,
+      siteId: state.siteId,
     }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
@@ -148,8 +164,12 @@ export class Preview {
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
         ></PreviewInBlackLists>
-
-        <div class="link" onClick={() => this.scanVirus(this.notifier)} style={{ 'margin-top': '25px', height: '28px' }}>
+        {/** @todo change presetId parameter */}
+        <div
+          class="link"
+          onClick={() => this.scanVirus(this.notifier, this.scanOption.id, this.siteId)}
+          style={{ 'margin-top': '25px', height: '28px' }}
+        >
           <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
         </div>
 

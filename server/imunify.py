@@ -430,9 +430,10 @@ class Imunify:
         preset_value = result[0]["preset"]
         log.debug("Scan params: {}".format(preset_value))
         preset = base64.b64encode(preset_value.encode("utf-8"))
+        docroot = "{}/{}/".format(site_info["docroot_base"], site_info["docroot"])
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
                              name='scan',
-                             params=["--address", host, "--params", preset.decode(), "--started", str(start_scan_time)],
+                             params=["--address", host, "--docroot", docroot, "--params", preset.decode(), "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})

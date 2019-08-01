@@ -9,12 +9,17 @@ import {
   getStateFailure,
   getHistorySuccess,
   getHistoryFailure,
+  savePartialPresetSuccess,
+  savePresetFailure,
+  saveAndScanFailure,
+  saveAndScanBegin,
+  saveAndScanSuccess,
   getInfectedFilesSuccess,
   getInfectedFilesFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
-import { AntivirusState, InfectedFile } from './state';
+import { AntivirusState, InfectedFile, ScanOption, CheckType } from './state';
 import { getNestedObject } from '../../utils/tools';
 
 /**
@@ -64,16 +69,16 @@ export namespace AntivirusActions {
    *
    * @param notifier - main app notifier object
    */
-  export function scan(notifier: Notifier) {
+  export function scan(notifier: Notifier, presetId: number, siteId: number) {
     return async dispatch => {
       dispatch(scanBegin());
       try {
         const requestInit: RequestInit = {
           method: 'POST',
-          body: JSON.stringify({ scan_path: '/var/www/www-root/', site_id: 1 }),
+          body: JSON.stringify({ preset_id: presetId }),
         };
 
-        let response = await fetch(`${endpoint}/plugin/api/imunify/scan`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan`, requestInit);
         handleErrors(response);
 
         let json = await response.json();
@@ -123,10 +128,77 @@ export namespace AntivirusActions {
         let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
         handleErrors(response);
         let json = await response.json();
+        json['isProVersion'] = true;
 
         dispatch(getStateSuccess(json));
       } catch (error) {
         dispatch(getStateFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Save new presets for scanning
+   *
+   * @param preset - scan options
+   * @param siteId - site id
+   * @param scanType - check type 'FULL' or 'PARTIAL'
+   */
+  export function savePreset(preset: Omit<ScanOption, 'id' | 'docroot'>, siteId: number, scanType: CheckType = 'PARTIAL') {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'POST',
+          body: JSON.stringify({ scan_type: scanType, preset: { ...preset } }),
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/preset`, requestInit);
+
+        handleErrors(response);
+
+        const json: { preset_id: string } = await response.json();
+
+        if (scanType === 'PARTIAL') {
+          dispatch(savePartialPresetSuccess({ ...preset, id: json.preset_id }));
+        } else if (scanType === 'FULL') {
+          /** @todo add handle for save full preset */
+          // dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
+        }
+        return Number(json.preset_id);
+      } catch (error) {
+        dispatch(savePresetFailure(error));
+        return { error };
+      }
+    };
+  }
+
+  /**
+   * Save preset and run scan by it
+   *
+   * @param notifier - main app notifier object
+   * @param preset - scan options
+   * @param siteId - site id
+   * @param scanType - check type 'FULL' or 'PARTIAL'
+   */
+  export function saveAndScan(
+    notifier: Notifier,
+    preset: Omit<ScanOption, 'id' | 'docroot'>,
+    siteId: number,
+    scanType: CheckType = 'PARTIAL',
+  ) {
+    return async dispatch => {
+      dispatch(saveAndScanBegin());
+      try {
+        const presetId = await savePreset(preset, siteId, scanType)(dispatch);
+        if (typeof presetId === 'number') {
+          await scan(notifier, presetId, siteId);
+        } else {
+          dispatch(saveAndScanFailure(presetId['error']));
+          return presetId;
+        }
+        dispatch(saveAndScanSuccess());
+      } catch (error) {
+        dispatch(saveAndScanFailure(error));
+        return { error };
       }
     };
   }

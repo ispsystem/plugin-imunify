@@ -28,9 +28,10 @@ class Fifo:
         os.unlink(self.name)
 
 
-def get_scan_args(scan_params):
+def get_scan_args(docroot, scan_params):
     """
     Разбор необходимых параметров
+    :param docroot Docroot
     :param scan_params: Параметры сканирования
     :return:
     """
@@ -43,11 +44,11 @@ def get_scan_args(scan_params):
     #  Для этого нужно переписать логику обработки результатов сканирования
     scan_paths = scan_params.get("path", [])
     if not scan_paths or not scan_paths[0]:
-        scan_path = "/"
+        scan_path = ""
     else:
         scan_path = scan_paths[0]
     params.append("--path")
-    params.append(scan_path)
+    params.append(docroot + scan_path)
 
     file_mask_list = scan_params.get("checkMask", [])
     if file_mask_list:
@@ -72,21 +73,23 @@ def get_scan_args(scan_params):
     return params
 
 
-def scan(scan_params):
+def scan(docroot, scan_params):
     """
     Запуск сканирования
+    :param docroot Docroot
     :param scan_params: Параметры сканирования
     :return: Exit code
     """
-    process = subprocess.Popen(get_scan_args(scan_params), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(get_scan_args(docroot, scan_params), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     return process.returncode
 
 
-def process(params, start_date):
+def process(params, docroot, start_date):
     """
     Запуск сканирования и обработка результатов
     :param params: Параметры сканирования
+    :param docroot Docroot
     :param start_date: Дата начала сканирования в формате timestamp
     :return: Словарь, оприсывающий результат сканирования: status, result, scan_id ...
     """
@@ -105,7 +108,7 @@ def process(params, start_date):
     try:
         started = int(start_date)
         fifo = Fifo()
-        scan(scan_params)
+        scan(docroot, scan_params)
     except Exception as e:
         scan_result["status"] = SCAN_STATUS_FAILED
         scan_result["reason"] = "Error while execute scan process: '{}'".format(e)
@@ -138,12 +141,12 @@ def process(params, start_date):
             malicious_list = json.loads(output)
             for malicious in malicious_list["items"]:
                 try:
-                    last_modify = int(os.stat(malicious["file"]).st_mtime)
+                    last_modified = int(os.stat(malicious["file"]).st_mtime)
                 except FileNotFoundError:
-                    last_modify = 0
+                    last_modified = 0
                 infected_file = {
                     "file": malicious["file"],
-                    "last_modify": last_modify,
+                    "last_modified": last_modified,
                     "malicious_type": malicious["type"]
                 }
                 scan_result["scan"]["infected"].append(infected_file)
@@ -170,9 +173,10 @@ def im_hook(dict_param):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-p", "--params", help="Scan params")
+    parser.add_argument("-d", "--docroot", help="Docroot")
     parser.add_argument("-s", "--started", help="Started date time")
     args = parser.parse_args()
 
-    if args.params and args.started:
-        scan_result = process(args.params, args.started)
+    if args.params and args.docroot and args.started:
+        scan_result = process(args.params, args.docroot, args.started)
         print(json.dumps(scan_result))

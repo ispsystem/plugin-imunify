@@ -7,7 +7,7 @@ import { ActionTypes } from '../../redux/actions';
 import { ITranslate } from '../../models/translate.reducers';
 import { PreviewFree } from '../preview/PreviewFree';
 import { PreviewNewScan } from '../preview/PreviewNewScan';
-import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusState, ScanOption } from '../../models/antivirus/state';
 
 /**
  * Dashboard component for antivirus-card
@@ -17,6 +17,38 @@ import { AntivirusState } from '../../models/antivirus/state';
   styleUrl: 'styles/$.scss',
 })
 export class Dashboard {
+  /** Ref for new scan modal */
+  newScanModal: HTMLAntivirusCardModalElement;
+
+  /**
+   *  Its Mock DATA
+   *  @todo delete after realise handle for get default preset
+   */
+  preset: ScanOption = {
+    id: 0,
+    path: [],
+    checkMask: [],
+    excludeMask: [],
+    intensity: 'LOW',
+    scheduleTime: {
+      single: {
+        date: 1,
+      },
+    },
+    checkFileTypes: 'critical',
+    saveCopyFilesDay: 31,
+    cureFoundFiles: true,
+    removeInfectedFileContent: true,
+    checkDomainReputation: false,
+    parallelChecks: 1,
+    ramForCheck: 1024,
+    fullLogDetails: true,
+    maxScanTime: 1,
+    autoUpdate: true,
+    docroot: 'www/example.com',
+    email: 'ispsystem@ispsystem.test',
+  };
+
   /** global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
@@ -25,11 +57,10 @@ export class Dashboard {
   /** translate object */
   @State() t: ITranslate;
 
+  @State() scanPreset: AntivirusState['scanPreset'];
+
   /** open ImunifyAV+ buy modal */
   @Event() openBuyModal: EventEmitter;
-
-  /** @todo: open new scan modal */
-  @Event() openNewScanModal: EventEmitter;
 
   /**
    * Lifecycle event
@@ -43,7 +74,20 @@ export class Dashboard {
       <Host>
         <antivirus-card-preview></antivirus-card-preview>
         {this.isProVersion ? (
-          <PreviewNewScan onClick={() => this.openNewScanModal.emit()} text={this.t.msg(['NEW_SCAN_BTN'])}></PreviewNewScan>
+          [
+            <antivirus-card-modal modal-width={`${640 - 50}px`} ref={(el: HTMLAntivirusCardModalElement) => (this.newScanModal = el)}>
+              <antivirus-card-new-scan preset={this.preset} closeModal={() => this.newScanModal.toggle(false)}>
+                <span class="title" slot="title">
+                  {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
+                </span>
+              </antivirus-card-new-scan>
+            </antivirus-card-modal>,
+            this.scanPreset && this.scanPreset.partial ? (
+              <antivirus-card-preview scanType="PARTIAL"></antivirus-card-preview>
+            ) : (
+              <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])}></PreviewNewScan>
+            ),
+          ]
         ) : (
           <PreviewFree
             onClick={() => this.openBuyModal.emit()}

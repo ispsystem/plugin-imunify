@@ -10,11 +10,13 @@
 ### Used by
 
  - [antivirus-card](..)
+ - [antivirus-card-new-scan](../new-scan)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card --> antivirus-card-switcher
+  antivirus-card-new-scan --> antivirus-card-switcher
   style antivirus-card-switcher fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

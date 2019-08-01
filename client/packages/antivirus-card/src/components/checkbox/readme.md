@@ -20,8 +20,21 @@
 
 | Event     | Description                    | Type                   |
 | --------- | ------------------------------ | ---------------------- |
-| `сhanged` | Event by change checkbox value | `CustomEvent<boolean>` |
+| `changed` | Event by change checkbox value | `CustomEvent<boolean>` |
 
+
+## Dependencies
+
+### Used by
+
+ - [antivirus-card-new-scan](../new-scan)
+
+### Graph
+```mermaid
+graph TD;
+  antivirus-card-new-scan --> antivirus-card-checkbox
+  style antivirus-card-checkbox fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

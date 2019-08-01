@@ -40,6 +40,7 @@ module.exports = {
           constructors: 'no-public',
           methods: 'no-public',
           properties: 'no-public',
+          accessors: 'no-public',
         },
       },
     ],
