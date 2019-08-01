@@ -114,8 +114,10 @@ export class AntivirusCard {
 
   /** Method to get available antivirus features */
   checkFeatures: typeof AntivirusActions.feature;
-  /** Method to get available antivirus features */
+  /** Method to get scan history */
   getScanHistory: typeof AntivirusActions.history;
+  /** Method to get infected files list */
+  getInfectedFiles: typeof AntivirusActions.infectedFiles;
   /** Method to update global state */
   updateState: typeof AntivirusActions.updateState;
   /** Method to wait a scan result */
@@ -138,6 +140,7 @@ export class AntivirusCard {
     this.store.mapDispatchToProps(this, {
       checkFeatures: AntivirusActions.feature,
       getScanHistory: AntivirusActions.history,
+      getInfectedFiles: AntivirusActions.infectedFiles,
       updateState: AntivirusActions.updateState,
       waitScanResult: AntivirusActions.waitScanResult,
       loadTranslate: TranslateActions.load,
@@ -156,6 +159,8 @@ export class AntivirusCard {
     await this.checkFeatures();
 
     await this.getScanHistory(this.siteId);
+
+    await this.getInfectedFiles(this.siteId);
 
     if (this.notifier !== undefined) {
       this.notifier.taskList$().subscribe((d: NotifierEvent[]) => {

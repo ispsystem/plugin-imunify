@@ -1,7 +1,5 @@
 from argparse import ArgumentParser
-from datetime import datetime
 import base64
-import calendar
 import json
 import os
 import re
@@ -22,35 +20,27 @@ class Fifo:
         os.mkfifo(self.name)
 
     def read(self):
-        """
-        Read from pipe
-        :return: Data from pipe
-        """
         self.fifo = open(self.name)
         return self.fifo.read()
 
     def close(self):
-        """
-        Close pipe
-        :return:
-        """
         self.fifo.close()
         os.unlink(self.name)
 
 
 def get_scan_args(scan_params):
-    params = list()
-    params.append("/bin/imunify-antivirus")
+    """
+    Разбор необходимых параметров
+    :param scan_params: Параметры сканирования
+    :return:
+    """
+    params = ["/bin/imunify-antivirus"]
 
     log_level = "DEBUG" if scan_params.get("fullLogDetails", True) else "INFO"
-    params.append("--console-log-level")
-    params.append(log_level)
-    params.append("malware")
-    params.append("on-demand")
-    params.append("start")
+    params.extend(["--console-log-level", log_level, "malware", "on-demand", "start"])
 
     # TODO(d.vitvitskii) Временное решение. Нужно научиться обрабатывать несколько директорий.
-    #  Для этого нужно переписать всю логику
+    #  Для этого нужно переписать логику обработки результатов сканирования
     scan_paths = scan_params.get("path", [])
     if not scan_paths or not scan_paths[0]:
         scan_path = "/"
@@ -84,26 +74,21 @@ def get_scan_args(scan_params):
 
 def scan(scan_params):
     """
-    Start scan
-    :param scan_params: Scan params
-    :return: Process exit code
+    Запуск сканирования
+    :param scan_params: Параметры сканирования
+    :return: Exit code
     """
     process = subprocess.Popen(get_scan_args(scan_params), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     process.wait()
     return process.returncode
 
 
-# TODO(d.vitvitskii) Поменять на time.time()*1000
-def get_utc_timestamp():
-    return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
-
-
 def process(params, start_date):
     """
-    Scan process
-    :param params: Scan params
-    :param start_date: Date time when scanning was started
-    :return: Dictionary that present scan result: status, result, scan_id etc.
+    Запуск сканирования и обработка результатов
+    :param params: Параметры сканирования
+    :param start_date: Дата начала сканирования в формате timestamp
+    :return: Словарь, оприсывающий результат сканирования: status, result, scan_id ...
     """
     scan_result = {
         "status": SCAN_STATUS_SUCCESS,
@@ -152,9 +137,13 @@ def process(params, start_date):
             output = subprocess.check_output(["imunify-antivirus", "malware", "malicious", "list", "--by-scan-id", scan_result["scan_id"], "--json"]).decode()
             malicious_list = json.loads(output)
             for malicious in malicious_list["items"]:
+                try:
+                    last_modify = int(os.stat(malicious["file"]).st_mtime)
+                except FileNotFoundError:
+                    last_modify = 0
                 infected_file = {
-                    # TODO(d.vitvitskii) Получать дату последнего изменения файла
                     "file": malicious["file"],
+                    "last_modify": last_modify,
                     "malicious_type": malicious["type"]
                 }
                 scan_result["scan"]["infected"].append(infected_file)
@@ -169,8 +158,8 @@ def process(params, start_date):
 
 def im_hook(dict_param):
     """
-    Hooks for detecting scan results
-    :param dict_param: Events parameters
+    Хук для обработки результатов сканирования
+    :param dict_param: Результат работы антивирума
     :return:
     """
     fifo = open(PIPE_PATH, "w")
