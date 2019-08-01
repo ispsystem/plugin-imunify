@@ -6,13 +6,14 @@ import { Store } from '@stencil/redux';
 import { ScanOption, IntensityType } from '../../models/antivirus/state';
 import { CheckByMask } from './CheckByMask';
 import { AntivirusActions } from '../../models/antivirus/actions';
+import { filterEmptyString } from '../../utils/tools';
 
 /**
  * New scan settings component
  */
 @Component({
   tag: 'antivirus-card-new-scan',
-  styleUrl: 'styles/$.scss',
+  styleUrls: ['styles/$.scss', '../style.scss'],
   shadow: true,
 })
 export class NewScan {
@@ -22,6 +23,7 @@ export class NewScan {
   /** global notifier object */
   @State() notifier: Notifier;
 
+  /** Function on modal close */
   @Prop() closeModal: () => void = () => {};
 
   /** Model settings for new scan */
@@ -40,9 +42,7 @@ export class NewScan {
   @State() useExcludeMask: boolean;
 
   /** State for preloader */
-  @State() isPreloader: {
-    submit: boolean;
-  } = { submit: false };
+  @State() isPreloader = { submit: false };
 
   /** Method to update global state */
   savePreset: typeof AntivirusActions.savePreset;
@@ -105,7 +105,7 @@ export class NewScan {
    * @param excludeMask - new path
    */
   handleChangePath(path: string) {
-    /** @TODO add handling for path as array, after this feature realise in backend */
+    /** @todo add handling for path as array, after this feature realise in backend */
     this.preset.path[0] = path;
     this.preset = { ...this.preset };
   }
@@ -115,10 +115,15 @@ export class NewScan {
    */
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
-    const preset = this._prepareDataForSubmit(this.preset);
-    await this.saveAndScan(this.notifier, preset, this.siteId);
+    const preset = this.prepareDataForSubmit(this.preset);
+    const res = await this.saveAndScan(this.notifier, preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
-    this.closeModal();
+    if (res && res['error']) {
+      console.warn('Oops, failed to save preset or start scanning', res['error']);
+      return;
+    } else {
+      this.closeModal();
+    }
   }
 
   /**
@@ -126,33 +131,27 @@ export class NewScan {
    */
   async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
-    const preset = this._prepareDataForSubmit(this.preset);
-    await this.savePreset(preset, this.siteId);
+    const preset = this.prepareDataForSubmit(this.preset);
+    const res = await this.savePreset(preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
-    this.closeModal();
+    if (res && res['error']) {
+      console.warn('Oops, failed to save preset or start scanning', res['error']);
+      return;
+    } else {
+      this.closeModal();
+    }
   }
+
   /**
    * Method for prepare data in desired form before submit
+   *
+   * @param model - scan option preset
    */
-  private _prepareDataForSubmit(model: ScanOption): Omit<ScanOption, 'id'> {
+  prepareDataForSubmit(model: ScanOption): Omit<ScanOption, 'id'> {
     const preset: ScanOption = {
       ...model,
-      checkMask: this.useCheckMask
-        ? model.checkMask.reduce((res: string[], el) => {
-            el = el.trim();
-            el !== '' && res.push(el);
-            return res;
-          }, [])
-        : [],
-      excludeMask: this.useExcludeMask
-        ? model.excludeMask.reduce((res: string[], el) => {
-            el = el.trim();
-            el !== '' && res.push(el);
-            return res;
-          }, [])
-        : [],
-      intensity: model.intensity,
-      path: model.path,
+      checkMask: this.useCheckMask ? filterEmptyString(model.checkMask) : [],
+      excludeMask: this.useExcludeMask ? filterEmptyString(model.excludeMask) : [],
     };
 
     delete preset.id;

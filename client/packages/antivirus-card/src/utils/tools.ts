@@ -37,7 +37,7 @@ export function declOfNum(num: number, listMsgs: string[]): string {
 
 /**
  * Return nested object or undefined
- * 
+ *
  * @param object - root object
  * @param pathArr - path to nested object as string array
  */
@@ -53,6 +53,7 @@ export function uuidv4() {
   const hash: any = ([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11;
   // https://stackoverflow.com/questions/44042816/what-is-wrong-with-crypto-getrandomvalues-in-internet-explorer-11
   const crypto = window.crypto || window['msCrypto']; // for IE 11
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return hash.replace(/[018]/g, c => (c ^ (crypto.getRandomValues(new Uint8Array(1))![0] & (15 >> (c / 4)))).toString(16));
 }
 
@@ -64,3 +65,29 @@ export function uuidv4() {
 export function pad(n: number) {
   return n < 10 ? '0' + n : n;
 }
+
+/**
+ * Method for reduce and filter array
+ *
+ * @param arr - input array
+ * @param filter - filter function
+ * @param preFun - functions to be performed before filtering
+ */
+export function reduceFilter<T>(arr: T[], filter: (e: T) => boolean, ...preFun: ((e: T) => T)[]): T[] {
+  return arr.reduce((res: T[], e) => {
+    if (preFun) {
+      e = preFun.reduce((_, f) => {
+        return f(e);
+      }, e);
+    }
+
+    return filter(e) ? res.push(e) && res : res;
+  }, []);
+}
+
+/**
+ * Filter array by empty string
+ *
+ * @param arr input array
+ */
+export const filterEmptyString = (arr: string[]): string[] => reduceFilter(arr, (e: string) => e !== '', (e: string) => e.trim());

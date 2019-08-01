@@ -7,17 +7,17 @@
 
 ## Properties
 
-| Property     | Attribute     | Description | Type      | Default     |
-| ------------ | ------------- | ----------- | --------- | ----------- |
-| `modalWidth` | `modal-width` |             | `string`  | `undefined` |
-| `visible`    | `visible`     |             | `boolean` | `undefined` |
+| Property     | Attribute     | Description                | Type      | Default     |
+| ------------ | ------------- | -------------------------- | --------- | ----------- |
+| `modalWidth` | `modal-width` | Modal width                | `string`  | `undefined` |
+| `visible`    | `visible`     | Flag for visible component | `boolean` | `undefined` |
 
 
 ## Methods
 
 ### `toggle(value?: boolean) => Promise<void>`
 
-
+Method for change modal visible
 
 #### Returns
 

@@ -73,7 +73,7 @@ export class Preloader {
   }
 
   componentWillUpdate() {
-    // @TODO add handle for browser scroll
+    /** @todo add handle for browser scroll */
     this._calculateSpinnerPosition(this._contentDiv, this._spinnerEl);
   }
 
@@ -84,7 +84,7 @@ export class Preloader {
    * @param spinnerElement - container with spinner element
    */
   private _calculateSpinnerPosition(containerElement: HTMLDivElement, spinnerElement: HTMLAntivirusCardSpinnerRoundElement) {
-    /** @TODO This method copy from isp-preloader and needing in revision */
+    /** @todo This method copy from isp-preloader and needing in revision */
     if (typeof containerElement !== 'undefined' && typeof spinnerElement !== 'undefined') {
       // проверка нужно ли изменить положение spinner
       // в видимой области или нет

@@ -7,17 +7,29 @@ import { CloseIcon } from '../icons/close';
   shadow: true,
 })
 export class Modal {
-  @Prop({ attribute: 'modal-width' }) public modalWidth: string;
+  /** Modal width */
+  @Prop({ attribute: 'modal-width' }) modalWidth: string;
+
+  /** Flag for visible component */
   @Prop({
     mutable: true,
     reflect: true,
   })
   visible: boolean;
 
+  /**
+   * Method for change modal visible
+   */
   @Method()
   async toggle(value?: boolean) {
     this.visible = value ? value : !this.visible;
   }
+
+  /**
+   * Handle for click on modal
+   *
+   * @param e - mouse event
+   */
   private handleModalClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

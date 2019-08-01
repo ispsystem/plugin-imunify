@@ -22,7 +22,7 @@ export class Dashboard {
 
   /**
    *  Its Mock DATA
-   *  @TODO delete after realise handle for get default preset
+   *  @todo delete after realise handle for get default preset
    */
   preset: ScanOption = {
     id: 0,
@@ -35,7 +35,7 @@ export class Dashboard {
         date: 1,
       },
     },
-    checkFileTypes: 'CRITICAL',
+    checkFileTypes: 'critical',
     saveCopyFilesDay: 31,
     cureFoundFiles: true,
     removeInfectedFileContent: true,

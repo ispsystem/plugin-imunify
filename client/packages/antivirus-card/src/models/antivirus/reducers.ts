@@ -5,7 +5,7 @@ const getInitialState = (): AntivirusState => {
   return {
     error: null,
 
-    isProVersion: true,
+    isProVersion: false,
     hasScheduledActions: false,
 
     scanning: false,

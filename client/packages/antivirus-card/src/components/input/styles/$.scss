@@ -1,3 +1,7 @@
+:host {
+  position: relative;
+}
+
 .input-form {
   display: block;
 
@@ -37,10 +41,6 @@
   }
 }
 
-:host {
-  position: relative;
-}
-
 .input-prefix__span {
   position: absolute;
   top: 50%;
@@ -48,5 +48,5 @@
   transform: translateY(-50%);
   color: var(--isp-color__additional-text, #9b9b9b);
   font: 14px Ubuntu, sans-serif;
-  font-size: var(--isp-font-size__input);
+  font-size: var(--isp-font-size__input, 14px);
 }

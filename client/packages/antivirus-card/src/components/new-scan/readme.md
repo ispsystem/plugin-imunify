@@ -9,7 +9,7 @@
 
 | Property              | Attribute | Description                 | Type         | Default     |
 | --------------------- | --------- | --------------------------- | ------------ | ----------- |
-| `closeModal`          | --        |                             | `() => void` | `() => {}`  |
+| `closeModal`          | --        | Function on modal close     | `() => void` | `() => {}`  |
 | `preset` _(required)_ | --        | Model settings for new scan | `ScanOption` | `undefined` |
 
 

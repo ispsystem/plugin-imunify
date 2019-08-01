@@ -35,6 +35,9 @@ interface HistoryItem {
   scanOptionId: number;
 }
 
+/**
+ * Presets type
+ */
 export type CheckType = 'FULL' | 'PARTIAL';
 
 /**
@@ -75,7 +78,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
+  checkFileTypes: 'critical' | 'all' | 'except_media';
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;

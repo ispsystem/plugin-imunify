@@ -10,9 +10,12 @@ import { getValidator, Validator, defaultValidator } from '../../utils/validator
   shadow: true,
 })
 export class Input {
-  private _prefixElement: HTMLSpanElement;
+  /** Ref for prefix element */
+  prefixElement: HTMLSpanElement;
 
-  private _inputElement: HTMLInputElement;
+  /** Ref for input element */
+  inputElement: HTMLInputElement;
+
   /** Field with merged custom validators */
   private _validator: Validator<string> = defaultValidator;
 
@@ -23,7 +26,6 @@ export class Input {
   @Prop({ mutable: true }) value: string;
 
   /** Style width for input field */
-
   @Prop({ reflect: true }) width: string = '280px';
 
   /** List of custom validators */
@@ -47,7 +49,7 @@ export class Input {
   }
 
   componentDidLoad() {
-    this._inputElement.style.paddingLeft = 10 + (this._prefixElement && this._prefixElement.clientWidth) + 'px';
+    this.inputElement.style.paddingLeft = 10 + (this.prefixElement && this.prefixElement.clientWidth) + 'px';
   }
 
   /**
@@ -81,12 +83,12 @@ export class Input {
     return (
       <Host>
         {this.textPrefix && (
-          <span ref={(el: HTMLSpanElement) => (this._prefixElement = el)} class="input-prefix__span">
+          <span ref={(el: HTMLSpanElement) => (this.prefixElement = el)} class="input-prefix__span">
             {this.textPrefix}
           </span>
         )}
         <input
-          ref={(el: HTMLInputElement) => (this._inputElement = el)}
+          ref={(el: HTMLInputElement) => (this.inputElement = el)}
           value={this.value}
           placeholder={this.placeholder}
           disabled={this.disabled}

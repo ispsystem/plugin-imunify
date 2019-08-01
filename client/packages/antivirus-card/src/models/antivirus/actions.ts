@@ -164,6 +164,7 @@ export namespace AntivirusActions {
         return Number(json.preset_id);
       } catch (error) {
         dispatch(savePresetFailure(error));
+        return { error };
       }
     };
   }
@@ -186,10 +187,16 @@ export namespace AntivirusActions {
       dispatch(saveAndScanBegin());
       try {
         const presetId = await savePreset(preset, siteId, scanType)(dispatch);
-        await scan(notifier, presetId, siteId);
+        if (typeof presetId === 'number') {
+          await scan(notifier, presetId, siteId);
+        } else {
+          dispatch(saveAndScanFailure(presetId['error']));
+          return presetId;
+        }
         dispatch(saveAndScanSuccess());
       } catch (error) {
         dispatch(saveAndScanFailure(error));
+        return { error };
       }
     };
   }

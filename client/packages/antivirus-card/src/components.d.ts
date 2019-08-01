@@ -129,8 +129,17 @@ export namespace Components {
     'width': string;
   }
   interface AntivirusCardModal {
+    /**
+    * Modal width
+    */
     'modalWidth': string;
+    /**
+    * Method for change modal visible
+    */
     'toggle': (value?: boolean) => Promise<void>;
+    /**
+    * Flag for visible component
+    */
     'visible': boolean;
   }
   interface AntivirusCardNavigation {
@@ -140,6 +149,9 @@ export namespace Components {
     }[];
   }
   interface AntivirusCardNewScan {
+    /**
+    * Function on modal close
+    */
     'closeModal': () => void;
     /**
     * Model settings for new scan
@@ -502,7 +514,13 @@ declare namespace LocalJSX {
     'width'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
+    /**
+    * Modal width
+    */
     'modalWidth'?: string;
+    /**
+    * Flag for visible component
+    */
     'visible'?: boolean;
   }
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
@@ -513,6 +531,9 @@ declare namespace LocalJSX {
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardNewScan extends JSXBase.HTMLAttributes<HTMLAntivirusCardNewScanElement> {
+    /**
+    * Function on modal close
+    */
     'closeModal'?: () => void;
     /**
     * Model settings for new scan
