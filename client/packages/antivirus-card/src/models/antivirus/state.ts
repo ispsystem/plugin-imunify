@@ -26,7 +26,7 @@ interface HistoryItem {
   // verification date and time (timestamp)
   date: number;
   // check type
-  checkType: 'FULL' | 'PARTIAL';
+  checkType: CheckType;
   // count infected files
   infectedFilesCount: number;
   // count cured files
@@ -36,14 +36,25 @@ interface HistoryItem {
 }
 
 /**
+ * Presets type
+ */
+export type CheckType = 'FULL' | 'PARTIAL';
+
+/**
+ * Type for scanning intensity
+ */
+export type IntensityType = 'LOW' | 'MEDIUM' | 'HIGH';
+
+/**
  * Scan option list item
  */
 export interface ScanOption {
   id: number;
   path: string[];
+  docroot: string;
   checkMask: string[];
   excludeMask: string[];
-  intensity: 'LOW' | 'MEDIUM' | 'HIGH';
+  intensity: IntensityType;
   scheduleTime: {
     daily?: {
       hour: number;
@@ -67,7 +78,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
+  checkFileTypes: 'critical' | 'all' | 'except_media';
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;

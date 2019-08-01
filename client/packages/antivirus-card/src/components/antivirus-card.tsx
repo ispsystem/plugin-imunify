@@ -15,7 +15,6 @@ import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 
 /**
- *
  * AntivirusCard component
  */
 @Component({
@@ -24,6 +23,7 @@ import { AntivirusActions } from '../models/antivirus/actions';
   shadow: true,
 })
 export class AntivirusCard {
+  newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
@@ -96,7 +96,7 @@ export class AntivirusCard {
    */
   @Listen('openBuyModal')
   openBuyModal(): void {
-    this.buyModal.visible = true;
+    this.buyModal.toggle(true);
   }
 
   /**
@@ -209,10 +209,10 @@ export class AntivirusCard {
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
           <div class="button-container">
-            <antivirus-card-button btn-theme="accent" onClick={() => (this.buyModal.visible = false)}>
+            <antivirus-card-button btn-theme="accent" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
-            <a class="link link_indent-left" onClick={() => (this.buyModal.visible = false)}>
+            <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>

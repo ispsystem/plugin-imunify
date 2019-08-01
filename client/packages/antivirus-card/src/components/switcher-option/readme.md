@@ -27,11 +27,13 @@
 ### Used by
 
  - [antivirus-card](..)
+ - [antivirus-card-new-scan](../new-scan)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card --> antivirus-card-switcher-option
+  antivirus-card-new-scan --> antivirus-card-switcher-option
   style antivirus-card-switcher-option fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

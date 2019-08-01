@@ -87,6 +87,24 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       };
     }
 
+    case ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS: {
+      return {
+        ...state,
+        scanPreset: {
+          ...state.scanPreset,
+          partial: action.payload.data,
+        },
+        error: null,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
     case ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS: {
       return {
         ...state,

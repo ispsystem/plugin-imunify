@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+
+  antivirus-card-hint {
+    margin-left: 10px;
+  }
+}
+
+.form-label {
+  padding: 7px 0;
+}
