@@ -34,7 +34,7 @@ export class AntivirusCard {
   /** global notifier object */
   @Prop() notifier: Notifier;
   /** main app translate service */
-  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+  @Prop() translateService: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   /** global store object */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
@@ -44,6 +44,8 @@ export class AntivirusCard {
   @State() history: RootState['antivirus']['history'];
   /** scan option preset */
   @State() scanPreset: RootState['antivirus']['scanPreset'];
+  /** scan in process */
+  @State() scanning: RootState['antivirus']['scanning'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -197,11 +199,16 @@ export class AntivirusCard {
             .filter(id => id !== undefined);
           if (runningPluginTasks.length > 0) {
             this.waitScanResult(this.notifier, runningPluginTasks);
-          } else if (this.history.length === 0) {
-            this.scanVirus(this.notifier, this.scanPreset.full.id, this.siteId);
           }
         }
       });
+
+      /** @todo: need query from back has scanning now or has not */
+      setTimeout(() => {
+        if (this.history.length === 0 && !this.scanning) {
+          this.scanVirus(this.notifier, this.scanPreset.full.id, this.siteId);
+        }
+      }, 700);
     }
   }
 
