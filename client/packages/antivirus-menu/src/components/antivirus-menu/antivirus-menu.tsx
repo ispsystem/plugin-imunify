@@ -5,7 +5,7 @@ import { loadTranslate, getNestedObject, ITranslate } from '../../utils/utils';
 
 @Component({
   tag: 'antivirus-menu',
-  shadow: true
+  shadow: true,
 })
 export class AntivirusMenu {
   @Prop() url: string;
@@ -26,7 +26,12 @@ export class AntivirusMenu {
       });
     }
 
-    this.t = await loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+    // prettier-ignore
+    this.t = await loadTranslate(
+      getNestedObject(this.translateService, ['currentLang'])
+      || getNestedObject(this.translateService, ['defaultLang'])
+      || defaultLang
+    );
 
     if (this.translateService) {
       this.translateService.onLangChange.subscribe(async d => {

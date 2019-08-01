@@ -157,9 +157,14 @@ export class AntivirusCard {
       loadTranslate: TranslateActions.load,
     });
 
-    await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+    // prettier-ignore
+    await this.loadTranslate(
+      getNestedObject(this.translateService, ['currentLang'])
+      || getNestedObject(this.translateService, ['defaultLang'])
+      || defaultLang
+    );
 
-    if (this.translateService) {
+    if (this.translateService !== undefined) {
       this.translateService.onLangChange.subscribe(d => {
         if (d.lang in languages) {
           this.loadTranslate(d.lang);
