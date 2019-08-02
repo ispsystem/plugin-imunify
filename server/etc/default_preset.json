@@ -2,7 +2,7 @@
   "path": [],
   "checkMask": [],
   "excludeMask": [],
-  "intensity": "high",
+  "intensity": "HIGH",
   "scheduleTime": {
     "daily": {
       "hour": 15,
