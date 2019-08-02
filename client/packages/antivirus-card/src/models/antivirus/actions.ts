@@ -280,7 +280,7 @@ export namespace AntivirusActions {
       try {
         const requestInit: RequestInit = {
           method: 'POST',
-          body: JSON.stringify({ preset_id: presetId }),
+          body: JSON.stringify({ is_active: false }),
         };
         let response = await fetch(`${endpoint}/plugin/api/imunify/preset/${presetId}/status`, requestInit);
         handleErrors(response);
