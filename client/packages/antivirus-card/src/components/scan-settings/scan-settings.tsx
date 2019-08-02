@@ -174,7 +174,8 @@ export class ScanSettings {
 
           <div class="flex-container">
             <antivirus-card-switcher>
-              {['CRITICAL', 'ALL', 'EXCEPT_MEDIA'].map((type: CheckFileType) => (
+              {/** @todo CHANGE  */}
+              {['critical', 'all', 'except_media'].map((type: CheckFileType) => (
                 <antivirus-card-switcher-option
                   active={this.preset.checkFileTypes === type}
                   onClick={() => (this.preset = { ...this.preset, checkFileTypes: type })}

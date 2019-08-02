@@ -15,6 +15,11 @@ export enum ANTIVIRUS_ACTION {
   SAVE_AND_SCAN_SUCCESS = 'SAVE_AND_SCAN_SUCCESS,',
   GET_INFECTED_FILES_SUCCESS = 'GET_INFECTED_FILES_SUCCESS',
   GET_INFECTED_FILES_FAILURE = 'GET_INFECTED_FILES_FAILURE',
+
+  GET_PRESETS_SUCCESS = 'GET_PRESETS_SUCCESS',
+  GET_PRESETS_FAILURE = 'GET_PRESETS_FAILURE',
+  DISABLE_PRESET_SUCCESS = 'DISABLE_PRESET_SUCCESS',
+  DISABLE_PRESET_FAILURE = 'DISABLE_PRESET_FAILURE',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -97,6 +102,12 @@ export const saveAndScanBegin = () => (dispatch: (obj: SaveAndScanBeginAction) =
   });
 };
 
+export const saveAndScanSuccess = () => (dispatch: (obj: SaveAndScanSuccessAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_SUCCESS,
+  });
+};
+
 export const saveAndScanFailure = error => (dispatch: (obj: SaveAndScanFailureAction) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_FAILURE,
@@ -118,9 +129,31 @@ export const getInfectedFilesFailure = error => async (dispatch: (obj: GetInfect
   });
 };
 
-export const saveAndScanSuccess = () => (dispatch: (obj: SaveAndScanSuccessAction) => void) => {
+export const getPresetsSuccess = data => async (dispatch: (obj: GetPresetsSuccessAction) => void) => {
   return dispatch({
-    type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_SUCCESS,
+    type: ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS,
+    payload: { data },
+  });
+};
+
+export const getPresetsFailure = error => async (dispatch: (obj: GetPresetsFailureAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.GET_PRESETS_FAILURE,
+    payload: { error },
+  });
+};
+
+export const disablePresetFailure = error => async (dispatch: (obj: DisablePresetFailure) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE,
+    payload: { error },
+  });
+};
+
+export const disablePresetSuccess = data => async (dispatch: (obj: DisablePresetSuccess) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS,
+    payload: { data },
   });
 };
 
@@ -199,6 +232,26 @@ interface GetInfectedFilesFailureAction {
   payload: any;
 }
 
+interface GetPresetsSuccessAction {
+  type: ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS;
+  payload: any;
+}
+
+interface GetPresetsFailureAction {
+  type: ANTIVIRUS_ACTION.GET_PRESETS_FAILURE;
+  payload: any;
+}
+
+interface DisablePresetFailure {
+  type: ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE;
+  payload: any;
+}
+
+interface DisablePresetSuccess {
+  type: ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS;
+  payload: any;
+}
+
 export type AntivirusActionTypes =
   | ScanBeginAction
   | ScanningAction
@@ -215,4 +268,8 @@ export type AntivirusActionTypes =
   | SaveAndScanFailureAction
   | SaveAndScanSuccessAction
   | GetInfectedFilesSuccessAction
-  | GetInfectedFilesFailureAction;
+  | GetInfectedFilesFailureAction
+  | GetPresetsSuccessAction
+  | GetPresetsFailureAction
+  | DisablePresetFailure
+  | DisablePresetSuccess;

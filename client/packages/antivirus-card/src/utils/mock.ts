@@ -12,7 +12,7 @@ export namespace MOCK {
         date: 1,
       },
     },
-    checkFileTypes: 'CRITICAL',
+    checkFileTypes: 'critical',
     saveCopyFilesDay: 31,
     cureFoundFiles: true,
     removeInfectedFileContent: true,

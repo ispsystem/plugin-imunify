@@ -10,12 +10,12 @@ import { Observable } from 'rxjs';
 @Component({
   tag: 'antivirus-widget',
   styleUrl: 'style.scss',
-  shadow: true
+  shadow: true,
 })
 export class AntivirusWidget {
   @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   @Prop() url: string;
-  
+
   @State() state;
   /** translate object */
   @State()
@@ -36,20 +36,25 @@ export class AntivirusWidget {
         isProcessing: false,
         statusMsg: this.t.msg(['WIDGET', 'STATUS_MSG', 'SAFELY']),
         descMsg: this.t.msg(['WIDGET', 'DESC_MSG', 'HISTORY']),
-        actionMsg: this.t.msg(['WIDGET', 'ACTION_MSG', 'AGAIN'])
+        actionMsg: this.t.msg(['WIDGET', 'ACTION_MSG', 'AGAIN']),
       };
     } else {
       return {
         isProcessing: true,
         statusMsg: this.t.msg(['WIDGET', 'STATUS_MSG', 'IN_PROCESS']),
         descMsg: this.t.msg(['WIDGET', 'DESC_MSG', 'WAIT']),
-        actionMsg: this.t.msg(['WIDGET', 'ACTION_MSG', 'REPORT'])
+        actionMsg: this.t.msg(['WIDGET', 'ACTION_MSG', 'REPORT']),
       };
     }
   }
 
   async componentWillLoad() {
-    this.t = await loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+    // prettier-ignore
+    this.t = await loadTranslate(
+      getNestedObject(this.translateService, ['currentLang'])
+      || getNestedObject(this.translateService, ['defaultLang'])
+      || defaultLang
+    );
 
     this.state = this._changeStatus(true);
 
@@ -77,7 +82,7 @@ export class AntivirusWidget {
           {this.state.descMsg}
         </div>
         <div class="vepp-widget-icon_adaptive">
-          <AntivirusShieldIcon/>
+          <AntivirusShieldIcon />
         </div>
         <a
           class="ngispui-link ngispui-link_type_hover-dropdown ngispui-link_size_small ngispui-link_color_primary"

@@ -20,6 +20,7 @@ import {
   ThemePalette,
 } from './components/button/button.interface';
 import {
+  CheckType,
   ScanOption,
 } from './models/antivirus/state';
 import {
@@ -48,7 +49,7 @@ export namespace Components {
     /**
     * main app translate service
     */
-    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService': { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -201,7 +202,12 @@ export namespace Components {
     */
     'width': string;
   }
-  interface AntivirusCardPreview {}
+  interface AntivirusCardPreview {
+    /**
+    * scan type for this card
+    */
+    'scanType': CheckType;
+  }
   interface AntivirusCardScanSettings {
     'closeModal': () => void;
     'setPreset': (preset: ScanOption) => Promise<void>;
@@ -472,7 +478,7 @@ declare namespace LocalJSX {
     /**
     * main app translate service
     */
-    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService'?: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;
@@ -644,6 +650,10 @@ declare namespace LocalJSX {
     * to open scan settings modal
     */
     'onOpenScanSettingsModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * scan type for this card
+    */
+    'scanType'?: CheckType;
   }
   interface AntivirusCardScanSettings extends JSXBase.HTMLAttributes<HTMLAntivirusCardScanSettingsElement> {
     'closeModal'?: () => void;

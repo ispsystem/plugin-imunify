@@ -8,12 +8,11 @@ import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
-import { PreviewInBlackLists } from './PreviewInBlackLists';
-import { MOCK } from '../../utils/mock';
+import { CloseIcon } from '../icons/close';
 
 /**
  * Preview component for antivirus-card
@@ -29,6 +28,10 @@ export class Preview {
   /** global stile */
   @Prop({ context: 'store' })
   store: Store<RootState, ActionTypes>;
+
+  /** scan type for this card */
+  @Prop()
+  scanType: CheckType = 'FULL';
 
   /** scan loading */
   @State() scanning: AntivirusState['scanning'];
@@ -50,6 +53,8 @@ export class Preview {
   @State() lastScan: string;
   /** Site id */
   @State() siteId: number;
+  /** scan option preset */
+  @State() scanPreset: RootState['antivirus']['scanPreset'];
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
@@ -63,6 +68,13 @@ export class Preview {
     composed: true,
   })
   clickItem: EventEmitter;
+
+  /**
+   * scan option for this card
+   */
+  get scanOption(): ScanOption {
+    return this.scanType === 'PARTIAL' ? this.scanPreset.partial : this.scanPreset.full;
+  }
 
   /**
    * Change last scan date
@@ -80,13 +92,21 @@ export class Preview {
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
 
+  disablePreset: typeof AntivirusActions.disablePreset;
+
   /**
    * Lifecycle
    */
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, notifier: state.notifier, t: state.translate, siteId: state.siteId }));
+    this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
+      notifier: state.notifier,
+      t: state.translate,
+      siteId: state.siteId,
+    }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
+      disablePreset: AntivirusActions.disablePreset,
     });
 
     this.setLastScan(this.history);
@@ -110,6 +130,10 @@ export class Preview {
     return `${date.getHours()}.${pad(date.getMinutes())}`;
   }
 
+  async handleDisablePreset() {
+    await this.disablePreset(this.scanOption.id);
+  }
+
   /**
    * Handle click to black list help link
    *
@@ -122,6 +146,11 @@ export class Preview {
   render() {
     return (
       <Host>
+        {this.scanType === 'PARTIAL' && (
+          <div style={{ position: 'absolute', right: '20px', cursor: 'pointer' }} onClick={() => this.handleDisablePreset()}>
+            <CloseIcon />
+          </div>
+        )}
         <PreviewStatus
           msgWaitCheck={this.t.msg(['PREVIEW', 'WAIT_CHECK'])}
           msgLastCheck={this.t.msg(['PREVIEW', 'LAST_CHECK'])}
@@ -146,18 +175,21 @@ export class Preview {
           openBuyModal={this.openBuyModal}
         ></PreviewInfectedFiles>
 
+        {/** @todo: return when imunify released this feature */
+        /*
         <PreviewInBlackLists
           t={this.t}
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
-        ></PreviewInBlackLists>
+        ></PreviewInBlackLists> 
+        */}
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
           <span class="link">
             <StartCheckIcon onClick={() => this.scanVirus(this.notifier, 1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
           </span>
           {this.isProVersion && (
-            <a class="link" onClick={() => this.openScanSettingsModal.emit(MOCK.defaultPreset)} style={{ 'margin-left': '20px' }}>
+            <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>
               {this.t.msg('CONFIGURE')}
             </a>
           )}

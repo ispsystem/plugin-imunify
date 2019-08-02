@@ -46,7 +46,7 @@ export type CheckType = 'FULL' | 'PARTIAL';
 export type IntensityType = 'LOW' | 'MEDIUM' | 'HIGH';
 
 /** Type for file check */
-export type CheckFileType = 'CRITICAL' | 'ALL' | 'EXCEPT_MEDIA';
+export type CheckFileType = 'critical' | 'all' | 'except_media';
 
 /**
  * Scan option list item
