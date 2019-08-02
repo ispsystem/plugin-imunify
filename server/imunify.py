@@ -558,7 +558,7 @@ class Imunify:
         where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
         fields = {"is_active": is_active}
         update(table='presets', data=fields, where=where_statement)
-        return web.Response(text="")
+        return web.Response(text=dumps({"preset_id": preset_id}))
 
     @staticmethod
     def scan_done(task_info: dict, scan_info: dict):
@@ -670,7 +670,7 @@ class Imunify:
 
         for data in presets:
             preset = loads(data["preset"])
-            type = "full" if data["type"] == str(ScanType.full) else str(ScanType.partial)
+            type = data["type"].lower()
             preset["id"] = data["id"]
             preset["isActive"] = bool(data["is_active"])
             presets_list[type] = preset
