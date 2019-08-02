@@ -142,6 +142,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       delete state.scanPreset.partial;
       return {
         ...state,
+        scanPreset: { ...state.scanPreset },
       };
     }
 
