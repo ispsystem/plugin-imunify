@@ -28,9 +28,10 @@ export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _
   });
 };
 
-export const scanning = () => async (dispatch: (obj: ScanningAction) => any, _getState) => {
+export const scanning = (data: { scanId: number }) => async (dispatch: (obj: ScanningAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCANNING,
+    payload: { data },
   });
 };
 
@@ -163,6 +164,11 @@ interface ScanBeginAction {
 
 interface ScanningAction {
   type: ANTIVIRUS_ACTION.SCANNING;
+  payload: {
+    data: {
+      scanId: number;
+    };
+  };
 }
 
 interface SaveAndScanBeginAction {

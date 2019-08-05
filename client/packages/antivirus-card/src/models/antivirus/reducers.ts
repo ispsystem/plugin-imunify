@@ -1,5 +1,6 @@
 import { AntivirusState } from './state';
 import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
+import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
   return {
@@ -12,6 +13,7 @@ const getInitialState = (): AntivirusState => {
     infectedFiles: [],
     inBlackLists: false,
     history: [],
+    scanTaskList$: new BehaviorSubject([]),
   };
 };
 
@@ -26,6 +28,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
+      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,

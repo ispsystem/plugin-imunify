@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+
 /**
  * Infected file
  */
@@ -92,6 +94,7 @@ export interface ScanOption {
   fullLogDetails: boolean;
   maxScanTime: number;
   autoUpdate: boolean;
+  isActive: boolean;
 }
 
 /**
@@ -108,7 +111,7 @@ export interface AntivirusState {
   // actual scan options
   scanPreset?: {
     full: ScanOption;
-    partial: ScanOption;
+    partial?: ScanOption;
   };
   // scanning flag
   scanning: boolean;
@@ -117,4 +120,5 @@ export interface AntivirusState {
 
   infectedFiles: InfectedFile[];
   history: HistoryItem[];
+  scanTaskList$: BehaviorSubject<number[]>;
 }
