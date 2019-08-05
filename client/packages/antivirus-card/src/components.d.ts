@@ -23,6 +23,7 @@ import {
   Validator,
 } from './utils/validators';
 import {
+  CheckType,
   ScanOption,
 } from './models/antivirus/state';
 import {
@@ -48,7 +49,7 @@ export namespace Components {
     /**
     * main app translate service
     */
-    'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService': { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -192,7 +193,12 @@ export namespace Components {
     */
     'width': string;
   }
-  interface AntivirusCardPreview {}
+  interface AntivirusCardPreview {
+    /**
+    * scan type for this card
+    */
+    'scanType': CheckType;
+  }
   interface AntivirusCardSelect {
     /**
     * Disabled key for select field
@@ -444,7 +450,7 @@ declare namespace LocalJSX {
     /**
     * main app translate service
     */
-    'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    'translateService'?: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;
@@ -604,6 +610,10 @@ declare namespace LocalJSX {
     * to open buy modal
     */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    /**
+    * scan type for this card
+    */
+    'scanType'?: CheckType;
   }
   interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
     /**

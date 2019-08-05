@@ -39,7 +39,12 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         scanning: false,
         infectedFiles: [
           // merge infected files with new scan result
-          ...new Map((state.infectedFiles || []).concat(action.payload.data).map(item => [item.id, item])).values(),
+          ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
+        ],
+        history: [
+          // add new item to the history list
+          ...state.history,
+          action.payload.data.historyItem,
         ],
       };
     }
@@ -113,6 +118,20 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.GET_INFECTED_FILES_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS: {
+      return {
+        ...state,
+        scanPreset: action.payload.data,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_PRESETS_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

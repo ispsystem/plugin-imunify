@@ -16,6 +16,8 @@ import {
   saveAndScanSuccess,
   getInfectedFilesSuccess,
   getInfectedFilesFailure,
+  getPresetsSuccess,
+  getPresetsFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { Observable } from 'rxjs';
@@ -128,7 +130,6 @@ export namespace AntivirusActions {
         let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
         handleErrors(response);
         let json = await response.json();
-        json['isProVersion'] = true;
 
         dispatch(getStateSuccess(json));
       } catch (error) {
@@ -155,7 +156,7 @@ export namespace AntivirusActions {
 
         handleErrors(response);
 
-        const json: { preset_id: string } = await response.json();
+        const json: { preset_id: number } = await response.json();
 
         if (scanType === 'PARTIAL') {
           dispatch(savePartialPresetSuccess({ ...preset, id: json.preset_id }));
@@ -163,9 +164,10 @@ export namespace AntivirusActions {
           /** @todo add handle for save full preset */
           // dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
         }
-        return Number(json.preset_id);
+        return json.preset_id;
       } catch (error) {
         dispatch(savePresetFailure(error));
+        /** @todo: need refactoring */
         return { error };
       }
     };
@@ -189,8 +191,9 @@ export namespace AntivirusActions {
       dispatch(saveAndScanBegin());
       try {
         const presetId = await savePreset(preset, siteId, scanType)(dispatch);
+        /** @todo: need refactoring */
         if (typeof presetId === 'number') {
-          await scan(notifier, presetId, siteId);
+          await scan(notifier, presetId, siteId)(dispatch);
         } else {
           dispatch(saveAndScanFailure(presetId['error']));
           return presetId;
@@ -243,6 +246,28 @@ export namespace AntivirusActions {
         dispatch(getInfectedFilesSuccess(json.list));
       } catch (error) {
         dispatch(getInfectedFilesFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Get active scan presets
+   *
+   * @param siteId - site ID from vepp
+   */
+  export function scanSettingPresets(siteId: number) {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(getPresetsSuccess(json));
+      } catch (error) {
+        dispatch(getPresetsFailure(error));
       }
     };
   }

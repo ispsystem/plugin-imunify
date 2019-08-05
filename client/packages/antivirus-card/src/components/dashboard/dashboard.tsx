@@ -46,7 +46,7 @@ export class Dashboard {
     maxScanTime: 1,
     autoUpdate: true,
     docroot: 'www/example.com',
-    email: 'hehe@lol.kek',
+    email: 'ispsystem@ispsystem.test',
   };
 
   /** global store */
@@ -83,7 +83,7 @@ export class Dashboard {
               </antivirus-card-new-scan>
             </antivirus-card-modal>,
             this.scanPreset && this.scanPreset.partial ? (
-              <antivirus-card-preview></antivirus-card-preview>
+              <antivirus-card-preview scanType="PARTIAL"></antivirus-card-preview>
             ) : (
               <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])}></PreviewNewScan>
             ),

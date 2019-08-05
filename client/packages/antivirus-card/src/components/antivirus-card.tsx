@@ -34,12 +34,18 @@ export class AntivirusCard {
   /** global notifier object */
   @Prop() notifier: Notifier;
   /** main app translate service */
-  @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+  @Prop() translateService: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   /** global store object */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /** selected period */
   @State() selectedPeriod = 0;
+  /** history list */
+  @State() history: RootState['antivirus']['history'];
+  /** scan option preset */
+  @State() scanPreset: RootState['antivirus']['scanPreset'];
+  /** scan in process */
+  @State() scanning: RootState['antivirus']['scanning'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -112,12 +118,16 @@ export class AntivirusCard {
     this.items = [...this.items];
   }
 
+  /** Action scan */
+  scanVirus: typeof AntivirusActions.scan;
   /** Method to get available antivirus features */
   checkFeatures: typeof AntivirusActions.feature;
   /** Method to get scan history */
   getScanHistory: typeof AntivirusActions.history;
   /** Method to get infected files list */
   getInfectedFiles: typeof AntivirusActions.infectedFiles;
+  /** Method to get setting presets */
+  getSettingPresets: typeof AntivirusActions.scanSettingPresets;
   /** Method to update global state */
   updateState: typeof AntivirusActions.updateState;
   /** Method to wait a scan result */
@@ -134,21 +144,29 @@ export class AntivirusCard {
     );
 
     this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
       t: state.translate,
     }));
 
     this.store.mapDispatchToProps(this, {
+      scanVirus: AntivirusActions.scan,
       checkFeatures: AntivirusActions.feature,
       getScanHistory: AntivirusActions.history,
       getInfectedFiles: AntivirusActions.infectedFiles,
+      getSettingPresets: AntivirusActions.scanSettingPresets,
       updateState: AntivirusActions.updateState,
       waitScanResult: AntivirusActions.waitScanResult,
       loadTranslate: TranslateActions.load,
     });
 
-    await this.loadTranslate(getNestedObject(this.translateService, ['currentLang']) || defaultLang);
+    // prettier-ignore
+    await this.loadTranslate(
+      getNestedObject(this.translateService, ['currentLang'])
+      || getNestedObject(this.translateService, ['defaultLang'])
+      || defaultLang
+    );
 
-    if (this.translateService) {
+    if (this.translateService !== undefined) {
       this.translateService.onLangChange.subscribe(d => {
         if (d.lang in languages) {
           this.loadTranslate(d.lang);
@@ -157,6 +175,8 @@ export class AntivirusCard {
     }
 
     await this.checkFeatures();
+
+    await this.getSettingPresets(this.siteId);
 
     await this.getScanHistory(this.siteId);
 
@@ -182,7 +202,26 @@ export class AntivirusCard {
           }
         }
       });
+
+      /** @todo: need query from back has scanning now or has not */
+      setTimeout(() => {
+        if (this.history.length === 0 && !this.scanning) {
+          this.scanVirus(this.notifier, this.scanPreset.full.id, this.siteId);
+        }
+      }, 700);
     }
+  }
+
+  /**
+   * Handle to buy pro version
+   */
+  buyProVersion() {
+    this.updateState({
+      ...this.store.getState().antivirus,
+      isProVersion: true,
+    });
+
+    this.buyModal.visible = false;
   }
 
   render() {
@@ -209,7 +248,7 @@ export class AntivirusCard {
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
           <div class="button-container">
-            <antivirus-card-button btn-theme="accent" onClick={() => this.buyModal.toggle(false)}>
+            <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
