@@ -34,7 +34,7 @@ export class ScanSettings {
   /** Translate object */
   @State() t: ITranslate;
 
-  @State() siteId: number;
+  @State() siteId: RootState['siteId'];
 
   @State() useEmailNotify: boolean;
 
@@ -50,7 +50,12 @@ export class ScanSettings {
   saveAndScan: typeof AntivirusActions.saveAndScan;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, notifier: state.notifier }));
+    this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
+      t: state.translate,
+      notifier: state.notifier,
+      siteId: state.siteId,
+    }));
     this.store.mapDispatchToProps(this, {
       savePreset: AntivirusActions.savePreset,
       saveAndScan: AntivirusActions.saveAndScan,
@@ -126,7 +131,7 @@ export class ScanSettings {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this.prepareDataForSubmit(this.preset);
-    const res = await this.saveAndScan(this.notifier, preset, this.siteId);
+    const res = await this.saveAndScan(preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
     if (res && res['error']) {
       console.warn('Oops, failed to save preset or start scanning', res['error']);

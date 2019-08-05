@@ -128,9 +128,15 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS: {
+      const scanPreset = {
+        full: action.payload.data.full,
+      };
+      if (action.payload.data.partial !== undefined && action.payload.data.partial.isActive) {
+        scanPreset['partial'] = action.payload.data.partial;
+      }
       return {
         ...state,
-        scanPreset: action.payload.data,
+        scanPreset,
       };
     }
 
