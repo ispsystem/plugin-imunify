@@ -1,5 +1,6 @@
 import { ScanOption } from '../models/antivirus/state';
 
+/** @todo: change to get from server */
 export namespace MOCK {
   export const defaultPreset: ScanOption = {
     id: 0,
@@ -24,5 +25,6 @@ export namespace MOCK {
     autoUpdate: true,
     docroot: 'www/example.com',
     email: 'hehe@lol.kek',
+    isActive: true,
   };
 }
