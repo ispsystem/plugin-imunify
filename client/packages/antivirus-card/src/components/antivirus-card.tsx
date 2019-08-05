@@ -10,6 +10,7 @@ import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
 import { Observable } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
@@ -46,6 +47,8 @@ export class AntivirusCard {
   @State() scanPreset: RootState['antivirus']['scanPreset'];
   /** scan in process */
   @State() scanning: RootState['antivirus']['scanning'];
+  /** list current scan process */
+  @State() scanTaskList$: RootState['antivirus']['scanTaskList$'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -131,7 +134,7 @@ export class AntivirusCard {
   /** Method to update global state */
   updateState: typeof AntivirusActions.updateState;
   /** Method to wait a scan result */
-  waitScanResult: typeof AntivirusActions.waitScanResult;
+  getScanResult: typeof AntivirusActions.getScanResult;
   /** Method to load translates from server */
   loadTranslate: typeof TranslateActions.load;
 
@@ -155,7 +158,7 @@ export class AntivirusCard {
       getInfectedFiles: AntivirusActions.infectedFiles,
       getSettingPresets: AntivirusActions.scanSettingPresets,
       updateState: AntivirusActions.updateState,
-      waitScanResult: AntivirusActions.waitScanResult,
+      getScanResult: AntivirusActions.getScanResult,
       loadTranslate: TranslateActions.load,
     });
 
@@ -183,30 +186,40 @@ export class AntivirusCard {
     await this.getInfectedFiles(this.siteId);
 
     if (this.notifier !== undefined) {
-      this.notifier.taskList$().subscribe((d: NotifierEvent[]) => {
-        if (d && Array.isArray(d) && d.length > 0) {
-          const runningPluginTasks = d
-            .map(n => {
-              if (
-                n.additional_data &&
-                (n.additional_data.status === 'created' ||
-                  n.additional_data.status === 'running' ||
-                  n.additional_data.status === 'deferred')
-              ) {
-                return n.id;
-              }
-            })
-            .filter(id => id !== undefined);
-          if (runningPluginTasks.length > 0) {
-            this.waitScanResult(this.notifier, runningPluginTasks);
+      this.notifier
+        .taskList$()
+        .pipe(take(1))
+        .subscribe((d: NotifierEvent[]) => {
+          // wait all scanning process
+          if (d && Array.isArray(d) && d.length > 0) {
+            const runningPluginTasks = d
+              .map(n => {
+                if (
+                  n.additional_data &&
+                  (n.additional_data.status === 'created' ||
+                    n.additional_data.status === 'running' ||
+                    n.additional_data.status === 'deferred')
+                ) {
+                  return n.id;
+                }
+              })
+              .filter(id => id !== undefined);
+            this.scanTaskList$.next([...this.scanTaskList$.getValue(), ...runningPluginTasks]);
           }
-        }
-      });
+        });
+
+      // subscribe to scan tasks
+      this.notifier
+        .ids(this.scanTaskList$.asObservable())
+        .delete$()
+        .subscribe((notify: { event: NotifierEvent }) => {
+          this.getScanResult(notify);
+        });
 
       /** @todo: need query from back has scanning now or has not */
       setTimeout(() => {
         if (this.history.length === 0 && !this.scanning) {
-          this.scanVirus(this.notifier, this.scanPreset.full.id, this.siteId);
+          this.scanVirus(this.scanPreset.full.id, this.siteId);
         }
       }, 700);
     }

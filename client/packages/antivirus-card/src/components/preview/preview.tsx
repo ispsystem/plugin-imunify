@@ -186,7 +186,7 @@ export class Preview {
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
           <span class="link">
-            <StartCheckIcon onClick={() => this.scanVirus(this.notifier, 1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
+            <StartCheckIcon onClick={() => this.scanVirus(1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
           </span>
           {this.isProVersion && (
             <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>

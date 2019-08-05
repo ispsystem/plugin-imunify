@@ -1,4 +1,4 @@
-import { Notifier, NotifierEvent } from '../../redux/reducers';
+import { NotifierEvent } from '../../redux/reducers';
 import {
   scanBegin,
   scanFailure,
@@ -22,8 +22,7 @@ import {
   disablePresetFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { Observable } from 'rxjs';
-import { AntivirusState, InfectedFile, ScanOption, CheckType } from './state';
+import { AntivirusState, ScanOption, CheckType } from './state';
 import { getNestedObject } from '../../utils/tools';
 
 /**
@@ -47,23 +46,6 @@ function handleErrors(response: Response): Response {
 
 /**
  *
- * Get scan result
- *
- * @param notify - result from notifier
- */
-async function getScanResult(notify: { event: NotifierEvent }): Promise<InfectedFile[]> {
-  const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
-  const taskId = notify.event.id;
-  if (started !== undefined && taskId !== undefined) {
-    let response = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`);
-    handleErrors(response);
-
-    return await response.json();
-  }
-}
-
-/**
- *
  * Actions for change antivirus state
  *
  */
@@ -71,9 +53,10 @@ export namespace AntivirusActions {
   /**
    * Search viruses
    *
-   * @param notifier - main app notifier object
+   * @param presetId - scan options preset Id
+   * @param siteId - vepp site ID
    */
-  export function scan(notifier: Notifier, presetId: number, siteId: number) {
+  export function scan(presetId: number, siteId: number) {
     return async dispatch => {
       dispatch(scanBegin());
       try {
@@ -87,7 +70,7 @@ export namespace AntivirusActions {
 
         let json = await response.json();
 
-        notifier.ids([json.task_id]).delete$();
+        dispatch(scanning({ scanId: json.task_id }));
       } catch (error) {
         dispatch(scanFailure(error));
       }
@@ -95,23 +78,23 @@ export namespace AntivirusActions {
   }
 
   /**
-   * Wait when scan tasks finish
    *
-   * @param notifier - notifier from main app
-   * @param ids - tasks
+   * Get scan result
+   *
+   * @param notify - result from notifier
    */
-  export function waitScanResult(notifier: Notifier, ids: number[] | Observable<number[]>) {
+  export async function getScanResult(notify: { event: NotifierEvent }) {
     return async dispatch => {
-      dispatch(scanning());
       try {
-        notifier
-          .ids(ids)
-          .delete$()
-          .subscribe(async d => {
-            const scanResult = await getScanResult(d);
-
-            dispatch(scanSuccess(scanResult));
-          });
+        const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
+        const taskId = notify.event.id;
+        if (started !== undefined && taskId !== undefined) {
+          let response = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`);
+          handleErrors(response);
+          dispatch(scanSuccess(response.json()));
+        } else {
+          throw 'Can not found object started or taskId in a notify!';
+        }
       } catch (error) {
         dispatch(scanFailure(error));
       }
@@ -178,24 +161,18 @@ export namespace AntivirusActions {
   /**
    * Save preset and run scan by it
    *
-   * @param notifier - main app notifier object
    * @param preset - scan options
    * @param siteId - site id
    * @param scanType - check type 'FULL' or 'PARTIAL'
    */
-  export function saveAndScan(
-    notifier: Notifier,
-    preset: Omit<ScanOption, 'id' | 'docroot'>,
-    siteId: number,
-    scanType: CheckType = 'PARTIAL',
-  ) {
+  export function saveAndScan(preset: Omit<ScanOption, 'id' | 'docroot'>, siteId: number, scanType: CheckType = 'PARTIAL') {
     return async dispatch => {
       dispatch(saveAndScanBegin());
       try {
         const presetId = await savePreset(preset, siteId, scanType)(dispatch);
         /** @todo: need refactoring */
         if (typeof presetId === 'number') {
-          await scan(notifier, presetId, siteId)(dispatch);
+          await scan(presetId, siteId)(dispatch);
         } else {
           dispatch(saveAndScanFailure(presetId['error']));
           return presetId;

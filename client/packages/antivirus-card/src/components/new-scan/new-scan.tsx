@@ -116,7 +116,7 @@ export class NewScan {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this.prepareDataForSubmit(this.preset);
-    const res = await this.saveAndScan(this.notifier, preset, this.siteId);
+    const res = await this.saveAndScan(preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
     if (res && res['error']) {
       console.warn('Oops, failed to save preset or start scanning', res['error']);
