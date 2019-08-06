@@ -104,6 +104,18 @@ https://github.com/streamich/git-cz
 1. [Как генерировать осмысленные коммиты. Применяем стандарт Conventional Commits](https://habr.com/ru/company/yandex/blog/431432/).
 
 
+## Переводы
+
+Приложение использует описания для разных локалей из файлов i18n/ru.json и i18n/en.json. Чтобы скачать обновленные переводы и загрузить на сервер переводов новые описания используйте команду `npm run msg`. 
+
+Для обновления переводов требуется установить id проекта в POEditor и токен авторизации через переменные окружения.
+
+```bash
+$ export POEDITOR_API_TOKEN=<poeditor_api_token>
+$ export POEDITOR_API_ID=<poeditor_api_id>
+```
+
+
 ## TODO
 
 1. На текущий момент используется локальный билд утилиты git-cz. После мерджа и выпуска версии к [PR](https://github.com/streamich/git-cz/pull/67) их можно удалить и обновить пакет в node-modules.
