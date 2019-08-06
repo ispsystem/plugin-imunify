@@ -1,5 +1,6 @@
 import { AntivirusState } from './state';
 import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
+import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
   return {
@@ -12,6 +13,7 @@ const getInitialState = (): AntivirusState => {
     infectedFiles: [],
     inBlackLists: false,
     history: [],
+    scanTaskList$: new BehaviorSubject([]),
   };
 };
 
@@ -26,6 +28,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
+      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,
@@ -125,13 +128,34 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS: {
+      const scanPreset = {
+        full: action.payload.data.full,
+      };
+      if (action.payload.data.partial !== undefined && action.payload.data.partial.isActive) {
+        scanPreset['partial'] = action.payload.data.partial;
+      }
       return {
         ...state,
-        scanPreset: action.payload.data,
+        scanPreset,
       };
     }
 
     case ANTIVIRUS_ACTION.GET_PRESETS_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS: {
+      delete state.scanPreset.partial;
+      return {
+        ...state,
+        scanPreset: { ...state.scanPreset },
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

@@ -17,6 +17,7 @@
 ### Used by
 
  - [antivirus-card-new-scan](../new-scan)
+ - [antivirus-card-scan-settings](../scan-settings)
 
 ### Depends on
 
@@ -27,6 +28,7 @@
 graph TD;
   antivirus-card-hint --> antivirus-card-dropdown
   antivirus-card-new-scan --> antivirus-card-hint
+  antivirus-card-scan-settings --> antivirus-card-hint
   style antivirus-card-hint fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

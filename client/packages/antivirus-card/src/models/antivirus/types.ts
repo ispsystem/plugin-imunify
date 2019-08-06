@@ -18,6 +18,8 @@ export enum ANTIVIRUS_ACTION {
 
   GET_PRESETS_SUCCESS = 'GET_PRESETS_SUCCESS',
   GET_PRESETS_FAILURE = 'GET_PRESETS_FAILURE',
+  DISABLE_PRESET_SUCCESS = 'DISABLE_PRESET_SUCCESS',
+  DISABLE_PRESET_FAILURE = 'DISABLE_PRESET_FAILURE',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -26,9 +28,10 @@ export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _
   });
 };
 
-export const scanning = () => async (dispatch: (obj: ScanningAction) => any, _getState) => {
+export const scanning = (data: { scanId: number }) => async (dispatch: (obj: ScanningAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCANNING,
+    payload: { data },
   });
 };
 
@@ -141,12 +144,31 @@ export const getPresetsFailure = error => async (dispatch: (obj: GetPresetsFailu
   });
 };
 
+export const disablePresetFailure = error => async (dispatch: (obj: DisablePresetFailure) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE,
+    payload: { error },
+  });
+};
+
+export const disablePresetSuccess = data => async (dispatch: (obj: DisablePresetSuccess) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS,
+    payload: { data },
+  });
+};
+
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
 }
 
 interface ScanningAction {
   type: ANTIVIRUS_ACTION.SCANNING;
+  payload: {
+    data: {
+      scanId: number;
+    };
+  };
 }
 
 interface SaveAndScanBeginAction {
@@ -226,6 +248,16 @@ interface GetPresetsFailureAction {
   payload: any;
 }
 
+interface DisablePresetFailure {
+  type: ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE;
+  payload: any;
+}
+
+interface DisablePresetSuccess {
+  type: ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS;
+  payload: any;
+}
+
 export type AntivirusActionTypes =
   | ScanBeginAction
   | ScanningAction
@@ -244,4 +276,6 @@ export type AntivirusActionTypes =
   | GetInfectedFilesSuccessAction
   | GetInfectedFilesFailureAction
   | GetPresetsSuccessAction
-  | GetPresetsFailureAction;
+  | GetPresetsFailureAction
+  | DisablePresetFailure
+  | DisablePresetSuccess;

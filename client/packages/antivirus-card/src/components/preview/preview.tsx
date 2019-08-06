@@ -12,6 +12,7 @@ import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/st
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
+import { CloseIcon } from '../icons/close';
 
 /**
  * Preview component for antivirus-card
@@ -57,6 +58,10 @@ export class Preview {
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
+
+  /** to open scan settings modal */
+  @Event() openScanSettingsModal: EventEmitter;
+
   /** to change selected tab item (horizontal menu) */
   @Event({
     bubbles: true,
@@ -87,6 +92,9 @@ export class Preview {
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
 
+  /** Action disable preset */
+  disablePreset: typeof AntivirusActions.disablePreset;
+
   /**
    * Lifecycle
    */
@@ -99,6 +107,7 @@ export class Preview {
     }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
+      disablePreset: AntivirusActions.disablePreset,
     });
 
     this.setLastScan(this.history);
@@ -123,6 +132,13 @@ export class Preview {
   }
 
   /**
+   * Method for disable preset
+   */
+  async handleDisablePreset() {
+    await this.disablePreset(this.scanOption.id);
+  }
+
+  /**
    * Handle click to black list help link
    *
    * @param ev - mouse click
@@ -134,6 +150,11 @@ export class Preview {
   render() {
     return (
       <Host>
+        {this.scanType === 'PARTIAL' && (
+          <div style={{ position: 'absolute', right: '20px', cursor: 'pointer' }} onClick={() => this.handleDisablePreset()}>
+            <CloseIcon />
+          </div>
+        )}
         <PreviewStatus
           msgWaitCheck={this.t.msg(['PREVIEW', 'WAIT_CHECK'])}
           msgLastCheck={this.t.msg(['PREVIEW', 'LAST_CHECK'])}
@@ -167,12 +188,16 @@ export class Preview {
         ></PreviewInBlackLists> 
         */}
         {/** @todo change presetId parameter */}
-        <div
-          class="link"
-          onClick={() => this.scanVirus(this.notifier, this.scanOption.id, this.siteId)}
-          style={{ 'margin-top': '25px', height: '28px' }}
-        >
-          <StartCheckIcon btnLabel={this.t.msg('NEW_SCAN_BTN')} />
+        <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
+          <span class="link">
+            {/** @todo change scanVirus presetId params to real presetId */}
+            <StartCheckIcon onClick={() => this.scanVirus(1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
+          </span>
+          {this.isProVersion && (
+            <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>
+              {this.t.msg('CONFIGURE')}
+            </a>
+          )}
         </div>
 
         <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>

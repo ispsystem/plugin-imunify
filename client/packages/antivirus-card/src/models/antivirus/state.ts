@@ -1,3 +1,5 @@
+import { BehaviorSubject } from 'rxjs';
+
 /**
  * Infected file
  */
@@ -45,6 +47,9 @@ export type CheckType = 'FULL' | 'PARTIAL';
  */
 export type IntensityType = 'LOW' | 'MEDIUM' | 'HIGH';
 
+/** Type for file check */
+export type CheckFileType = 'critical' | 'all' | 'except_media';
+
 /**
  * Scan option list item
  */
@@ -78,7 +83,7 @@ export interface ScanOption {
       };
     };
   };
-  checkFileTypes: 'critical' | 'all' | 'except_media';
+  checkFileTypes: CheckFileType;
   saveCopyFilesDay: number;
   cureFoundFiles: boolean;
   removeInfectedFileContent: boolean;
@@ -89,6 +94,7 @@ export interface ScanOption {
   fullLogDetails: boolean;
   maxScanTime: number;
   autoUpdate: boolean;
+  isActive: boolean;
 }
 
 /**
@@ -105,7 +111,7 @@ export interface AntivirusState {
   // actual scan options
   scanPreset?: {
     full: ScanOption;
-    partial: ScanOption;
+    partial?: ScanOption;
   };
   // scanning flag
   scanning: boolean;
@@ -114,4 +120,5 @@ export interface AntivirusState {
 
   infectedFiles: InfectedFile[];
   history: HistoryItem[];
+  scanTaskList$: BehaviorSubject<number[]>;
 }

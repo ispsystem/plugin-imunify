@@ -46,6 +46,9 @@ export class Input {
   /** Event for input value changed */
   @Event({ bubbles: false }) changed: EventEmitter<string>;
 
+  /** Input type in HTML format */
+  @Prop({ reflect: true }) type: 'text' | 'number' = 'text';
+
   componentWillLoad() {
     this._validator =
       this.validator && (Array.isArray(this.validator) ? getValidator<string>(this.validator) : getValidator<string>([this.validator]));
@@ -95,6 +98,7 @@ export class Input {
           value={this.value}
           placeholder={this.placeholder}
           disabled={this.disabled}
+          type={this.type}
           class={`input-form ${this.validateResult ? '' : 'input-form_accent'}`}
           onInput={event => this.inputChanged(event)}
           onBlur={() => this.updateValidator(this.value)}

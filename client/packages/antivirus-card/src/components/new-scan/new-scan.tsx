@@ -116,7 +116,7 @@ export class NewScan {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this.prepareDataForSubmit(this.preset);
-    const res = await this.saveAndScan(this.notifier, preset, this.siteId);
+    const res = await this.saveAndScan(preset, this.siteId);
     this.isPreloader = { ...this.isPreloader, submit: false };
     if (res && res['error']) {
       console.warn('Oops, failed to save preset or start scanning', res['error']);
@@ -178,6 +178,7 @@ export class NewScan {
           ></antivirus-card-input>
         </div>
 
+        {/** @todo rewrite and use CheckInput component  */}
         <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_CHECK_FILES'])}
           isActive={this.useCheckMask}
@@ -188,6 +189,7 @@ export class NewScan {
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_MASK_HINT'])}</antivirus-card-hint>
         </CheckByMask>
 
+        {/** @todo rewrite and use CheckInput component  */}
         <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_IGNORE_FILES'])}
           isActive={this.useExcludeMask}

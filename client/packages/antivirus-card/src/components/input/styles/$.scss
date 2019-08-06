@@ -50,3 +50,9 @@
   font: 14px Ubuntu, sans-serif;
   font-size: var(--isp-font-size__input, 14px);
 }
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

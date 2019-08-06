@@ -28,11 +28,13 @@
 ### Used by
 
  - [antivirus-card-new-scan](../new-scan)
+ - [antivirus-card-scan-settings](../scan-settings)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card-new-scan --> antivirus-card-checkbox
+  antivirus-card-scan-settings --> antivirus-card-checkbox
   style antivirus-card-checkbox fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
