@@ -43,8 +43,6 @@ Type: `Promise<void>`
 - [antivirus-card-select-option](../select-option)
 - [antivirus-card-preloader](../preloader)
 - [antivirus-card-button](../button)
-- [antivirus-card-checkbox](../checkbox)
-- [antivirus-card-input](../input)
 
 ### Graph
 ```mermaid
@@ -59,8 +57,6 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-select-option
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
-  antivirus-card-scan-settings --> antivirus-card-checkbox
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card-hint --> antivirus-card-dropdown
   antivirus-card-preloader --> antivirus-card-spinner-round
   antivirus-card-dashboard --> antivirus-card-scan-settings
