@@ -10,7 +10,7 @@ interface CheckInputProps {
   inputWrapperClass?: string;
   inputPlaceholder?: string;
   handleChangeCheckbox: (checked: boolean) => void;
-  handleChangeInput: (checkMask: string) => void;
+  handleChangeInput: (value: string) => void;
 }
 
 /**

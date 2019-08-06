@@ -7,16 +7,16 @@
 
 ## Properties
 
-| Property     | Attribute | Description | Type         | Default    |
-| ------------ | --------- | ----------- | ------------ | ---------- |
-| `closeModal` | --        |             | `() => void` | `() => {}` |
+| Property     | Attribute | Description                  | Type         | Default    |
+| ------------ | --------- | ---------------------------- | ------------ | ---------- |
+| `closeModal` | --        | Method for click close modal | `() => void` | `() => {}` |
 
 
 ## Methods
 
 ### `setPreset(preset: ScanOption) => Promise<void>`
 
-
+Method for set preset in modal
 
 #### Returns
 

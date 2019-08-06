@@ -186,6 +186,7 @@ export class Preview {
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
           <span class="link">
+            {/** @todo change scanVirus presetId params to real presetId */}
             <StartCheckIcon onClick={() => this.scanVirus(1, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
           </span>
           {this.isProVersion && (

@@ -209,7 +209,14 @@ export namespace Components {
     'scanType': CheckType;
   }
   interface AntivirusCardScanSettings {
+    /**
+    * Method for click close modal
+    */
     'closeModal': () => void;
+    /**
+    * Method for set preset in modal
+    * @param preset - model of scanOptions
+    */
     'setPreset': (preset: ScanOption) => Promise<void>;
   }
   interface AntivirusCardSelect {
@@ -656,6 +663,9 @@ declare namespace LocalJSX {
     'scanType'?: CheckType;
   }
   interface AntivirusCardScanSettings extends JSXBase.HTMLAttributes<HTMLAntivirusCardScanSettingsElement> {
+    /**
+    * Method for click close modal
+    */
     'closeModal'?: () => void;
   }
   interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {

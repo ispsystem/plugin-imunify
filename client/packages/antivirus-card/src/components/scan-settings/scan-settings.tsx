@@ -7,9 +7,12 @@ import { ScanOption, CheckFileType } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { CheckInput } from '../check-input/check-input';
 
+/** Types for max time scan result */
 export type MaxScanResultType = 'ITEM_1' | 'ITEM_3' | 'ITEM_6' | 'ITEM_12' | 'ITEM_24' | 'ITEM_0';
 
+/** Types for log details */
 export type LogDetailsType = 'FULL' | 'COMMON';
+
 /**
  * Scan settings component
  */
@@ -19,13 +22,16 @@ export type LogDetailsType = 'FULL' | 'COMMON';
   shadow: true,
 })
 export class ScanSettings {
+  /** Host element */
   @Element() host: HTMLAntivirusCardScanSettingsElement;
+
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /** global notifier object */
   @State() notifier: Notifier;
 
+  /** Method for click close modal */
   @Prop() closeModal: () => void = () => {};
 
   /** Model settings for new scan */
@@ -34,8 +40,10 @@ export class ScanSettings {
   /** Translate object */
   @State() t: ITranslate;
 
+  /** Site id state */
   @State() siteId: RootState['siteId'];
 
+  /** Flag for use email notification */
   @State() useEmailNotify: boolean;
 
   /** State for preloader */
@@ -62,13 +70,24 @@ export class ScanSettings {
     });
   }
 
+  /**
+   * Method for set preset in modal
+   *
+   * @param preset - model of scanOptions
+   */
   @Method()
   async setPreset(preset: ScanOption) {
-    this.host.forceUpdate();
+    /** @todo @bug modal state is not update when preset update */
+    // this.host.forceUpdate();
     this.preset = { ...preset };
     this.useEmailNotify = this.preset.email !== '';
   }
 
+  /**
+   * Handle for change count of day field
+   *
+   * @param saveCopyFilesDay - new value
+   */
   handleChangeDayCount(saveCopyFilesDay: string) {
     this.preset = {
       ...this.preset,
@@ -76,6 +95,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change flag of curing files
+   *
+   * @param cureFoundFiles - new value
+   */
   handleChangeCureFiles(cureFoundFiles: boolean) {
     this.preset = {
       ...this.preset,
@@ -83,6 +107,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change flag of remove only content of files
+   *
+   * @param removeInfectedFileContent - new value
+   */
   handleChangeRemoveFileContent(removeInfectedFileContent: boolean) {
     this.preset = {
       ...this.preset,
@@ -90,6 +119,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change flag of auto update
+   *
+   * @param autoUpdate - new value
+   */
   handleChangeAutoUpdate(autoUpdate: boolean) {
     this.preset = {
       ...this.preset,
@@ -97,6 +131,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change user email field
+   *
+   * @param email - new value
+   */
   handleChangeEmail(email: string) {
     this.preset = {
       ...this.preset,
@@ -104,6 +143,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change count of ram for check
+   *
+   * @param ramForCheck - new value
+   */
   handleRamForCheckChange(ramForCheck: number) {
     this.preset = {
       ...this.preset,
@@ -111,6 +155,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change count of parallel checks
+   *
+   * @param parallelChecks - new value
+   */
   handleParallelChecksChange(parallelChecks: number) {
     this.preset = {
       ...this.preset,
@@ -118,6 +167,11 @@ export class ScanSettings {
     };
   }
 
+  /**
+   * Handle for change max scan time
+   *
+   * @param maxScanTime - new value
+   */
   handleMaxScanTimeChange(maxScanTime: number) {
     this.preset = {
       ...this.preset,
@@ -126,7 +180,7 @@ export class ScanSettings {
   }
 
   /**
-   * Handle for use click scan button
+   * Handle for click scan button
    */
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
@@ -142,7 +196,7 @@ export class ScanSettings {
   }
 
   /**
-   * Handle for use click save button
+   * Handle for click save button
    */
   async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
@@ -179,7 +233,7 @@ export class ScanSettings {
 
           <div class="flex-container">
             <antivirus-card-switcher>
-              {/** @todo CHANGE  */}
+              {/** @todo change to upperCase when backend realise it */}
               {['critical', 'all', 'except_media'].map((type: CheckFileType) => (
                 <antivirus-card-switcher-option
                   active={this.preset.checkFileTypes === type}
