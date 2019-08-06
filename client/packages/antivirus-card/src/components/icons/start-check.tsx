@@ -1,5 +1,6 @@
 import { h, FunctionalComponent } from '@stencil/core';
 
+/** Properties for StartCheck icon */
 interface StartCheckIconProps {
   onClick: (e: Event) => void;
   btnLabel: string;

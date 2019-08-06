@@ -251,7 +251,11 @@ export namespace AntivirusActions {
     };
   }
 
-  /** @todo COMMENT */
+  /**
+   * Action for disable preset by id
+   *
+   * @param presetId - id
+   */
   export function disablePreset(presetId: number) {
     return async dispatch => {
       try {

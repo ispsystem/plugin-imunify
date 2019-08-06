@@ -80,8 +80,18 @@ export namespace Components {
     'unwrap': boolean;
   }
   interface AntivirusCardCollapse {
+    /**
+    * Flag for open collapse
+    */
     'isOpen': boolean;
+    /**
+    * Text for input title
+    */
     'text': { open: string; close: string };
+    /**
+    * Method for toggle collapse state
+    * @param value - new value
+    */
     'toggle': (value?: boolean) => Promise<void>;
   }
   interface AntivirusCardDashboard {}
@@ -520,7 +530,13 @@ declare namespace LocalJSX {
     'unwrap'?: boolean;
   }
   interface AntivirusCardCollapse extends JSXBase.HTMLAttributes<HTMLAntivirusCardCollapseElement> {
+    /**
+    * Flag for open collapse
+    */
     'isOpen'?: boolean;
+    /**
+    * Text for input title
+    */
     'text': { open: string; close: string };
   }
   interface AntivirusCardDashboard extends JSXBase.HTMLAttributes<HTMLAntivirusCardDashboardElement> {

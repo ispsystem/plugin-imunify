@@ -7,17 +7,17 @@
 
 ## Properties
 
-| Property            | Attribute | Description | Type                               | Default     |
-| ------------------- | --------- | ----------- | ---------------------------------- | ----------- |
-| `isOpen`            | `is-open` |             | `boolean`                          | `false`     |
-| `text` _(required)_ | --        |             | `{ open: string; close: string; }` | `undefined` |
+| Property            | Attribute | Description            | Type                               | Default     |
+| ------------------- | --------- | ---------------------- | ---------------------------------- | ----------- |
+| `isOpen`            | `is-open` | Flag for open collapse | `boolean`                          | `false`     |
+| `text` _(required)_ | --        | Text for input title   | `{ open: string; close: string; }` | `undefined` |
 
 
 ## Methods
 
 ### `toggle(value?: boolean) => Promise<void>`
 
-
+Method for toggle collapse state
 
 #### Returns
 

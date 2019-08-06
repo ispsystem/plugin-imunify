@@ -8,14 +8,22 @@ import { h, Component, Method, Prop } from '@stencil/core';
   styleUrl: 'styles/$.scss',
 })
 export class Collapse {
+  /** Flag for open collapse */
   @Prop() isOpen = false;
 
+  /** Text for input title */
   @Prop() text!: { open: string; close: string };
 
+  /**
+   * Method for toggle collapse state
+   *
+   * @param value - new value
+   */
   @Method()
   async toggle(value?: boolean) {
     this.isOpen = value ? value : !this.isOpen;
   }
+
   render() {
     return (
       <div class="collapse">

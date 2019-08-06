@@ -92,6 +92,7 @@ export class Preview {
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
 
+  /** Action disable preset */
   disablePreset: typeof AntivirusActions.disablePreset;
 
   /**
@@ -130,6 +131,9 @@ export class Preview {
     return `${date.getHours()}.${pad(date.getMinutes())}`;
   }
 
+  /**
+   * Method for disable preset
+   */
   async handleDisablePreset() {
     await this.disablePreset(this.scanOption.id);
   }
