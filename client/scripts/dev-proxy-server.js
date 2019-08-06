@@ -7,7 +7,7 @@ const httpProxy = require('http-proxy');
  * Proxy config object
  */
 let SETTINGS = {
-  cookie: 'ses6=A0746ACA5062C51F7DD54170',
+  cookie: 'ses6=***********',
   host: 'vepp-1.vepp.evm.ru',
   port: 8000,
 };
