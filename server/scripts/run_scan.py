@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
+"""запуск задачи на сканирование"""
 from argparse import ArgumentParser
 import os
 
 
-def make_scan(args):
+def make_scan(params):
     """
     Запуск сканирования на сервере клиента
-    :param host: Хост
     :param params: Параметры сканирования
-    :param started: Дата начала сканирования в формате timestamp
     :return:
     """
-    cmd = "/usr/bin/ssh -o StrictHostKeyChecking=no root@" + args.address +\
-          " '/bin/python3 /opt/ispsystem/plugin/imunify/scan.py --params " + args.params +\
-          " --docroot " + args.docroot + " --started " + args.started + "'"
+    cmd = "/usr/bin/ssh -o StrictHostKeyChecking=no root@" + params.address +\
+          " '/bin/python3 /opt/ispsystem/plugin/imunify/scan.py --params " + params.params +\
+          " --docroot " + params.docroot + " --started " + params.started + "'"
     os.system(cmd)
 
 
