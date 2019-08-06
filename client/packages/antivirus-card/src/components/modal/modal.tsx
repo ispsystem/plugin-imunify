@@ -32,7 +32,7 @@ export class Modal {
   }
 
   /**
-   * Listen click for definitions click outside select
+   * Listen click for definitions click outside modal
    *
    * @param event - DOM event
    */

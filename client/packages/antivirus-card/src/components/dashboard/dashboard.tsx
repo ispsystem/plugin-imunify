@@ -46,7 +46,11 @@ export class Dashboard {
   /** open ImunifyAV+ buy modal */
   @Event() openBuyModal: EventEmitter<ScanOption>;
 
-  /** open scan setting modal */
+  /**
+   * Open scan setting modal
+   *
+   * @param event - custom event
+   */
   @Listen('openScanSettingsModal')
   openSettingModal(event: CustomEvent<ScanOption>) {
     this.scanSettings.setPreset(event.detail);

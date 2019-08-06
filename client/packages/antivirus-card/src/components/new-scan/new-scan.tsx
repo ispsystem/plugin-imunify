@@ -178,7 +178,7 @@ export class NewScan {
           ></antivirus-card-input>
         </div>
 
-        {/** @todo rewrite and ise CheckInput component  */}
+        {/** @todo rewrite and use CheckInput component  */}
         <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_CHECK_FILES'])}
           isActive={this.useCheckMask}
@@ -189,7 +189,7 @@ export class NewScan {
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_MASK_HINT'])}</antivirus-card-hint>
         </CheckByMask>
 
-        {/** @todo rewrite and ise CheckInput component  */}
+        {/** @todo rewrite and use CheckInput component  */}
         <CheckByMask
           msg={this.t.msg(['SCAN_SETTINGS', 'USE_MASK_FOR_IGNORE_FILES'])}
           isActive={this.useExcludeMask}
