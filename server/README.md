@@ -1,4 +1,4 @@
-# Imunify plugin API
+# server/imunify-plugin
 
 - ### GET: `/site/{sid}/files/{type}` - Список зараженных файлов
   Позволяет получить список зараженных файлов на определенном сайте
