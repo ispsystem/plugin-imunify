@@ -1,3 +1,4 @@
+"""Скрипт сканирования"""
 from argparse import ArgumentParser
 import base64
 import json
@@ -13,6 +14,7 @@ EMPTY_SCAN_RESULT_REGEXP = "(?P<start>{.*})(?P<finish>{.*})"
 
 
 class Fifo:
+    """Механизм работы с пайпами"""
     def __init__(self):
         self.name = PIPE_PATH
         if os.path.exists(self.name):
@@ -20,10 +22,18 @@ class Fifo:
         os.mkfifo(self.name)
 
     def read(self):
+        """
+        Чтение данных из пайпы
+        :return: Данные из пайпы
+        """
         self.fifo = open(self.name)
         return self.fifo.read()
 
     def close(self):
+        """
+        закрытие и удаление пайпы
+        :return:
+        """
         self.fifo.close()
         os.unlink(self.name)
 
@@ -31,9 +41,9 @@ class Fifo:
 def get_scan_args(docroot, scan_params):
     """
     Разбор необходимых параметров
-    :param docroot Docroot
+    :param docroot Директория сайта
     :param scan_params: Параметры сканирования
-    :return:
+    :return: аргумены для запуска антивируса
     """
     params = ["/bin/imunify-antivirus"]
 
