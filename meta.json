@@ -38,7 +38,7 @@
     }
   },
   "backend": {
-    "service": [
+    "services": [
       {
         "uri": "",
         "type": "webservice",
