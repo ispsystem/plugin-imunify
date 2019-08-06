@@ -64,8 +64,6 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-select-option
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
-  antivirus-card-scan-settings --> antivirus-card-checkbox
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell

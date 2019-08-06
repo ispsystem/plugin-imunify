@@ -49,7 +49,7 @@ const lang = {
     CURE: 'Лечить',
     DETAIL: 'Подробнее',
     NOT_INFECTED_FILES: 'Вирусов не обнаружили',
-    IN_BLACK_LISTS: 'Сайт находится в чёных списках',
+    IN_BLACK_LISTS: 'Сайт находится в чёрных списках',
     HOW_TO_FIX: 'Как исправить',
     NOT_IN_BLACK_LISTS: 'Сайта в чёрных списках нет',
   },
@@ -140,6 +140,7 @@ const lang = {
   },
   BTN_SCAN: 'Проверить',
   CONFIGURE: 'Настроить',
+  MEGABYTE_SHORT: 'MB',
 };
 
 export type Lang = typeof lang;

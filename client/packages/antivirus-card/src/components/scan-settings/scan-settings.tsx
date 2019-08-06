@@ -5,7 +5,6 @@ import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
 import { ScanOption, CheckFileType } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
-import { CheckInput } from '../check-input/check-input';
 
 /** Types for max time scan result */
 export type MaxScanResultType = 'ITEM_1' | 'ITEM_3' | 'ITEM_6' | 'ITEM_12' | 'ITEM_24' | 'ITEM_0';
@@ -43,8 +42,9 @@ export class ScanSettings {
   /** Site id state */
   @State() siteId: RootState['siteId'];
 
+  /** @todo uncomment when email notification will release in backend */
   /** Flag for use email notification */
-  @State() useEmailNotify: boolean;
+  // @State() useEmailNotify: boolean;
 
   /** State for preloader */
   @State() isPreloader: {
@@ -80,7 +80,7 @@ export class ScanSettings {
     /** @todo @bug modal state is not update when preset update */
     // this.host.forceUpdate();
     this.preset = { ...preset };
-    this.useEmailNotify = this.preset.email !== '';
+    // this.useEmailNotify = this.preset.email !== '';
   }
 
   /**
@@ -133,15 +133,16 @@ export class ScanSettings {
 
   /**
    * Handle for change user email field
+   * @todo uncomment when email notification will release in backend
    *
    * @param email - new value
    */
-  handleChangeEmail(email: string) {
-    this.preset = {
-      ...this.preset,
-      email,
-    };
-  }
+  // handleChangeEmail(email: string) {
+  //   this.preset = {
+  //     ...this.preset,
+  //     email,
+  //   };
+  // }
 
   /**
    * Handle for change count of ram for check
@@ -282,14 +283,15 @@ export class ScanSettings {
             {this.t.msg(['SCAN_SETTINGS', 'DELETE_ONLY_CONTENT'])}
           </antivirus-card-checkbox>
 
-          <CheckInput
+          {/** @todo uncomment when email notification will release in backend */}
+          {/* <CheckInput
             isActive={this.useEmailNotify}
             msg={this.t.msg(['SCAN_SETTINGS', 'EMAIL_NOTIFY'])}
             value={this.preset.email}
             inputWrapperClass="flex-container"
             handleChangeCheckbox={(checked: boolean) => (this.useEmailNotify = checked)}
             handleChangeInput={this.handleChangeEmail.bind(this)}
-          />
+          /> */}
 
           <antivirus-card-collapse
             isOpen={false}
@@ -332,7 +334,7 @@ export class ScanSettings {
                   </antivirus-card-select-option>
                 ))}
               </antivirus-card-select>
-              <span style={{ 'margin-left': '10px' }}>MB</span>
+              <span style={{ 'margin-left': '10px' }}>{this.t.msg(['MEGABYTE_SHORT'])}</span>
             </div>
 
             <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'DETAIL_LOG', 'TEXT'])}</span>
@@ -340,7 +342,7 @@ export class ScanSettings {
               <antivirus-card-switcher>
                 {['COMMON', 'FULL'].map((type: LogDetailsType) => (
                   <antivirus-card-switcher-option
-                    active={this.preset.fullLogDetails && type === 'FULL'}
+                    active={(this.preset.fullLogDetails && type === 'FULL') || (!this.preset.fullLogDetails && type === 'COMMON')}
                     onClick={() => (this.preset = { ...this.preset, fullLogDetails: type === 'FULL' })}
                   >
                     {this.t.msg(['SCAN_SETTINGS', 'DETAIL_LOG', type])}

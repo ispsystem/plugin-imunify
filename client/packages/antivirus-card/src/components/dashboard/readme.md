@@ -54,8 +54,6 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-select-option
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
-  antivirus-card-scan-settings --> antivirus-card-checkbox
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card --> antivirus-card-dashboard
   style antivirus-card-dashboard fill:#f9f,stroke:#333,stroke-width:4px
 ```
