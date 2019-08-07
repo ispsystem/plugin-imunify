@@ -10,6 +10,9 @@ import {
   Notifier,
 } from './redux/reducers';
 import {
+  UserNotification,
+} from './redux/user-notification.interface';
+import {
   Observable,
 } from 'rxjs';
 import {
@@ -50,6 +53,10 @@ export namespace Components {
     * main app translate service
     */
     'translateService': { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * Global user notification service
+    */
+    'userNotification': UserNotification;
   }
   interface AntivirusCardButton {
     'btnType': ButtonType;
@@ -496,6 +503,10 @@ declare namespace LocalJSX {
     * main app translate service
     */
     'translateService'?: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * Global user notification service
+    */
+    'userNotification'?: UserNotification;
   }
   interface AntivirusCardButton extends JSXBase.HTMLAttributes<HTMLAntivirusCardButtonElement> {
     'btnType'?: ButtonType;

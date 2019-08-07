@@ -24,6 +24,9 @@ import {
 import { endpoint } from '../../constants';
 import { AntivirusState, ScanOption, CheckType } from './state';
 import { getNestedObject } from '../../utils/tools';
+import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
+import { ITranslate } from '../translate.reducers';
+import { ScanResultResponse } from './model';
 
 /**
  *
@@ -83,7 +86,7 @@ export namespace AntivirusActions {
    *
    * @param notify - result from notifier
    */
-  export async function getScanResult(notify: { event: NotifierEvent }) {
+  export function getScanResult(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
     return async dispatch => {
       try {
         const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
@@ -91,7 +94,13 @@ export namespace AntivirusActions {
         if (started !== undefined && taskId !== undefined) {
           let response = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`);
           handleErrors(response);
-          dispatch(scanSuccess(response.json()));
+          const data: ScanResultResponse = await response.json();
+          data.infectedFiles.list.forEach(file => {
+            if (file.status === 'INFECTED') {
+              userNotification.push({ title: t.msg(['VIRUS_DETECTED']), content: file.threatName, type: NotifyBannerTypes.ERROR_FAST });
+            }
+          });
+          dispatch(scanSuccess(data));
         } else {
           throw 'Can not found object started or taskId in a notify!';
         }
