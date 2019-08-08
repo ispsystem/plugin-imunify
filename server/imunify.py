@@ -12,6 +12,7 @@ from datetime import datetime
 import base64
 import calendar
 import logging as log
+import re
 import requests
 import socket
 import subprocess
@@ -26,6 +27,8 @@ PROXY_SERVICE = getenv("PROXY_SERVICE")
 SCHEMAS_PATH = 'schemas/'
 MAX_REQUEST_ATTEMPTS = 10
 OPERATION_STATUS_SUCCESS = "success"
+DEFAULT_LIMIT_VALUE = 15
+LIMIT_REGEXP = r"^\d+,\d+$|^\d+$"
 
 DB_CONNECTION = connector.connect(
     host='mysql',
@@ -342,10 +345,20 @@ def get_utc_timestamp():
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
 
 
+def get_limit_value(limit: str):
+    """
+    Валидация и обработка переданного лимита
+    :param limit: Строка с лимитом
+    :return:
+    """
+    limit_value = limit if re.search(LIMIT_REGEXP, limit) else str(DEFAULT_LIMIT_VALUE)
+    return " LIMIT {}".format(limit_value)
+
+
 class List:
     """Обертка над list()"""
-    def __init__(self, wrapped_list: list):
-        self.content = {'list': wrapped_list, 'size': len(wrapped_list)}
+    def __init__(self, wrapped_list: list, size=None):
+        self.content = {'list': wrapped_list, "size": size if size else len(wrapped_list)}
 
     def __str__(self):
         return dumps(self.content)
@@ -915,9 +928,13 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
+        where_statement = "instance={} AND site_id={} ORDER BY scan_date DESC".format(info.instance_id, site_id)
+        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
         reports = select(table="report",
                          table_fields=["report", "scan_date", "preset_id"],
-                         where="instance={} AND site_id={}".format(info.instance_id, site_id))
+                         where=where_statement)
 
         for scan in reports:
             report = loads(scan["report"])
@@ -928,7 +945,7 @@ class Imunify:
                 "curedFilesCount": 0,  # TODO(d.vitvitskii) Данная функциональность ещё не реализована. Пока захардкожено
                 "scanOptionId": scan["preset_id"]
             })
-        return web.Response(text=str(List(report_list)))
+        return web.Response(text=str(List(report_list, size=all_rows[0]["count"])))
 
     async def get_site_site_id_files_type(self, info: HandlerInfo):
         """
@@ -952,7 +969,11 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        files = select(table="files", table_fields=table_fields, where="site_id={} AND instance={}".format(site_id, info.instance_id))
+        where_statement = "site_id={} AND instance={} ORDER BY detected DESC".format(site_id, info.instance_id)
+        all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
+        files = select(table="files", table_fields=table_fields, where=where_statement)
 
         for file_info in files:
             file = {
@@ -966,7 +987,7 @@ class Imunify:
                 "lastChangeDate": file_info["last_modified"]
             }
             file_list.append(file)
-        return web.Response(text=str(List(file_list)))
+        return web.Response(text=str(List(file_list, size=all_rows[0]["count"])))
 
     async def delete_site_site_id_files(self, info: HandlerInfo):
         """
