@@ -13,6 +13,7 @@ import { AntivirusState } from '../../models/antivirus/state';
 export class InfectedFiles {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
+  @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
   @Event() openBuyModal: EventEmitter;
@@ -24,20 +25,26 @@ export class InfectedFiles {
   render() {
     return (
       <Host>
-        {(this.infectedFiles && this.infectedFiles.length) > 0 ? (
-          this.renderInfectedFilesTable()
-        ) : (
-          <div style={{ display: 'contents' }}>
-            <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
-
-            <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
-              {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
-            </antivirus-card-button>
-          </div>
-        )}
+        {(this.infectedFiles && this.infectedFiles.length) > 0 ? this.renderInfectedFilesTable() : this.renderEmptyListPlaceholder()}
       </Host>
     );
   }
+
+  renderEmptyListPlaceholder = () => {
+    return this.isProVersion ? (
+      <div style={{ display: 'contents' }}>
+        <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND_PRO'])}</p>
+      </div>
+    ) : (
+      <div style={{ display: 'contents' }}>
+        <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
+
+        <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
+          {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
+        </antivirus-card-button>
+      </div>
+    );
+  };
 
   getDayMonthYearAsStr(date: Date) {
     return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
