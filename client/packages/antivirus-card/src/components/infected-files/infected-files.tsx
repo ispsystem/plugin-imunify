@@ -5,6 +5,7 @@ import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState } from '../../models/antivirus/state';
+import { BurgerMenuIcon } from '../icons/burgerMenu';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -106,12 +107,14 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => this.dropdownEl.toggle(ev)} />
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => this.dropdownEl.toggle(ev)}>
+                    <BurgerMenuIcon />
+                  </span>
                 </span>
                 <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
                   <antivirus-card-vmenu>
                     <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
-                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>
+                    {/*<antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>*/}
                     <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
                       {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
                     </antivirus-card-vmenu-item>
