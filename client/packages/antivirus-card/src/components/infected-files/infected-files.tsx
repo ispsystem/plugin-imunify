@@ -11,6 +11,9 @@ import { AntivirusState } from '../../models/antivirus/state';
   styleUrl: 'styles/$.scss',
 })
 export class InfectedFiles {
+  /** Ref for dropdown element */
+  dropdownEl!: HTMLAntivirusCardDropdownElement;
+
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() isProVersion: AntivirusState['isProVersion'];
@@ -71,6 +74,7 @@ export class InfectedFiles {
             <antivirus-card-table-cell style={{ width: 370 - 20 + 'px' }}>
               {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_4'])}
             </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 35 + 'px' }} />
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -99,6 +103,21 @@ export class InfectedFiles {
                         time: this.getTimeAsStr(new Date(file.createdDate)),
                       })}
                 </span>
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <span class="main-text">
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => this.dropdownEl.toggle(ev)} />
+                </span>
+                <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
+                  <antivirus-card-vmenu>
+                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
+                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>
+                    <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
+                      {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
+                    </antivirus-card-vmenu-item>
+                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}</antivirus-card-vmenu-item>
+                  </antivirus-card-vmenu>
+                </antivirus-card-dropdown>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}

@@ -223,6 +223,12 @@ export class AntivirusCard {
         }
       }, 700);
     }
+
+    // DONT COMMIT THIS
+    this.updateState({
+      ...this.store.getState().antivirus,
+      isProVersion: true,
+    });
   }
 
   /**

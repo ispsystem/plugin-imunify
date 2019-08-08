@@ -70,6 +70,12 @@ const lang = {
       EXCEPTED: 'добавлен в исключения',
       HEALING: 'лечим',
     },
+    ACTIONS: {
+      HEAL: 'Лечить',
+      EXCLUDE: 'Добавить в исключения',
+      OPEN_FOLDER: 'Показать в папке',
+      DELETE: 'Удалить',
+    },
   },
   DATETIME_CREATED: 'создан %{date} в %{time}',
   DATETIME_CHANGED: 'изменён %{date} в %{time}',
