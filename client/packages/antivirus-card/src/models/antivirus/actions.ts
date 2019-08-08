@@ -20,6 +20,8 @@ import {
   getPresetsFailure,
   disablePresetSuccess,
   disablePresetFailure,
+  deleteFilesSuccess,
+  deleteFilesFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { AntivirusState, ScanOption, CheckType } from './state';
@@ -50,6 +52,33 @@ function handleErrors(response: Response): Response {
  *
  */
 export namespace AntivirusActions {
+  /**
+   * Deletes the file or files
+   *
+   * @param siteId Site's id
+   * @param fileIds File's id
+   */
+  export function deleteFiles(siteId: number, fileIds: number[]) {
+    return async dispatch => {
+      try {
+        const body = {
+          files: fileIds,
+        };
+        const requestInit: RequestInit = {
+          method: 'DELETE',
+          body: JSON.stringify(body),
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        handleErrors(response);
+        let json = await response.json();
+
+        dispatch(deleteFilesSuccess(json));
+      } catch (error) {
+        dispatch(deleteFilesFailure(error));
+      }
+    };
+  }
+
   /**
    * Search viruses
    *

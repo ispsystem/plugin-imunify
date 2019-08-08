@@ -89,7 +89,7 @@ export class AntivirusCard {
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
-        component: () => <antivirus-card-infected-files />,
+        component: () => <antivirus-card-infected-files siteId={this.siteId} />,
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),

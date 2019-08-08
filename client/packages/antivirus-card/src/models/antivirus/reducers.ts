@@ -1,5 +1,5 @@
 import { AntivirusState } from './state';
-import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
+import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
 import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
@@ -156,6 +156,20 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
+      return {
+        ...state,
+        // TODO: Узнать, что нам придёт
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

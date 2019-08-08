@@ -6,6 +6,8 @@ import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState } from '../../models/antivirus/state';
 import { BurgerMenuIcon } from '../icons/burgerMenu';
+import { AntivirusActions } from '../../models/antivirus/actions';
+import deleteFiles = AntivirusActions.deleteFiles;
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -15,6 +17,7 @@ export class InfectedFiles {
   /** Ref for dropdown element */
   dropdownEl!: HTMLAntivirusCardDropdownElement;
 
+  @Prop() siteId: number;
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() isProVersion: AntivirusState['isProVersion'];
@@ -118,7 +121,9 @@ export class InfectedFiles {
                     <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
                       {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
                     </antivirus-card-vmenu-item>
-                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}</antivirus-card-vmenu-item>
+                    <antivirus-card-vmenu-item onClick={deleteFiles(this.siteId, [file.id])}>
+                      {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}
+                    </antivirus-card-vmenu-item>
                   </antivirus-card-vmenu>
                 </antivirus-card-dropdown>
               </antivirus-card-table-cell>

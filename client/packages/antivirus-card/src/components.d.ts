@@ -117,7 +117,9 @@ export namespace Components {
     'accent': boolean;
   }
   interface AntivirusCardHistory {}
-  interface AntivirusCardInfectedFiles {}
+  interface AntivirusCardInfectedFiles {
+    'siteId': number;
+  }
   interface AntivirusCardInput {
     /**
     * Flag for disable input field
@@ -580,6 +582,7 @@ declare namespace LocalJSX {
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
+    'siteId'?: number;
   }
   interface AntivirusCardInput extends JSXBase.HTMLAttributes<HTMLAntivirusCardInputElement> {
     /**
