@@ -22,9 +22,11 @@ import {
   disablePresetFailure,
   deleteFilesSuccess,
   deleteFilesFailure,
+  deleteFilesPostProcessSuccess,
+  deleteFilesPostProcessFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { AntivirusState, ScanOption, CheckType } from './state';
+import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
 import { getNestedObject } from '../../utils/tools';
 
 /**
@@ -75,6 +77,19 @@ export namespace AntivirusActions {
         dispatch(deleteFilesSuccess(json));
       } catch (error) {
         dispatch(deleteFilesFailure(error));
+      }
+    };
+  }
+
+  export function deleteFilesPostProcess(notify: { event: NotifierEvent }) {
+    return dispatch => {
+      try {
+        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
+        let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+        let ids: number[] = deletedFiles.map(file => file.id);
+        dispatch(deleteFilesPostProcessSuccess(ids));
+      } catch (error) {
+        dispatch(deleteFilesPostProcessFailure(error));
       }
     };
   }

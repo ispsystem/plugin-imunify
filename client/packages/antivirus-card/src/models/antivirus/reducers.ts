@@ -163,13 +163,30 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
+      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.task_id]);
       return {
         ...state,
-        // TODO: Узнать, что нам придёт
+        error: null,
       };
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS: {
+      const { ids } = action.payload;
+      const infectedFiles = state.infectedFiles.filter(file => !ids.includes(file.id));
+      return {
+        ...state,
+        infectedFiles,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

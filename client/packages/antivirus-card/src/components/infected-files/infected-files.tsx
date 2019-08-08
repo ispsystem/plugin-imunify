@@ -7,7 +7,6 @@ import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState } from '../../models/antivirus/state';
 import { BurgerMenuIcon } from '../icons/burgerMenu';
 import { AntivirusActions } from '../../models/antivirus/actions';
-import deleteFiles = AntivirusActions.deleteFiles;
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -17,8 +16,10 @@ export class InfectedFiles {
   /** Ref for dropdown element */
   dropdownEl!: HTMLAntivirusCardDropdownElement;
 
-  @Prop() siteId: number;
+  deleteFiles: typeof AntivirusActions.deleteFiles;
+
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
+  @State() siteId: number;
   @State() infectedFiles: AntivirusState['infectedFiles'];
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
@@ -26,7 +27,10 @@ export class InfectedFiles {
   @Event() openBuyModal: EventEmitter;
 
   componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
+    this.store.mapDispatchToProps(this, {
+      deleteFiles: AntivirusActions.deleteFiles,
+    });
   }
 
   render() {
@@ -121,7 +125,7 @@ export class InfectedFiles {
                     <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
                       {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
                     </antivirus-card-vmenu-item>
-                    <antivirus-card-vmenu-item onClick={deleteFiles(this.siteId, [file.id])}>
+                    <antivirus-card-vmenu-item onClick={() => this.deleteFiles(this.siteId, [file.id])}>
                       {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}
                     </antivirus-card-vmenu-item>
                   </antivirus-card-vmenu>

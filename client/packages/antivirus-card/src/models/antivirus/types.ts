@@ -23,6 +23,8 @@ export enum ANTIVIRUS_ACTION {
 
   DELETE_FILES_SUCCESS = 'DELETE_FILES_SUCCESS',
   DELETE_FILES_FAILURE = 'DELETE_FILES_FAILURE',
+  DELETE_FILES_POST_PROCESS_SUCCESS = 'DELETE_FILES_POST_PROCESS_SUCCESS',
+  DELETE_FILES_POST_PROCESS_FAILURE = 'DELETE_FILES_POST_PROCESS_FAILURE',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -175,6 +177,20 @@ export const deleteFilesFailure = error => async (dispatch: (obj: DeleteFilesFai
   });
 };
 
+export const deleteFilesPostProcessSuccess = ids => async (dispatch: (obj: DeleteFilesPostProcessSuccess) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS,
+    payload: { ids },
+  });
+};
+
+export const deleteFilesPostProcessFailure = error => async (dispatch: (obj: DeleteFilesPostProcessFailure) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE,
+    payload: { error },
+  });
+};
+
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
 }
@@ -277,10 +293,26 @@ interface DisablePresetSuccess {
 
 interface DeleteFilesSuccess {
   type: ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS;
-  payload: any;
+  payload: {
+    data: {
+      task_id: number;
+    };
+  };
 }
+
 interface DeleteFilesFailure {
   type: ANTIVIRUS_ACTION.DELETE_FILES_FAILURE;
+  payload: any;
+}
+
+interface DeleteFilesPostProcessSuccess {
+  type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS;
+  payload: {
+    ids: number[];
+  };
+}
+interface DeleteFilesPostProcessFailure {
+  type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE;
   payload: any;
 }
 
@@ -306,4 +338,6 @@ export type AntivirusActionTypes =
   | DisablePresetFailure
   | DisablePresetSuccess
   | DeleteFilesSuccess
-  | DeleteFilesFailure;
+  | DeleteFilesFailure
+  | DeleteFilesPostProcessSuccess
+  | DeleteFilesPostProcessFailure;

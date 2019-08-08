@@ -89,7 +89,7 @@ export class AntivirusCard {
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
-        component: () => <antivirus-card-infected-files siteId={this.siteId} />,
+        component: () => <antivirus-card-infected-files />,
       },
       {
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
@@ -213,7 +213,16 @@ export class AntivirusCard {
         .ids(this.scanTaskList$.asObservable())
         .delete$()
         .subscribe((notify: { event: NotifierEvent }) => {
-          this.getScanResult(notify);
+          const taskName = notify.event.additional_data.name;
+          switch (taskName) {
+            case 'scan':
+              this.getScanResult(notify);
+              break;
+
+            case 'files':
+              //    magic here
+              break;
+          }
         });
 
       /** @todo: need query from back has scanning now or has not */
