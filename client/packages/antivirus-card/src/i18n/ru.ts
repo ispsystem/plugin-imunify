@@ -77,6 +77,15 @@ const lang = {
       OPEN_FOLDER: 'Показать в папке',
       DELETE: 'Удалить',
     },
+    MODAL: {
+      /**
+       * There's no question mark in the title because it's specified in the template
+       * so I can cut only the filename without touching the question mark
+       */
+      TITLE: 'Удалить файл %{filename}',
+      DELETE_BUTTON: 'Удалить',
+      CANCEL_BUTTON: 'Отменить',
+    },
   },
   DATETIME_CREATED: 'создан %{date} в %{time}',
   DATETIME_CHANGED: 'изменён %{date} в %{time}',

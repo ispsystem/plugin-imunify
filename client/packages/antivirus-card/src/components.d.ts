@@ -117,7 +117,9 @@ export namespace Components {
     'accent': boolean;
   }
   interface AntivirusCardHistory {}
-  interface AntivirusCardInfectedFiles {}
+  interface AntivirusCardInfectedFiles {
+    'openDeletionModal': (ev: MouseEvent) => Promise<boolean>;
+  }
   interface AntivirusCardInput {
     /**
     * Flag for disable input field
@@ -153,6 +155,10 @@ export namespace Components {
     'width': string;
   }
   interface AntivirusCardModal {
+    /**
+    * Modal max width
+    */
+    'maxModalWidth': string;
     /**
     * Modal width
     */
@@ -620,6 +626,10 @@ declare namespace LocalJSX {
     'width'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
+    /**
+    * Modal max width
+    */
+    'maxModalWidth'?: string;
     /**
     * Modal width
     */
