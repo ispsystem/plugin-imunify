@@ -1,21 +1,39 @@
 import Polyglot from 'node-polyglot';
 import { languageTypes, isDevMode, endpoint } from '../constants';
-import { Lang } from '../i18n/ru';
-import { Path } from './types';
+import { Translate } from '../store/types';
 
-export interface ITranslate {
-  msg<T extends Lang, L extends Path<T, L>>(params: L, options?: number | Polyglot.InterpolationOptions): string;
-  error: any;
-  loading: boolean;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleErrors(response): any {
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  const contentType = response.headers.get('content-type');
+
+  if (contentType === undefined || !contentType.includes('application/json')) {
+    throw new TypeError("Oops, we haven't got JSON with a plugin service list!");
+  }
+
+  return response;
 }
 
-export async function loadTranslate(lang: languageTypes): Promise<ITranslate> {
+function msg(polyglot: Polyglot, keys: string[], options?: number | Polyglot.InterpolationOptions): string {
+  if (Array.isArray(keys)) {
+    return polyglot.t(keys.join('.'), options);
+  } else if (typeof keys === 'string') {
+    return polyglot.t(keys, options);
+  }
+
+  console.warn(keys);
+  return '';
+}
+
+export async function loadTranslate(lang: languageTypes): Promise<Translate> {
   let json = {};
   if (isDevMode) {
     json = (await import(`../i18n/ru`)).default;
   } else {
     const requestInit: RequestInit = {
-      method: 'GET'
+      method: 'GET',
     };
     let response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
     handleErrors(response);
@@ -27,30 +45,7 @@ export async function loadTranslate(lang: languageTypes): Promise<ITranslate> {
   return { msg: msg.bind(null, _polyglot), error: null, loading: false };
 }
 
-export function getNestedObject(nestedObj, pathArr) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function getNestedObject(nestedObj, pathArr): any {
   return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
-}
-
-function msg(polyglot: Polyglot, keys: string[], options?: number | Polyglot.InterpolationOptions) {
-  if (Array.isArray(keys)) {
-    return polyglot.t(keys.join('.'), options);
-  } else if (typeof keys === 'string') {
-    return polyglot.t(keys, options);
-  }
-
-  console.warn(keys);
-  return '';
-}
-
-function handleErrors(response) {
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  const contentType = response.headers.get('content-type');
-
-  if (contentType === undefined || !contentType.includes('application/json')) {
-    throw new TypeError("Oops, we haven't got JSON with a plugin service list!");
-  }
-
-  return response;
 }

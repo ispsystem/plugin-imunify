@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property | Attribute | Description             | Type     | Default  |
-| -------- | --------- | ----------------------- | -------- | -------- |
-| `width`  | `width`   | Width style for spinner | `string` | `'25px'` |
+| Property   | Attribute  | Description                                        | Type     | Default      |
+| ---------- | ---------- | -------------------------------------------------- | -------- | ------------ |
+| `position` | `position` | Position absolute or relative, absolute is default | `string` | `'absolute'` |
+| `width`    | `width`    | Width style for spinner                            | `string` | `'25px'`     |
 
 
 ## Dependencies

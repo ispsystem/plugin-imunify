@@ -12,11 +12,34 @@ import {
 import {
   languageTypes,
 } from './constants';
+import {
+  Notifier,
+  UserNotification,
+} from './store/types';
 
 export namespace Components {
   interface AntivirusWidget {
+    'infectedCount': number;
+    /**
+    * global notifier object
+    */
+    'notifier': Notifier;
+    /**
+    * Site id
+    */
+    'siteId': number;
+    /**
+    * Translate service
+    */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * url ??
+    */
     'url': string;
+    /**
+    * Global user notification service
+    */
+    'userNotification': UserNotification;
   }
 }
 
@@ -35,8 +58,27 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusWidget extends JSXBase.HTMLAttributes<HTMLAntivirusWidgetElement> {
+    'infectedCount'?: number;
+    /**
+    * global notifier object
+    */
+    'notifier'?: Notifier;
+    /**
+    * Site id
+    */
+    'siteId'?: number;
+    /**
+    * Translate service
+    */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * url ??
+    */
     'url'?: string;
+    /**
+    * Global user notification service
+    */
+    'userNotification'?: UserNotification;
   }
 
   interface IntrinsicElements {
