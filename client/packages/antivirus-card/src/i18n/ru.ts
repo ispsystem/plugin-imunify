@@ -69,6 +69,7 @@ const lang = {
       CURED: 'вылечен',
       EXCEPTED: 'добавлен в исключения',
       HEALING: 'лечим',
+      DELETED: 'удалён',
     },
     ACTIONS: {
       HEAL: 'Лечить',

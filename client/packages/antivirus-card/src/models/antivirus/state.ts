@@ -8,7 +8,7 @@ export interface InfectedFile {
   // file name, e.g. "beregovoi_orcestr.bat"
   name: string;
   // file status, e.g. "заражён"
-  status: 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING';
+  status: 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
   // type of threat, e.g. "Troyan.enspect"
   threatName: string;
   // path to file
