@@ -12,6 +12,7 @@ from datetime import datetime
 import base64
 import calendar
 import logging as log
+import re
 import requests
 import socket
 import subprocess
@@ -26,6 +27,8 @@ PROXY_SERVICE = getenv("PROXY_SERVICE")
 SCHEMAS_PATH = 'schemas/'
 MAX_REQUEST_ATTEMPTS = 10
 OPERATION_STATUS_SUCCESS = "success"
+DEFAULT_LIMIT_VALUE = 15
+LIMIT_REGEXP = r"^\d+,\d+$|^\d+$"
 
 DB_CONNECTION = connector.connect(
     host='mysql',
@@ -35,7 +38,7 @@ DB_CONNECTION = connector.connect(
 )
 
 DB_PREFIX = 'imunify_'
-INSTALL_LOCK = "imunify-instance-{}"
+IMUNIFY_LOCK = "imunify-instance-{}"
 
 
 class BaseEnum(Enum):
@@ -342,10 +345,20 @@ def get_utc_timestamp():
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
 
 
+def get_limit_value(limit: str):
+    """
+    Валидация и обработка переданного лимита
+    :param limit: Строка с лимитом
+    :return:
+    """
+    limit_value = limit if re.search(LIMIT_REGEXP, limit) else str(DEFAULT_LIMIT_VALUE)
+    return " LIMIT {}".format(limit_value)
+
+
 class List:
     """Обертка над list()"""
-    def __init__(self, wrapped_list: list):
-        self.content = {'list': wrapped_list, 'size': len(wrapped_list)}
+    def __init__(self, wrapped_list: list, size=None):
+        self.content = {'list': wrapped_list, "size": size if size else len(wrapped_list)}
 
     def __str__(self):
         return dumps(self.content)
@@ -581,6 +594,7 @@ class Imunify:
                                      "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                             lock=IMUNIFY_LOCK.format(info.instance_id),
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
 
         result = loads(output)
@@ -737,6 +751,7 @@ class Imunify:
 
             path_hash = md5(full_path.encode("utf-8")).hexdigest()
             file_data = {
+                "iav_file_id": infected_file["iav_file_id"],
                 "instance": int(scan_info["instance"]),
                 "site_id": scan_info["site_id"],
                 "path_hash": path_hash,
@@ -915,9 +930,13 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
+        where_statement = "instance={} AND site_id={} ORDER BY scan_date DESC".format(info.instance_id, site_id)
+        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
         reports = select(table="report",
                          table_fields=["report", "scan_date", "preset_id"],
-                         where="instance={} AND site_id={}".format(info.instance_id, site_id))
+                         where=where_statement)
 
         for scan in reports:
             report = loads(scan["report"])
@@ -928,7 +947,7 @@ class Imunify:
                 "curedFilesCount": 0,  # TODO(d.vitvitskii) Данная функциональность ещё не реализована. Пока захардкожено
                 "scanOptionId": scan["preset_id"]
             })
-        return web.Response(text=str(List(report_list)))
+        return web.Response(text=str(List(report_list, size=all_rows[0]["count"])))
 
     async def get_site_site_id_files_type(self, info: HandlerInfo):
         """
@@ -952,7 +971,11 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        files = select(table="files", table_fields=table_fields, where="site_id={} AND instance={}".format(site_id, info.instance_id))
+        where_statement = "site_id={} AND instance={} ORDER BY detected DESC".format(site_id, info.instance_id)
+        all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
+        files = select(table="files", table_fields=table_fields, where=where_statement)
 
         for file_info in files:
             file = {
@@ -966,7 +989,7 @@ class Imunify:
                 "lastChangeDate": file_info["last_modified"]
             }
             file_list.append(file)
-        return web.Response(text=str(List(file_list)))
+        return web.Response(text=str(List(file_list, size=all_rows[0]["count"])))
 
     async def delete_site_site_id_files(self, info: HandlerInfo):
         """
@@ -1114,7 +1137,7 @@ def install_imunufy():
                     params=["--inventory", item["host"] + ',', getcwd() + "/playbooks/imunify.yml"],
                     instance_id=instance_id,
                     task_env=task_env,
-                    lock=INSTALL_LOCK.format(instance_id))
+                    lock=IMUNIFY_LOCK.format(instance_id))
 
 
 if __name__ == '__main__':
@@ -1160,6 +1183,7 @@ if __name__ == '__main__':
     create_table("report", fields)
 
     fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("iav_file_id", "BIGINT"),
               DbField("instance", "INT"),
               DbField("site_id", "INT"),
               DbField("path_hash", "VARCHAR", 32),
@@ -1183,7 +1207,7 @@ if __name__ == '__main__':
     create_table("presets", fields)
     install_imunufy()
 
-    log.info("Starting Imunify sevice".format(sock_path))
+    log.info("Starting Imunify service".format(sock_path))
     web.run_app(app, sock=sock)
 
     remove(args.socket)
