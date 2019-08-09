@@ -148,6 +148,7 @@ const lang = {
   BTN_SCAN: 'Проверить',
   CONFIGURE: 'Настроить',
   MEGABYTE_SHORT: 'MB',
+  VIRUS_DETECTED: 'Обнаружен вирус',
 };
 
 export type Lang = typeof lang;

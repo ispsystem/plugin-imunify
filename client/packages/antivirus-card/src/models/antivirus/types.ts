@@ -1,3 +1,5 @@
+import { ScanResultResponse } from './model';
+
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
   SCANNING = 'SCANNING',
@@ -15,7 +17,6 @@ export enum ANTIVIRUS_ACTION {
   SAVE_AND_SCAN_SUCCESS = 'SAVE_AND_SCAN_SUCCESS,',
   GET_INFECTED_FILES_SUCCESS = 'GET_INFECTED_FILES_SUCCESS',
   GET_INFECTED_FILES_FAILURE = 'GET_INFECTED_FILES_FAILURE',
-
   GET_PRESETS_SUCCESS = 'GET_PRESETS_SUCCESS',
   GET_PRESETS_FAILURE = 'GET_PRESETS_FAILURE',
   DISABLE_PRESET_SUCCESS = 'DISABLE_PRESET_SUCCESS',
@@ -35,7 +36,7 @@ export const scanning = (data: { scanId: number }) => async (dispatch: (obj: Sca
   });
 };
 
-export const scanSuccess = data => async (dispatch: (obj: ScanSuccessAction) => any, _getState) => {
+export const scanSuccess = (data: ScanResultResponse) => async (dispatch: (obj: ScanSuccessAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_SUCCESS,
     payload: { data },
@@ -186,7 +187,7 @@ interface SaveAndScanSuccessAction {
 
 interface ScanSuccessAction {
   type: ANTIVIRUS_ACTION.SCAN_SUCCESS;
-  payload: any;
+  payload: { data: ScanResultResponse };
 }
 
 interface ScanFailureAction {

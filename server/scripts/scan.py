@@ -48,7 +48,7 @@ def get_scan_args(docroot, scan_params):
     params = ["/bin/imunify-antivirus"]
 
     log_level = "DEBUG" if scan_params.get("fullLogDetails", True) else "INFO"
-    params.extend(["--console-log-level", log_level, "malware", "on-demand", "start"])
+    params.extend(["--console-log-level", log_level, "malware", "on-demand", "queue", "put"])
 
     # TODO(d.vitvitskii) Временное решение. Нужно научиться обрабатывать несколько директорий.
     #  Для этого нужно переписать логику обработки результатов сканирования
@@ -57,7 +57,6 @@ def get_scan_args(docroot, scan_params):
         scan_path = ""
     else:
         scan_path = scan_paths[0]
-    params.append("--path")
     params.append(docroot + scan_path)
 
     file_mask_list = scan_params.get("checkMask", [])
@@ -155,6 +154,7 @@ def process(params, docroot, start_date):
                 except FileNotFoundError:
                     last_modified = 0
                 infected_file = {
+                    "iav_file_id": malicious["id"],
                     "file": malicious["file"],
                     "last_modified": last_modified,
                     "malicious_type": malicious["type"]
