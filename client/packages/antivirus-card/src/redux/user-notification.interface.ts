@@ -1,12 +1,12 @@
 import { Observable } from 'rxjs';
 
-/** интерфейс события нотификации */
+/** Interface for notify event */
 export interface NotifyEvent {
   type: NotifyBannerEvents;
   id: number;
 }
 
-/** Возможные события на уведомлениях */
+/** Enum of notify events on banner*/
 export enum NotifyBannerEvents {
   CLOSE = 'close',
   CLICK = 'click',
@@ -14,7 +14,7 @@ export enum NotifyBannerEvents {
   LINK_CLICK = 'link-click',
 }
 
-/** типы банеров для уведомлений */
+/** Enum of banner type */
 export enum NotifyBannerTypes {
   ERROR_FAST = 'error-fast',
   NORMAL_FAST = 'normal-fast',
@@ -24,7 +24,7 @@ export enum NotifyBannerTypes {
   REST_LIST = 'rest-list',
 }
 
-/** интерфейс баннера  */
+/** Banner interface  */
 export interface NotifyBanner {
   type: NotifyBannerTypes;
   title: string;
@@ -42,7 +42,7 @@ export interface NotifyBanner {
   linkWhiteSpace?: WhiteSpaceValue;
 }
 
-/** Перечисление возможных значений white-space */
+/** Enum of white-space value */
 export enum WhiteSpaceValue {
   normal = 'normal',
   nowrap = 'nowrap',
@@ -55,20 +55,22 @@ export enum WhiteSpaceValue {
   unset = 'unset',
 }
 
-/** перечисление типов ссылок */
+/** Enum of link type */
 export enum LinkType {
-  /** сплошное подчеркивание */
+  /** 
+solid underline */
   default = 'default',
-  /** сплошное подчеркивание при наведении */
+  /** solid underline on hover */
   // eslint-disable-next-line @typescript-eslint/camelcase
   default_hover = 'default-hover',
-  /** пунктирное подчеркивание */
+  /** dotted underline */
   dropdown = 'dropdown',
-  /** пунктирное подчеркивание при наведении */
+  /** dotted underline on hover */
   // eslint-disable-next-line @typescript-eslint/camelcase
   dropdown_hover = 'dropdown-hover',
 }
 
+/** Interface of user notification */
 export interface UserNotification {
   push(banner: NotifyBanner): Observable<NotifyEvent>;
 }
