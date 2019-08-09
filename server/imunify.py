@@ -38,7 +38,7 @@ DB_CONNECTION = connector.connect(
 )
 
 DB_PREFIX = 'imunify_'
-INSTALL_LOCK = "imunify-instance-{}"
+IMUNIFY_LOCK = "imunify-instance-{}"
 
 
 class BaseEnum(Enum):
@@ -594,6 +594,7 @@ class Imunify:
                                      "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                             lock=IMUNIFY_LOCK.format(info.instance_id),
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
 
         result = loads(output)
@@ -1135,7 +1136,7 @@ def install_imunufy():
                     params=["--inventory", item["host"] + ',', getcwd() + "/playbooks/imunify.yml"],
                     instance_id=instance_id,
                     task_env=task_env,
-                    lock=INSTALL_LOCK.format(instance_id))
+                    lock=IMUNIFY_LOCK.format(instance_id))
 
 
 if __name__ == '__main__':
