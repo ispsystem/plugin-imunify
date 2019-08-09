@@ -48,7 +48,7 @@ export class AntivirusCard {
   /** scan in process */
   @State() scanning: RootState['antivirus']['scanning'];
   /** list current scan process */
-  @State() scanTaskList$: RootState['antivirus']['scanTaskList$'];
+  @State() taskList$: RootState['antivirus']['scanTaskList$'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -137,6 +137,8 @@ export class AntivirusCard {
   getScanResult: typeof AntivirusActions.getScanResult;
   /** Method to load translates from server */
   loadTranslate: typeof TranslateActions.load;
+  /** Method for removing removed files from infected files list */
+  deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
 
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
@@ -160,6 +162,7 @@ export class AntivirusCard {
       updateState: AntivirusActions.updateState,
       getScanResult: AntivirusActions.getScanResult,
       loadTranslate: TranslateActions.load,
+      deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
     });
 
     // prettier-ignore
@@ -204,13 +207,13 @@ export class AntivirusCard {
                 }
               })
               .filter(id => id !== undefined);
-            this.scanTaskList$.next([...this.scanTaskList$.getValue(), ...runningPluginTasks]);
+            this.taskList$.next([...this.taskList$.getValue(), ...runningPluginTasks]);
           }
         });
 
-      // subscribe to scan tasks
+      // subscribe to tasks
       this.notifier
-        .ids(this.scanTaskList$.asObservable())
+        .ids(this.taskList$.asObservable())
         .delete$()
         .subscribe((notify: { event: NotifierEvent }) => {
           const taskName = notify.event.additional_data.name;
@@ -220,7 +223,7 @@ export class AntivirusCard {
               break;
 
             case 'files':
-              //    magic here
+              this.deleteFilesPostProcess(notify);
               break;
           }
         });
