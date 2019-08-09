@@ -227,12 +227,6 @@ export class AntivirusCard {
         }
       }, 1000);
     }
-
-    // DONT COMMIT THIS
-    this.updateState({
-      ...this.store.getState().antivirus,
-      isProVersion: true,
-    });
   }
 
   /**
