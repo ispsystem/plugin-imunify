@@ -71,6 +71,7 @@ graph TD;
   antivirus-card-infected-files --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-vmenu
   antivirus-card-infected-files --> antivirus-card-vmenu-item
+  antivirus-card-infected-files --> antivirus-card-modal
   antivirus-card-history --> antivirus-card-table
   antivirus-card-history --> antivirus-card-table-row
   antivirus-card-history --> antivirus-card-table-cell
