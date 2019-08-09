@@ -12,6 +12,7 @@ from datetime import datetime
 import base64
 import calendar
 import logging as log
+import re
 import requests
 import socket
 import subprocess
@@ -25,6 +26,9 @@ ANSIBLE_PLAYBOOK_COMMAND = getenv("ANSIBLE_PLAYBOOK")
 PROXY_SERVICE = getenv("PROXY_SERVICE")
 SCHEMAS_PATH = 'schemas/'
 MAX_REQUEST_ATTEMPTS = 10
+OPERATION_STATUS_SUCCESS = "success"
+DEFAULT_LIMIT_VALUE = 15
+LIMIT_REGEXP = r"^\d+,\d+$|^\d+$"
 
 DB_CONNECTION = connector.connect(
     host='mysql',
@@ -34,7 +38,7 @@ DB_CONNECTION = connector.connect(
 )
 
 DB_PREFIX = 'imunify_'
-INSTALL_LOCK = "imunify-instance-{}"
+IMUNIFY_LOCK = "imunify-instance-{}"
 
 
 class BaseEnum(Enum):
@@ -67,12 +71,18 @@ class FileStatus(BaseEnum):
     cured = "CURED"
     added_to_exceptions = "EXCEPTED"
     healing = "HEALING"
+    deleted = "DELETED"
 
 
 class ScanType(BaseEnum):
     """Типы сканирования"""
     full = "FULL"
     partial = "PARTIAL"
+
+
+class FileAction(BaseEnum):
+    """Типы операций с файлами"""
+    delete = "delete"
 
 
 class Value:
@@ -335,10 +345,20 @@ def get_utc_timestamp():
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
 
 
+def get_limit_value(limit: str):
+    """
+    Валидация и обработка переданного лимита
+    :param limit: Строка с лимитом
+    :return:
+    """
+    limit_value = limit if re.search(LIMIT_REGEXP, limit) else str(DEFAULT_LIMIT_VALUE)
+    return " LIMIT {}".format(limit_value)
+
+
 class List:
     """Обертка над list()"""
-    def __init__(self, wrapped_list: list):
-        self.content = {'list': wrapped_list, 'size': len(wrapped_list)}
+    def __init__(self, wrapped_list: list, size=None):
+        self.content = {'list': wrapped_list, "size": size if size else len(wrapped_list)}
 
     def __str__(self):
         return dumps(self.content)
@@ -351,9 +371,10 @@ class List:
         return self.content
 
 
-def get_handler_name(url_path: str, path_params: dict):
+def get_handler_name(method: str, url_path: str, path_params: dict):
     """
     Возвращает имя необходимого хендлера для рефлексифного вызова метода
+    :param method: Метод
     :param url_path: URL
     :param path_params: Параметры
     :return:
@@ -361,7 +382,7 @@ def get_handler_name(url_path: str, path_params: dict):
     handler = url_path.replace('/', '_')
     for key, value in path_params.items():
         handler = handler.replace(value, key)
-    return handler
+    return method.lower() + handler
 
 
 def get_schema_path(handler: str):
@@ -370,7 +391,7 @@ def get_schema_path(handler: str):
     :param handler: Название хендлера
     :return:
     """
-    return SCHEMAS_PATH + handler[1:] + ".json"
+    return SCHEMAS_PATH + handler + ".json"
 
 
 def get_default_preset():
@@ -454,7 +475,7 @@ class Imunify:
         if who_ami.status != 200:
             return web.Response(text=await who_ami.text(), status=who_ami.status, content_type='application/json')
 
-        handler = get_handler_name(handler_info.path, handler_info.path_params)
+        handler = get_handler_name(request.method, handler_info.path, handler_info.path_params)
         log.debug("Handler '{}' was chosen".format(handler))
         if hasattr(self, handler):
             if request.method == hdrs.METH_POST:
@@ -525,14 +546,14 @@ class Imunify:
             return await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
                                  headers={"internal-auth": "on"})
 
-    async def _site_sid_scan(self, info: HandlerInfo):
+    async def post_site_site_id_scan(self, info: HandlerInfo):
         """
         Хендлер запуска сканирования
         :param info: Информация о запросе
         :return:
         """
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -573,6 +594,7 @@ class Imunify:
                                      "--started", str(start_scan_time)],
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                             lock=IMUNIFY_LOCK.format(info.instance_id),
                              notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
 
         result = loads(output)
@@ -590,7 +612,7 @@ class Imunify:
         result["started"] = start_scan_time
         return web.Response(text=dumps(result))
 
-    async def _scan_result(self, info: HandlerInfo):
+    async def get_scan_result(self, info: HandlerInfo):
         """
         Метод для получения результатов сканирования
         :param info: Информация о запросе
@@ -646,7 +668,7 @@ class Imunify:
         }
         return web.Response(text=dumps(response))
 
-    async def _site_sid_preset(self, info: HandlerInfo):
+    async def post_site_site_id_preset(self, info: HandlerInfo):
         """
         Создание нового пресета для сканирования
         :param info: Информация о запросе
@@ -654,7 +676,7 @@ class Imunify:
         """
         request_body = await info.body
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -682,7 +704,7 @@ class Imunify:
         return web.Response(text=dumps(result))
 
     @staticmethod
-    async def _preset_id_status(info: HandlerInfo):
+    async def post_preset_id_status(info: HandlerInfo):
         """
         Изменение статуса пресета (Активация/деактивация)
         :param info: Информация о запросе
@@ -729,6 +751,7 @@ class Imunify:
 
             path_hash = md5(full_path.encode("utf-8")).hexdigest()
             file_data = {
+                "iav_file_id": infected_file["iav_file_id"],
                 "instance": int(scan_info["instance"]),
                 "site_id": scan_info["site_id"],
                 "path_hash": path_hash,
@@ -752,7 +775,28 @@ class Imunify:
         insert(table="report", data=report_data)
 
     @staticmethod
-    async def _feature(_):
+    def files_done(task_info: dict, info: dict):
+        """
+        Callback который будет вызван после завершения операции с файлами
+        :param task_info: Таска
+        :param info: Дополнительная информация
+        :return:
+        """
+        log.debug("Task ended. File operation complete. Info: {}".format(dumps(task_info)))
+        operations_result = task_info["additional_data"]["output"]["content"]
+        status = operations_result["status"]
+
+        if status == OPERATION_STATUS_SUCCESS:
+            operations = operations_result["result"]
+            file_status = str(FileStatus.deleted)
+            for operation in operations:
+                if operation["status"] == OPERATION_STATUS_SUCCESS:
+                    where_statement = "id={}".format(operation["id"])
+                    fields = {"status": str(file_status)}
+                    update(table='files', data=fields, where=where_statement)
+
+    @staticmethod
+    async def get_feature(_):
         """
         Информация о состоянии плагина
         :param _:
@@ -763,7 +807,7 @@ class Imunify:
                 "hasScheduledActions": get_settings_value("hasScheduledActions", "False").get()}
         return web.Response(text=dumps(resp))
 
-    async def _site_sid_presets(self, info: HandlerInfo):
+    async def get_site_site_id_presets(self, info: HandlerInfo):
         """
         Список пресетов пользователя определенного инстанса и сайта.
         Возвращает последние по дате использования пресеты каждого из типов
@@ -772,7 +816,7 @@ class Imunify:
         :return:
         """
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -813,14 +857,14 @@ class Imunify:
             presets_list[type] = preset
         return web.Response(text=dumps(presets_list))
 
-    async def _site_sid_presets_default(self, info: HandlerInfo):
+    async def get_site_site_id_presets_default(self, info: HandlerInfo):
         """
         Метод, возвращающий дефолтный пресет
         :param info: Информация о запросе
         :return:
         """
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -839,15 +883,15 @@ class Imunify:
 
         return web.Response(text=dumps(default_preset))
 
-    async def _site_sid_preset_id(self, info: HandlerInfo):
+    async def get_site_site_id_preset_preset_id(self, info: HandlerInfo):
         """
         Метод, возвращающий пресет по его идентификатору
         :param info: Информация о запросе
         :return:
         """
         try:
-            preset_id = int(info.path_params.get("id"))
-            site_id = int(info.path_params.get("sid"))
+            preset_id = int(info.path_params.get("preset_id"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site or preset is not valid")
 
@@ -869,7 +913,7 @@ class Imunify:
 
         return web.Response(text=dumps(preset))
 
-    async def _site_sid_scan_history(self, info: HandlerInfo):
+    async def get_site_site_id_scan_history(self, info: HandlerInfo):
         """
         История сканирований сайта
         :param info: Информация о запросе
@@ -877,7 +921,7 @@ class Imunify:
         """
         report_list = list()
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -886,9 +930,13 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
+        where_statement = "instance={} AND site_id={} ORDER BY scan_date DESC".format(info.instance_id, site_id)
+        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
         reports = select(table="report",
                          table_fields=["report", "scan_date", "preset_id"],
-                         where="instance={} AND site_id={}".format(info.instance_id, site_id))
+                         where=where_statement)
 
         for scan in reports:
             report = loads(scan["report"])
@@ -899,9 +947,9 @@ class Imunify:
                 "curedFilesCount": 0,  # TODO(d.vitvitskii) Данная функциональность ещё не реализована. Пока захардкожено
                 "scanOptionId": scan["preset_id"]
             })
-        return web.Response(text=str(List(report_list)))
+        return web.Response(text=str(List(report_list, size=all_rows[0]["count"])))
 
-    async def _site_sid_files_type(self, info: HandlerInfo):
+    async def get_site_site_id_files_type(self, info: HandlerInfo):
         """
         Получение списка файлов по их типу
         :param info: Информация о запросе
@@ -909,7 +957,7 @@ class Imunify:
         """
         file_list = list()
         try:
-            site_id = int(info.path_params.get("sid"))
+            site_id = int(info.path_params.get("site_id"))
         except ValueError:
             return web.HTTPBadRequest(text="The identifier of the site is not valid")
 
@@ -923,7 +971,11 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        files = select(table="files", table_fields=table_fields, where="site_id={} AND instance={}".format(site_id, info.instance_id))
+        where_statement = "site_id={} AND instance={} ORDER BY detected DESC".format(site_id, info.instance_id)
+        all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
+
+        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
+        files = select(table="files", table_fields=table_fields, where=where_statement)
 
         for file_info in files:
             file = {
@@ -937,7 +989,62 @@ class Imunify:
                 "lastChangeDate": file_info["last_modified"]
             }
             file_list.append(file)
-        return web.Response(text=str(List(file_list)))
+        return web.Response(text=str(List(file_list, size=all_rows[0]["count"])))
+
+    async def delete_site_site_id_files(self, info: HandlerInfo):
+        """
+        Удаление файлов
+        :param info: Информация о запросе
+        :return:
+        """
+        request_body = await info.body
+        try:
+            site_id = int(info.path_params.get("site_id"))
+        except ValueError:
+            return web.HTTPBadRequest(text="The identifier of the site is not valid")
+
+        site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
+        if site_info_response.status != 200:
+            response = await site_info_response.text()
+            return web.Response(text=response, status=site_info_response.status)
+        site_info = await site_info_response.json()
+
+        file_ids = request_body.get("files")
+        response = await self.get_instance(info.instance_id)
+        data = await response.json()
+        host = data.get("host", "")
+
+        ids = ",".join(str(id) for id in file_ids)
+        where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, str(FileStatus.infected), site_id, info.instance_id)
+        files = select(table="files", table_fields=["id", "file", "path"], where=where_statement)
+
+        if not files:
+            return web.HTTPNotFound(text="There is no files to delete")
+
+        params = ["--host", host, "--action", str(FileAction.delete)]
+        for file in files:
+            path = site_info["docroot_base"] + "/" + site_info["docroot"] + file["path"] + "/" + file["file"]
+            params.append("--file")
+            params.append(str(file["id"]))
+            params.append(path)
+
+        output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
+                             name='files',
+                             params=params,
+                             instance_id=info.instance_id,
+                             task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                             notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
+
+        result = loads(output)
+        loop = asyncio.get_event_loop()
+        info = {
+            "instance": info.instance_id,
+            "ses6": info.ses6,
+            "action": str(FileAction.delete)
+        }
+        loop.create_task(task_wait(result['task_id'], info, self.files_done))
+        result = loads(output)
+        return web.Response(text=dumps(result))
 
 
 imunify = Imunify()
@@ -959,6 +1066,15 @@ def make_post(name):
     :return:
     """
     return web.post(name, imunify)
+
+
+def make_delete(name):
+    """
+    DELETE query realization
+    :param name:
+    :return:
+    """
+    return web.delete(name, imunify)
 
 
 class DbField:
@@ -1021,7 +1137,7 @@ def install_imunufy():
                     params=["--inventory", item["host"] + ',', getcwd() + "/playbooks/imunify.yml"],
                     instance_id=instance_id,
                     task_env=task_env,
-                    lock=INSTALL_LOCK.format(instance_id))
+                    lock=IMUNIFY_LOCK.format(instance_id))
 
 
 if __name__ == '__main__':
@@ -1043,15 +1159,16 @@ if __name__ == '__main__':
 
     app = web.Application()
     app.add_routes([make_get('/feature'),
-                    make_get('/site/{sid}/files/{type}'),
-                    make_get('/site/{sid}/preset/{id}'),
-                    make_get('/site/{sid}/presets'),
-                    make_get('/site/{sid}/presets/default'),
-                    make_get('/site/{sid}/scan/history'),
+                    make_get('/site/{site_id}/files/{type}'),
+                    make_get('/site/{site_id}/preset/{preset_id}'),
+                    make_get('/site/{site_id}/presets'),
+                    make_get('/site/{site_id}/presets/default'),
+                    make_get('/site/{site_id}/scan/history'),
                     make_get('/scan/result'),
                     make_post('/preset/{id}/status'),
-                    make_post('/site/{sid}/preset'),
-                    make_post('/site/{sid}/scan')])
+                    make_post('/site/{site_id}/preset'),
+                    make_post('/site/{site_id}/scan'),
+                    make_delete('/site/{site_id}/files')])
 
     fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
     create_table("settings", fields)
@@ -1066,6 +1183,7 @@ if __name__ == '__main__':
     create_table("report", fields)
 
     fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("iav_file_id", "BIGINT"),
               DbField("instance", "INT"),
               DbField("site_id", "INT"),
               DbField("path_hash", "VARCHAR", 32),
@@ -1089,7 +1207,7 @@ if __name__ == '__main__':
     create_table("presets", fields)
     install_imunufy()
 
-    log.info("Starting Imunify sevice".format(sock_path))
+    log.info("Starting Imunify service".format(sock_path))
     web.run_app(app, sock=sock)
 
     remove(args.socket)
