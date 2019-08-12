@@ -89,7 +89,7 @@ export namespace AntivirusActions {
       try {
         const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let ids: number[] = deletedFiles.map(file => file.id);
+        let ids: number[] = deletedFiles.map(file => Number(file.id));
         dispatch(deleteFilesPostProcessSuccess(ids));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
