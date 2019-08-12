@@ -17,6 +17,7 @@ export class InfectedFiles {
 
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   @State() infectedFiles: AntivirusState['infectedFiles'];
+  /** returns true if the user has the pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
@@ -34,6 +35,9 @@ export class InfectedFiles {
     );
   }
 
+  /**
+   * Renders the placeholder with a text instead of table with empty files list
+   */
   renderEmptyListPlaceholder = () => {
     return this.isProVersion ? (
       <div style={{ display: 'contents' }}>
