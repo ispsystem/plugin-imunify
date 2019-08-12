@@ -32,6 +32,7 @@ export abstract class AbstractStore<T> {
   }
 
   setTaskList(nextList: TaskElement[]): void {
+    console.log('NEW TASK LIST');
     this._taskList$.next(nextList);
   }
 }

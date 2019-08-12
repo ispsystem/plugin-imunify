@@ -1,8 +1,8 @@
 import { FunctionalComponent, h } from '@stencil/core';
-import { AntivirusSpinnerRound } from './icons/spinner-round';
+import { AntivirusSpinnerRound } from './icons/antivirus-spinner-round';
 
 /**
- *
+ * Properties for active widget state
  */
 interface ActiveStateProps {
   desc: string;
@@ -10,7 +10,7 @@ interface ActiveStateProps {
 }
 
 /**
- *
+ * Render widget in action
  *
  * @param props - properties
  */

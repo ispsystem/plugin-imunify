@@ -49,3 +49,22 @@ export async function loadTranslate(lang: languageTypes): Promise<Translate> {
 export function getNestedObject(nestedObj, pathArr): any {
   return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
 }
+
+/**
+ * Add leading zeroes to date
+ *
+ * @param n - day or time number
+ */
+export function pad(n: number) {
+  return n < 10 ? '0' + n : n;
+}
+
+/**
+ * Method return input date as string in DD.MM.YYYY format
+ *
+ * @param date - input date in timestamp
+ */
+export function getDayMonthYearAsStr(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+}

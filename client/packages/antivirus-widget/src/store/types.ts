@@ -16,6 +16,7 @@ export interface Notifier {
   create$: (action?: string) => Observable<any>;
   delete$: (action?: string) => Observable<any>;
   taskList$: () => Observable<any>;
+  taskList(fn: (e: any[]) => void): any;
 }
 
 export type TaskStatus = 'created' | 'deferred' | 'running' | 'failed' | 'complete';

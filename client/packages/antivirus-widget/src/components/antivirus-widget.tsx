@@ -4,7 +4,7 @@ import { languages, defaultLang, languageTypes } from '../constants';
 import { Observable } from 'rxjs';
 import { Translate, Notifier, UserNotification, NotifierEvent, TaskEventName } from '../store/types';
 import { Store, WidgetState } from '../store/widget.store';
-import { distinctUntilChanged, map, tap, take } from 'rxjs/operators';
+import { distinctUntilChanged, map, take } from 'rxjs/operators';
 import { StaticState } from './StaticState';
 import { ActiveState } from './ActiveState';
 
@@ -57,17 +57,11 @@ export class AntivirusWidget {
     console.log('NOTIFIER', this.notifier);
 
     if (this.notifier !== undefined) {
-      // setTimeout(() => {
-
-      // }, 12000);
       this.notifier
         .taskList$()
-        .pipe(
-          tap(_ => console.log(_)),
-          take(1),
-        )
+        .pipe(take(1))
         .subscribe((event: NotifierEvent[]) => {
-          console.log('EVENT', event);
+          console.log('TASK LIST EVENT', event);
 
           if (event && Array.isArray(event) && event.length > 0) {
             const runningPluginTasks = event.filter(e => ['created', 'running', 'deferred'].includes(e.additional_data.status));
@@ -93,13 +87,14 @@ export class AntivirusWidget {
           ),
         )
         .delete$()
-        .subscribe((notify: { event: NotifierEvent }) => {
-          console.log('NOTIFY!!', event);
-
-          switch (notify.event.additional_data.name) {
+        .subscribe(async (notify: { event: NotifierEvent }) => {
+          const actionName = getNestedObject(notify, ['event', 'additional_data', 'name']);
+          console.log('NOTIFY!!', event, actionName);
+          switch (actionName) {
             case TaskEventName.scan: {
-              /** @todo await? */
-              this.store.getScanResult(notify);
+              console.log('I AM IN CASE');
+
+              await this.store.getScanResult(notify, this.userNotification, this.t);
               break;
             }
             case TaskEventName.cure: {
@@ -127,17 +122,21 @@ export class AntivirusWidget {
     this.isPreloader = { ...this.isPreloader, button: false };
   }
 
-  handleClickCure(event: Event) {
-    console.log('CURE', event);
-    /** @todo add event by cure */
+  async handleClickCure() {
+    this.isPreloader = { ...this.isPreloader, button: true };
+    this.state.isProVersion
+      ? /** @todo add event by cure */
+        null
+      : (location.href = `${this.url}?openModal=buyModal`);
+    this.isPreloader = { ...this.isPreloader, button: false };
   }
 
-  handleClickStopScan(event: Event) {
+  handleClickStopScan() {
     // ???
     console.log('CLOSE SCAN', event);
   }
 
-  handleClickStopCure(event: Event) {
+  handleClickStopCure() {
     // ???
     console.log('CLOSE CURE', event);
   }
@@ -146,14 +145,14 @@ export class AntivirusWidget {
     return (
       <section class="overview-widget-list__item widget_adaptive">
         <div>
-          <a class="overview-widget-list__item-link" href="#/site/1/settings/files">
+          <a class="overview-widget-list__item-link" href={this.url}>
             {this.t.msg(['WIDGET', 'ANTIVIRUS'])}
           </a>
         </div>
         {(this.state.scanning && (
           <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'SCANNING'])} handleClickCancel={this.handleClickStopScan} />
         )) ||
-          (this.state.scanning && (
+          (this.state.healing && (
             <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'CURE'])} handleClickCancel={this.handleClickStopCure} />
           )) || (
             <StaticState

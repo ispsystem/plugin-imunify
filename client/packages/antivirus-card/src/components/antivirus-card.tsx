@@ -194,6 +194,7 @@ export class AntivirusCard {
         .taskList$()
         .pipe(take(1))
         .subscribe((d: NotifierEvent[]) => {
+          console.log('EVENT', d);
           // wait all scanning process
           if (d && Array.isArray(d) && d.length > 0) {
             const runningPluginTasks = d
@@ -226,6 +227,22 @@ export class AntivirusCard {
           this.scanVirus(this.scanPreset.full.id, this.siteId);
         }
       }, 1000);
+    }
+  }
+
+  componentDidLoad() {
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (queryParam !== undefined && queryParam !== '') {
+      const searchParams = new URLSearchParams(queryParam);
+      if (searchParams.has('openModal')) {
+        switch (searchParams.get('openModal')) {
+          case 'buyModal': {
+            this.buyModal.toggle(true);
+            break;
+          }
+        }
+        history.replaceState({}, document.title, defaultLocation);
+      }
     }
   }
 
