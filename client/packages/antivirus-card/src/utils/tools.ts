@@ -91,3 +91,21 @@ export function reduceFilter<T>(arr: T[], filter: (e: T) => boolean, ...preFun: 
  * @param arr input array
  */
 export const filterEmptyString = (arr: string[]): string[] => reduceFilter(arr, (e: string) => e !== '', (e: string) => e.trim());
+
+/**
+ * Method return input date as string in DD.MM.YYYY format
+ *
+ * @param date - input date in timestamp
+ */
+export function getDayMonthYearAsStr(date: Date): string {
+  return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+}
+
+/**
+ * Method return input date as string in hh:mm format
+ *
+ * @param date - input date in timestamp
+ */
+export function getTimeAsStr(date: Date): string {
+  return `${date.getHours()}:${pad(date.getMinutes())}`;
+}

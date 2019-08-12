@@ -34,7 +34,7 @@ import { ScanResultResponse } from './model';
  *
  * @param response - a fetch response obj
  */
-function handleErrors(response: Response): Response {
+export function handleErrors(response: Response): Response {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
@@ -205,11 +205,11 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=0`, requestInit);
         handleErrors(response);
         let json = await response.json();
 
-        dispatch(getHistorySuccess(json.list));
+        dispatch(getHistorySuccess(json));
       } catch (error) {
         dispatch(getHistoryFailure(error));
       }
@@ -227,11 +227,11 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`, requestInit);
         handleErrors(response);
         let json = await response.json();
 
-        dispatch(getInfectedFilesSuccess(json.list));
+        dispatch(getInfectedFilesSuccess(json));
       } catch (error) {
         dispatch(getInfectedFilesFailure(error));
       }

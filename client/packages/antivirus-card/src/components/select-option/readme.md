@@ -25,11 +25,13 @@
 ### Used by
 
  - [antivirus-card-scan-settings](../scan-settings)
+ - [antivirus-card-table-pagination](../table-pagination)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card-scan-settings --> antivirus-card-select-option
+  antivirus-card-table-pagination --> antivirus-card-select-option
   style antivirus-card-select-option fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

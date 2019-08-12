@@ -28,10 +28,14 @@ export class Select {
   /** Disabled key for select field */
   @Prop({ reflect: true }) disabled: boolean;
 
+  /** Width for select block */
   @Prop({ reflect: true }) width = 280;
 
   /** Placeholder for select field */
   @Prop({ reflect: true }) placeholder: string;
+
+  /** Flag for disable border around select */
+  @Prop({ reflect: true }) borderless: boolean;
 
   /** Selected value */
   @Prop({ mutable: true }) selectedValue: SelectedOption;
@@ -41,13 +45,6 @@ export class Select {
     if (newValue !== oldValue) {
       const slotted = this._host.shadowRoot.querySelector('slot');
       slotted.assignedNodes().forEach((el: HTMLAntivirusCardSelectOptionElement) => (el.selected = el.value === newValue.v));
-    }
-  }
-
-  componentDidLoad() {
-    if (this.selectedValue !== undefined) {
-      const slotted = this._host.shadowRoot.querySelector('slot');
-      slotted.assignedNodes().forEach((el: HTMLAntivirusCardSelectOptionElement) => (el.selected = el.value === this.selectedValue.v));
     }
   }
 
@@ -76,12 +73,19 @@ export class Select {
     this.openPanel = this.selectContainer.contains(composedPath) ? !this.openPanel : this._host.shadowRoot.contains(composedPath);
   }
 
+  componentDidLoad() {
+    if (this.selectedValue !== undefined) {
+      const slotted = this._host.shadowRoot.querySelector('slot');
+      slotted.assignedNodes().forEach((el: HTMLAntivirusCardSelectOptionElement) => (el.selected = el.value === this.selectedValue.v));
+    }
+  }
+
   render() {
     return (
       <Host>
         <div
           ref={(el: HTMLDivElement) => (this.selectContainer = el)}
-          class={`select-container${this.disabled ? ' disabled' : ''}`}
+          class={`select-container${this.disabled ? ' disabled' : ''} ${this.borderless ? 'borderless' : ''}`}
           style={{ width: `${this.width}px` }}
         >
           <span class="select__value">
