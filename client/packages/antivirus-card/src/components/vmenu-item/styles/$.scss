@@ -1,13 +1,9 @@
-:host {
-  display: inline-flex;
+antivirus-card-vmenu-item {
+  display: block;
   position: relative;
   cursor: pointer;
 }
 
-:host(:not(:last-child)) {
+antivirus-card-vmenu-item:not(:last-child) {
   margin-bottom: 15px;
-}
-
-:host(.disabled) {
-
 }
