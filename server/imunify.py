@@ -970,7 +970,7 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        where_statement = "site_id={} AND instance={} ORDER BY detected DESC".format(site_id, info.instance_id)
+        where_statement = "site_id={} AND instance={} AND status={} ORDER BY detected DESC".format(site_id, info.instance_id, file_type)
         all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
 
         where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
