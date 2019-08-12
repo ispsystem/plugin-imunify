@@ -7,13 +7,13 @@
 
 ## Properties
 
-| Property        | Attribute     | Description                   | Type                  | Default     |
-| --------------- | ------------- | ----------------------------- | --------------------- | ----------- |
-| `borderless`    | `borderless`  |                               | `boolean`             | `undefined` |
-| `disabled`      | `disabled`    | Disabled key for select field | `boolean`             | `undefined` |
-| `placeholder`   | `placeholder` | Placeholder for select field  | `string`              | `undefined` |
-| `selectedValue` | --            | Selected value                | `SelectedOption<any>` | `undefined` |
-| `width`         | `width`       |                               | `number`              | `280`       |
+| Property        | Attribute     | Description                           | Type                  | Default     |
+| --------------- | ------------- | ------------------------------------- | --------------------- | ----------- |
+| `borderless`    | `borderless`  | Flag for disable border around select | `boolean`             | `undefined` |
+| `disabled`      | `disabled`    | Disabled key for select field         | `boolean`             | `undefined` |
+| `placeholder`   | `placeholder` | Placeholder for select field          | `string`              | `undefined` |
+| `selectedValue` | --            | Selected value                        | `SelectedOption<any>` | `undefined` |
+| `width`         | `width`       | Width for select block                | `number`              | `280`       |
 
 
 ## Events

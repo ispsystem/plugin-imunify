@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property           | Attribute | Description                      | Type                                                                                               | Default     |
@@ -10,6 +11,7 @@
 | `siteId`           | `site-id` | site ID from vepp                | `number`                                                                                           | `undefined` |
 | `translateService` | --        | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
 | `userNotification` | --        | Global user notification service | `UserNotification`                                                                                 | `undefined` |
+
 
 ## Dependencies
 
@@ -25,7 +27,6 @@
 - [antivirus-card-button](button)
 
 ### Graph
-
 ```mermaid
 graph TD;
   antivirus-card --> antivirus-card-dashboard
@@ -66,10 +67,13 @@ graph TD;
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
+  antivirus-card-infected-files --> antivirus-card-table-pagination
   antivirus-card-infected-files --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-vmenu
   antivirus-card-infected-files --> antivirus-card-vmenu-item
   antivirus-card-infected-files --> antivirus-card-modal
+  antivirus-card-table-pagination --> antivirus-card-select
+  antivirus-card-table-pagination --> antivirus-card-select-option
   antivirus-card-history --> antivirus-card-table
   antivirus-card-history --> antivirus-card-table-row
   antivirus-card-history --> antivirus-card-table-cell
@@ -77,6 +81,6 @@ graph TD;
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
 
-_Built with [StencilJS](https://stenciljs.com/)_
+*Built with [StencilJS](https://stenciljs.com/)*

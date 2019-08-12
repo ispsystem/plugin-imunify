@@ -1,4 +1,4 @@
-import { Component, h, Host, Event, EventEmitter, State, Prop, Method } from '@stencil/core';
+import { Component, h, Host, Event, EventEmitter, State, Prop } from '@stencil/core';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';

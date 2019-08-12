@@ -124,9 +124,7 @@ export namespace Components {
     'accent': boolean;
   }
   interface AntivirusCardHistory {}
-  interface AntivirusCardInfectedFiles {
-    'openDeletionModal': (ev: MouseEvent) => Promise<boolean>;
-  }
+  interface AntivirusCardInfectedFiles {}
   interface AntivirusCardInput {
     /**
     * Flag for disable input field
