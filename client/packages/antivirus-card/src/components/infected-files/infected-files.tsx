@@ -4,7 +4,7 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { pad } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { AntivirusState } from '../../models/antivirus/state';
+import { AntivirusState, InfectedFile } from '../../models/antivirus/state';
 import { BurgerMenuIcon } from '../icons/burgerMenu';
 import { AntivirusActions } from '../../models/antivirus/actions';
 
@@ -27,6 +27,7 @@ export class InfectedFiles {
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
+  @State() fileToDelete: InfectedFile;
   @Event() openBuyModal: EventEmitter;
 
   componentWillLoad() {
@@ -73,6 +74,8 @@ export class InfectedFiles {
 
   @Method()
   async openDeletionModal(ev: MouseEvent) {
+    console.log(this.fileToDelete);
+
     await this.deletionModal.toggle(true);
     await this.dropdownEl.toggle(ev);
     return true;
@@ -89,7 +92,7 @@ export class InfectedFiles {
   }
 
   renderInfectedFilesTable = () => {
-    return (
+    return [
       <antivirus-card-table>
         <div slot="table-header" style={{ display: 'contents' }}>
           <antivirus-card-table-row style={{ height: '50px', 'vertical-align': 'middle' }}>
@@ -137,37 +140,12 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => this.dropdownEl.toggle(ev)}>
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.fileToDelete = file), this.dropdownEl.toggle(ev))}>
                     <BurgerMenuIcon />
                   </span>
                 </span>
-                <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
-                  <antivirus-card-vmenu>
-                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
-                    {/*<antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>*/}
-                    <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
-                      {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
-                    </antivirus-card-vmenu-item>
-                    <antivirus-card-vmenu-item onClick={ev => this.openDeletionModal(ev)}>
-                      {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}
-                    </antivirus-card-vmenu-item>
-                  </antivirus-card-vmenu>
-                </antivirus-card-dropdown>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>,
-            <antivirus-card-modal ref={el => (this.deletionModal = el)} max-modal-width="530px">
-              <span class="title">
-                <span class="delete-modal-title">{this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: file.name })}</span>?
-              </span>
-              <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-                <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, file.id)}>
-                  {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
-                </antivirus-card-button>
-                <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>
-                  {this.t.msg(['INFECTED_FILES', 'MODAL', 'CANCEL_BUTTON'])}
-                </a>
-              </div>
-            </antivirus-card-modal>,
           ])}
         </div>
         {/** @todo: change when backend will can work with pagination */
@@ -177,7 +155,35 @@ export class InfectedFiles {
             <antivirus-card-table-pagination />
           </div>
         </div> */}
-      </antivirus-card-table>
-    );
+      </antivirus-card-table>,
+      <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
+        <antivirus-card-vmenu>
+          <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
+          {/*<antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>*/}
+          <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
+            {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
+          </antivirus-card-vmenu-item>
+          <antivirus-card-vmenu-item onClick={ev => this.openDeletionModal(ev)}>
+            {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}
+          </antivirus-card-vmenu-item>
+        </antivirus-card-vmenu>
+      </antivirus-card-dropdown>,
+      <antivirus-card-modal ref={el => (this.deletionModal = el)} max-modal-width="530px">
+        <span class="title">
+          <span class="delete-modal-title">
+            {this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: this.fileToDelete && this.fileToDelete.name })}
+          </span>
+          ?
+        </span>
+        <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
+          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, this.fileToDelete && this.fileToDelete.id)}>
+            {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
+          </antivirus-card-button>
+          <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>
+            {this.t.msg(['INFECTED_FILES', 'MODAL', 'CANCEL_BUTTON'])}
+          </a>
+        </div>
+      </antivirus-card-modal>,
+    ];
   };
 }
