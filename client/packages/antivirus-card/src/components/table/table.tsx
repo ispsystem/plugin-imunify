@@ -3,7 +3,7 @@ import { Component, h, Host } from '@stencil/core';
 @Component({
   tag: 'antivirus-card-table',
   styleUrl: 'styles/$.scss',
-  shadow: true
+  shadow: true,
 })
 export class Table {
   render() {

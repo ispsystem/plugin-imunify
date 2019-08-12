@@ -45,7 +45,7 @@ export class AntivirusCard {
   /** selected period */
   @State() selectedPeriod = 0;
   /** history list */
-  @State() history: RootState['antivirus']['history'];
+  @State() historyItemCount: RootState['antivirus']['historyItemCount'];
   /** scan option preset */
   @State() scanPreset: RootState['antivirus']['scanPreset'];
   /** scan in process */
@@ -181,13 +181,12 @@ export class AntivirusCard {
       });
     }
 
-    await this.checkFeatures();
-
-    await this.getSettingPresets(this.siteId);
-
-    await this.getScanHistory(this.siteId);
-
-    await this.getInfectedFiles(this.siteId);
+    await Promise.all([
+      this.checkFeatures(),
+      this.getSettingPresets(this.siteId),
+      this.getScanHistory(this.siteId),
+      this.getInfectedFiles(this.siteId),
+    ]);
 
     if (this.notifier !== undefined) {
       this.notifier
@@ -222,7 +221,7 @@ export class AntivirusCard {
 
       /** @todo: need query from back has scanning now or has not */
       setTimeout(() => {
-        if (this.history.length === 0 && !this.scanning) {
+        if (this.historyItemCount === 0 && !this.scanning) {
           this.scanVirus(this.scanPreset.full.id, this.siteId);
         }
       }, 1000);

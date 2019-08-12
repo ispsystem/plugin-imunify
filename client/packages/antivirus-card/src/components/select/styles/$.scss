@@ -30,6 +30,23 @@
     color: var(--ngispui-select-disabled__font-color, var(--isp-color__basic-text, $isp-color__basic-text));
     background-color: var(--ngispui-select-disabled__background-color, var(--isp-color__default-inactive, #f4f4f4));
   }
+
+  &.borderless {
+    --ngispui-select__border-color: transparent;
+    width: auto;
+    min-width: auto;
+
+    height: auto;
+
+    background-color: transparent;
+
+    padding: {
+      top: 0;
+      right: 15px;
+      bottom: 0;
+    }
+
+  }
 }
 
 .select__panel {

@@ -1,29 +1,6 @@
-// antivirus-card-table-row {
-//   display: table-row;
-//   height: 70px;
-
-//   border-bottom-width: 1px;
-//   border-bottom-style: solid;
-//   border-bottom-color: var(--ngispui-table__row_border-color, var(--isp-color__table-row-border, #d9d9d9));
-
-//   &[disabled] {
-//     --ngispui-table__cell-color: #9b9b9b;
-
-//     a.main-text {
-//       text-decoration: none !important;
-//       color: #9b9b9b !important;
-//     }
-
-//     a.add-text {
-//       color: #9b9b9b !important;
-//     }
-//   }
-
-//   @import './_action/_hover.scss';
-// }
-
 antivirus-card-table-pagination {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
 
   .pagination__control {
     position: relative;
@@ -39,6 +16,7 @@ antivirus-card-table-pagination {
     &.pagination__control_prev {
       margin-right: 6px;
     }
+
     &.pagination__control_next {
       margin-left: 6px;
       transform: rotate(180deg);
@@ -71,10 +49,8 @@ antivirus-card-table-pagination {
     }
 
     &:active {
-      background: var(
-        --ngispui-pagination__color-control-background_active,
-        var(--isp-color__pagination-control-background_active, #b8b8b8)
-      );
+      background: var(--ngispui-pagination__color-control-background_active,
+          var(--isp-color__pagination-control-background_active, #b8b8b8));
     }
 
     &:hover {

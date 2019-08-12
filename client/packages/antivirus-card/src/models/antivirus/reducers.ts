@@ -8,11 +8,12 @@ const getInitialState = (): AntivirusState => {
 
     isProVersion: false,
     hasScheduledActions: false,
-
-    scanning: false,
     infectedFiles: [],
+    infectedFilesCount: 0,
+    scanning: false,
     inBlackLists: false,
     history: [],
+    historyItemCount: 0,
     scanTaskList$: new BehaviorSubject([]),
   };
 };
@@ -40,15 +41,16 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       return {
         ...state,
         scanning: false,
-        infectedFiles: [
-          // merge infected files with new scan result
-          ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
-        ],
-        history: [
-          // add new item to the history list
-          ...state.history,
-          action.payload.data.historyItem,
-        ],
+        /** @todo understand what to do in this place with state */
+        // infectedFiles: [
+        //   // merge infected files with new scan result
+        //   ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
+        // ],
+        // history: [
+        //   // add new item to the history list
+        //   ...state.history,
+        //   action.payload.data.historyItem,
+        // ],
       };
     }
 
@@ -84,7 +86,8 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS: {
       return {
         ...state,
-        history: action.payload.data,
+        // history: action.payload.data.list,
+        historyItemCount: action.payload.data.size,
       };
     }
 
@@ -116,7 +119,8 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS: {
       return {
         ...state,
-        infectedFiles: action.payload.data,
+        // infectedFiles: action.payload.data.list,
+        infectedFilesCount: action.payload.data.size,
       };
     }
 

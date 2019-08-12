@@ -122,6 +122,8 @@ export interface AntivirusState {
   inBlackLists: boolean;
 
   infectedFiles: InfectedFile[];
+  infectedFilesCount: number;
   history: HistoryItem[];
+  historyItemCount: number;
   scanTaskList$: BehaviorSubject<number[]>;
 }
