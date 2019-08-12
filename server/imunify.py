@@ -82,7 +82,8 @@ class ScanType(BaseEnum):
 
 class FileAction(BaseEnum):
     """Типы операций с файлами"""
-    delete = "delete"
+    delete = "DELETE"
+    heal = "HEAL"
 
 
 class Value:
@@ -1015,7 +1016,7 @@ class Imunify:
 
         ids = ",".join(str(id) for id in file_ids)
         where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, str(FileStatus.infected), site_id, info.instance_id)
-        files = select(table="files", table_fields=["id", "file", "path"], where=where_statement)
+        files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
 
         if not files:
             return web.HTTPNotFound(text="There is no files to delete")
@@ -1025,6 +1026,7 @@ class Imunify:
             path = site_info["docroot_base"] + "/" + site_info["docroot"] + file["path"] + "/" + file["file"]
             params.append("--file")
             params.append(str(file["id"]))
+            params.append(str(file["iav_file_id"]))
             params.append(path)
 
         output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
@@ -1044,6 +1046,67 @@ class Imunify:
         loop.create_task(task_wait(result['task_id'], info, self.files_done))
         result = loads(output)
         return web.Response(text=dumps(result))
+
+
+async def post_site_site_id_files(self, info: HandlerInfo):
+    """
+    Операции с файлами
+    :param info: Информация о запросе
+    :return:
+    """
+    request_body = await info.body
+    try:
+        site_id = int(info.path_params.get("site_id"))
+    except ValueError:
+        return web.HTTPBadRequest(text="The identifier of the site is not valid")
+
+    site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
+    if site_info_response.status != 200:
+        response = await site_info_response.text()
+        return web.Response(text=response, status=site_info_response.status)
+    site_info = await site_info_response.json()
+
+    file_ids = request_body.get("files")
+    action = request_body.get("action")
+    if not FileAction.has_value(action.upper()):
+        return web.HTTPNotFound(text="There is no handler to process this action")
+
+    response = await self.get_instance(info.instance_id)
+    data = await response.json()
+    host = data.get("host", "")
+
+    ids = ",".join(str(id) for id in file_ids)
+    where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, str(FileStatus.infected), site_id, info.instance_id)
+    files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
+
+    if not files:
+        return web.HTTPNotFound(text="There is no files to process")
+
+    params = ["--host", host, "--action", action.lower()]
+    for file in files:
+        path = site_info["docroot_base"] + "/" + site_info["docroot"] + file["path"] + "/" + file["file"]
+        params.append("--file")
+        params.append(str(file["id"]))
+        params.append(str(file["iav_file_id"]))
+        params.append(path)
+
+    output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
+                         name='files',
+                         params=params,
+                         instance_id=info.instance_id,
+                         task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                         notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
+
+    result = loads(output)
+    loop = asyncio.get_event_loop()
+    info = {
+        "instance": info.instance_id,
+        "ses6": info.ses6,
+        "action": str(FileAction.delete)
+    }
+    loop.create_task(task_wait(result['task_id'], info, self.files_done))
+    result = loads(output)
+    return web.Response(text=dumps(result))
 
 
 imunify = Imunify()
@@ -1165,6 +1228,7 @@ if __name__ == '__main__':
                     make_get('/site/{site_id}/scan/history'),
                     make_get('/scan/result'),
                     make_post('/preset/{id}/status'),
+                    make_post('/site/{site_id}/files'),
                     make_post('/site/{site_id}/preset'),
                     make_post('/site/{site_id}/scan'),
                     make_delete('/site/{site_id}/files')])
