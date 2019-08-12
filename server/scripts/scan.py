@@ -154,6 +154,7 @@ def process(params, docroot, start_date):
                 except FileNotFoundError:
                     last_modified = 0
                 infected_file = {
+                    "iav_file_id": malicious["id"],
                     "file": malicious["file"],
                     "last_modified": last_modified,
                     "malicious_type": malicious["type"]

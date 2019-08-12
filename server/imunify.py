@@ -752,6 +752,7 @@ class Imunify:
 
             path_hash = md5(full_path.encode("utf-8")).hexdigest()
             file_data = {
+                "iav_file_id": infected_file["iav_file_id"],
                 "instance": int(scan_info["instance"]),
                 "site_id": scan_info["site_id"],
                 "path_hash": path_hash,
@@ -1246,6 +1247,7 @@ if __name__ == '__main__':
     create_table("report", fields)
 
     fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("iav_file_id", "BIGINT"),
               DbField("instance", "INT"),
               DbField("site_id", "INT"),
               DbField("path_hash", "VARCHAR", 32),
@@ -1269,7 +1271,7 @@ if __name__ == '__main__':
     create_table("presets", fields)
     install_imunufy()
 
-    log.info("Starting Imunify sevice".format(sock_path))
+    log.info("Starting Imunify service".format(sock_path))
     web.run_app(app, sock=sock)
 
     remove(args.socket)
