@@ -36,6 +36,8 @@ const lang = {
   },
   TABLE: {
     ON_PAGE_LABEL: 'На странице',
+    OF: 'из',
+    RECORD_COUNT: '%{smart_count} запись |||| %{smart_count} записи |||| %{smart_count} записей',
   },
   PREVIEW: {
     HELP:
