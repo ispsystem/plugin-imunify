@@ -1,9 +1,6 @@
 # antivirus-card
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Properties
 
@@ -13,7 +10,6 @@
 | `siteId`           | `site-id` | site ID from vepp                | `number`                                                                                           | `undefined` |
 | `translateService` | --        | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
 | `userNotification` | --        | Global user notification service | `UserNotification`                                                                                 | `undefined` |
-
 
 ## Dependencies
 
@@ -29,6 +25,7 @@
 - [antivirus-card-button](button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   antivirus-card --> antivirus-card-dashboard
@@ -65,13 +62,13 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-select-option
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
+  antivirus-card-infected-files --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
-  antivirus-card-infected-files --> antivirus-card-table-pagination
-  antivirus-card-infected-files --> antivirus-card-button
-  antivirus-card-table-pagination --> antivirus-card-select
-  antivirus-card-table-pagination --> antivirus-card-select-option
+  antivirus-card-infected-files --> antivirus-card-dropdown
+  antivirus-card-infected-files --> antivirus-card-vmenu
+  antivirus-card-infected-files --> antivirus-card-vmenu-item
   antivirus-card-history --> antivirus-card-table
   antivirus-card-history --> antivirus-card-table-row
   antivirus-card-history --> antivirus-card-table-cell
@@ -79,6 +76,6 @@ graph TD;
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
+---
 
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_

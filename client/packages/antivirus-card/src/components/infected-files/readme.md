@@ -1,9 +1,6 @@
 # antivirus-card-infected-files
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Events
 
@@ -11,15 +8,15 @@
 | -------------- | ----------- | ------------------ |
 | `openBuyModal` |             | `CustomEvent<any>` |
 
-
 ## Dependencies
 
 ### Used by
 
- - [antivirus-card](..)
+- [antivirus-card](..)
 
 ### Depends on
 
+- [antivirus-card-button](../button)
 - [antivirus-card-table](../table)
 - [antivirus-card-table-row](../table-row)
 - [antivirus-card-table-cell](../table-cell)
@@ -27,8 +24,10 @@
 - [antivirus-card-button](../button)
 
 ### Graph
+
 ```mermaid
 graph TD;
+  antivirus-card-infected-files --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
@@ -40,6 +39,6 @@ graph TD;
   style antivirus-card-infected-files fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
+---
 
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_

@@ -314,6 +314,8 @@ export namespace Components {
     'actionHover': boolean;
     'disabled': boolean;
   }
+  interface AntivirusCardVmenu {}
+  interface AntivirusCardVmenuItem {}
   interface AntivirusCardZoom {
     /**
     * The number of fields that cannot be deleted
@@ -479,6 +481,18 @@ declare global {
     new (): HTMLAntivirusCardTableRowElement;
   };
 
+  interface HTMLAntivirusCardVmenuElement extends Components.AntivirusCardVmenu, HTMLStencilElement {}
+  var HTMLAntivirusCardVmenuElement: {
+    prototype: HTMLAntivirusCardVmenuElement;
+    new (): HTMLAntivirusCardVmenuElement;
+  };
+
+  interface HTMLAntivirusCardVmenuItemElement extends Components.AntivirusCardVmenuItem, HTMLStencilElement {}
+  var HTMLAntivirusCardVmenuItemElement: {
+    prototype: HTMLAntivirusCardVmenuItemElement;
+    new (): HTMLAntivirusCardVmenuItemElement;
+  };
+
   interface HTMLAntivirusCardZoomElement extends Components.AntivirusCardZoom, HTMLStencilElement {}
   var HTMLAntivirusCardZoomElement: {
     prototype: HTMLAntivirusCardZoomElement;
@@ -510,6 +524,8 @@ declare global {
     'antivirus-card-table-cell': HTMLAntivirusCardTableCellElement;
     'antivirus-card-table-pagination': HTMLAntivirusCardTablePaginationElement;
     'antivirus-card-table-row': HTMLAntivirusCardTableRowElement;
+    'antivirus-card-vmenu': HTMLAntivirusCardVmenuElement;
+    'antivirus-card-vmenu-item': HTMLAntivirusCardVmenuItemElement;
     'antivirus-card-zoom': HTMLAntivirusCardZoomElement;
   }
 }
@@ -810,6 +826,8 @@ declare namespace LocalJSX {
     'actionHover'?: boolean;
     'disabled'?: boolean;
   }
+  interface AntivirusCardVmenu extends JSXBase.HTMLAttributes<HTMLAntivirusCardVmenuElement> {}
+  interface AntivirusCardVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusCardVmenuItemElement> {}
   interface AntivirusCardZoom extends JSXBase.HTMLAttributes<HTMLAntivirusCardZoomElement> {
     /**
     * The number of fields that cannot be deleted
@@ -851,6 +869,8 @@ declare namespace LocalJSX {
     'antivirus-card-table-cell': AntivirusCardTableCell;
     'antivirus-card-table-pagination': AntivirusCardTablePagination;
     'antivirus-card-table-row': AntivirusCardTableRow;
+    'antivirus-card-vmenu': AntivirusCardVmenu;
+    'antivirus-card-vmenu-item': AntivirusCardVmenuItem;
     'antivirus-card-zoom': AntivirusCardZoom;
   }
 }

@@ -18,7 +18,7 @@
 
   @at-root #{&}([unwrap]) .checkbox__control {
     display: flex;
-  
+
     &::before {
       flex-shrink: 0;
       margin-top: 1px;
@@ -35,7 +35,7 @@
 
   &:disabled + .checkbox__control {
     color: var(--ngispui-checkbox__font-color-disabled, var(--isp-color__inactive-text, #{$isp-color__inactive-text}));
-    
+
     @extend %checkbox_is_disabled;
   }
 
@@ -80,7 +80,7 @@
 
 %checkbox_is_disabled {
   cursor: not-allowed;
-  
+
   &::before {
     cursor: not-allowed;
     border-width: 1px;

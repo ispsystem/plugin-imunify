@@ -8,6 +8,8 @@ import { InfectedFile } from '../../models/antivirus/state';
 import { TableState, TableController } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 import { endpoint } from '../../constants';
+import { AntivirusState } from '../../models/antivirus/state';
+import { BurgerMenuIcon } from '../icons/burgerMenu';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -23,6 +25,10 @@ export class InfectedFiles {
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
+  /** Ref for dropdown element */
+  dropdownEl!: HTMLAntivirusCardDropdownElement;
+
+  @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
 
@@ -40,7 +46,7 @@ export class InfectedFiles {
   }
 
   async componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
     this.tableController = new TableController(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/files/infected`,
       this.handleFailure,
@@ -71,20 +77,29 @@ export class InfectedFiles {
   render() {
     return (
       <Host>
-        {this.tableState.data && this.tableState.elementCount > 0 ? (
-          this.renderInfectedFilesTable()
-        ) : (
-          <div style={{ display: 'contents' }}>
-            <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
-
-            <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
-              {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
-            </antivirus-card-button>
-          </div>
-        )}
+        {(this.tableState.data && this.tableState.data.length) > 0 ? this.renderInfectedFilesTable() : this.renderEmptyListPlaceholder()}
       </Host>
     );
   }
+
+  /**
+   * Renders the placeholder with a text instead of table with empty files list
+   */
+  renderEmptyListPlaceholder = () => {
+    return this.isProVersion ? (
+      <div style={{ display: 'contents' }}>
+        <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND_PRO'])}</p>
+      </div>
+    ) : (
+      <div style={{ display: 'contents' }}>
+        <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
+
+        <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
+          {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
+        </antivirus-card-button>
+      </div>
+    );
+  };
 
   renderInfectedFilesTable = () => {
     return (
@@ -103,6 +118,7 @@ export class InfectedFiles {
             <antivirus-card-table-cell style={{ width: 370 - 20 + 'px' }}>
               {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_4'])}
             </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 35 + 'px' }} />
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -131,6 +147,23 @@ export class InfectedFiles {
                         time: getTimeAsStr(new Date(file.createdDate)),
                       })}
                 </span>
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <span class="main-text">
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => this.dropdownEl.toggle(ev)}>
+                    <BurgerMenuIcon />
+                  </span>
+                </span>
+                <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
+                  <antivirus-card-vmenu>
+                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
+                    {/*<antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>*/}
+                    <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
+                      {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
+                    </antivirus-card-vmenu-item>
+                    <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE'])}</antivirus-card-vmenu-item>
+                  </antivirus-card-vmenu>
+                </antivirus-card-dropdown>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}
