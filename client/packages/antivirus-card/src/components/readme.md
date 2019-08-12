@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property           | Attribute | Description                | Type                                                                                               | Default     |
-| ------------------ | --------- | -------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
-| `notifier`         | --        | global notifier object     | `Notifier`                                                                                         | `undefined` |
-| `siteId`           | `site-id` | site ID from vepp          | `number`                                                                                           | `undefined` |
-| `translateService` | --        | main app translate service | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| Property           | Attribute | Description                      | Type                                                                                               | Default     |
+| ------------------ | --------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
+| `notifier`         | --        | global notifier object           | `Notifier`                                                                                         | `undefined` |
+| `siteId`           | `site-id` | site ID from vepp                | `number`                                                                                           | `undefined` |
+| `translateService` | --        | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `userNotification` | --        | Global user notification service | `UserNotification`                                                                                 | `undefined` |
 
 
 ## Dependencies

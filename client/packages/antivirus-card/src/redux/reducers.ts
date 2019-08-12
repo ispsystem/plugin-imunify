@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { translateReducer, ITranslate } from '../models/translate.reducers';
 import { AntivirusState } from '../models/antivirus/state';
 import { antivirusReducer } from '../models/antivirus/reducers';
+import { UserNotification } from './user-notification.interface';
 
 /** @todo: move to common plugin lib */
 export interface Notifier {
@@ -47,6 +48,7 @@ export interface RootState {
   siteId: number;
   antivirus?: AntivirusState;
   notifier: Notifier;
+  userNotification: UserNotification;
   translate?: ITranslate;
 }
 
@@ -56,4 +58,5 @@ export const rootReducer = combineReducers({
   antivirus: antivirusReducer,
   notifier: (state: Notifier = null) => state,
   translate: translateReducer,
+  userNotification: (state: UserNotification = null) => state,
 });

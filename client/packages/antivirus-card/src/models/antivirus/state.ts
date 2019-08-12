@@ -1,5 +1,8 @@
 import { BehaviorSubject } from 'rxjs';
 
+/** Types for inspected files status */
+export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING';
+
 /**
  * Infected file
  */
@@ -8,7 +11,7 @@ export interface InfectedFile {
   // file name, e.g. "beregovoi_orcestr.bat"
   name: string;
   // file status, e.g. "заражён"
-  status: 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
+  status: InfectedStatusType;
   // type of threat, e.g. "Troyan.enspect"
   threatName: string;
   // path to file
@@ -24,7 +27,7 @@ export interface InfectedFile {
 /**
  * History list item
  */
-interface HistoryItem {
+export interface HistoryItem {
   // verification date and time (timestamp)
   date: number;
   // check type

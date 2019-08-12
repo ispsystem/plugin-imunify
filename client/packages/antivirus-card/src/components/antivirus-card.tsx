@@ -14,6 +14,7 @@ import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
+import { UserNotification } from '../redux/user-notification.interface';
 
 /**
  * AntivirusCard component
@@ -34,6 +35,8 @@ export class AntivirusCard {
   @Prop() siteId: number;
   /** global notifier object */
   @Prop() notifier: Notifier;
+  /** Global user notification service */
+  @Prop() userNotification: UserNotification;
   /** main app translate service */
   @Prop() translateService: { currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: languageTypes }> };
   /** global store object */
@@ -145,6 +148,7 @@ export class AntivirusCard {
       configureStore({
         siteId: this.siteId,
         notifier: this.notifier,
+        userNotification: this.userNotification,
       }),
     );
 
@@ -219,7 +223,7 @@ export class AntivirusCard {
           const taskName = notify.event.additional_data.name;
           switch (taskName) {
             case 'scan':
-              this.getScanResult(notify);
+              this.getScanResult(notify, this.userNotification, this.t);
               break;
 
             case 'files':
@@ -233,7 +237,7 @@ export class AntivirusCard {
         if (this.history.length === 0 && !this.scanning) {
           this.scanVirus(this.scanPreset.full.id, this.siteId);
         }
-      }, 700);
+      }, 1000);
     }
   }
 
