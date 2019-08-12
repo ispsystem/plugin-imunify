@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 
 /** Types for inspected files status */
-export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING';
+export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
 
 /**
  * Infected file
