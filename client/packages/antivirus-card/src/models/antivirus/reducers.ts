@@ -13,7 +13,7 @@ const getInitialState = (): AntivirusState => {
     infectedFiles: [],
     inBlackLists: false,
     history: [],
-    scanTaskList$: new BehaviorSubject([]),
+    taskList$: new BehaviorSubject([]),
   };
 };
 
@@ -28,7 +28,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
-      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.scanId]);
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,
@@ -163,7 +163,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
-      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.task_id]);
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.task_id]);
       return {
         ...state,
         error: null,

@@ -123,5 +123,5 @@ export interface AntivirusState {
 
   infectedFiles: InfectedFile[];
   history: HistoryItem[];
-  scanTaskList$: BehaviorSubject<number[]>;
+  taskList$: BehaviorSubject<number[]>;
 }

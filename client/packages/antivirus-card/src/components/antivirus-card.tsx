@@ -51,7 +51,7 @@ export class AntivirusCard {
   /** scan in process */
   @State() scanning: RootState['antivirus']['scanning'];
   /** list current scan process */
-  @State() taskList$: RootState['antivirus']['scanTaskList$'];
+  @State() taskList$: RootState['antivirus']['taskList$'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
