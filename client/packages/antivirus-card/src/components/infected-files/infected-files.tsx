@@ -78,6 +78,16 @@ export class InfectedFiles {
     return true;
   }
 
+  /**
+   * Handles delete modal submit button
+   * @param siteId Site's id
+   * @param fileId File's id
+   */
+  private deleteSubmitHandler(siteId: number, fileId: number): void {
+    this.deleteFiles(siteId, [fileId]);
+    this.deletionModal.toggle(false);
+  }
+
   renderInfectedFilesTable = () => {
     return (
       <antivirus-card-table>
@@ -150,7 +160,7 @@ export class InfectedFiles {
                 <span class="delete-modal-title">{this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: file.name })}</span>?
               </span>
               <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-                <antivirus-card-button onClick={() => this.deleteFiles(this.siteId, [file.id])}>
+                <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, file.id)}>
                   {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
                 </antivirus-card-button>
                 <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>
