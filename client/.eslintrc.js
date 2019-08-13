@@ -44,6 +44,7 @@ module.exports = {
         },
       },
     ],
+    '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/camelcase': ['error', { properties: 'never' }],
     '@typescript-eslint/no-namespace': 'off',
     'react/react-in-jsx-scope': 'off',
