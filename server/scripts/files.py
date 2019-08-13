@@ -34,8 +34,8 @@ def get_malicious_list(host: str, action: str):
 def handle_operation(params, extended_cmd):
     """
     Выполнение операции
-    :param params:
-    :param extended_cmd:
+    :param params: Параметры запуска операции
+    :param extended_cmd: Команда для выполнения операции
     :return:
     """
     operation_result = {"action": params.action, "status": OPERATION_STATUS_SUCCESS, "result": list()}

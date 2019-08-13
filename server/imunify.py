@@ -802,7 +802,6 @@ class Imunify:
 
         if status == OPERATION_STATUS_SUCCESS:
             operations = operations_result["result"]
-            # file_status = str(FileStatus.deleted)
             file_status = get_file_status(info["action"].upper())
             for operation in operations:
                 if operation["status"] == OPERATION_STATUS_SUCCESS:
@@ -1103,7 +1102,7 @@ class Imunify:
             params.append(str(file["iav_file_id"]))
 
         output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
-                             name='files',
+                             name='files-{}'.format(action.lower()),
                              params=params,
                              instance_id=info.instance_id,
                              task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},

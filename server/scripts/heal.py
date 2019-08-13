@@ -30,7 +30,7 @@ class Fifo:
 
     def close(self):
         """
-        закрытие и удаление пайпы
+        Закрытие и удаление пайпы
         :return:
         """
         self.fifo.close()
