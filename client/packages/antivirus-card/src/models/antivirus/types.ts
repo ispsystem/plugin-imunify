@@ -178,10 +178,10 @@ export const deleteFilesFailure = error => async (dispatch: (obj: DeleteFilesFai
   });
 };
 
-export const deleteFilesPostProcessSuccess = ids => async (dispatch: (obj: DeleteFilesPostProcessSuccess) => void) => {
+export const deleteFilesPostProcessSuccess = deletedFilesCount => async (dispatch: (obj: DeleteFilesPostProcessSuccess) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS,
-    payload: { ids },
+    payload: { deletedFilesCount },
   });
 };
 
@@ -309,7 +309,7 @@ interface DeleteFilesFailure {
 interface DeleteFilesPostProcessSuccess {
   type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS;
   payload: {
-    ids: number[];
+    deletedFilesCount: number;
   };
 }
 interface DeleteFilesPostProcessFailure {

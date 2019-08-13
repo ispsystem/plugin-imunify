@@ -61,14 +61,12 @@ export namespace AntivirusActions {
    * Deletes the file or files
    *
    * @param siteId Site's id
-   * @param fileIds File's id
+   * @param files Files' ids
    */
-  export function deleteFiles(siteId: number, fileIds: number[]) {
+  export function deleteFiles(siteId: number, files: number[]) {
     return async dispatch => {
       try {
-        const body = {
-          files: fileIds,
-        };
+        const body = { files };
         const requestInit: RequestInit = {
           method: 'DELETE',
           body: JSON.stringify(body),
@@ -89,8 +87,8 @@ export namespace AntivirusActions {
       try {
         const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let ids: number[] = deletedFiles.map(file => Number(file.id));
-        dispatch(deleteFilesPostProcessSuccess(ids));
+        let deletedFilesCount: number = deletedFiles.length;
+        dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
       }

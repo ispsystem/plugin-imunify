@@ -182,15 +182,14 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS: {
-      const { ids } = action.payload;
-      const infectedFiles = state.infectedFiles.map(file => {
-        if (!ids.includes(file.id)) return file;
-        file.status = 'DELETED';
-        return file;
-      });
+      const { deletedFilesCount } = action.payload;
+      let infectedFilesCount = state.infectedFilesCount - deletedFilesCount;
+      if (infectedFilesCount < 0) {
+        infectedFilesCount = 0;
+      }
       return {
         ...state,
-        infectedFiles,
+        infectedFilesCount,
       };
     }
 
