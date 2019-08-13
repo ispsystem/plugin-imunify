@@ -161,6 +161,10 @@ export namespace Components {
   }
   interface AntivirusCardModal {
     /**
+    * Modal max width
+    */
+    'maxModalWidth': string;
+    /**
     * Modal width
     */
     'modalWidth': string;
@@ -238,6 +242,10 @@ export namespace Components {
   }
   interface AntivirusCardSelect {
     /**
+    * Flag for disable border around select
+    */
+    'borderless': boolean;
+    /**
     * Disabled key for select field
     */
     'disabled': boolean;
@@ -249,6 +257,9 @@ export namespace Components {
     * Selected value
     */
     'selectedValue': SelectedOption;
+    /**
+    * Width for select block
+    */
     'width': number;
   }
   interface AntivirusCardSelectOption {
@@ -286,8 +297,26 @@ export namespace Components {
     'singleline': boolean;
   }
   interface AntivirusCardTablePagination {
-    'actionHover': boolean;
-    'disabled': boolean;
+    /**
+    * Handle for change count on one page
+    */
+    'changeCountOnPage': (event: number) => void;
+    /**
+    * Handle for click next or previous page
+    */
+    'clickPagination': (event: 'next' | 'previous') => void;
+    /**
+    * Item count on one page
+    */
+    'countOnPage': number;
+    /**
+    * Current page in pagination
+    */
+    'currentPage': number;
+    /**
+    * Total page count
+    */
+    'pageCount': number;
   }
   interface AntivirusCardTableRow {
     'actionHover': boolean;
@@ -594,6 +623,9 @@ declare namespace LocalJSX {
   }
   interface AntivirusCardHistory extends JSXBase.HTMLAttributes<HTMLAntivirusCardHistoryElement> {}
   interface AntivirusCardInfectedFiles extends JSXBase.HTMLAttributes<HTMLAntivirusCardInfectedFilesElement> {
+    /**
+    * Event for open modal window with buy pro version
+    */
     'onOpenBuyModal'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardInput extends JSXBase.HTMLAttributes<HTMLAntivirusCardInputElement> {
@@ -635,6 +667,10 @@ declare namespace LocalJSX {
     'width'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
+    /**
+    * Modal max width
+    */
+    'maxModalWidth'?: string;
     /**
     * Modal width
     */
@@ -717,6 +753,10 @@ declare namespace LocalJSX {
   }
   interface AntivirusCardSelect extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectElement> {
     /**
+    * Flag for disable border around select
+    */
+    'borderless'?: boolean;
+    /**
     * Disabled key for select field
     */
     'disabled'?: boolean;
@@ -732,6 +772,9 @@ declare namespace LocalJSX {
     * Selected value
     */
     'selectedValue'?: SelectedOption;
+    /**
+    * Width for select block
+    */
     'width'?: number;
   }
   interface AntivirusCardSelectOption extends JSXBase.HTMLAttributes<HTMLAntivirusCardSelectOptionElement> {
@@ -774,8 +817,26 @@ declare namespace LocalJSX {
     'singleline'?: boolean;
   }
   interface AntivirusCardTablePagination extends JSXBase.HTMLAttributes<HTMLAntivirusCardTablePaginationElement> {
-    'actionHover'?: boolean;
-    'disabled'?: boolean;
+    /**
+    * Handle for change count on one page
+    */
+    'changeCountOnPage'?: (event: number) => void;
+    /**
+    * Handle for click next or previous page
+    */
+    'clickPagination'?: (event: 'next' | 'previous') => void;
+    /**
+    * Item count on one page
+    */
+    'countOnPage'?: number;
+    /**
+    * Current page in pagination
+    */
+    'currentPage'?: number;
+    /**
+    * Total page count
+    */
+    'pageCount'?: number;
   }
   interface AntivirusCardTableRow extends JSXBase.HTMLAttributes<HTMLAntivirusCardTableRowElement> {
     'actionHover'?: boolean;

@@ -19,6 +19,9 @@ import {
 
 export namespace Components {
   interface AntivirusWidget {
+    /**
+    * infected files count
+    */
     'infectedCount': number;
     /**
     * global notifier object
@@ -33,7 +36,7 @@ export namespace Components {
     */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     /**
-    * url ??
+    * url to antivirus main page
     */
     'url': string;
     /**
@@ -58,6 +61,9 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusWidget extends JSXBase.HTMLAttributes<HTMLAntivirusWidgetElement> {
+    /**
+    * infected files count
+    */
     'infectedCount'?: number;
     /**
     * global notifier object
@@ -72,7 +78,7 @@ declare namespace LocalJSX {
     */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
     /**
-    * url ??
+    * url to antivirus main page
     */
     'url'?: string;
     /**

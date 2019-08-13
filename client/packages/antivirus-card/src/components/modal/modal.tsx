@@ -15,6 +15,8 @@ export class Modal {
 
   /** Modal width */
   @Prop({ attribute: 'modal-width' }) modalWidth: string;
+  /** Modal max width */
+  @Prop({ attribute: 'max-modal-width' }) maxModalWidth: string;
 
   /** Flag for visible component */
   @Prop({
@@ -47,7 +49,7 @@ export class Modal {
   render() {
     return (
       <div class={this.visible ? 'wrapper visible' : 'wrapper'} ref={el => (this.modalWrapper = el)}>
-        <div style={{ width: this.modalWidth }} class="modal" ref={el => (this.modalElement = el)}>
+        <div style={{ width: this.modalWidth, maxWidth: this.maxModalWidth }} class="modal" ref={el => (this.modalElement = el)}>
           <span class="modal-close" onClick={() => this.toggle()}>
             <CloseIcon />
           </span>

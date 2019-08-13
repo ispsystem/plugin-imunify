@@ -20,13 +20,17 @@ import {
   getPresetsFailure,
   disablePresetSuccess,
   disablePresetFailure,
+  deleteFilesSuccess,
+  deleteFilesFailure,
+  deleteFilesPostProcessSuccess,
+  deleteFilesPostProcessFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { AntivirusState, ScanOption, CheckType } from './state';
+import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
 import { getNestedObject } from '../../utils/tools';
 import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
-import { ScanResultResponse } from './model';
+import { ScanResultResponse, TaskManagerResponse } from './model';
 
 /**
  *
@@ -34,7 +38,7 @@ import { ScanResultResponse } from './model';
  *
  * @param response - a fetch response obj
  */
-function handleErrors(response: Response): Response {
+export function handleErrors(response: Response): Response {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
@@ -53,6 +57,44 @@ function handleErrors(response: Response): Response {
  *
  */
 export namespace AntivirusActions {
+  /**
+   * Deletes the file or files
+   *
+   * @param siteId Site's id
+   * @param files Files' ids
+   */
+  export function deleteFiles(siteId: number, files: number[]) {
+    return async dispatch => {
+      try {
+        const body = { files };
+        const requestInit: RequestInit = {
+          method: 'DELETE',
+          body: JSON.stringify(body),
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        handleErrors(response);
+        let json: TaskManagerResponse = await response.json();
+
+        dispatch(deleteFilesSuccess(json));
+      } catch (error) {
+        dispatch(deleteFilesFailure(error));
+      }
+    };
+  }
+
+  export function deleteFilesPostProcess(notify: { event: NotifierEvent }) {
+    return dispatch => {
+      try {
+        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
+        let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+        let deletedFilesCount: number = deletedFiles.length;
+        dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
+      } catch (error) {
+        dispatch(deleteFilesPostProcessFailure(error));
+      }
+    };
+  }
+
   /**
    * Search viruses
    *
@@ -205,11 +247,11 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=0`, requestInit);
         handleErrors(response);
         let json = await response.json();
 
-        dispatch(getHistorySuccess(json.list));
+        dispatch(getHistorySuccess(json));
       } catch (error) {
         dispatch(getHistoryFailure(error));
       }
@@ -227,11 +269,11 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected`, requestInit);
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`, requestInit);
         handleErrors(response);
         let json = await response.json();
 
-        dispatch(getInfectedFilesSuccess(json.list));
+        dispatch(getInfectedFilesSuccess(json));
       } catch (error) {
         dispatch(getInfectedFilesFailure(error));
       }

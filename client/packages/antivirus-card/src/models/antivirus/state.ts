@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 
 /** Types for inspected files status */
-export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING';
+export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
 
 /**
  * Infected file
@@ -122,6 +122,8 @@ export interface AntivirusState {
   inBlackLists: boolean;
 
   infectedFiles: InfectedFile[];
+  infectedFilesCount: number;
   history: HistoryItem[];
-  scanTaskList$: BehaviorSubject<number[]>;
+  historyItemCount: number;
+  taskList$: BehaviorSubject<number[]>;
 }

@@ -1,5 +1,5 @@
 import { AntivirusState } from './state';
-import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
+import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
 import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
@@ -8,12 +8,13 @@ const getInitialState = (): AntivirusState => {
 
     isProVersion: false,
     hasScheduledActions: false,
-
-    scanning: false,
     infectedFiles: [],
+    infectedFilesCount: 0,
+    scanning: false,
     inBlackLists: false,
     history: [],
-    scanTaskList$: new BehaviorSubject([]),
+    historyItemCount: 0,
+    taskList$: new BehaviorSubject([]),
   };
 };
 
@@ -28,7 +29,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
-      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.scanId]);
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,
@@ -40,15 +41,16 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       return {
         ...state,
         scanning: false,
-        infectedFiles: [
-          // merge infected files with new scan result
-          ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
-        ],
-        history: [
-          // add new item to the history list
-          ...state.history,
-          action.payload.data.historyItem,
-        ],
+        /** @todo understand what to do in this place with state */
+        // infectedFiles: [
+        //   // merge infected files with new scan result
+        //   ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
+        // ],
+        // history: [
+        //   // add new item to the history list
+        //   ...state.history,
+        //   action.payload.data.historyItem,
+        // ],
       };
     }
 
@@ -84,7 +86,8 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS: {
       return {
         ...state,
-        history: action.payload.data,
+        // history: action.payload.data.list,
+        historyItemCount: action.payload.data.size,
       };
     }
 
@@ -116,7 +119,8 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS: {
       return {
         ...state,
-        infectedFiles: action.payload.data,
+        // infectedFiles: action.payload.data.list,
+        infectedFilesCount: action.payload.data.size,
       };
     }
 
@@ -156,6 +160,40 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.task_id]);
+      return {
+        ...state,
+        error: null,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS: {
+      const { deletedFilesCount } = action.payload;
+      let infectedFilesCount = state.infectedFilesCount - deletedFilesCount;
+      if (infectedFilesCount < 0) {
+        infectedFilesCount = 0;
+      }
+      return {
+        ...state,
+        infectedFilesCount,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

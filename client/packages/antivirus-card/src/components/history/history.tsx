@@ -3,30 +3,70 @@ import { Store } from '@stencil/redux';
 
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { pad } from '../../utils/tools';
+import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { AntivirusState } from '../../models/antivirus/state';
+import { HistoryItem } from '../../models/antivirus/state';
+import { endpoint } from '../../constants';
+import { TableController, TableState } from '../table/table-controller';
+import { Subscription } from 'rxjs';
 
 @Component({
   tag: 'antivirus-card-history',
   styleUrl: 'styles/$.scss',
 })
 export class History {
+  /** RXJS subscription */
+  sub = new Subscription();
+
+  /** Table controller */
+  tableController: TableController<HistoryItem>;
+
+  /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
-  @State() history: AntivirusState['history'];
+
+  /** Vepp site id */
+  @State() siteId: RootState['siteId'];
+
   /** translate object */
   @State() t: ITranslate;
 
-  componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
+  /** Common table state */
+  @State() tableState: TableState<HistoryItem>;
+
+  constructor() {
+    this.tableState = new TableState();
+  }
+  async componentWillLoad() {
+    this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
+    this.tableController = new TableController(
+      `${endpoint}/plugin/api/imunify/site/${this.siteId}/scan/history`,
+      this.handleFailure,
+      this.tableState,
+    );
+
+    // subscribe to update state by table controller
+    this.sub.add(
+      this.tableController.state$.subscribe({
+        next: newState => (this.tableState = newState),
+      }),
+    );
+
+    // initialize data by controller
+    await this.tableController.init();
   }
 
-  getDayMonthYearAsStr(date: Date) {
-    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
+  componentDidUnload() {
+    this.sub.unsubscribe();
   }
 
-  getTimeAsStr(date: Date) {
-    return `${date.getHours()}.${pad(date.getMinutes())}`;
+  /**
+   * Handle fetch list error
+   * @todo may be need update global state with error
+   *
+   * @param error - error
+   */
+  handleFailure(error: any): void {
+    throw new Error("Oops, we haven't got JSON with a history list!" + error);
   }
 
   render() {
@@ -46,11 +86,11 @@ export class History {
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
-          {this.history.map(historyItem => (
+          {this.tableState.data.map(historyItem => (
             <antivirus-card-table-row action-hover>
               <antivirus-card-table-cell doubleline>
-                <span class="main-text">{this.getDayMonthYearAsStr(new Date(historyItem.date))}</span>
-                <span class="add-text">{this.getTimeAsStr(new Date(historyItem.date))}</span>
+                <span class="main-text">{getDayMonthYearAsStr(new Date(historyItem.date))}</span>
+                <span class="add-text">{getTimeAsStr(new Date(historyItem.date))}</span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{this.t.msg(['HISTORY_TAB', 'CHECK_TYPE', historyItem.checkType])}</span>
@@ -61,13 +101,18 @@ export class History {
             </antivirus-card-table-row>
           ))}
         </div>
-        {/** @todo: change when backend will can work with pagination */
-        /* <div slot="table-footer" style={{ display: 'contents' }}>
+        <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
-            <span>1 запись</span>
-            <antivirus-card-table-pagination />
+            <span>{this.t.msg(['TABLE', 'RECORD_COUNT'], { smart_count: this.tableState.elementCount })}</span>
+            <antivirus-card-table-pagination
+              countOnPage={this.tableState.countOnPage}
+              pageCount={this.tableState.pageCount}
+              currentPage={this.tableState.currentPage}
+              changeCountOnPage={value => this.tableController.onChangeCountOnPage(value)}
+              clickPagination={event => (event === 'next' ? this.tableController.onClickNext() : this.tableController.onClickPrevious())}
+            />
           </div>
-        </div> */}
+        </div>
       </antivirus-card-table>
     );
   }

@@ -1,7 +1,5 @@
 # antivirus-card
 
-
-
 <!-- Auto Generated Below -->
 
 
@@ -69,12 +67,17 @@ graph TD;
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
+  antivirus-card-infected-files --> antivirus-card-table-pagination
   antivirus-card-infected-files --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-vmenu
   antivirus-card-infected-files --> antivirus-card-vmenu-item
+  antivirus-card-infected-files --> antivirus-card-modal
+  antivirus-card-table-pagination --> antivirus-card-select
+  antivirus-card-table-pagination --> antivirus-card-select-option
   antivirus-card-history --> antivirus-card-table
   antivirus-card-history --> antivirus-card-table-row
   antivirus-card-history --> antivirus-card-table-cell
+  antivirus-card-history --> antivirus-card-table-pagination
   style antivirus-card fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
