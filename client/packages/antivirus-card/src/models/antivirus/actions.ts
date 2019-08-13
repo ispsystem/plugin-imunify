@@ -30,7 +30,7 @@ import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
 import { getNestedObject } from '../../utils/tools';
 import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
-import { ScanResultResponse } from './model';
+import { ScanResultResponse, TaskManagerResponse } from './model';
 
 /**
  *
@@ -73,7 +73,7 @@ export namespace AntivirusActions {
         };
         let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
         handleErrors(response);
-        let json = await response.json();
+        let json: TaskManagerResponse = await response.json();
 
         dispatch(deleteFilesSuccess(json));
       } catch (error) {

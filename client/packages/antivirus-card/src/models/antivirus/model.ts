@@ -8,3 +8,9 @@ export interface ScanResultResponse {
     size: number;
   };
 }
+
+export interface TaskManagerResponse {
+  task_id: number;
+}
+
+export interface DeleteFilesResponse extends TaskManagerResponse {}

@@ -1,4 +1,4 @@
-import { ScanResultResponse } from './model';
+import { DeleteFilesResponse, ScanResultResponse, TaskManagerResponse } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -295,9 +295,7 @@ interface DisablePresetSuccess {
 interface DeleteFilesSuccess {
   type: ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS;
   payload: {
-    data: {
-      task_id: number;
-    };
+    data: TaskManagerResponse;
   };
 }
 
