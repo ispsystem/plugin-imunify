@@ -5,6 +5,7 @@
 :host {
   min-width: 680px;
 
+  position: relative;
   color: var(--isp-color__basic-text, #344a5e);
   font-size: var(--isp-font-size-default, 14px);
   font-family: Ubuntu, sans-serif;

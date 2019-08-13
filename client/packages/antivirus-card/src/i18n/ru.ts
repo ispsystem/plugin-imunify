@@ -38,6 +38,7 @@ const lang = {
     ON_PAGE_LABEL: 'На странице',
     OF: 'из',
     RECORD_COUNT: '%{smart_count} запись |||| %{smart_count} записи |||| %{smart_count} записей',
+    SELECTED_COUNT: 'Выбрано %{count}',
   },
   PREVIEW: {
     HELP:

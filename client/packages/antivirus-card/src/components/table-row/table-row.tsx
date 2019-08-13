@@ -2,7 +2,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
 
 @Component({
   tag: 'antivirus-card-table-row',
-  styleUrl: 'styles/$.scss'
+  styleUrl: 'styles/$.scss',
 })
 export class History {
   @Prop({ reflect: true })

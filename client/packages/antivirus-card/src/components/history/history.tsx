@@ -7,7 +7,7 @@ import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { HistoryItem } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
-import { TableController, TableState } from '../table/table-controller';
+import { PaginationController, TableState, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -18,8 +18,11 @@ export class History {
   /** RXJS subscription */
   sub = new Subscription();
 
+  /** table store */
+  tableStore: TableStore<HistoryItem>;
+
   /** Table controller */
-  tableController: TableController<HistoryItem>;
+  paginationController: PaginationController<HistoryItem, TableStore<HistoryItem>>;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -34,25 +37,25 @@ export class History {
   @State() tableState: TableState<HistoryItem>;
 
   constructor() {
-    this.tableState = new TableState();
+    this.tableStore = new TableStore();
   }
   async componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
-    this.tableController = new TableController(
+    this.paginationController = new PaginationController(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/scan/history`,
       this.handleFailure,
-      this.tableState,
+      this.tableStore,
     );
 
     // subscribe to update state by table controller
     this.sub.add(
-      this.tableController.state$.subscribe({
+      this.tableStore.state$.subscribe({
         next: newState => (this.tableState = newState),
       }),
     );
 
     // initialize data by controller
-    await this.tableController.init();
+    await this.paginationController.init();
   }
 
   componentDidUnload() {
@@ -108,8 +111,10 @@ export class History {
               countOnPage={this.tableState.countOnPage}
               pageCount={this.tableState.pageCount}
               currentPage={this.tableState.currentPage}
-              changeCountOnPage={value => this.tableController.onChangeCountOnPage(value)}
-              clickPagination={event => (event === 'next' ? this.tableController.onClickNext() : this.tableController.onClickPrevious())}
+              changeCountOnPage={value => this.paginationController.onChangeCountOnPage(value)}
+              clickPagination={event =>
+                event === 'next' ? this.paginationController.onClickNext() : this.paginationController.onClickPrevious()
+              }
             />
           </div>
         </div>

@@ -286,6 +286,7 @@ export namespace Components {
     'alignLeft': boolean;
     'alignRight': boolean;
     'doubleline': boolean;
+    'selected': boolean;
     'singleline': boolean;
   }
   interface AntivirusCardTablePagination {
@@ -798,6 +799,7 @@ declare namespace LocalJSX {
     'alignLeft'?: boolean;
     'alignRight'?: boolean;
     'doubleline'?: boolean;
+    'selected'?: boolean;
     'singleline'?: boolean;
   }
   interface AntivirusCardTablePagination extends JSXBase.HTMLAttributes<HTMLAntivirusCardTablePaginationElement> {

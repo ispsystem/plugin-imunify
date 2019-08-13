@@ -5,11 +5,14 @@ import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { InfectedFile } from '../../models/antivirus/state';
-import { TableState, TableController } from '../table/table-controller';
+import { TableState, PaginationController, TableStore, GroupActionController } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 import { endpoint } from '../../constants';
 import { AntivirusState } from '../../models/antivirus/state';
 import { BurgerMenuIcon } from '../icons/burgerMenu';
+import { TableGroupActions } from '../table-actions/TableGroupActions';
+
+type InfectedFilesAction = 'delete' | 'heal';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -19,8 +22,14 @@ export class InfectedFiles {
   /** RXJS subscription */
   sub = new Subscription();
 
-  /** Table controller */
-  tableController: TableController<InfectedFile>;
+  /** Table store */
+  tableStore: TableStore<InfectedFile>;
+
+  /** Pagination controller */
+  paginationController: PaginationController<InfectedFile, TableStore<InfectedFile>>;
+
+  /** Group action controller */
+  groupActionController: GroupActionController<InfectedFile, TableStore<InfectedFile>, InfectedFilesAction>;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -42,26 +51,45 @@ export class InfectedFiles {
   @Event() openBuyModal: EventEmitter;
 
   constructor() {
-    this.tableState = new TableState();
+    this.tableStore = new TableStore();
   }
 
   async componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
-    this.tableController = new TableController(
+    // controlling table state by pagination
+    this.paginationController = new PaginationController(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/files/infected`,
       this.handleFailure,
-      this.tableState,
+      this.tableStore,
+    );
+    // controlling table state by group actions
+    this.groupActionController = new GroupActionController(
+      {
+        delete: this.delete,
+        heal: this.heal,
+      },
+      this.tableStore,
     );
 
     // subscribe to update state by table controller
     this.sub.add(
-      this.tableController.state$.subscribe({
+      this.tableStore.state$.subscribe({
         next: newState => (this.tableState = newState),
       }),
     );
 
     // initialize data by controller
-    await this.tableController.init();
+    await this.paginationController.init();
+  }
+
+  async delete(ids: number[]) {
+    console.log(ids);
+    /** @todo add handle for delete files*/
+  }
+
+  async heal(ids: number[]) {
+    console.log(ids);
+    /** @todo add handle for heal files */
   }
 
   /**
@@ -71,6 +99,7 @@ export class InfectedFiles {
    * @param error - error
    */
   handleFailure(error: any): void {
+    /** @todo add handle for error fetch list */
     throw new Error("Oops, we haven't got JSON with a infected file list!" + error);
   }
 
@@ -119,12 +148,23 @@ export class InfectedFiles {
               {this.t.msg(['INFECTED_FILES', 'TABLE_HEADER', 'CELL_4'])}
             </antivirus-card-table-cell>
             <antivirus-card-table-cell style={{ width: 35 + 'px' }} />
+            <antivirus-card-table-cell style={{ width: 15 + 'px' }}>
+              <antivirus-card-checkbox
+                onChanged={event => {
+                  event.detail
+                    ? this.groupActionController.select(this.tableState.data.map(d => d.id))
+                    : this.groupActionController.deselect(this.tableState.data.map(d => d.id));
+                  event.stopPropagation;
+                }}
+                checked={this.tableState.data.every(f => this.tableState.selectedList.includes(f.id))}
+              ></antivirus-card-checkbox>
+            </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
           {this.tableState.data.map(file => (
             <antivirus-card-table-row action-hover>
-              <antivirus-card-table-cell doubleline>
+              <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file.id)} doubleline>
                 <span class="main-text">{file.name}</span>
                 <span class="add-text">{this.t.msg(['INFECTED_FILES', 'STATUS', file.status])}</span>
               </antivirus-card-table-cell>
@@ -165,18 +205,44 @@ export class InfectedFiles {
                   </antivirus-card-vmenu>
                 </antivirus-card-dropdown>
               </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <antivirus-card-checkbox
+                  onChanged={event => {
+                    event.detail ? this.groupActionController.select(file.id) : this.groupActionController.deselect(file.id);
+                    event.stopPropagation;
+                  }}
+                  checked={this.tableState.selectedList.includes(file.id)}
+                ></antivirus-card-checkbox>
+              </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}
         </div>
         <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
             <span>{this.t.msg(['TABLE', 'RECORD_COUNT'], { smart_count: this.tableState.elementCount })}</span>
+            <TableGroupActions
+              selectedCount={this.tableState.selectedList.length}
+              action={[
+                {
+                  msg: this.t.msg(['INFECTED_FILES', 'ACTIONS', 'DELETE']),
+                  name: 'delete',
+                },
+                {
+                  msg: this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL']),
+                  name: 'heal',
+                },
+              ]}
+              t={this.t}
+              handleActions={this.groupActionController.doAction.bind(this.groupActionController)}
+            />
             <antivirus-card-table-pagination
               countOnPage={this.tableState.countOnPage}
               pageCount={this.tableState.pageCount}
               currentPage={this.tableState.currentPage}
-              changeCountOnPage={value => this.tableController.onChangeCountOnPage(value)}
-              clickPagination={event => (event === 'next' ? this.tableController.onClickNext() : this.tableController.onClickPrevious())}
+              changeCountOnPage={value => this.paginationController.onChangeCountOnPage(value)}
+              clickPagination={event =>
+                event === 'next' ? this.paginationController.onClickNext() : this.paginationController.onClickPrevious()
+              }
             />
           </div>
         </div>
