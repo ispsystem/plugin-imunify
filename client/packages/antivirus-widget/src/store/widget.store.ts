@@ -1,19 +1,39 @@
-import { AbstractStore, TaskElement } from './abstract.store';
+import { AbstractStore } from './abstract.store';
 import { endpoint } from '../constants';
 import { API } from './api.interface';
-import { NotifierEvent, TaskEventName, UserNotification, Translate, NotifyBannerTypes } from './types';
-import { getNestedObject } from '../utils/utils';
+import { NotifierEvent, UserNotification, Translate, NotifyBannerTypes, TaskEventName } from './types';
+import { getNestedObject, handleErrors } from '../utils/utils';
 
+/** State for antivirus widget component */
 export class WidgetState {
+  /** Count of infected files */
   infectedFilesCount: number = null;
+
+  /** Partial preset id for scanning */
   partialPresetId: number = null;
+
+  /** Last scan date in timestamp */
   lastCheck: number = null;
+
+  /** Full preset id for scanning */
   fullPresetId: number = null;
+
+  /** Scanning state */
   scanning: boolean = false;
+
+  /** Healing state */
   healing: boolean = false;
+
+  /** Vepp site id */
   siteId: number = null;
+
+  /** Backend can working with scheduled actions */
   hasScheduledActions: boolean;
+
+  /** Flag for imunify pro version */
   isProVersion: boolean;
+
+  /** Error state */
   error: any;
 
   constructor(siteId: number) {
@@ -22,45 +42,27 @@ export class WidgetState {
 }
 
 /**
- *
- * Handle errors if response no ok or if it is not json format
- *
- * @param response - a fetch response obj
+ * Store for antivirus widget component
  */
-function handleErrors(response: Response): Response {
-  if (!response.ok) {
-    throw new Error(response.statusText);
-  }
-  const contentType = response.headers.get('content-type');
-
-  if (contentType === undefined || !contentType.includes('application/json')) {
-    throw new TypeError('Oops, we have not got JSON with a plugin service list!');
-  }
-
-  return response;
-}
-
 export class Store extends AbstractStore<WidgetState> {
-  constructor(siteId: number) {
-    super(new WidgetState(siteId));
-    this.taskList$.subscribe({
-      next: list => {
-        console.log('NEXT LIST', list);
-        // SEARCH LAST ACTIVE
-        const lastActiveTask = list.find(
-          task => task.status === 'running' && (task.name === TaskEventName.scan || task.name === TaskEventName.cure),
-        );
-        if (lastActiveTask !== undefined) {
-          lastActiveTask.name === TaskEventName.scan
-            ? this.setStateProperty({ scanning: true, healing: false })
-            : this.setStateProperty({ healing: true, scanning: false });
-        } else {
-          this.setStateProperty({ healing: false, scanning: false });
-        }
-      },
-    });
+  /** Global translate */
+  private _t: Translate;
+
+  set t(value: Translate) {
+    this._t = value;
   }
 
+  /** Global user notification service */
+  private _userNotification: UserNotification;
+
+  constructor(siteId: number, userNotification: UserNotification) {
+    super(new WidgetState(siteId));
+    this._userNotification = userNotification;
+  }
+
+  /**
+   * Scan action
+   */
   async scan(): Promise<void> {
     try {
       const requestInit: RequestInit = {
@@ -68,38 +70,40 @@ export class Store extends AbstractStore<WidgetState> {
         body: JSON.stringify({ preset_id: this.state.fullPresetId }),
       };
 
-      let response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/scan`, requestInit);
+      const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/scan`, requestInit);
       handleErrors(response);
-
-      const result: API.ScanResponse = await response.json();
-
-      this.addTask({ id: result.task_id, name: TaskEventName.scan, status: 'running' });
     } catch (error) {
       this.setError(error);
     }
   }
 
+  /**
+   * Action for get feature
+   */
   async getFeature(): Promise<void> {
     try {
       const requestInit: RequestInit = {
         method: 'GET',
       };
-      let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
+      const response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
       handleErrors(response);
 
-      let updatesProps: API.GetFeatureResponse = await response.json();
+      const updatesProps: API.GetFeatureResponse = await response.json();
       this.setStateProperty(updatesProps);
     } catch (error) {
       this.setError(error);
     }
   }
 
+  /**
+   * Action for get presets of scanning
+   */
   async getPresets(): Promise<void> {
     try {
       const requestInit: RequestInit = {
         method: 'GET',
       };
-      let response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/presets`, requestInit);
+      const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/presets`, requestInit);
       handleErrors(response);
       const json: API.GetPresetsResponse = await response.json();
 
@@ -113,12 +117,16 @@ export class Store extends AbstractStore<WidgetState> {
       this.setError(error);
     }
   }
+
+  /**
+   * Action for get infected file list
+   */
   async getInfectedFiles(): Promise<void> {
     try {
       const requestInit: RequestInit = {
         method: 'GET',
       };
-      let response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/files/infected`, requestInit);
+      const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/files/infected`, requestInit);
       handleErrors(response);
       const json: API.GetInfectedFilesResponse = await response.json();
       this.setStateProperty({
@@ -129,14 +137,17 @@ export class Store extends AbstractStore<WidgetState> {
     }
   }
 
+  /**
+   * Action for get last scan
+   */
   async getLastScan(): Promise<void> {
     try {
       const requestInit: RequestInit = {
         method: 'GET',
       };
-      let response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/scan/history?limit=1`, requestInit);
+      const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/scan/history?limit=1`, requestInit);
       handleErrors(response);
-      let json: API.GetLastScanResponse = await response.json();
+      const json: API.GetLastScanResponse = await response.json();
 
       this.setStateProperty({
         lastCheck: json.list[0] ? json.list[0].date : null,
@@ -146,18 +157,21 @@ export class Store extends AbstractStore<WidgetState> {
     }
   }
 
-  async getScanResult(notify: { event: NotifierEvent }, userNotification: UserNotification, t: Translate): Promise<void> {
+  /**
+   * Action for get scan result
+   *
+   * @param event - event by notifier
+   */
+  async getScanResult(event: NotifierEvent): Promise<void> {
     try {
-      const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
-      const taskId = notify.event.id;
-      console.log('I AM IN GET SCAN RES', started, taskId);
+      const started = getNestedObject(event, ['additional_data', 'output', 'content', 'scan', 'started']);
+      const taskId = event.id;
       if (started !== undefined && taskId !== undefined) {
         const [scanResponse, infectedFilesResponse] = await Promise.all([
-          fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`),
+          fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${event.id}&started=${started}`),
           fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/files/infected?limit=0`),
         ]);
 
-        console.log('I AM IFETCH NEW DATA', scanResponse, infectedFilesResponse);
         handleErrors(scanResponse);
         handleErrors(infectedFilesResponse);
 
@@ -166,20 +180,17 @@ export class Store extends AbstractStore<WidgetState> {
           infectedFilesResponse.json(),
         ]);
 
-        console.log('GetScanResultResponse', scanResult);
-        console.log('GetInfectedFilesResponse', infectedFilesResult);
-        userNotification.push({
-          title: t.msg(['WIDGET', 'SCAN_SUCCESS']),
+        this._userNotification.push({
+          title: this._t.msg(['WIDGET', 'SCAN_SUCCESS']),
           content: '',
-          link: t.msg(['WIDGET', 'MORE_DETAILS']),
+          link: this._t.msg(['WIDGET', 'MORE_DETAILS']),
           type: NotifyBannerTypes.NORMAL_FAST,
         });
-        console.log('NOTIFY PUSHED');
 
         scanResult.infectedFiles.list.forEach(file => {
           if (file.status === 'INFECTED') {
-            userNotification.push({
-              title: t.msg(['WIDGET', 'VIRUS_DETECTED']),
+            this._userNotification.push({
+              title: this._t.msg(['WIDGET', 'VIRUS_DETECTED']),
               content: file.threatName,
               type: NotifyBannerTypes.ERROR_FAST,
             });
@@ -189,17 +200,52 @@ export class Store extends AbstractStore<WidgetState> {
           lastCheck: scanResult.historyItem.date,
           infectedFilesCount: infectedFilesResult.size,
         });
-        console.log('STATE UPDATED');
-
-        this.removeTask(taskId);
       } else {
-        console.warn('Can not found object started or taskId in a notify!');
+        throw new Error('Can not found object started or taskId in a notify!');
       }
     } catch (error) {
       this.setError(error);
     }
   }
 
+  /**
+   * Method for update state by incoming notification
+   *
+   * @param event - event by notifier
+   */
+  async updateStateByNotify(event: NotifierEvent): Promise<void> {
+    console.log('UPDATE BY NOTIFY ', event);
+    switch (event.additional_data.name) {
+      case TaskEventName.scan:
+        switch (event.additional_data.status) {
+          case 'deleted':
+            await this.getScanResult(event);
+            break;
+          case 'complete':
+            this.setStateProperty({
+              scanning: false,
+            });
+            break;
+          case 'running':
+            this.setStateProperty({
+              scanning: true,
+            });
+            break;
+        }
+        break;
+      case TaskEventName.heal:
+        this.setStateProperty({
+          healing: event.additional_data.status === 'running',
+        });
+        break;
+    }
+  }
+
+  /**
+   * Method for update state properties
+   *
+   * @param properties - new properties
+   */
   setStateProperty(properties: Partial<WidgetState>): void {
     console.warn('BEFORE WIDGET STATE', this.state);
     this.setState({
@@ -209,19 +255,11 @@ export class Store extends AbstractStore<WidgetState> {
     console.warn('AFTER WIDGET STATE', this.state);
   }
 
-  addTask(task: TaskElement | TaskElement[]): void {
-    console.log('ADD TASK', task);
-    const tasks = Array.isArray(task) ? task : [task];
-    this.setTaskList(this.taskList.concat(tasks.filter(t => this.taskList.indexOf(t) < 0)));
-  }
-
-  removeTask(id: number | number[]): void {
-    console.log('REMOVIND TASK', id);
-
-    const ids = Array.isArray(id) ? id : [id];
-    this.setTaskList(this.taskList.filter(t => ids.indexOf(t.id) < 0));
-  }
-
+  /**
+   * Method for set error state
+   *
+   * @param error - error value
+   */
   setError(error: any): void {
     this.setState({
       ...this.state,

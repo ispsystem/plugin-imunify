@@ -2,15 +2,20 @@ import Polyglot from 'node-polyglot';
 import { languageTypes, isDevMode, endpoint } from '../constants';
 import { Translate } from '../store/types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleErrors(response): any {
+/**
+ *
+ * Handle errors if response no ok or if it is not json format
+ *
+ * @param response - a fetch response obj
+ */
+export function handleErrors(response: Response): Response {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
   const contentType = response.headers.get('content-type');
 
   if (contentType === undefined || !contentType.includes('application/json')) {
-    throw new TypeError("Oops, we haven't got JSON with a plugin service list!");
+    throw new TypeError('Oops, we have not got JSON with a plugin service list!');
   }
 
   return response;

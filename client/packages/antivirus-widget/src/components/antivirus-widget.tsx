@@ -1,10 +1,10 @@
 import { Component, Prop, h, State } from '@stencil/core';
 import { loadTranslate, getNestedObject } from '../utils/utils';
 import { languages, defaultLang, languageTypes } from '../constants';
-import { Observable } from 'rxjs';
-import { Translate, Notifier, UserNotification, NotifierEvent, TaskEventName } from '../store/types';
+import { Observable, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { Translate, Notifier, UserNotification, NotifierEvent } from '../store/types';
 import { Store, WidgetState } from '../store/widget.store';
-import { distinctUntilChanged, map, take } from 'rxjs/operators';
 import { StaticState } from './StaticState';
 import { ActiveState } from './ActiveState';
 
@@ -17,33 +17,48 @@ import { ActiveState } from './ActiveState';
   shadow: true,
 })
 export class AntivirusWidget {
+  /** RXJS subscription */
+  sub = new Subscription();
+
   /** Global store */
   store: Store;
-  // state: WidgetState;
+
+  /** infected files count */
   @Prop() infectedCount: number;
+
   /** Translate service */
   @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
-  /** url ?? */
+
+  /** url to antivirus main page */
   @Prop() url: string;
+
   /** global notifier object */
   @Prop() notifier: Notifier;
+
   /** Global user notification service */
   @Prop() userNotification: UserNotification;
+
   /** Site id */
   @Prop() siteId: number;
+
+  /** Widget state */
   @State() state: WidgetState;
+
   /** translate object */
   @State() t: Translate;
 
+  /** Preloader state */
   @State() isPreloader = {
     button: false,
   };
 
   constructor() {
-    this.store = new Store(this.siteId);
-    this.store.state$.subscribe({
-      next: newState => (this.state = newState),
-    });
+    this.store = new Store(this.siteId, this.userNotification);
+    this.sub.add(
+      this.store.state$.subscribe({
+        next: newState => (this.state = newState),
+      }),
+    );
   }
 
   async componentWillLoad() {
@@ -54,55 +69,42 @@ export class AntivirusWidget {
       || defaultLang
     );
 
-    console.log('NOTIFIER', this.notifier);
+    this.store.t = this.t;
 
     if (this.notifier !== undefined) {
-      this.notifier
-        .taskList$()
-        .pipe(take(1))
-        .subscribe((event: NotifierEvent[]) => {
-          console.log('TASK LIST EVENT', event);
+      this.sub.add(
+        this.notifier
+          .taskList$()
+          .pipe(take(1))
+          .subscribe({
+            next: async (events: NotifierEvent[]) => {
+              const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+              if (runningTask !== undefined) {
+                await this.store.updateStateByNotify(runningTask);
+              }
+            },
+          }),
+      );
 
-          if (event && Array.isArray(event) && event.length > 0) {
-            const runningPluginTasks = event.filter(e => ['created', 'running', 'deferred'].includes(e.additional_data.status));
-
-            console.log('LISTS', runningPluginTasks);
-            this.store.addTask(
-              runningPluginTasks.map(task => ({ name: task.additional_data.name, id: task.id, status: task.additional_data.status })),
-            );
-          }
-        });
-
-      // subscribe to tasks
-      this.notifier
-        .ids(
-          this.store.taskList$.pipe(
-            map(list =>
-              list.map(e => {
-                console.log('its my list', e);
-                return e.id;
-              }),
-            ),
-            distinctUntilChanged(),
-          ),
-        )
-        .delete$()
-        .subscribe(async (notify: { event: NotifierEvent }) => {
-          const actionName = getNestedObject(notify, ['event', 'additional_data', 'name']);
-          console.log('NOTIFY!!', event, actionName);
-          switch (actionName) {
-            case TaskEventName.scan: {
-              console.log('I AM IN CASE');
-
-              await this.store.getScanResult(notify, this.userNotification, this.t);
-              break;
+      this.sub.add(
+        this.notifier.update$().subscribe({
+          next: async (notify: { event: NotifierEvent }) => {
+            if (getNestedObject(notify.event, ['additional_data', 'status']) === 'running') {
+              await this.store.updateStateByNotify(notify.event);
             }
-            case TaskEventName.cure: {
-              /** @TODO add handle for cure files success */
-              break;
+          },
+        }),
+      );
+
+      this.sub.add(
+        this.notifier.delete$().subscribe({
+          next: async (notify: { event: NotifierEvent }) => {
+            if (getNestedObject(notify.event, ['additional_data', 'status']) !== undefined) {
+              await this.store.updateStateByNotify(notify.event);
             }
-          }
-        });
+          },
+        }),
+      );
     }
 
     await Promise.all([this.store.getPresets(), this.store.getFeature(), this.store.getInfectedFiles(), this.store.getLastScan()]);
@@ -116,30 +118,34 @@ export class AntivirusWidget {
     }
   }
 
+  componentDidUnload() {
+    this.sub.unsubscribe();
+  }
+
+  /**
+   * Handle click retry scan site
+   */
   async handleClickRetryScan() {
     this.isPreloader = { ...this.isPreloader, button: true };
     await this.store.scan();
     this.isPreloader = { ...this.isPreloader, button: false };
   }
 
+  /**
+   * Handle click start healing
+   * @todo start heal all, when this feature realise in backend
+   */
   async handleClickCure() {
     this.isPreloader = { ...this.isPreloader, button: true };
-    this.state.isProVersion
-      ? /** @todo add event by cure */
-        null
-      : (location.href = `${this.url}?openModal=buyModal`);
+    this.state.isProVersion ? (location.href = `${this.url}?page=infectedFiles`) : (location.href = `${this.url}?openModal=buyModal`);
     this.isPreloader = { ...this.isPreloader, button: false };
   }
 
-  handleClickStopScan() {
-    // ???
-    console.log('CLOSE SCAN', event);
-  }
+  /** @todo add handle for stop scan files, when this function realise in backend */
+  handleClickStopScan() {}
 
-  handleClickStopCure() {
-    // ???
-    console.log('CLOSE CURE', event);
-  }
+  /** @todo add handle for stop cure files, when this function realise in backend */
+  handleClickStopCure() {}
 
   render() {
     return (

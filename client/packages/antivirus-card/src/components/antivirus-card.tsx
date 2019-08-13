@@ -16,6 +16,13 @@ import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 
+/** Enumirable for card pages */
+enum AntivirusCardPages {
+  dashboard = 'dashboard',
+  infectedFiles = 'infectedFiles',
+  history = 'history',
+}
+
 /**
  * AntivirusCard component
  */
@@ -57,6 +64,7 @@ export class AntivirusCard {
   /** nested components */
   @State()
   items: {
+    name: AntivirusCardPages;
     label: string;
     active?: boolean;
     component: () => JSX.Element;
@@ -87,14 +95,17 @@ export class AntivirusCard {
 
     this.items = [
       {
+        name: AntivirusCardPages.dashboard,
         label: this.t.msg(['MENU_ITEMS', 'DASHBOARD']),
         component: () => <antivirus-card-dashboard />,
       },
       {
+        name: AntivirusCardPages.infectedFiles,
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
         component: () => <antivirus-card-infected-files />,
       },
       {
+        name: AntivirusCardPages.history,
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
         component: () => <antivirus-card-history />,
       },
@@ -228,9 +239,28 @@ export class AntivirusCard {
         }
       }, 1000);
     }
+
+    // search page in query params
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (queryParam !== undefined && queryParam !== '') {
+      const searchParams = new URLSearchParams(queryParam);
+      if (searchParams.has('page')) {
+        const index = this.items.findIndex(i => i.name === searchParams.get('page'));
+        const beforeIndex = this.items.findIndex(item => item.active);
+
+        if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
+          this.items[beforeIndex].active = false;
+          this.items[index].active = true;
+          this.items = [...this.items];
+        }
+        searchParams.delete('page');
+      }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+    }
   }
 
   componentDidLoad() {
+    // search open modal in query params
     const [defaultLocation, queryParam] = location.toString().split('?');
     if (queryParam !== undefined && queryParam !== '') {
       const searchParams = new URLSearchParams(queryParam);
@@ -241,8 +271,9 @@ export class AntivirusCard {
             break;
           }
         }
-        history.replaceState({}, document.title, defaultLocation);
+        searchParams.delete('openModal');
       }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
   }
 

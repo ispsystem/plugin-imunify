@@ -15,8 +15,8 @@ export interface Notifier {
   ids: (ids$: number[] | Observable<number[]>) => Notifier;
   create$: (action?: string) => Observable<any>;
   delete$: (action?: string) => Observable<any>;
+  update$: (action?: string) => Observable<any>;
   taskList$: () => Observable<any>;
-  taskList(fn: (e: any[]) => void): any;
 }
 
 export type TaskStatus = 'created' | 'deferred' | 'running' | 'failed' | 'complete';
@@ -199,7 +199,8 @@ export interface HistoryItem {
   scanOptionId: number;
 }
 
+/** Antivirus task event names */
 export enum TaskEventName {
   scan = 'scan',
-  cure = 'cure',
+  heal = 'files-heal',
 }

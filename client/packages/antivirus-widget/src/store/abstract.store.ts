@@ -1,38 +1,32 @@
 import { Observable, BehaviorSubject } from 'rxjs';
-import { TaskEventName } from './types';
 
-export interface TaskElement {
-  name: TaskEventName;
-  status: string;
-  id: number;
-}
-
+/**
+ * Abstract class for realise store pattern
+ */
 export abstract class AbstractStore<T> {
+  /** State as behavior subject */
   private _state$: BehaviorSubject<T>;
-  private _taskList$ = new BehaviorSubject<TaskElement[]>([]);
-  taskList$: Observable<TaskElement[]>;
+  /** Observable for state */
   state$: Observable<T>;
 
   protected constructor(state: T) {
     this._state$ = new BehaviorSubject<T>(state);
     this.state$ = this._state$.asObservable();
-    this.taskList$ = this._taskList$.asObservable();
   }
 
+  /**
+   * Method return current state
+   */
   get state(): T {
-    return { ...this._state$.getValue(), taskList: this.taskList };
+    return this._state$.getValue();
   }
 
-  get taskList(): TaskElement[] {
-    return this._taskList$.getValue();
-  }
-
+  /**
+   * Method for update state
+   *
+   * @param nextState - next state value
+   */
   setState(nextState: T): void {
     this._state$.next(nextState);
-  }
-
-  setTaskList(nextList: TaskElement[]): void {
-    console.log('NEW TASK LIST');
-    this._taskList$.next(nextList);
   }
 }
