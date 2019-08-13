@@ -121,6 +121,10 @@ export class InfectedFiles {
     );
   };
 
+  /**
+   * Opens up the delete confirm dialog modal
+   * @param ev Mouse event of clicking the 'delete' link in the dropdown
+   */
   async openDeletionModal(ev: MouseEvent) {
     await this.deletionModal.toggle(true);
     await this.dropdownEl.toggle(ev);
