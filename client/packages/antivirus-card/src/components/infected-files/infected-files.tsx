@@ -42,8 +42,8 @@ export class InfectedFiles {
   /** Common table state */
   @State() tableState: TableState<InfectedFile>;
 
-  /** Choosed file to apply an action to */
-  @State() fileToDelete: InfectedFile;
+  /** Chosen file to apply an action to */
+  @State() chosenFile: InfectedFile;
 
   /** Event for open modal window with buy pro version */
   @Event() openBuyModal: EventEmitter;
@@ -82,6 +82,16 @@ export class InfectedFiles {
    */
   handleFailure(error: any): void {
     throw new Error("Oops, we haven't got JSON with a infected file list!" + error);
+  }
+
+  /**
+   * Opens up the chosen file's path in the site's file manager
+   * @TODO: It would be great if we could also **highlight** the file instead of just opening its folder
+   */
+  showInFileManager(): void {
+    const { path } = this.chosenFile;
+    let targetPath = path === '/' ? '' : '/' + encodeURIComponent(path);
+    location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
   }
 
   render() {
@@ -176,7 +186,7 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.fileToDelete = file), this.dropdownEl.toggle(ev))}>
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.chosenFile = file), this.dropdownEl.toggle(ev))}>
                     <BurgerMenuIcon />
                   </span>
                 </span>
@@ -201,7 +211,7 @@ export class InfectedFiles {
         <antivirus-card-vmenu>
           <antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'HEAL'])}</antivirus-card-vmenu-item>
           {/*<antivirus-card-vmenu-item>{this.t.msg(['INFECTED_FILES', 'ACTIONS', 'EXCLUDE'])}</antivirus-card-vmenu-item>*/}
-          <antivirus-card-vmenu-item style={{ marginBottom: '30px' }}>
+          <antivirus-card-vmenu-item style={{ marginBottom: '30px' }} onClick={() => this.showInFileManager()}>
             {this.t.msg(['INFECTED_FILES', 'ACTIONS', 'OPEN_FOLDER'])}
           </antivirus-card-vmenu-item>
           <antivirus-card-vmenu-item onClick={ev => this.openDeletionModal(ev)}>
@@ -212,12 +222,12 @@ export class InfectedFiles {
       <antivirus-card-modal ref={el => (this.deletionModal = el)} max-modal-width="530px">
         <span class="title">
           <span class="delete-modal-title">
-            {this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: this.fileToDelete && this.fileToDelete.name })}
+            {this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: this.chosenFile && this.chosenFile.name })}
           </span>
           ?
         </span>
         <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, this.fileToDelete && this.fileToDelete.id)}>
+          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, this.chosenFile && this.chosenFile.id)}>
             {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
           </antivirus-card-button>
           <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>
