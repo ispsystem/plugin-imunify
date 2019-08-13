@@ -1,0 +1,9 @@
+antivirus-card-vmenu-item {
+  display: block;
+  position: relative;
+  cursor: pointer;
+}
+
+antivirus-card-vmenu-item:not(:last-child) {
+  margin-bottom: 15px;
+}
