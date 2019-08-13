@@ -1,4 +1,4 @@
-import { DeleteFilesResponse, ScanResultResponse, TaskManagerResponse } from './model';
+import { ScanResultResponse, TaskManagerResponse } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
