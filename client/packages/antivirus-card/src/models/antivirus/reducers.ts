@@ -1,5 +1,5 @@
 import { AntivirusState } from './state';
-import { AntivirusActionTypes, ANTIVIRUS_ACTION } from './types';
+import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
 import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
@@ -14,7 +14,7 @@ const getInitialState = (): AntivirusState => {
     inBlackLists: false,
     history: [],
     historyItemCount: 0,
-    scanTaskList$: new BehaviorSubject([]),
+    taskList$: new BehaviorSubject([]),
   };
 };
 
@@ -29,7 +29,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
-      state.scanTaskList$.next([...state.scanTaskList$.getValue(), action.payload.data.scanId]);
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,
@@ -160,6 +160,40 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
+      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.task_id]);
+      return {
+        ...state,
+        error: null,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS: {
+      const { deletedFilesCount } = action.payload;
+      let infectedFilesCount = state.infectedFilesCount - deletedFilesCount;
+      if (infectedFilesCount < 0) {
+        infectedFilesCount = 0;
+      }
+      return {
+        ...state,
+        infectedFilesCount,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE: {
       return {
         ...state,
         error: action.payload.error,

@@ -20,13 +20,17 @@ import {
   getPresetsFailure,
   disablePresetSuccess,
   disablePresetFailure,
+  deleteFilesSuccess,
+  deleteFilesFailure,
+  deleteFilesPostProcessSuccess,
+  deleteFilesPostProcessFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { AntivirusState, ScanOption, CheckType } from './state';
+import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
 import { getNestedObject } from '../../utils/tools';
 import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
-import { ScanResultResponse } from './model';
+import { ScanResultResponse, TaskManagerResponse } from './model';
 
 /**
  *
@@ -53,6 +57,44 @@ export function handleErrors(response: Response): Response {
  *
  */
 export namespace AntivirusActions {
+  /**
+   * Deletes the file or files
+   *
+   * @param siteId Site's id
+   * @param files Files' ids
+   */
+  export function deleteFiles(siteId: number, files: number[]) {
+    return async dispatch => {
+      try {
+        const body = { files };
+        const requestInit: RequestInit = {
+          method: 'DELETE',
+          body: JSON.stringify(body),
+        };
+        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        handleErrors(response);
+        let json: TaskManagerResponse = await response.json();
+
+        dispatch(deleteFilesSuccess(json));
+      } catch (error) {
+        dispatch(deleteFilesFailure(error));
+      }
+    };
+  }
+
+  export function deleteFilesPostProcess(notify: { event: NotifierEvent }) {
+    return dispatch => {
+      try {
+        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
+        let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+        let deletedFilesCount: number = deletedFiles.length;
+        dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
+      } catch (error) {
+        dispatch(deleteFilesPostProcessFailure(error));
+      }
+    };
+  }
+
   /**
    * Search viruses
    *

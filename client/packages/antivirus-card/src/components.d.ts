@@ -161,6 +161,10 @@ export namespace Components {
   }
   interface AntivirusCardModal {
     /**
+    * Modal max width
+    */
+    'maxModalWidth': string;
+    /**
     * Modal width
     */
     'modalWidth': string;
@@ -659,6 +663,10 @@ declare namespace LocalJSX {
     'width'?: string;
   }
   interface AntivirusCardModal extends JSXBase.HTMLAttributes<HTMLAntivirusCardModalElement> {
+    /**
+    * Modal max width
+    */
+    'maxModalWidth'?: string;
     /**
     * Modal width
     */

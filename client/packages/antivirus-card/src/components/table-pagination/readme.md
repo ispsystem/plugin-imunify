@@ -7,15 +7,13 @@
 
 ## Properties
 
-| Property            | Attribute       | Description | Type                                    | Default     |
-| ------------------- | --------------- | ----------- | --------------------------------------- | ----------- |
-| `changeCountOnPage` | --              |             | `(event: number) => void`               | `undefined` |
-| `clickPagination`   | --              |             | `(event: "next" \| "previous") => void` | `undefined` |
-| `countOnPage`       | `count-on-page` |             | `number`                                | `undefined` |
-| `currentPage`       | `current-page`  |             | `number`                                | `undefined` |
-| `disable`           | `disable`       |             | `boolean`                               | `undefined` |
-| `disabled`          | `disabled`      |             | `boolean`                               | `undefined` |
-| `pageCount`         | `page-count`    |             | `number`                                | `undefined` |
+| Property            | Attribute       | Description                            | Type                                    | Default     |
+| ------------------- | --------------- | -------------------------------------- | --------------------------------------- | ----------- |
+| `changeCountOnPage` | --              | Handle for change count on one page    | `(event: number) => void`               | `undefined` |
+| `clickPagination`   | --              | Handle for click next or previous page | `(event: "next" \| "previous") => void` | `undefined` |
+| `countOnPage`       | `count-on-page` | Item count on one page                 | `number`                                | `undefined` |
+| `currentPage`       | `current-page`  | Current page in pagination             | `number`                                | `undefined` |
+| `pageCount`         | `page-count`    | Total page count                       | `number`                                | `undefined` |
 
 
 ## Dependencies
