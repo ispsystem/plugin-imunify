@@ -82,12 +82,24 @@ export namespace AntivirusActions {
     };
   }
 
-  export function deleteFilesPostProcess(notify: { event: NotifierEvent }) {
+  /**
+   * File deletion post process method
+   * It updated the state of the component and sends the user notification
+   * @param notify Notification from notifier
+   * @param userNotification User Notification provider
+   * @param t Translator provider
+   */
+  export function deleteFilesPostProcess(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
         const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
         let deletedFilesCount: number = deletedFiles.length;
+        userNotification.push({
+          title: t.msg(['VIRUS_DELETED']),
+          content: deletedFiles[0].name,
+          type: NotifyBannerTypes.NORMAL_FAST,
+        });
         dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));

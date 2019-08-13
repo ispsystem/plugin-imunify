@@ -226,7 +226,7 @@ export class AntivirusCard {
               break;
 
             case 'files':
-              this.deleteFilesPostProcess(notify);
+              this.deleteFilesPostProcess(notify, this.userNotification, this.t);
               break;
           }
         });
