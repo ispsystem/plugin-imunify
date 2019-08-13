@@ -1,0 +1,159 @@
+{
+  "TITLE": "",
+  "PRO_PERIODS": {
+    "MONTH": {
+      "SHORT": "",
+      "LONG": ""
+    },
+    "YEAR": {
+      "SHORT": "",
+      "LONG": "",
+      "DESCRIPTION": ""
+    }
+  },
+  "MENU_ITEMS": {
+    "PREVIEW": "",
+    "INFECTED_FILES": "",
+    "HISTORY": "",
+    "DASHBOARD": ""
+  },
+  "CHECK_TYPE": {
+    "FULL": ""
+  },
+  "BUY_MODAL": {
+    "TITLE": "",
+    "LABEL_1": "",
+    "LABEL_2": "",
+    "LABEL_3": "",
+    "LABEL_PRO_1": "",
+    "LABEL_PRO_2": "",
+    "LABEL_PRO_3": ""
+  },
+  "NOT_NOW": "",
+  "SUBSCRIBE_FOR": "",
+  "TABLE": {
+    "ON_PAGE_LABEL": ""
+  },
+  "PREVIEW": {
+    "HELP": "",
+    "HELP_RECOMMENDATION": "",
+    "WAIT_CHECK": "",
+    "LAST_CHECK": "",
+    "NEXT_CHECK": "",
+    "INFECTED_FILES_WORD_1": "",
+    "INFECTED_FILES_WORD_2": "",
+    "CURE": "",
+    "DETAIL": "",
+    "NOT_INFECTED_FILES": "",
+    "IN_BLACK_LISTS": "",
+    "HOW_TO_FIX": "",
+    "NOT_IN_BLACK_LISTS": ""
+  },
+  "INFECTED_FILES": {
+    "NOT_FOUND": "",
+    "SUBSCRIBE_TO_PRO": "",
+    "TABLE_HEADER": {
+      "CELL_1": "",
+      "CELL_2": "",
+      "CELL_3": "",
+      "CELL_4": ""
+    },
+    "STATUS": {
+      "INFECTED": "",
+      "CURED": "",
+      "EXCEPTED": "",
+      "HEALING": ""
+    }
+  },
+  "DATETIME_CREATED": "",
+  "DATETIME_CHANGED": "",
+  "HISTORY_TAB": {
+    "TABLE_HEADER": {
+      "CELL_1": "",
+      "CELL_2": "",
+      "CELL_3": ""
+    },
+    "CHECK_TYPE": {
+      "FULL": "",
+      "PARTIAL": ""
+    }
+  },
+  "MENU_ITEM": "",
+  "WIDGET": {
+    "ANTIVIRUS": "",
+    "STATUS_MSG": {
+      "SAFELY": "",
+      "IN_PROCESS": ""
+    },
+    "DESC_MSG": {
+      "HISTORY": "",
+      "WAIT": ""
+    },
+    "ACTION_MSG": {
+      "AGAIN": "",
+      "REPORT": ""
+    }
+  },
+  "NEW_SCAN_BTN": "",
+  "DASHBOARD": {
+    "TITLE": "",
+    "TEXT": ""
+  },
+  "SCAN_SETTINGS": {
+    "NEW_SCAN": "",
+    "CHECK_FOLDER": "",
+    "USE_MASK_FOR_CHECK_FILES": "",
+    "USE_MASK_FOR_IGNORE_FILES": "",
+    "CHECK_MASK_HINT": "",
+    "INSPECTION_INTENSITY": {
+      "LOW": "",
+      "MEDIUM": "",
+      "HIGH": "",
+      "TEXT": "",
+      "HINT_TEXT": ""
+    },
+    "BUTTON_SCAN": "",
+    "BUTTON_SAVE": "",
+    "BUTTON_CANCEL": "",
+    "CHECK_FILE_TYPE": {
+      "CRITICAL": "",
+      "ALL": "",
+      "EXCEPT_MEDIA": "",
+      "TEXT": "",
+      "HINT_TEXT": "",
+      "critical": "",
+      "all": "",
+      "except_media": ""
+    },
+    "CONFIGURE_SCAN": "",
+    "SAVE_COPY_FILES": "",
+    "AUTO_HEAL_MALWARE": "",
+    "DELETE_ONLY_CONTENT": "",
+    "EMAIL_NOTIFY": "",
+    "ADVANCED_SETTINGS": "",
+    "HIDE_ADVANCED_SETTINGS": "",
+    "CPU_THREAD_COUNT": {
+      "TEXT": "",
+      "HINT_TEXT": ""
+    },
+    "RAM_COUNT": "",
+    "DETAIL_LOG": {
+      "TEXT": "",
+      "FULL": "",
+      "COMMON": ""
+    },
+    "MAX_SCAN_TIME": {
+      "ITEM_1": "",
+      "ITEM_3": "",
+      "ITEM_6": "",
+      "ITEM_12": "",
+      "ITEM_24": "",
+      "ITEM_0": "",
+      "TEXT": ""
+    },
+    "AUTO_UPDATE_DB": "",
+    "DAY_COUNT": ""
+  },
+  "BTN_SCAN": "",
+  "CONFIGURE": ""
+}
