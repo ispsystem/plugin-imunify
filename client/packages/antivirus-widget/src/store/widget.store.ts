@@ -219,7 +219,6 @@ export class Store extends AbstractStore<WidgetState> {
    * @param event - event by notifier
    */
   async updateStateByNotify(event: NotifierEvent): Promise<void> {
-    console.log('UPDATE BY NOTIFY ', event);
     switch (event.additional_data.name) {
       case TaskEventName.scan:
         switch (event.additional_data.status) {

@@ -207,7 +207,6 @@ export class AntivirusCard {
         .taskList$()
         .pipe(take(1))
         .subscribe((d: NotifierEvent[]) => {
-          console.log('EVENT', d);
           // wait all scanning process
           if (d && Array.isArray(d) && d.length > 0) {
             const runningPluginTasks = d
