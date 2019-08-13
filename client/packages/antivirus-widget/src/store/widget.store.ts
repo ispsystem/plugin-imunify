@@ -72,6 +72,11 @@ export class Store extends AbstractStore<WidgetState> {
 
       const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/scan`, requestInit);
       handleErrors(response);
+
+      // set scanning is true because notification about scanning start may be late
+      this.setStateProperty({
+        scanning: true,
+      });
     } catch (error) {
       this.setError(error);
     }
