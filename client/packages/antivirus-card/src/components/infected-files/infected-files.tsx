@@ -56,7 +56,12 @@ export class InfectedFiles {
   }
 
   async componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
+    this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
+      t: state.translate,
+      siteId: state.siteId,
+      userNotification: state.userNotification,
+    }));
     this.store.mapDispatchToProps(this, {
       deleteFiles: AntivirusActions.deleteFiles,
     });
