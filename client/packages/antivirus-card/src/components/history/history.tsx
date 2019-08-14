@@ -5,7 +5,7 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { HistoryItem } from '../../models/antivirus/state';
+import { HistoryItem, AntivirusState } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
 import { TableController, TableState } from '../table/table-controller';
 import { Subscription } from 'rxjs';
@@ -34,6 +34,9 @@ export class History {
   /** Common table state */
   @State() tableState: TableState<HistoryItem>;
 
+  /** flag if antivirus is pro version */
+  @State() isProVersion: AntivirusState['isProVersion'];
+
   /** Action scan */
   scanVirus: typeof AntivirusActions['scan'];
 
@@ -41,7 +44,7 @@ export class History {
     this.tableState = new TableState();
   }
   async componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
     });
@@ -100,7 +103,7 @@ export class History {
             <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
             </antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 60 + 'px' }}></antivirus-card-table-cell>
+            {this.isProVersion && <antivirus-card-table-cell style={{ width: 60 + 'px' }}></antivirus-card-table-cell>}
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -115,17 +118,19 @@ export class History {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>
-                {historyItem.curedFilesCount > 0 && (
+                {this.isProVersion && historyItem.curedFilesCount > 0 && (
                   <span class="add-text" style={{ color: '#30ba9a' }}>
                     {this.t.msg(['HISTORY_TAB', 'CURED_COUNT'], { count: historyItem.curedFilesCount })}
                   </span>
                 )}
               </antivirus-card-table-cell>
-              <antivirus-card-table-cell doubleline>
-                <a class="link" onClick={async () => await this.handleRetryScan(historyItem.scanOptionId)}>
-                  {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
-                </a>
-              </antivirus-card-table-cell>
+              {this.isProVersion && (
+                <antivirus-card-table-cell doubleline>
+                  <a class="link" onClick={async () => await this.handleRetryScan(historyItem.scanOptionId)}>
+                    {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
+                  </a>
+                </antivirus-card-table-cell>
+              )}
             </antivirus-card-table-row>
           ))}
         </div>
