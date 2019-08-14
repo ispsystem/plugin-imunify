@@ -175,7 +175,7 @@ export class AntivirusCard {
    */
   checkPaymentStatus() {
     const queryParams = this.getQueryParams();
-    const paymentStatus: PaymentStatus = queryParams.get('payment') as PaymentStatus;
+    const paymentStatus = queryParams.get('payment') as PaymentStatus;
     if (paymentStatus === 'failed') {
       this.failedPaymentModal.toggle(true);
       this.removeQueryParam('payment');
