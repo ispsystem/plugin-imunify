@@ -252,7 +252,7 @@ export class AntivirusCard {
 
     // search page in query params
     const [defaultLocation, queryParam] = location.toString().split('?');
-    if (queryParam !== undefined && queryParam !== '') {
+    if (Boolean(queryParam)) {
       const searchParams = new URLSearchParams(queryParam);
       if (searchParams.has('page')) {
         const index = this.items.findIndex(i => i.name === searchParams.get('page'));
@@ -272,7 +272,7 @@ export class AntivirusCard {
   componentDidLoad() {
     // search open modal in query params
     const [defaultLocation, queryParam] = location.toString().split('?');
-    if (queryParam !== undefined && queryParam !== '') {
+    if (Boolean(queryParam)) {
       const searchParams = new URLSearchParams(queryParam);
       if (searchParams.has('openModal')) {
         switch (searchParams.get('openModal')) {

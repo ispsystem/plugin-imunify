@@ -13,7 +13,7 @@ export class SpinnerRound {
   @Prop({ reflect: true }) width = '25px';
 
   /** Position absolute or relative, absolute is default */
-  @Prop({ reflect: true }) position = 'absolute';
+  @Prop({ reflect: true }) position: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial' = 'absolute';
 
   render() {
     return (
