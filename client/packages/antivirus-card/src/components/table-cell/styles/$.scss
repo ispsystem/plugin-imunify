@@ -22,10 +22,8 @@ antivirus-card-table-cell {
   [slot='table-header'] & {
     --ngispui-table__cell-font-size: var(--ngispui-table__header-font-size, var(--isp-font-size-small, 12px));
     --ngispui-table__cell-color: var(--ngispui-table__header-color, var(--isp-color__additional-text, #9b9b9b));
-    --ngispui-table__cell-background-color: var(
-      --ngispui-table__header-background-color,
-      var(--isp-color__table-head-background-dark, #ecf2f6)
-    );
+    --ngispui-table__cell-background-color: var(--ngispui-table__header-background-color,
+        var(--isp-color__table-head-background-dark, #ecf2f6));
     --ngispui-checkbox__border-color: var(--ngispui-table__header-checkbox-border-color, var(--isp-color__basic-text, #344a5e));
     --isp-color__control-background: var(--ngispui-table__header-background-color, var(--isp-color__table-head-background-dark, #ecf2f6));
     padding-top: 1px;
@@ -49,6 +47,23 @@ antivirus-card-table-cell {
     line-height: 8px;
   }
 
+  &[selected] {
+    &::before {
+      position: absolute;
+      top: -1px;
+      left: 0;
+
+      height: calc(100% + 2px);
+
+      content: '';
+
+      border-left-width: 3px;
+      border-left-style: solid;
+      border-left-color: var(--ngispui-table__selected-border-color,
+          var(--isp-color__table-selected-border, #0279c0));
+    }
+  }
+
   &[singleline] {
     --ngispui-checkbox__border-color: #9b9b9b;
     height: 50px;
@@ -59,7 +74,7 @@ antivirus-card-table-cell {
   &[align-left] {
     text-align: left;
   }
-  
+
   &[align-right] {
     text-align: right;
   }
@@ -67,6 +82,3 @@ antivirus-card-table-cell {
 
   @import 'text/text';
 }
-
-
-

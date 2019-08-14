@@ -38,6 +38,11 @@
       stroke: #0991e2;
     }
   }
+
+  &.link-dashed:hover {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+  }
 }
 
 .title {
