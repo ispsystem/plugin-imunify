@@ -316,15 +316,15 @@ export class AntivirusCard {
           </div>
         </antivirus-card-modal>
         <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
-          <span class="title">Ошибка при оплате ImunifyAV+</span>
+          <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
           <p>
-            При оплате возникла проблема.
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
             <br />
-            Попробуйте повторить платёж через 1 минуту.
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
           </p>
           <div class="button-container">
             <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
-              Попробовать ещё раз
+              {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
