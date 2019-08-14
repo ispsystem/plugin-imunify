@@ -161,38 +161,6 @@ export class AntivirusCard {
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
 
-  /**
-   * Returns GET-parameters (or URLSearchParams) from the current URI
-   */
-  private getQueryParams(): URLSearchParams {
-    const [, queryParams] = location.toString().split('?');
-    return Boolean(queryParams) ? new URLSearchParams(queryParams) : null;
-  }
-
-  /**
-   * Removes a GET-parameter from the current URI
-   * @param parameter get-parameter
-   */
-  private removeQueryParam(parameter: string): void {
-    const [locationUrl, queryParams] = location.toString().split('?');
-    const searchParams = new URLSearchParams(queryParams);
-    searchParams.delete(parameter);
-    history.replaceState({}, document.title, `${locationUrl}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
-  }
-
-  /**
-   * Checks for the payment status and if it's passed
-   * and it equals 'failed' -- the expedient modal shows up
-   */
-  checkPaymentStatus() {
-    const queryParams = this.getQueryParams();
-    const paymentStatus = queryParams.get('payment') as PaymentStatus;
-    if (paymentStatus === 'failed') {
-      this.failedPaymentModal.toggle(true);
-      this.removeQueryParam('payment');
-    }
-  }
-
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
       configureStore({
@@ -309,10 +277,11 @@ export class AntivirusCard {
   }
 
   componentDidLoad() {
-    // search open modal in query params
+    /** @todo move this logic to different handlers */
     const [defaultLocation, queryParam] = location.toString().split('?');
     if (Boolean(queryParam)) {
       const searchParams = new URLSearchParams(queryParam);
+      // search open modal in query params
       if (searchParams.has('openModal')) {
         switch (searchParams.get('openModal')) {
           case 'buyModal': {
@@ -322,9 +291,16 @@ export class AntivirusCard {
         }
         searchParams.delete('openModal');
       }
+      // Checks for the payment status and if it's passed and it equals 'failed' -- the expedient modal shows up
+      else if (searchParams.has('payment')) {
+        const paymentStatus = searchParams.get('payment') as PaymentStatus;
+        if (paymentStatus === 'failed') {
+          this.failedPaymentModal.toggle(true);
+          searchParams.delete('payment');
+        }
+      }
       history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
-    this.checkPaymentStatus();
   }
 
   /**
