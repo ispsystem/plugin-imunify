@@ -144,6 +144,7 @@ def process(params, docroot, start_date):
         scan_result["scan"]["started"] = started
         scan_result["scan"]["created"] = on_complete_params.get("created", 0)
         scan_result["scan"]["infected"] = []
+        scan_result["scan"]["cured"] = 0
 
         if on_complete_params.get("total_malicious", 0) != 0:
             output = subprocess.check_output(["imunify-antivirus", "malware", "malicious", "list", "--by-scan-id", scan_result["scan_id"], "--json"]).decode()
@@ -157,8 +158,26 @@ def process(params, docroot, start_date):
                     "iav_file_id": malicious["id"],
                     "file": malicious["file"],
                     "last_modified": last_modified,
-                    "malicious_type": malicious["type"]
+                    "malicious_type": malicious["type"],
+                    "status": "INFECTED"
                 }
+
+                if scan_params.get("cureFoundFiles", False):
+                    cmd = ["imunify-antivirus", "malware", "malicious"]
+                    if scan_params.get("removeInfectedFileContent", False):
+                        cmd.extend(["cleanup", str(malicious["id"])])
+                        file_status = "CURED"
+                    else:
+                        cmd.extend(["delete", str(malicious["id"])])
+                        file_status = "DELETED"
+
+                    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    proc.wait()
+
+                    if proc.returncode == 0:
+                        infected_file["status"] = file_status
+                        scan_result["scan"]["cured"] += 1
+
                 scan_result["scan"]["infected"].append(infected_file)
 
     except Exception as e:
