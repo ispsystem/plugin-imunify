@@ -21,6 +21,12 @@ const lang = {
     LABEL_PRO_2: 'Сканирование по расписанию',
     LABEL_PRO_3: 'Оповещения об угрозах на почту',
   },
+  PAYMENT_FAILED_MODAL: {
+    TITLE: 'Ошибка при оплате ImunifyAV+',
+    DESCRIPTION_1: 'При оплате возникла проблема.',
+    DESCRIPTION_2: 'Попробуйте повторить платёж через 1 минуту.',
+    TRY_AGAIN_BUTTON: 'Попробовать ещё раз',
+  },
   NOT_NOW: 'Нет, не сейчас',
   SUBSCRIBE_FOR: 'Оформить подписку за',
   PRO_PERIODS: {

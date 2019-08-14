@@ -17,6 +17,11 @@ import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 
 /**
+ * Payment status returned by payment system
+ */
+type PaymentStatus = 'failed' | 'success';
+
+/**
  * AntivirusCard component
  */
 @Component({
@@ -28,6 +33,8 @@ export class AntivirusCard {
   newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
+  /** reference to the failed payment modal */
+  failedPaymentModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
   proPeriods;
 
@@ -143,6 +150,38 @@ export class AntivirusCard {
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
 
+  /**
+   * Returns GET-parameters (or URLSearchParams) from the current URI
+   */
+  private getQueryParams(): URLSearchParams {
+    const [, queryParams] = location.toString().split('?');
+    return Boolean(queryParams) ? new URLSearchParams(queryParams) : null;
+  }
+
+  /**
+   * Removes a GET-parameter from the current URI
+   * @param parameter get-parameter
+   */
+  private removeQueryParam(parameter: string): void {
+    const [locationUrl, queryParams] = location.toString().split('?');
+    const searchParams = new URLSearchParams(queryParams);
+    searchParams.delete(parameter);
+    history.replaceState({}, document.title, `${locationUrl}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+  }
+
+  /**
+   * Checks for the payment status and if it's passed
+   * and it equals 'failed' -- the expedient modal shows up
+   */
+  checkPaymentStatus() {
+    const queryParams = this.getQueryParams();
+    const paymentStatus = queryParams.get('payment') as PaymentStatus;
+    if (paymentStatus === 'failed') {
+      this.failedPaymentModal.toggle(true);
+      this.removeQueryParam('payment');
+    }
+  }
+
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
       configureStore({
@@ -240,6 +279,10 @@ export class AntivirusCard {
     }
   }
 
+  async componentDidLoad(): Promise<void> {
+    this.checkPaymentStatus();
+  }
+
   /**
    * Handle to buy pro version
    */
@@ -280,6 +323,22 @@ export class AntivirusCard {
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
+              {this.t.msg(['NOT_NOW'])}
+            </a>
+          </div>
+        </antivirus-card-modal>
+        <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
+          <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
+          <p>
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
+            <br />
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
+          </p>
+          <div class="button-container">
+            <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
+              {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
+            </antivirus-card-button>
+            <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>
