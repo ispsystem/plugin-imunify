@@ -930,10 +930,14 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
-        where_statement = "instance={} AND site_id={} ORDER BY scan_date DESC".format(info.instance_id, site_id)
-        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement)
+        where_statement = "instance={} AND site_id={} ".format(info.instance_id, site_id)
+        order_statement = "ORDER BY scan_date DESC "
+        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement + order_statement)
 
-        where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
+        scan_type = info.query_params.get("type", str())
+        if scan_type:
+            where_statement += "AND report->'$.type' = '{}' ".format(scan_type)
+        where_statement += order_statement + get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
         reports = select(table="report",
                          table_fields=["report", "scan_date", "preset_id"],
                          where=where_statement)
