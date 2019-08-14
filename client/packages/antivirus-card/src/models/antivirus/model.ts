@@ -54,8 +54,14 @@ export interface GetLastScanResponse {
   size: number;
 }
 
+/** Interface for last scan in state */
 export interface LastScanData {
   full: HistoryItem;
   partial: HistoryItem;
   size: number;
 }
+
+/**
+ * Payment status returned by payment system
+ */
+export type PaymentStatus = 'failed' | 'success';

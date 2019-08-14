@@ -21,6 +21,7 @@ antivirus-card-preview {
       cursor: pointer;
     }
   }
+
   .popover-content {
     padding: 20px 30px 30px 20px;
   }
@@ -47,6 +48,7 @@ antivirus-card-preview {
   font: inherit;
   text-decoration: underline;
   cursor: pointer;
+
   &:focus {
     outline: 0;
   }
@@ -68,4 +70,8 @@ antivirus-card-preview {
   margin-top: -3px;
   margin-left: 10px;
   height: 0;
+}
+
+.link-disabled {
+  cursor: not-allowed;
 }

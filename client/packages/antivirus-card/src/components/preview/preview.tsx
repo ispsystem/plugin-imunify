@@ -116,7 +116,7 @@ export class Preview {
    * Method return infected files count
    */
   getInfectedFilesCount(): number {
-    return this.scanType === 'PARTIAL' ? this.lastScan.partial.infectedFilesCount : this.infectedFilesCount;
+    return this.scanType === 'PARTIAL' ? (this.lastScan.partial ? this.lastScan.partial.infectedFilesCount : 0) : this.infectedFilesCount;
   }
 
   render() {
@@ -167,10 +167,14 @@ export class Preview {
         */}
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
-          <span class="link">
-            <StartCheckIcon onClick={() => this.scanVirus(this.scanOption.id, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
+          <span class={this.scanning ? 'link-disabled' : 'link'}>
+            <StartCheckIcon
+              onClick={() => this.scanVirus(this.scanOption.id, this.siteId)}
+              disabled={this.scanning}
+              btnLabel={this.t.msg('BTN_SCAN')}
+            />
           </span>
-          {this.isProVersion && (
+          {this.isProVersion && !this.scanning && (
             <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>
               {this.t.msg('CONFIGURE')}
             </a>

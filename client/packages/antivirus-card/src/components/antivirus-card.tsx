@@ -15,20 +15,8 @@ import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
-import { TaskEventName, NavigationItem, AntivirusCardPages } from '../models/antivirus/model';
+import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
-
-/** Enumirable for card pages */
-enum AntivirusCardPages {
-  dashboard = 'dashboard',
-  infectedFiles = 'infectedFiles',
-  history = 'history',
-}
-
-/**
- * Payment status returned by payment system
- */
-type PaymentStatus = 'failed' | 'success';
 
 /**
  * AntivirusCard component
@@ -143,8 +131,6 @@ export class AntivirusCard {
 
   @Watch('historyItemCount')
   lastScanChange(count: number) {
-    console.log('HISTORY CHANGED', count);
-
     const historyTabIndex = this.items && this.items.findIndex(item => item.name === AntivirusCardPages.history);
     if (historyTabIndex !== undefined && historyTabIndex > -1) {
       this.items = this.items.map((item, index) => {
