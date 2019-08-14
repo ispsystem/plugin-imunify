@@ -5,6 +5,7 @@
     imunify_installation_script_name: "imav-deploy.sh"
     imunify_installation_script_url: "https://repo.imunify360.cloudlinux.com/defence360/{{imunify_installation_script_name}}"
     scan_script_path: "/opt/ispsystem/plugin/imunify/scan.py"
+    heal_script_path: "/opt/ispsystem/plugin/imunify/heal.py"
 
   tasks:
   - name: "Check that imunify is installed"
@@ -36,10 +37,20 @@
 
   - name: "Copy scan script"
     copy:
-      src: "{{ lookup('env', 'SCRIPT_PATH') }}"
+      src: "{{ lookup('env', 'SCAN_SCRIPT_PATH') }}"
       dest: "{{scan_script_path}}"
 
-  - name: "Create hook"
+  - name: "Copy heal script"
+    copy:
+      src: "{{ lookup('env', 'HEAL_SCRIPT_PATH') }}"
+      dest: "{{heal_script_path}}"
+
+  - name: "Create scan hook"
     command: imunify-antivirus hook add-native --event malware-scanning --path /opt/ispsystem/plugin/imunify/scan.py
+    ignore_errors: True
+    when: imunify.stat.exists == False
+
+  - name: "Create heal hook"
+    command: imunify-antivirus hook add-native --event malware-cleanup --path /opt/ispsystem/plugin/imunify/heal.py
     ignore_errors: True
     when: imunify.stat.exists == False

@@ -70,7 +70,6 @@ class FileStatus(BaseEnum):
     infected = "INFECTED"
     cured = "CURED"
     added_to_exceptions = "EXCEPTED"
-    healing = "HEALING"
     deleted = "DELETED"
 
 
@@ -82,7 +81,9 @@ class ScanType(BaseEnum):
 
 class FileAction(BaseEnum):
     """Типы операций с файлами"""
-    delete = "delete"
+    delete = "DELETE"
+    cure = "CURE"
+    restore = "RESTORE"
 
 
 class Value:
@@ -343,6 +344,18 @@ def get_utc_timestamp():
     :return:
     """
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
+
+
+def get_file_status(action: str):
+    """
+    Возвращает статус файла для обновления
+    :param action:
+    :return:
+    """
+    if action == str(FileAction.delete):
+        return str(FileStatus.deleted)
+    if action == str(FileAction.cure):
+        return str(FileStatus.cured)
 
 
 def get_limit_value(limit: str):
@@ -793,7 +806,7 @@ class Imunify:
 
         if status == OPERATION_STATUS_SUCCESS:
             operations = operations_result["result"]
-            file_status = str(FileStatus.deleted)
+            file_status = get_file_status(info["action"].upper())
             for operation in operations:
                 if operation["status"] == OPERATION_STATUS_SUCCESS:
                     where_statement = "id={}".format(operation["id"])
@@ -980,7 +993,7 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        where_statement = "site_id={} AND instance={} ORDER BY detected DESC".format(site_id, info.instance_id)
+        where_statement = "site_id={} AND instance={} AND status='{}' ORDER BY detected DESC".format(site_id, info.instance_id, file_type)
         all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
 
         where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
@@ -1025,17 +1038,17 @@ class Imunify:
 
         ids = ",".join(str(id) for id in file_ids)
         where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, str(FileStatus.infected), site_id, info.instance_id)
-        files = select(table="files", table_fields=["id", "file", "path"], where=where_statement)
+        files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
 
         if not files:
             return web.HTTPNotFound(text="There is no files to delete")
 
-        params = ["--host", host, "--action", str(FileAction.delete)]
+        params = ["--host", host, "--action", str(FileAction.delete).lower()]
         for file in files:
             path = site_info["docroot_base"] + "/" + site_info["docroot"] + file["path"] + "/" + file["file"]
             params.append("--file")
             params.append(str(file["id"]))
-            params.append(path)
+            params.append(str(file["iav_file_id"]))
 
         output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
                              name='files',
@@ -1050,6 +1063,66 @@ class Imunify:
             "instance": info.instance_id,
             "ses6": info.ses6,
             "action": str(FileAction.delete)
+        }
+        loop.create_task(task_wait(result['task_id'], info, self.files_done))
+        result = loads(output)
+        return web.Response(text=dumps(result))
+
+    async def post_site_site_id_files(self, info: HandlerInfo):
+        """
+        Операции с файлами
+        TODO(d.vitvitskii) Вынести операции с файлами по разным хендлерам
+        :param info: Информация о запросе
+        :return:
+        """
+        request_body = await info.body
+        try:
+            site_id = int(info.path_params.get("site_id"))
+        except ValueError:
+            return web.HTTPBadRequest(text="The identifier of the site is not valid")
+
+        site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
+        if site_info_response.status != 200:
+            response = await site_info_response.text()
+            return web.Response(text=response, status=site_info_response.status)
+
+        file_ids = request_body.get("files")
+        action = request_body.get("action").upper()
+        if not FileAction.has_value(action):
+            return web.HTTPNotFound(text="There is no handler to process this action")
+
+        response = await self.get_instance(info.instance_id)
+        data = await response.json()
+        host = data.get("host", "")
+
+        file_status = str(FileStatus.cured) if action == str(FileAction.restore) else str(FileStatus.infected)
+
+        ids = ",".join(str(id) for id in file_ids)
+        where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, file_status, site_id, info.instance_id)
+        files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
+
+        if not files:
+            return web.HTTPNotFound(text="There is no files to process")
+
+        params = ["--host", host, "--action", action.lower()]
+        for file in files:
+            params.append("--file")
+            params.append(str(file["id"]))
+            params.append(str(file["iav_file_id"]))
+
+        output = create_task(exec_bin="/var/www/imunify/scripts/files.py",
+                             name='files-{}'.format(action.lower()),
+                             params=params,
+                             instance_id=info.instance_id,
+                             task_env={"INSTANCE_ID": info.instance_id, "LOG_SETTINGS_FILE_LEVEL": "debug"},
+                             notify={"entity": "plugin", "id": int(getenv("PLUGIN_ID"))})
+
+        result = loads(output)
+        loop = asyncio.get_event_loop()
+        info = {
+            "instance": info.instance_id,
+            "ses6": info.ses6,
+            "action": action
         }
         loop.create_task(task_wait(result['task_id'], info, self.files_done))
         result = loads(output)
@@ -1134,7 +1207,8 @@ def install_imunufy():
         "ANSIBLE_LOAD_CALLBACK_PLUGINS": "True",
         "ANSIBLE_STDOUT_CALLBACK": "json",
         "ANSIBLE_HOST_KEY_CHECKING": "False",
-        "SCRIPT_PATH": getcwd() + "/scripts/scan.py",
+        "SCAN_SCRIPT_PATH": getcwd() + "/scripts/scan.py",
+        "HEAL_SCRIPT_PATH": getcwd() + "/scripts/heal.py",
         "INSTANCE_ID": ""
     }
 
@@ -1175,6 +1249,7 @@ if __name__ == '__main__':
                     make_get('/site/{site_id}/scan/history'),
                     make_get('/scan/result'),
                     make_post('/preset/{id}/status'),
+                    make_post('/site/{site_id}/files'),
                     make_post('/site/{site_id}/preset'),
                     make_post('/site/{site_id}/scan'),
                     make_delete('/site/{site_id}/files')])
