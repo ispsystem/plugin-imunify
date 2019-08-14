@@ -109,6 +109,10 @@ const lang = {
       FULL: 'полная',
       PARTIAL: 'выборочная',
     },
+    ACTION: {
+      RETRY: 'Повторить',
+    },
+    CURED_COUNT: 'Вылечено {count}',
   },
   NEW_SCAN_BTN: 'Новое сканирование',
   SCAN_SETTINGS: {
