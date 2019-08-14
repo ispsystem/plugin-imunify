@@ -94,13 +94,19 @@ export namespace AntivirusActions {
       try {
         const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let deletedFilesCount: number = deletedFiles.length;
+        let count: number = deletedFiles.length;
+
+        const title =
+          count > 1
+            ? `${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_2'], count)}`
+            : t.msg(['VIRUS_DELETE', 'DONE']);
+        const content = count > 1 ? deletedFiles[0].name : undefined;
         userNotification.push({
-          title: t.msg(['VIRUS_DELETED']),
-          content: deletedFiles[0].name,
+          title,
+          content,
           type: NotifyBannerTypes.NORMAL_FAST,
         });
-        dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
+        dispatch(deleteFilesPostProcessSuccess(count));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
       }

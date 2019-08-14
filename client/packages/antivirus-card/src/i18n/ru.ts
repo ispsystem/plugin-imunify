@@ -161,7 +161,13 @@ const lang = {
   CONFIGURE: 'Настроить',
   MEGABYTE_SHORT: 'MB',
   VIRUS_DETECTED: 'Обнаружен вирус',
-  VIRUS_DELETED: 'Заражённый файл удалён',
+  VIRUS_DELETE: {
+    DONE: 'Заражённый файл удалён',
+    GROUP: {
+      DONE_1: 'удалён |||| удалено |||| удалено',
+      DONE_2: 'заражённый файл |||| заражённых файла |||| заражённых файлов',
+    },
+  },
 };
 
 export type Lang = typeof lang;
