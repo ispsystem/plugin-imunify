@@ -3,7 +3,7 @@ export const endpoint = isDevMode ? 'http://localhost:8000' : '';
 
 export const languages = {
   ru: 'Русский',
-  en: 'English'
+  en: 'English',
 };
 
 export type languageTypes = keyof typeof languages;

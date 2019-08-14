@@ -279,6 +279,10 @@ export namespace Components {
   }
   interface AntivirusCardSpinnerRound {
     /**
+    * Position absolute or relative, absolute is default
+    */
+    'position': 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial';
+    /**
     * Width style for spinner
     */
     'width': string;
@@ -799,6 +803,10 @@ declare namespace LocalJSX {
     'value'?: SelectedOption['v'];
   }
   interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {
+    /**
+    * Position absolute or relative, absolute is default
+    */
+    'position'?: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial';
     /**
     * Width style for spinner
     */
