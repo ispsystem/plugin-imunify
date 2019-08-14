@@ -9,6 +9,7 @@ import { HistoryItem } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
 import { TableController, TableState } from '../table/table-controller';
 import { Subscription } from 'rxjs';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 @Component({
   tag: 'antivirus-card-history',
@@ -33,11 +34,18 @@ export class History {
   /** Common table state */
   @State() tableState: TableState<HistoryItem>;
 
+  /** Action scan */
+  scanVirus: typeof AntivirusActions['scan'];
+
   constructor() {
     this.tableState = new TableState();
   }
   async componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
+    this.store.mapDispatchToProps(this, {
+      scanVirus: AntivirusActions.scan,
+    });
+
     this.tableController = new TableController(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/scan/history`,
       this.handleFailure,
@@ -69,6 +77,15 @@ export class History {
     throw new Error("Oops, we haven't got JSON with a history list!" + error);
   }
 
+  /**
+   * Handle retry scan by history
+   *
+   * @param presetId - scan preset id
+   */
+  async handleRetryScan(presetId: number) {
+    await this.scanVirus(presetId, this.siteId);
+  }
+
   render() {
     return (
       <antivirus-card-table>
@@ -83,6 +100,7 @@ export class History {
             <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
             </antivirus-card-table-cell>
+            <antivirus-card-table-cell style={{ width: 60 + 'px' }}></antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -97,6 +115,16 @@ export class History {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>
+                {historyItem.curedFilesCount > 0 && (
+                  <span class="add-text" style={{ color: '#30ba9a' }}>
+                    {this.t.msg(['HISTORY_TAB', 'CURED_COUNT'], { count: historyItem.curedFilesCount })}
+                  </span>
+                )}
+              </antivirus-card-table-cell>
+              <antivirus-card-table-cell doubleline>
+                <a class="link" onClick={async () => await this.handleRetryScan(historyItem.scanOptionId)}>
+                  {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
+                </a>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}
