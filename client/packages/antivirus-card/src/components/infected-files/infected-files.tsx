@@ -36,6 +36,9 @@ export class InfectedFiles {
   /** translate object */
   @State() t: ITranslate;
 
+  /** user notification's provider */
+  @State() userNotification: RootState['userNotification'];
+
   /** Vepp site id */
   @State() siteId: RootState['siteId'];
 
@@ -133,11 +136,10 @@ export class InfectedFiles {
 
   /**
    * Handles delete modal submit button
-   * @param siteId Site's id
-   * @param fileId File's id
+   * @param files Files to delete
    */
-  private deleteSubmitHandler(siteId: number, fileId: number): void {
-    this.deleteFiles(siteId, [fileId]);
+  private deleteSubmitHandler(files: InfectedFile[]): void {
+    this.deleteFiles(this.siteId, files, this.userNotification, this.t);
     this.deletionModal.toggle(false);
   }
 
@@ -231,7 +233,7 @@ export class InfectedFiles {
           ?
         </span>
         <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, this.chosenFile && this.chosenFile.id)}>
+          <antivirus-card-button onClick={() => this.deleteSubmitHandler([this.chosenFile])}>
             {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
           </antivirus-card-button>
           <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>

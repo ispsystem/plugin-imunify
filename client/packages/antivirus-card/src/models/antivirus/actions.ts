@@ -1,34 +1,34 @@
 import { NotifierEvent } from '../../redux/reducers';
 import {
+  deleteFilesFailure,
+  deleteFilesPostProcessFailure,
+  deleteFilesPostProcessSuccess,
+  deleteFilesSuccess,
+  disablePresetFailure,
+  disablePresetSuccess,
+  getHistoryFailure,
+  getHistorySuccess,
+  getInfectedFilesFailure,
+  getInfectedFilesSuccess,
+  getPresetsFailure,
+  getPresetsSuccess,
+  getStateBegin,
+  getStateFailure,
+  getStateSuccess,
+  saveAndScanBegin,
+  saveAndScanFailure,
+  saveAndScanSuccess,
+  savePartialPresetSuccess,
+  savePresetFailure,
   scanBegin,
   scanFailure,
   scanning,
   scanSuccess,
-  getStateBegin,
-  getStateSuccess,
-  getStateFailure,
-  getHistorySuccess,
-  getHistoryFailure,
-  savePartialPresetSuccess,
-  savePresetFailure,
-  saveAndScanFailure,
-  saveAndScanBegin,
-  saveAndScanSuccess,
-  getInfectedFilesSuccess,
-  getInfectedFilesFailure,
-  getPresetsSuccess,
-  getPresetsFailure,
-  disablePresetSuccess,
-  disablePresetFailure,
-  deleteFilesSuccess,
-  deleteFilesFailure,
-  deleteFilesPostProcessSuccess,
-  deleteFilesPostProcessFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
+import { AntivirusState, CheckType, InfectedFile, ScanOption } from './state';
 import { getNestedObject } from '../../utils/tools';
-import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
+import { NotifyBannerTypes, UserNotification } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
 import { ScanResultResponse, TaskManagerResponse } from './model';
 
@@ -61,17 +61,27 @@ export namespace AntivirusActions {
    * Deletes the file or files
    *
    * @param siteId Site's id
-   * @param files Files' ids
+   * @param files Files array
+   * @param userNotification User notifications provider
+   * @param t i18n provider
    */
-  export function deleteFiles(siteId: number, files: number[]) {
+  export function deleteFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: ITranslate) {
     return async dispatch => {
       try {
-        const body = { files };
+        const body = { files: files.map(f => f.id) };
         const requestInit: RequestInit = {
           method: 'DELETE',
           body: JSON.stringify(body),
         };
         let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        if (response.status === 404) {
+          const filename = files[0].name;
+          userNotification.push({
+            type: NotifyBannerTypes.ERROR_FAST,
+            title: t.msg(['VIRUS_DELETE', 'FAIL']),
+            content: t.msg(['VIRUS_DELETE', 'ERROR_404'], { filename }),
+          });
+        }
         handleErrors(response);
         let json: TaskManagerResponse = await response.json();
 
