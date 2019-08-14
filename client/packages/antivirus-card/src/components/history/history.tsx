@@ -7,7 +7,7 @@ import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { HistoryItem } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
-import { PaginationController, TableState, TableStore } from '../table/table-controller';
+import { TableController, TableState, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -22,7 +22,7 @@ export class History {
   tableStore: TableStore<HistoryItem>;
 
   /** Table controller */
-  paginationController: PaginationController<HistoryItem, TableStore<HistoryItem>>;
+  paginationController: TableController.Pagination<HistoryItem, TableStore<HistoryItem>>;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -41,7 +41,7 @@ export class History {
   }
   async componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
-    this.paginationController = new PaginationController(
+    this.paginationController = new TableController.Pagination(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/scan/history`,
       this.handleFailure,
       this.tableStore,

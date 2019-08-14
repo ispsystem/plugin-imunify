@@ -4,15 +4,15 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { TableState, PaginationController, TableStore, GroupActionController } from '../table/table-controller';
+import { TableState, TableController, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 import { endpoint } from '../../constants';
 import { AntivirusState, InfectedFile } from '../../models/antivirus/state';
 import { BurgerMenuIcon } from '../icons/burgerMenu';
 import { TableGroupActions } from '../table-actions/TableGroupActions';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 type InfectedFilesAction = 'delete' | 'heal';
-import { AntivirusActions } from '../../models/antivirus/actions';
 
 @Component({
   tag: 'antivirus-card-infected-files',
@@ -26,10 +26,10 @@ export class InfectedFiles {
   tableStore: TableStore<InfectedFile>;
 
   /** Pagination controller */
-  paginationController: PaginationController<InfectedFile, TableStore<InfectedFile>>;
+  paginationController: TableController.Pagination<InfectedFile, TableStore<InfectedFile>>;
 
   /** Group action controller */
-  groupActionController: GroupActionController<InfectedFile, TableStore<InfectedFile>, InfectedFilesAction>;
+  groupActionController: TableController.GroupAction<InfectedFile, TableStore<InfectedFile>, InfectedFilesAction>;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -67,16 +67,16 @@ export class InfectedFiles {
     this.store.mapDispatchToProps(this, {
       deleteFiles: AntivirusActions.deleteFiles,
     });
-    this.paginationController = new PaginationController(
+    this.paginationController = new TableController.Pagination(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/files/infected`,
       this.handleFailure,
       this.tableStore,
     );
     // controlling table state by group actions
-    this.groupActionController = new GroupActionController(
+    this.groupActionController = new TableController.GroupAction(
       {
-        delete: this.delete,
-        heal: this.heal,
+        delete: this.delete.bind(this),
+        heal: this.heal.bind(this),
       },
       this.tableStore,
     );
@@ -92,11 +92,28 @@ export class InfectedFiles {
     await this.paginationController.init();
   }
 
+  /**
+   * Group action delete files
+   *
+   * @param ids - id list
+   */
   async delete(ids: number[]) {
-    console.log(ids);
-    /** @todo add handle for delete files*/
+    await this.deleteFiles(this.siteId, ids);
+    this.tableStore.setStateProperty({
+      data: this.tableState.data.map(file => {
+        if (ids.includes(file.id)) {
+          file.status = 'DELETED';
+        }
+        return file;
+      }),
+    });
   }
 
+  /**
+   * Group action heal files
+   *
+   * @param ids - id list
+   */
   async heal(ids: number[]) {
     console.log(ids);
     /** @todo add handle for heal files */
@@ -111,6 +128,26 @@ export class InfectedFiles {
   handleFailure(error: any): void {
     /** @todo add handle for error fetch list */
     throw new Error("Oops, we haven't got JSON with a infected file list!" + error);
+  }
+
+  /**
+   * Opens up the delete confirm dialog modal
+   * @param ev Mouse event of clicking the 'delete' link in the dropdown
+   */
+  async openDeletionModal(ev: MouseEvent): Promise<boolean> {
+    await this.deletionModal.toggle(true);
+    await this.dropdownEl.toggle(ev);
+    return true;
+  }
+
+  /**
+   * Handles delete modal submit button
+   * @param siteId Site's id
+   * @param fileId File's id
+   */
+  deleteSubmitHandler(siteId: number, fileId: number): void {
+    this.deleteFiles(siteId, [fileId]);
+    this.deletionModal.toggle(false);
   }
 
   /**
@@ -150,26 +187,6 @@ export class InfectedFiles {
     );
   };
 
-  /**
-   * Opens up the delete confirm dialog modal
-   * @param ev Mouse event of clicking the 'delete' link in the dropdown
-   */
-  async openDeletionModal(ev: MouseEvent) {
-    await this.deletionModal.toggle(true);
-    await this.dropdownEl.toggle(ev);
-    return true;
-  }
-
-  /**
-   * Handles delete modal submit button
-   * @param siteId Site's id
-   * @param fileId File's id
-   */
-  private deleteSubmitHandler(siteId: number, fileId: number): void {
-    this.deleteFiles(siteId, [fileId]);
-    this.deletionModal.toggle(false);
-  }
-
   renderInfectedFilesTable = () => {
     return [
       <antivirus-card-table>
@@ -206,7 +223,9 @@ export class InfectedFiles {
             <antivirus-card-table-row action-hover>
               <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file.id)} doubleline>
                 <span class="main-text">{file.name}</span>
-                <span class="add-text">{this.t.msg(['INFECTED_FILES', 'STATUS', file.status])}</span>
+                <span class="add-text" style={{ color: file.status === 'INFECTED' ? '#E44592' : '#9b9b9b' }}>
+                  {this.t.msg(['INFECTED_FILES', 'STATUS', file.status])}
+                </span>
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text main-text__ellipsis">{file.threatName}</span>

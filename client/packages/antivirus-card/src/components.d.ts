@@ -250,6 +250,10 @@ export namespace Components {
     */
     'disabled': boolean;
     /**
+    * Flag for disable border around select
+    */
+    'marginTop': number;
+    /**
     * Placeholder for select field
     */
     'placeholder': string;
@@ -757,6 +761,10 @@ declare namespace LocalJSX {
     * Disabled key for select field
     */
     'disabled'?: boolean;
+    /**
+    * Flag for disable border around select
+    */
+    'marginTop'?: number;
     /**
     * Handle for change selected value
     */

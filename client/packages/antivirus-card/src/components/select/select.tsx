@@ -37,6 +37,9 @@ export class Select {
   /** Flag for disable border around select */
   @Prop({ reflect: true }) borderless: boolean;
 
+  /** Flag for disable border around select */
+  @Prop({ reflect: true }) marginTop: number;
+
   /** Selected value */
   @Prop({ mutable: true }) selectedValue: SelectedOption;
 
@@ -93,7 +96,10 @@ export class Select {
           </span>
           <span class="select__arrow"></span>
         </div>
-        <div class="select__panel" style={{ display: !this.openPanel ? 'none' : 'block', width: `${this.width - 20}px` }}>
+        <div
+          class="select__panel"
+          style={{ display: !this.openPanel ? 'none' : 'block', width: `${this.width - 20}px`, 'margin-top': `${this.marginTop}px` }}
+        >
           <div class="select__options">
             <slot />
           </div>

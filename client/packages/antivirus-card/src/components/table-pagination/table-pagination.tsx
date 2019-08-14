@@ -45,7 +45,8 @@ export class History {
           }}
           width={50}
           borderless
-          style={{ display: 'inline-block', padding: '0 12px 0 4px', 'margin-top': '-179px' }}
+          style={{ display: 'inline-block', padding: '0 12px 0 4px' }}
+          marginTop={-179}
         >
           {[5, 10, 25, 50].map(value => (
             <antivirus-card-select-option selected={this.countOnPage === value} value={value}>
