@@ -78,6 +78,8 @@ export class AntivirusWidget {
           .pipe(take(1))
           .subscribe({
             next: async (events: NotifierEvent[]) => {
+              console.log('TASK LIST', events);
+
               const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
               if (runningTask !== undefined) {
                 await this.store.updateStateByNotify(runningTask);
@@ -89,6 +91,7 @@ export class AntivirusWidget {
       this.sub.add(
         this.notifier.update$().subscribe({
           next: async (notify: { event: NotifierEvent }) => {
+            console.log('UPDATE', notify.event);
             if (getNestedObject(notify.event, ['additional_data', 'status']) === 'running') {
               await this.store.updateStateByNotify(notify.event);
             }
@@ -99,6 +102,7 @@ export class AntivirusWidget {
       this.sub.add(
         this.notifier.delete$().subscribe({
           next: async (notify: { event: NotifierEvent }) => {
+            console.log('DELETE', notify.event);
             if (getNestedObject(notify.event, ['additional_data', 'status']) !== undefined) {
               await this.store.updateStateByNotify(notify.event);
             }
