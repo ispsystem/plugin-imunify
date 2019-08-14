@@ -22,6 +22,7 @@
 - [antivirus-card-table](../table)
 - [antivirus-card-table-row](../table-row)
 - [antivirus-card-table-cell](../table-cell)
+- [antivirus-card-checkbox](../checkbox)
 - [antivirus-card-table-pagination](../table-pagination)
 - [antivirus-card-dropdown](../dropdown)
 - [antivirus-card-vmenu](../vmenu)
@@ -35,6 +36,7 @@ graph TD;
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row
   antivirus-card-infected-files --> antivirus-card-table-cell
+  antivirus-card-infected-files --> antivirus-card-checkbox
   antivirus-card-infected-files --> antivirus-card-table-pagination
   antivirus-card-infected-files --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-vmenu

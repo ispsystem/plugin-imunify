@@ -11,6 +11,7 @@
 | --------------- | ------------- | ------------------------------------- | --------------------- | ----------- |
 | `borderless`    | `borderless`  | Flag for disable border around select | `boolean`             | `undefined` |
 | `disabled`      | `disabled`    | Disabled key for select field         | `boolean`             | `undefined` |
+| `marginTop`     | `margin-top`  | Margin top value for select panel     | `number`              | `undefined` |
 | `placeholder`   | `placeholder` | Placeholder for select field          | `string`              | `undefined` |
 | `selectedValue` | --            | Selected value                        | `SelectedOption<any>` | `undefined` |
 | `width`         | `width`       | Width for select block                | `number`              | `280`       |

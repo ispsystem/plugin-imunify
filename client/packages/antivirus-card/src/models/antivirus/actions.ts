@@ -71,9 +71,9 @@ export namespace AntivirusActions {
           method: 'DELETE',
           body: JSON.stringify(body),
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
         handleErrors(response);
-        let json: TaskManagerResponse = await response.json();
+        const json: TaskManagerResponse = await response.json();
 
         dispatch(deleteFilesSuccess(json));
       } catch (error) {
