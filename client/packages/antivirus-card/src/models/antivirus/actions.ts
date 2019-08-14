@@ -58,7 +58,7 @@ export function handleErrors(response: Response): Response {
  */
 export namespace AntivirusActions {
   /**
-   * Deletes the file or files
+   * Deletes a file or files
    *
    * @param siteId Site's id
    * @param files Files array
@@ -73,7 +73,7 @@ export namespace AntivirusActions {
           method: 'DELETE',
           body: JSON.stringify(body),
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
         if (response.status === 404) {
           const filename = files[0].name;
           userNotification.push({
@@ -83,7 +83,7 @@ export namespace AntivirusActions {
           });
         }
         handleErrors(response);
-        let json: TaskManagerResponse = await response.json();
+        const json: TaskManagerResponse = await response.json();
 
         dispatch(deleteFilesSuccess(json));
       } catch (error) {

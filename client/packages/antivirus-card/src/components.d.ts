@@ -250,6 +250,11 @@ export namespace Components {
     */
     'disabled': boolean;
     /**
+    * Margin top value for select panel
+    * @todo calculate this parameter
+    */
+    'marginTop': number;
+    /**
     * Placeholder for select field
     */
     'placeholder': string;
@@ -274,6 +279,10 @@ export namespace Components {
   }
   interface AntivirusCardSpinnerRound {
     /**
+    * Position absolute or relative, absolute is default
+    */
+    'position': 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial';
+    /**
     * Width style for spinner
     */
     'width': string;
@@ -290,6 +299,7 @@ export namespace Components {
     'alignLeft': boolean;
     'alignRight': boolean;
     'doubleline': boolean;
+    'selected': boolean;
     'singleline': boolean;
   }
   interface AntivirusCardTablePagination {
@@ -757,6 +767,11 @@ declare namespace LocalJSX {
     */
     'disabled'?: boolean;
     /**
+    * Margin top value for select panel
+    * @todo calculate this parameter
+    */
+    'marginTop'?: number;
+    /**
     * Handle for change selected value
     */
     'onChanged'?: (event: CustomEvent<SelectedOption['v']>) => void;
@@ -789,6 +804,10 @@ declare namespace LocalJSX {
   }
   interface AntivirusCardSpinnerRound extends JSXBase.HTMLAttributes<HTMLAntivirusCardSpinnerRoundElement> {
     /**
+    * Position absolute or relative, absolute is default
+    */
+    'position'?: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial';
+    /**
     * Width style for spinner
     */
     'width'?: string;
@@ -806,6 +825,7 @@ declare namespace LocalJSX {
     'alignLeft'?: boolean;
     'alignRight'?: boolean;
     'doubleline'?: boolean;
+    'selected'?: boolean;
     'singleline'?: boolean;
   }
   interface AntivirusCardTablePagination extends JSXBase.HTMLAttributes<HTMLAntivirusCardTablePaginationElement> {

@@ -5,10 +5,11 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
-import { HistoryItem } from '../../models/antivirus/state';
+import { HistoryItem, AntivirusState } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
-import { TableController, TableState } from '../table/table-controller';
+import { TableController, TableState, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
+import { AntivirusActions } from '../../models/antivirus/actions';
 
 @Component({
   tag: 'antivirus-card-history',
@@ -18,8 +19,11 @@ export class History {
   /** RXJS subscription */
   sub = new Subscription();
 
+  /** table store */
+  tableStore: TableStore<HistoryItem>;
+
   /** Table controller */
-  tableController: TableController<HistoryItem>;
+  paginationController: TableController.Pagination<HistoryItem, TableStore<HistoryItem>>;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -33,26 +37,36 @@ export class History {
   /** Common table state */
   @State() tableState: TableState<HistoryItem>;
 
+  /** flag if antivirus is pro version */
+  @State() isProVersion: AntivirusState['isProVersion'];
+
+  /** Action scan */
+  scanVirus: typeof AntivirusActions['scan'];
+
   constructor() {
-    this.tableState = new TableState();
+    this.tableStore = new TableStore();
   }
   async componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ t: state.translate, siteId: state.siteId }));
-    this.tableController = new TableController(
+    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
+    this.store.mapDispatchToProps(this, {
+      scanVirus: AntivirusActions.scan,
+    });
+
+    this.paginationController = new TableController.Pagination(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/scan/history`,
       this.handleFailure,
-      this.tableState,
+      this.tableStore,
     );
 
     // subscribe to update state by table controller
     this.sub.add(
-      this.tableController.state$.subscribe({
+      this.tableStore.state$.subscribe({
         next: newState => (this.tableState = newState),
       }),
     );
 
     // initialize data by controller
-    await this.tableController.init();
+    await this.paginationController.init();
   }
 
   componentDidUnload() {
@@ -69,6 +83,15 @@ export class History {
     throw new Error("Oops, we haven't got JSON with a history list!" + error);
   }
 
+  /**
+   * Handle retry scan by history
+   *
+   * @param presetId - scan preset id
+   */
+  async handleRetryScan(presetId: number) {
+    await this.scanVirus(presetId, this.siteId);
+  }
+
   render() {
     return (
       <antivirus-card-table>
@@ -83,6 +106,7 @@ export class History {
             <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
             </antivirus-card-table-cell>
+            {this.isProVersion && <antivirus-card-table-cell style={{ width: 60 + 'px' }}></antivirus-card-table-cell>}
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -97,7 +121,19 @@ export class History {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>
+                {this.isProVersion && historyItem.curedFilesCount > 0 && (
+                  <span class="add-text" style={{ color: '#30ba9a' }}>
+                    {this.t.msg(['HISTORY_TAB', 'CURED_COUNT'], { count: historyItem.curedFilesCount })}
+                  </span>
+                )}
               </antivirus-card-table-cell>
+              {this.isProVersion && (
+                <antivirus-card-table-cell doubleline>
+                  <a class="link" onClick={async () => await this.handleRetryScan(historyItem.scanOptionId)}>
+                    {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
+                  </a>
+                </antivirus-card-table-cell>
+              )}
             </antivirus-card-table-row>
           ))}
         </div>
@@ -108,8 +144,10 @@ export class History {
               countOnPage={this.tableState.countOnPage}
               pageCount={this.tableState.pageCount}
               currentPage={this.tableState.currentPage}
-              changeCountOnPage={value => this.tableController.onChangeCountOnPage(value)}
-              clickPagination={event => (event === 'next' ? this.tableController.onClickNext() : this.tableController.onClickPrevious())}
+              changeCountOnPage={value => this.paginationController.onChangeCountOnPage(value)}
+              clickPagination={event =>
+                event === 'next' ? this.paginationController.onClickNext() : this.paginationController.onClickPrevious()
+              }
             />
           </div>
         </div>

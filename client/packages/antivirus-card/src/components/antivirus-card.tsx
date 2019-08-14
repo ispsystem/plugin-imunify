@@ -16,6 +16,18 @@ import { getNestedObject } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 
+/** Enumirable for card pages */
+enum AntivirusCardPages {
+  dashboard = 'dashboard',
+  infectedFiles = 'infectedFiles',
+  history = 'history',
+}
+
+/**
+ * Payment status returned by payment system
+ */
+type PaymentStatus = 'failed' | 'success';
+
 /**
  * AntivirusCard component
  */
@@ -28,6 +40,8 @@ export class AntivirusCard {
   newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
+  /** reference to the failed payment modal */
+  failedPaymentModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
   proPeriods;
 
@@ -57,6 +71,7 @@ export class AntivirusCard {
   /** nested components */
   @State()
   items: {
+    name: AntivirusCardPages;
     label: string;
     active?: boolean;
     component: () => JSX.Element;
@@ -87,14 +102,17 @@ export class AntivirusCard {
 
     this.items = [
       {
+        name: AntivirusCardPages.dashboard,
         label: this.t.msg(['MENU_ITEMS', 'DASHBOARD']),
         component: () => <antivirus-card-dashboard />,
       },
       {
+        name: AntivirusCardPages.infectedFiles,
         label: this.t.msg(['MENU_ITEMS', 'INFECTED_FILES']),
         component: () => <antivirus-card-infected-files />,
       },
       {
+        name: AntivirusCardPages.history,
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
         component: () => <antivirus-card-history />,
       },
@@ -142,6 +160,38 @@ export class AntivirusCard {
   loadTranslate: typeof TranslateActions.load;
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
+
+  /**
+   * Returns GET-parameters (or URLSearchParams) from the current URI
+   */
+  private getQueryParams(): URLSearchParams {
+    const [, queryParams] = location.toString().split('?');
+    return Boolean(queryParams) ? new URLSearchParams(queryParams) : null;
+  }
+
+  /**
+   * Removes a GET-parameter from the current URI
+   * @param parameter get-parameter
+   */
+  private removeQueryParam(parameter: string): void {
+    const [locationUrl, queryParams] = location.toString().split('?');
+    const searchParams = new URLSearchParams(queryParams);
+    searchParams.delete(parameter);
+    history.replaceState({}, document.title, `${locationUrl}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+  }
+
+  /**
+   * Checks for the payment status and if it's passed
+   * and it equals 'failed' -- the expedient modal shows up
+   */
+  checkPaymentStatus() {
+    const queryParams = this.getQueryParams();
+    const paymentStatus = queryParams.get('payment') as PaymentStatus;
+    if (paymentStatus === 'failed') {
+      this.failedPaymentModal.toggle(true);
+      this.removeQueryParam('payment');
+    }
+  }
 
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
@@ -238,6 +288,43 @@ export class AntivirusCard {
         }
       }, 1000);
     }
+
+    // search page in query params
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (Boolean(queryParam)) {
+      const searchParams = new URLSearchParams(queryParam);
+      if (searchParams.has('page')) {
+        const index = this.items.findIndex(i => i.name === searchParams.get('page'));
+        const beforeIndex = this.items.findIndex(item => item.active);
+
+        if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
+          this.items[beforeIndex].active = false;
+          this.items[index].active = true;
+          this.items = [...this.items];
+        }
+        searchParams.delete('page');
+      }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+    }
+  }
+
+  componentDidLoad() {
+    // search open modal in query params
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (Boolean(queryParam)) {
+      const searchParams = new URLSearchParams(queryParam);
+      if (searchParams.has('openModal')) {
+        switch (searchParams.get('openModal')) {
+          case 'buyModal': {
+            this.buyModal.toggle(true);
+            break;
+          }
+        }
+        searchParams.delete('openModal');
+      }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+    }
+    this.checkPaymentStatus();
   }
 
   /**
@@ -280,6 +367,22 @@ export class AntivirusCard {
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
+              {this.t.msg(['NOT_NOW'])}
+            </a>
+          </div>
+        </antivirus-card-modal>
+        <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
+          <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
+          <p>
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
+            <br />
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
+          </p>
+          <div class="button-container">
+            <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
+              {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
+            </antivirus-card-button>
+            <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>
