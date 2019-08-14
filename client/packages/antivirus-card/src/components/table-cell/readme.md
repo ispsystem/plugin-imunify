@@ -12,6 +12,7 @@
 | `alignLeft`  | `align-left`  |             | `boolean` | `undefined` |
 | `alignRight` | `align-right` |             | `boolean` | `undefined` |
 | `doubleline` | `doubleline`  |             | `boolean` | `undefined` |
+| `selected`   | `selected`    |             | `boolean` | `undefined` |
 | `singleline` | `singleline`  |             | `boolean` | `undefined` |
 
 

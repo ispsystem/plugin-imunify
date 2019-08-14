@@ -18,6 +18,18 @@ import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 
+/** Enumirable for card pages */
+enum AntivirusCardPages {
+  dashboard = 'dashboard',
+  infectedFiles = 'infectedFiles',
+  history = 'history',
+}
+
+/**
+ * Payment status returned by payment system
+ */
+type PaymentStatus = 'failed' | 'success';
+
 /**
  * AntivirusCard component
  */
@@ -34,7 +46,8 @@ export class AntivirusCard {
 
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
-
+  /** reference to the failed payment modal */
+  failedPaymentModal: HTMLAntivirusCardModalElement;
   /** periods for PRO version */
   proPeriods;
 
@@ -265,12 +278,50 @@ export class AntivirusCard {
       this.getInfectedFiles(this.siteId),
     ]);
 
-    /** @todo: need query from back has scanning now or has not */
-    // setTimeout(() => {
-    //   if (this.historyItemCount === 0 && !this.scanning) {
-    //     this.scanVirus(this.scanPreset.full.id, this.siteId);
-    //   }
-    // }, 1000);
+    // search page in query params
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (Boolean(queryParam)) {
+      const searchParams = new URLSearchParams(queryParam);
+      if (searchParams.has('page')) {
+        const index = this.items.findIndex(i => i.name === searchParams.get('page'));
+        const beforeIndex = this.items.findIndex(item => item.active);
+
+        if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
+          this.items[beforeIndex].active = false;
+          this.items[index].active = true;
+          this.items = [...this.items];
+        }
+        searchParams.delete('page');
+      }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+    }
+  }
+
+  componentDidLoad() {
+    /** @todo move this logic to different handlers */
+    const [defaultLocation, queryParam] = location.toString().split('?');
+    if (Boolean(queryParam)) {
+      const searchParams = new URLSearchParams(queryParam);
+      // search open modal in query params
+      if (searchParams.has('openModal')) {
+        switch (searchParams.get('openModal')) {
+          case 'buyModal': {
+            this.buyModal.toggle(true);
+            break;
+          }
+        }
+        searchParams.delete('openModal');
+      }
+      // Checks for the payment status and if it's passed and it equals 'failed' -- the expedient modal shows up
+      else if (searchParams.has('payment')) {
+        const paymentStatus = searchParams.get('payment') as PaymentStatus;
+        if (paymentStatus === 'failed') {
+          this.failedPaymentModal.toggle(true);
+          searchParams.delete('payment');
+        }
+      }
+      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+    }
   }
 
   /**
@@ -313,6 +364,22 @@ export class AntivirusCard {
               {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
+              {this.t.msg(['NOT_NOW'])}
+            </a>
+          </div>
+        </antivirus-card-modal>
+        <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
+          <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
+          <p>
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
+            <br />
+            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
+          </p>
+          <div class="button-container">
+            <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
+              {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
+            </antivirus-card-button>
+            <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}
             </a>
           </div>

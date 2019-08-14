@@ -25,6 +25,12 @@ const lang = {
     LABEL_PRO_2: 'Сканирование по расписанию',
     LABEL_PRO_3: 'Оповещения об угрозах на почту',
   },
+  PAYMENT_FAILED_MODAL: {
+    TITLE: 'Ошибка при оплате ImunifyAV+',
+    DESCRIPTION_1: 'При оплате возникла проблема.',
+    DESCRIPTION_2: 'Попробуйте повторить платёж через 1 минуту.',
+    TRY_AGAIN_BUTTON: 'Попробовать ещё раз',
+  },
   NOT_NOW: 'Нет, не сейчас',
   SUBSCRIBE_FOR: 'Оформить подписку за',
   PRO_PERIODS: {
@@ -42,6 +48,7 @@ const lang = {
     ON_PAGE_LABEL: 'На странице',
     OF: 'из',
     RECORD_COUNT: '%{smart_count} запись |||| %{smart_count} записи |||| %{smart_count} записей',
+    SELECTED_COUNT: 'Выбрано %{count}',
   },
   PREVIEW: {
     HELP:
@@ -89,6 +96,7 @@ const lang = {
        * so I can cut only the filename without touching the question mark
        */
       TITLE: 'Удалить файл %{filename}',
+      GROUP_TITLE: 'Удалить %{smart_count} запись |||| Удалить %{smart_count} записи |||| Удалить %{smart_count} записей',
       DELETE_BUTTON: 'Удалить',
       CANCEL_BUTTON: 'Отменить',
     },
@@ -105,6 +113,10 @@ const lang = {
       FULL: 'полная',
       PARTIAL: 'выборочная',
     },
+    ACTION: {
+      RETRY: 'Повторить',
+    },
+    CURED_COUNT: 'Вылечено {count}',
   },
   NEW_SCAN_BTN: 'Новое сканирование',
   SCAN_SETTINGS: {

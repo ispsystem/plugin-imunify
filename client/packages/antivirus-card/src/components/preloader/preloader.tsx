@@ -15,10 +15,10 @@ export type ViewType =
 })
 export class Preloader {
   /** Ref for spinner element */
-  private _spinnerEl: HTMLAntivirusCardSpinnerRoundElement;
+  spinnerEl: HTMLAntivirusCardSpinnerRoundElement;
 
   /** Ref for content div element */
-  private _contentDiv: HTMLDivElement;
+  contentDiv: HTMLDivElement;
 
   /** Value for css style top */
   @Prop({ reflect: true }) top = '0';
@@ -61,20 +61,20 @@ export class Preloader {
     }
     switch (this.type) {
       case 'overlay': {
-        this._spinnerEl.style.position = 'relative';
-        this._spinnerEl.style.top = this.top;
-        this._spinnerEl.style.left = this.left;
-        this._spinnerEl.style.height = this.height;
-        this._spinnerEl.style.width = this.width;
+        this.spinnerEl.position = 'relative';
+        this.spinnerEl.style.top = this.top;
+        this.spinnerEl.style.left = this.left;
+        this.spinnerEl.style.height = this.height;
+        this.spinnerEl.style.width = this.width;
       }
     }
-    this._spinnerEl.width = spinnerWidth;
-    this._calculateSpinnerPosition(this._contentDiv, this._spinnerEl);
+    this.spinnerEl.width = spinnerWidth;
+    this._calculateSpinnerPosition(this.contentDiv, this.spinnerEl);
   }
 
   componentWillUpdate() {
     /** @todo add handle for browser scroll */
-    this._calculateSpinnerPosition(this._contentDiv, this._spinnerEl);
+    this._calculateSpinnerPosition(this.contentDiv, this.spinnerEl);
   }
 
   /**
@@ -123,22 +123,22 @@ export class Preloader {
   /**
    *  Method for check display data behind preloader
    */
-  private _canDisplay(): boolean {
+  canDisplay(): boolean {
     return !this.loading || this.type === 'overlay';
   }
 
   render() {
     return (
       <div class="isp-preloader">
-        {this._canDisplay() && (
-          <div ref={el => (this._contentDiv = el)}>
+        {this.canDisplay() && (
+          <div ref={el => (this.contentDiv = el)}>
             <slot />
           </div>
         )}
         <div style={!this.loading && { display: 'none' }}>
           <div class="isp-preloader__loader">
             <div class="isp-preloader__snipper_round">
-              <antivirus-card-spinner-round ref={el => (this._spinnerEl = el)}></antivirus-card-spinner-round>
+              <antivirus-card-spinner-round ref={el => (this.spinnerEl = el)}></antivirus-card-spinner-round>
             </div>
           </div>
         </div>
