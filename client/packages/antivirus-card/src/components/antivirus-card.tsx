@@ -159,6 +159,17 @@ export class AntivirusCard {
   }
 
   /**
+   * Removes a GET-parameter from the current URI
+   * @param parameter get-parameter
+   */
+  private removeQueryParam(parameter: string): void {
+    const [locationUrl, queryParams] = location.toString().split('?');
+    const searchParams = new URLSearchParams(queryParams);
+    searchParams.delete(parameter);
+    history.replaceState({}, document.title, `${locationUrl}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
+  }
+
+  /**
    * Checks for the payment status and if it's passed
    * and it equals 'failed' -- the expedient modal shows up
    */
@@ -167,6 +178,7 @@ export class AntivirusCard {
     const paymentStatus: PaymentStatus = queryParams.get('payment') as PaymentStatus;
     if (paymentStatus === 'failed') {
       this.failedPaymentModal.toggle(true);
+      this.removeQueryParam('payment');
     }
   }
 
