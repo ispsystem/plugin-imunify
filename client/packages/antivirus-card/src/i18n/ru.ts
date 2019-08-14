@@ -86,6 +86,7 @@ const lang = {
        * so I can cut only the filename without touching the question mark
        */
       TITLE: 'Удалить файл %{filename}',
+      GROUP_TITLE: 'Удалить %{smart_count} запись |||| Удалить %{smart_count} записи |||| Удалить %{smart_count} записей',
       DELETE_BUTTON: 'Удалить',
       CANCEL_BUTTON: 'Отменить',
     },

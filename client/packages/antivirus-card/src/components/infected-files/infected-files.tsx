@@ -52,7 +52,7 @@ export class InfectedFiles {
   @State() tableState: TableState<InfectedFile>;
 
   /** Chosen file to apply an action to */
-  @State() chosenFile: InfectedFile;
+  @State() chosenFiles: InfectedFile[];
 
   /** Event for open modal window with buy pro version */
   @Event() openBuyModal: EventEmitter;
@@ -98,15 +98,8 @@ export class InfectedFiles {
    * @param ids - id list
    */
   async delete(ids: number[]) {
-    await this.deleteFiles(this.siteId, ids);
-    this.tableStore.setStateProperty({
-      data: this.tableState.data.map(file => {
-        if (ids.includes(file.id)) {
-          file.status = 'DELETED';
-        }
-        return file;
-      }),
-    });
+    this.chosenFiles = this.tableState.data.filter(file => ids.includes(file.id));
+    this.openDeletionModal();
   }
 
   /**
@@ -134,9 +127,11 @@ export class InfectedFiles {
    * Opens up the delete confirm dialog modal
    * @param ev Mouse event of clicking the 'delete' link in the dropdown
    */
-  async openDeletionModal(ev: MouseEvent): Promise<boolean> {
+  async openDeletionModal(ev?: MouseEvent): Promise<boolean> {
     await this.deletionModal.toggle(true);
-    await this.dropdownEl.toggle(ev);
+    if (Boolean(ev)) {
+      await this.dropdownEl.toggle(ev);
+    }
     return true;
   }
 
@@ -145,9 +140,19 @@ export class InfectedFiles {
    * @param siteId Site's id
    * @param fileId File's id
    */
-  deleteSubmitHandler(siteId: number, fileId: number): void {
-    this.deleteFiles(siteId, [fileId]);
+  async deleteSubmitHandler(siteId: number, fileId: number | number[]): Promise<void> {
+    const ids = Array.isArray(fileId) ? fileId : [fileId];
     this.deletionModal.toggle(false);
+    await this.deleteFiles(siteId, ids);
+    this.tableStore.setStateProperty({
+      data: this.tableState.data.map(file => {
+        if (ids.includes(file.id)) {
+          file.status = 'DELETED';
+        }
+        return file;
+      }),
+      selectedList: [],
+    });
   }
 
   /**
@@ -155,7 +160,7 @@ export class InfectedFiles {
    * @TODO: It would be great if we could also **highlight** the file instead of just opening its folder
    */
   showInFileManager(): void {
-    const { path } = this.chosenFile;
+    const { path } = this.chosenFiles[0];
     let targetPath = path === '/' ? '' : '/' + encodeURIComponent(path);
     location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
   }
@@ -249,7 +254,7 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.chosenFile = file), this.dropdownEl.toggle(ev))}>
+                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.chosenFiles = [file]), this.dropdownEl.toggle(ev))}>
                     <BurgerMenuIcon />
                   </span>
                 </span>
@@ -311,12 +316,17 @@ export class InfectedFiles {
       <antivirus-card-modal ref={el => (this.deletionModal = el)} max-modal-width="530px">
         <span class="title">
           <span class="delete-modal-title">
-            {this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: this.chosenFile && this.chosenFile.name })}
+            {this.chosenFiles &&
+              (this.chosenFiles.length === 1
+                ? this.t.msg(['INFECTED_FILES', 'MODAL', 'TITLE'], { filename: this.chosenFiles[0].name })
+                : this.t.msg(['INFECTED_FILES', 'MODAL', 'GROUP_TITLE'], { smart_count: this.chosenFiles.length }))}
           </span>
           ?
         </span>
         <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.siteId, this.chosenFile && this.chosenFile.id)}>
+          <antivirus-card-button
+            onClick={() => this.deleteSubmitHandler(this.siteId, this.chosenFiles && this.chosenFiles.map(file => file.id))}
+          >
             {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
           </antivirus-card-button>
           <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>

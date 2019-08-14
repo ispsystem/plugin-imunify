@@ -165,9 +165,6 @@ export namespace TableController {
      */
     async doAction(actionName: K): Promise<void> {
       const idList = this._store.state.selectedList;
-      this._store.setStateProperty({
-        selectedList: [],
-      });
       await this._actionList[actionName](idList);
     }
   }
