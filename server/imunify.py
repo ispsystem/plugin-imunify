@@ -661,7 +661,7 @@ class Imunify:
                 "date": report_result[0]["scan_date"],
                 "checkType": report["type"],
                 "infectedFilesCount": len(file_list),
-                "curedFilesCount": 0,
+                "curedFilesCount": report["cured"],
                 "scanOptionId": report_result[0]["preset_id"]
             },
             "infectedFiles": List(file_list).to_dict()
@@ -757,7 +757,7 @@ class Imunify:
                 "path_hash": path_hash,
                 "file": file["name"],
                 "path": file["path"],
-                "status": str(FileStatus.infected),
+                "status": infected_file["status"] if FileStatus.has_value(infected_file["status"]) else str(FileStatus.infected),
                 "malicious_type": infected_file["malicious_type"],
                 "last_modified": infected_file["last_modified"],
                 "detected": scan_info["started"],
@@ -770,7 +770,12 @@ class Imunify:
                 file_row = select(table="files", table_fields=["id"], where=where_statement)
                 file_id = file_row[0]["id"]
 
+                data = {"iav_file_id": infected_file["iav_file_id"],
+                        "status": infected_file["status"] if FileStatus.has_value(infected_file["status"]) else str(FileStatus.infected)}
+                update(table="files", data=data, where="id={}".format(file_id))
+
             report["infected"].append(file_id)
+        report["cured"] = scan_report.get("cured", 0)
         report_data["report"] = dumps(report)
         insert(table="report", data=report_data)
 
@@ -948,7 +953,7 @@ class Imunify:
                 "date": scan["scan_date"],
                 "checkType": report["type"],
                 "infectedFilesCount": len(report["infected"]),
-                "curedFilesCount": 0,  # TODO(d.vitvitskii) Данная функциональность ещё не реализована. Пока захардкожено
+                "curedFilesCount": report["cured"],
                 "scanOptionId": scan["preset_id"]
             })
         return web.Response(text=str(List(report_list, size=all_rows[0]["count"])))
