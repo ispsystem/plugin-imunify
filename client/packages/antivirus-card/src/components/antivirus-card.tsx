@@ -12,9 +12,10 @@ import { ITranslate } from '../models/translate.reducers';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
-import { getNestedObject } from '../utils/tools';
+import { getNestedObject, getCurrencySymbol } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
+import { AntivirusState } from '../models/antivirus/state';
 
 /** Enumirable for card pages */
 enum AntivirusCardPages {
@@ -42,9 +43,6 @@ export class AntivirusCard {
   buyModal: HTMLAntivirusCardModalElement;
   /** reference to the failed payment modal */
   failedPaymentModal: HTMLAntivirusCardModalElement;
-  /** periods for PRO version */
-  proPeriods;
-
   /** site ID from vepp */
   @Prop() siteId: number;
   /** global notifier object */
@@ -66,6 +64,8 @@ export class AntivirusCard {
   @State() scanning: RootState['antivirus']['scanning'];
   /** list current scan process */
   @State() taskList$: RootState['antivirus']['taskList$'];
+  /** Price list for buy pro version */
+  @State() priceList: AntivirusState['priceList'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -82,19 +82,6 @@ export class AntivirusCard {
    */
   @Watch('t')
   updateMessages(): void {
-    this.proPeriods = [
-      {
-        msg: this.t.msg(['PRO_PERIODS', 'MONTH', 'LONG']),
-        monthCost: `4.9 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])}`,
-        fullCost: '4.9 €',
-      },
-      {
-        msg: this.t.msg(['PRO_PERIODS', 'YEAR', 'LONG']),
-        monthCost: `4.08 €/${this.t.msg(['PRO_PERIODS', 'MONTH', 'SHORT'])} ${this.t.msg(['PRO_PERIODS', 'YEAR', 'DESCRIPTION'])}`,
-        fullCost: '49 €',
-      },
-    ];
-
     let activeIndex = 0;
     if (Array.isArray(this.items) && this.items.length > 0) {
       activeIndex = this.items.findIndex(item => item.active);
@@ -160,6 +147,8 @@ export class AntivirusCard {
   loadTranslate: typeof TranslateActions.load;
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
+  /** Method for get price list by plugin */
+  getPriceList: typeof AntivirusActions.getPriceList;
 
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
@@ -185,6 +174,7 @@ export class AntivirusCard {
       getScanResult: AntivirusActions.getScanResult,
       loadTranslate: TranslateActions.load,
       deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
+      getPriceList: AntivirusActions.getPriceList,
     });
 
     // prettier-ignore
@@ -207,6 +197,8 @@ export class AntivirusCard {
       this.getSettingPresets(this.siteId),
       this.getScanHistory(this.siteId),
       this.getInfectedFiles(this.siteId),
+      /** @todo may be get price list for only free version */
+      this.getPriceList(),
     ]);
 
     if (this.notifier !== undefined) {
@@ -322,25 +314,27 @@ export class AntivirusCard {
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
         <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
-          <span class="title">{this.t.msg(['BUY_MODAL', 'TITLE'])}</span>
-          <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
+          <span class="title" style={{ display: 'block', 'margin-bottom': '20px' }}>
+            {this.t.msg(['BUY_MODAL', 'TITLE'])}
+          </span>
+          {/* <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
             <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>
               {this.proPeriods[0].msg}
             </antivirus-card-switcher-option>
             <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 1)} last>
               {this.proPeriods[1].msg}
             </antivirus-card-switcher-option>
-          </antivirus-card-switcher>
-          <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p>
+          </antivirus-card-switcher> */}
+          {/* <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p> */}
           <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
           <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
-          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} />
+          {/* <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} /> */}
           <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
-          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} />
-          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} />
+          {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} /> */}
+          {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} /> */}
           <div class="button-container">
             <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
-              {this.t.msg(['SUBSCRIBE_FOR'])} {this.proPeriods[this.selectedPeriod].fullCost}
+              {this.t.msg(['SUBSCRIBE_FOR'], { cost: this.priceList[0].cost, currency: getCurrencySymbol(this.priceList[0].currency) })}
             </antivirus-card-button>
             <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
               {this.t.msg(['NOT_NOW'])}

@@ -1,6 +1,7 @@
 import { AntivirusState } from './state';
 import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
 import { BehaviorSubject } from 'rxjs';
+import { PricePeriodType } from './model';
 
 const getInitialState = (): AntivirusState => {
   return {
@@ -15,6 +16,7 @@ const getInitialState = (): AntivirusState => {
     history: [],
     historyItemCount: 0,
     taskList$: new BehaviorSubject([]),
+    priceList: [],
   };
 };
 
@@ -79,6 +81,30 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_STATE_FAILURE: {
       return {
         ...state,
+        error: action.payload.error,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS: {
+      return {
+        ...state,
+        priceList: action.payload.data,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE: {
+      return {
+        ...state,
+        /** @todo DELETE THIS MOCK DATA */
+        priceList: [
+          {
+            id: '0',
+            cost: 5,
+            currency: 'EUR',
+            type: PricePeriodType.month,
+            length: 1,
+          },
+        ],
         error: action.payload.error,
       };
     }

@@ -1,4 +1,5 @@
 import { BehaviorSubject } from 'rxjs';
+import { PriceListPrice } from './model';
 
 /** Types for inspected files status */
 export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
@@ -126,4 +127,5 @@ export interface AntivirusState {
   history: HistoryItem[];
   historyItemCount: number;
   taskList$: BehaviorSubject<number[]>;
+  priceList: PriceListPrice[];
 }
