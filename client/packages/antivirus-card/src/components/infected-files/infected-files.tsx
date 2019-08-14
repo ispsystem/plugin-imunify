@@ -138,15 +138,14 @@ export class InfectedFiles {
   /**
    * Handles delete modal submit button
    * @param siteId Site's id
-   * @param fileId File's id
+   * @param fileIds File's id
    */
-  async deleteSubmitHandler(siteId: number, fileId: number | number[]): Promise<void> {
-    const ids = Array.isArray(fileId) ? fileId : [fileId];
+  async deleteSubmitHandler(siteId: number, fileIds: number[]): Promise<void> {
     this.deletionModal.toggle(false);
-    await this.deleteFiles(siteId, ids);
+    await this.deleteFiles(siteId, fileIds);
     this.tableStore.setStateProperty({
       data: this.tableState.data.map(file => {
-        if (ids.includes(file.id)) {
+        if (fileIds.includes(file.id)) {
           file.status = 'DELETED';
         }
         return file;

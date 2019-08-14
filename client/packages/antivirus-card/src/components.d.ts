@@ -250,7 +250,8 @@ export namespace Components {
     */
     'disabled': boolean;
     /**
-    * Flag for disable border around select
+    * Margin top value for select panel
+    * @todo calculate this parameter
     */
     'marginTop': number;
     /**
@@ -762,7 +763,8 @@ declare namespace LocalJSX {
     */
     'disabled'?: boolean;
     /**
-    * Flag for disable border around select
+    * Margin top value for select panel
+    * @todo calculate this parameter
     */
     'marginTop'?: number;
     /**

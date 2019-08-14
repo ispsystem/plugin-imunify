@@ -37,7 +37,10 @@ export class Select {
   /** Flag for disable border around select */
   @Prop({ reflect: true }) borderless: boolean;
 
-  /** Flag for disable border around select */
+  /**
+   * Margin top value for select panel
+   * @todo calculate this parameter
+   */
   @Prop({ reflect: true }) marginTop: number;
 
   /** Selected value */
