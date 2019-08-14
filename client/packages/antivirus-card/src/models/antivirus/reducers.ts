@@ -8,12 +8,14 @@ const getInitialState = (): AntivirusState => {
 
     isProVersion: false,
     hasScheduledActions: false,
-    infectedFiles: [],
     infectedFilesCount: 0,
     scanning: false,
     inBlackLists: false,
-    history: [],
     historyItemCount: 0,
+    lastScan: {
+      full: null,
+      partial: null,
+    },
     taskList$: new BehaviorSubject([]),
   };
 };
@@ -41,16 +43,12 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       return {
         ...state,
         scanning: false,
-        /** @todo understand what to do in this place with state */
-        // infectedFiles: [
-        //   // merge infected files with new scan result
-        //   ...new Map((state.infectedFiles || []).concat(action.payload.data.infectedFiles.list).map(item => [item.id, item])).values(),
-        // ],
-        // history: [
-        //   // add new item to the history list
-        //   ...state.history,
-        //   action.payload.data.historyItem,
-        // ],
+        infectedFilesCount: action.payload.data.infectedFilesCount,
+        lastScan: {
+          full: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.full,
+          partial: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.partial,
+        },
+        historyItemCount: state.historyItemCount++,
       };
     }
 
@@ -83,15 +81,19 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       };
     }
 
-    case ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS: {
+    case ANTIVIRUS_ACTION.GET_LAST_SCAN_SUCCESS: {
       return {
         ...state,
         // history: action.payload.data.list,
         historyItemCount: action.payload.data.size,
+        lastScan: {
+          full: action.payload.data.full,
+          partial: action.payload.data.partial,
+        },
       };
     }
 
-    case ANTIVIRUS_ACTION.GET_HISTORY_FAILURE: {
+    case ANTIVIRUS_ACTION.GET_LAST_SCAN_FAILURE: {
       return {
         ...state,
         error: action.payload.error,
@@ -119,7 +121,6 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS: {
       return {
         ...state,
-        // infectedFiles: action.payload.data.list,
         infectedFilesCount: action.payload.data.size,
       };
     }

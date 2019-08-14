@@ -5,12 +5,14 @@ import { translateReducer, ITranslate } from '../models/translate.reducers';
 import { AntivirusState } from '../models/antivirus/state';
 import { antivirusReducer } from '../models/antivirus/reducers';
 import { UserNotification } from './user-notification.interface';
+import { TaskEventName } from '../models/antivirus/model';
 
 /** @todo: move to common plugin lib */
 export interface Notifier {
   ids: (ids$: number[] | Observable<number[]>) => Notifier;
   create$: (action?: string) => Observable<any>;
   delete$: (action?: string) => Observable<any>;
+  update$: (action?: string) => Observable<any>;
   taskList$: () => Observable<any>;
 }
 
@@ -28,7 +30,7 @@ export interface NotifierEvent {
   additional_data?: {
     id?: number; // id задачи
     output?: any;
-    name: string; // название задачи
+    name: TaskEventName; // название задачи
     status: 'created' | 'deferred' | 'running' | 'failed' | 'complete'; // статус задачи
     // прогресс задачи, такой формат вроде как формализован на BE но может быть что угодно
     progress?:

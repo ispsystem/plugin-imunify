@@ -121,9 +121,11 @@ export interface AntivirusState {
   // domain in black list
   inBlackLists: boolean;
 
-  infectedFiles: InfectedFile[];
   infectedFilesCount: number;
-  history: HistoryItem[];
+  lastScan: {
+    full?: HistoryItem;
+    partial?: HistoryItem;
+  };
   historyItemCount: number;
   taskList$: BehaviorSubject<number[]>;
 }

@@ -1,5 +1,9 @@
 const lang = {
   TITLE: 'Антивирус ImunifyAV',
+  NOTIFY: {
+    SCAN_SUCCESS: 'Проверка сайта закончилась',
+    MORE_DETAILS: 'Подробнее',
+  },
   MENU_ITEMS: {
     DASHBOARD: 'Обзор',
     INFECTED_FILES: 'Заражённые файлы',
