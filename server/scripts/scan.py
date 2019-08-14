@@ -151,7 +151,7 @@ def process(params, docroot, start_date):
             malicious_list = json.loads(output)
             for malicious in malicious_list["items"]:
                 try:
-                    last_modified = int(os.stat(malicious["file"]).st_mtime)
+                    last_modified = int(os.stat(malicious["file"]).st_mtime) * 1000
                 except FileNotFoundError:
                     last_modified = 0
                 infected_file = {
