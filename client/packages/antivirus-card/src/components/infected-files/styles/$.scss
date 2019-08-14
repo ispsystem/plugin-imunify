@@ -12,6 +12,11 @@
 
 .menu-icon {
   cursor: pointer;
+
+  &_disabled {
+    cursor: not-allowed;
+    opacity: .33;
+  }
 }
 
 .delete-modal-title {

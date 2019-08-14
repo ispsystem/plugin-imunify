@@ -172,6 +172,16 @@ export class InfectedFiles {
     location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
   }
 
+  handleBurgerMenuClick(ev: MouseEvent, file: InfectedFile) {
+    if (file.status === 'DELETED') {
+      ev.preventDefault();
+      return;
+    }
+
+    this.chosenFiles = [file];
+    this.dropdownEl.toggle(ev);
+  }
+
   render() {
     return (
       <Host>
@@ -261,7 +271,10 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.chosenFiles = [file]), this.dropdownEl.toggle(ev))}>
+                  <span
+                    class={`menu-icon ${file.status === 'DELETED' && 'menu-icon_disabled'}`}
+                    onClick={ev => this.handleBurgerMenuClick(ev, file)}
+                  >
                     <BurgerMenuIcon />
                   </span>
                 </span>
@@ -272,7 +285,9 @@ export class InfectedFiles {
                     event.detail ? this.groupActionController.select(file.id) : this.groupActionController.deselect(file.id);
                     event.stopPropagation;
                   }}
-                  checked={this.tableState.selectedList.includes(file.id)}
+                  onClick={event => file.status === 'DELETED' && event.preventDefault()}
+                  checked={file.status !== 'DELETED' && this.tableState.selectedList.includes(file.id)}
+                  readonly={file.status === 'DELETED'}
                 ></antivirus-card-checkbox>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
