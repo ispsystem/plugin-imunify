@@ -356,6 +356,8 @@ def get_file_status(action: str):
         return str(FileStatus.deleted)
     if action == str(FileAction.cure):
         return str(FileStatus.cured)
+    if action == str(FileAction.restore):
+        return str(FileStatus.infected)
 
 
 def get_limit_value(limit: str):
