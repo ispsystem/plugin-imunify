@@ -4,6 +4,9 @@
   color: var(--isp-color__basic-text, #344a5e);
   font-size: var(--isp-font-size-default, 14px);
   font-family: Ubuntu, sans-serif;
+
+  --spinner-round__color: #ed81b5;
+  --spinner-round__width: 25px;
 }
 
 .link {
