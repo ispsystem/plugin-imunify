@@ -20,6 +20,7 @@
 - [antivirus-card-dashboard](dashboard)
 - [antivirus-card-infected-files](infected-files)
 - [antivirus-card-history](history)
+- [antivirus-card-spinner-round](spinner-round)
 - [antivirus-card-navigation](navigation)
 - [antivirus-card-modal](modal)
 - [antivirus-card-button](button)
@@ -30,6 +31,7 @@ graph TD;
   antivirus-card --> antivirus-card-dashboard
   antivirus-card --> antivirus-card-infected-files
   antivirus-card --> antivirus-card-history
+  antivirus-card --> antivirus-card-spinner-round
   antivirus-card --> antivirus-card-navigation
   antivirus-card --> antivirus-card-modal
   antivirus-card --> antivirus-card-button

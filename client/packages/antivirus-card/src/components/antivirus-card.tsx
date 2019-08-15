@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, Listen, Prop, Watch } from '@stencil/core';
+import { Component, h, State, Listen, Prop, Watch, Host } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -41,6 +41,8 @@ type PaymentStatus = 'failed' | 'success';
 export class AntivirusCard {
   /** RXJS subscription */
   sub = new Subscription();
+  /** first loading flag */
+  isPreloader = { card: true };
 
   newScanModal: HTMLAntivirusCardModalElement;
 
@@ -169,6 +171,10 @@ export class AntivirusCard {
   /** Method for get price list by plugin */
   getPriceList: typeof AntivirusActions.getPriceList;
 
+  /**
+   * LIFECYCLE
+   * Init global store and subscribe to notifications
+   */
   async componentWillLoad(): Promise<void> {
     this.store.setStore(
       configureStore({
@@ -195,21 +201,6 @@ export class AntivirusCard {
       deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
       getPriceList: AntivirusActions.getPriceList,
     });
-
-    // prettier-ignore
-    await this.loadTranslate(
-      getNestedObject(this.translateService, ['currentLang'])
-      || getNestedObject(this.translateService, ['defaultLang'])
-      || defaultLang
-    );
-
-    if (this.translateService !== undefined) {
-      this.translateService.onLangChange.subscribe(d => {
-        if (d.lang in languages) {
-          this.loadTranslate(d.lang);
-        }
-      });
-    }
 
     if (this.notifier !== undefined) {
       this.sub.add(
@@ -263,7 +254,13 @@ export class AntivirusCard {
         }),
       );
     }
+  }
 
+  /**
+   * LIFECYCLE
+   * Prepare component, load data from server
+   */
+  async componentDidLoad() {
     await Promise.all([
       this.checkFeatures(),
       this.getSettingPresets(this.siteId),
@@ -271,12 +268,29 @@ export class AntivirusCard {
       this.getInfectedFiles(this.siteId),
       /** @todo may be get price list for only free version */
       this.getPriceList(),
+      this.loadTranslate(
+        // prettier-ignore
+        getNestedObject(this.translateService, ['currentLang'])
+        || getNestedObject(this.translateService, ['defaultLang'])
+        || defaultLang,
+      ),
     ]);
 
-    // search page in query params
+    if (this.translateService !== undefined) {
+      this.translateService.onLangChange.subscribe(d => {
+        if (d.lang in languages) {
+          this.loadTranslate(d.lang);
+        }
+      });
+    }
+
+    // get url params
     const [defaultLocation, queryParam] = location.toString().split('?');
+
     if (Boolean(queryParam)) {
       const searchParams = new URLSearchParams(queryParam);
+
+      // search page in query params
       if (searchParams.has('page')) {
         const index = this.items.findIndex(i => i.name === searchParams.get('page'));
         const beforeIndex = this.items.findIndex(item => item.active);
@@ -288,15 +302,6 @@ export class AntivirusCard {
         }
         searchParams.delete('page');
       }
-      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
-    }
-  }
-
-  componentDidLoad() {
-    /** @todo move this logic to different handlers */
-    const [defaultLocation, queryParam] = location.toString().split('?');
-    if (Boolean(queryParam)) {
-      const searchParams = new URLSearchParams(queryParam);
       // search open modal in query params
       if (searchParams.has('openModal')) {
         switch (searchParams.get('openModal')) {
@@ -317,6 +322,8 @@ export class AntivirusCard {
       }
       history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
+
+    this.isPreloader.card = false;
   }
 
   /**
@@ -332,6 +339,9 @@ export class AntivirusCard {
   }
 
   render() {
+    if (this.isPreloader.card) {
+      return <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>;
+    }
     return (
       <Host>
         <h2 class="title">{this.t.msg(['TITLE'])}</h2>
