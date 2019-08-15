@@ -9,6 +9,7 @@ import { PreviewFree } from '../preview/PreviewFree';
 import { PreviewNewScan } from '../preview/PreviewNewScan';
 import { AntivirusState, ScanOption } from '../../models/antivirus/state';
 import { MOCK } from '../../utils/mock';
+import { getCurrencySymbol, getShortPeriod } from '../../utils/tools';
 
 /**
  * Dashboard component for antivirus-card
@@ -41,7 +42,11 @@ export class Dashboard {
   /** translate object */
   @State() t: ITranslate;
 
+  /** Preset object for scanning */
   @State() scanPreset: AntivirusState['scanPreset'];
+
+  /** Price list for pro version */
+  @State() priceList: AntivirusState['priceList'];
 
   /** open ImunifyAV+ buy modal */
   @Event() openBuyModal: EventEmitter<ScanOption>;
@@ -93,8 +98,13 @@ export class Dashboard {
         ) : (
           <PreviewFree
             onClick={() => this.openBuyModal.emit()}
-            title={this.t.msg(['DASHBOARD', 'TITLE'])}
-            text={this.t.msg(['DASHBOARD', 'TEXT'])}
+            title={this.t.msg(['DASHBOARD', 'TITLE'], {
+              cost: this.priceList[0].cost,
+              currency: getCurrencySymbol(this.priceList[0].currency),
+              period: getShortPeriod(this.priceList[0].type, this.t),
+            })}
+            /** @todo uncomment if UX decides to return the description for the purchase */
+            // text={this.t.msg(['DASHBOARD', 'TEXT'])}
           ></PreviewFree>
         )}
       </Host>

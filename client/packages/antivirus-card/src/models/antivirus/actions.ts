@@ -24,6 +24,8 @@ import {
   deleteFilesFailure,
   deleteFilesPostProcessSuccess,
   deleteFilesPostProcessFailure,
+  getPriceListSuccess,
+  getPriceListFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
@@ -37,6 +39,7 @@ import {
   ScanSuccessData,
   GetLastScanResponse,
   LastScanData,
+  PriceListResponse,
 } from './model';
 
 /**
@@ -189,6 +192,26 @@ export namespace AntivirusActions {
         dispatch(getStateSuccess(json));
       } catch (error) {
         dispatch(getStateFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Method for getting price list for buy pro version
+   */
+  export function getPriceList() {
+    return async dispatch => {
+      try {
+        const requestInit: RequestInit = {
+          method: 'GET',
+        };
+        const response = await fetch(`${endpoint}/isp/market/v3/pricelist/plugin/AVP?lang=ru`, requestInit);
+        handleErrors(response);
+        const priceList: PriceListResponse = await response.json();
+        /** @todo in price list only first price in list now */
+        dispatch(getPriceListSuccess(priceList.list[0].price));
+      } catch (error) {
+        dispatch(getPriceListFailure(error));
       }
     };
   }

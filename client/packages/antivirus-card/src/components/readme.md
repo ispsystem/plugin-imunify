@@ -22,8 +22,6 @@
 - [antivirus-card-history](history)
 - [antivirus-card-navigation](navigation)
 - [antivirus-card-modal](modal)
-- [antivirus-card-switcher](switcher)
-- [antivirus-card-switcher-option](switcher-option)
 - [antivirus-card-button](button)
 
 ### Graph
@@ -34,8 +32,6 @@ graph TD;
   antivirus-card --> antivirus-card-history
   antivirus-card --> antivirus-card-navigation
   antivirus-card --> antivirus-card-modal
-  antivirus-card --> antivirus-card-switcher
-  antivirus-card --> antivirus-card-switcher-option
   antivirus-card --> antivirus-card-button
   antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-dashboard --> antivirus-card-modal
