@@ -30,7 +30,7 @@
 
   border-style: solid;
   border-radius: 3px;
-  box-shadow: 0 1px 2px 0 rgba(64, 61, 4, 0.44);
+  box-shadow: var(--ngispui-button__box-shadow, 0 1px 2px 0 rgba(64, 61, 4, 0.44));
 
   font: 14px Ubuntu, sans-serif;
   line-height: 28px;

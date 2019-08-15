@@ -72,6 +72,11 @@ export class Dashboard {
   render() {
     return (
       <Host>
+        {this.isProVersion && Boolean(this.scanPreset.partial) && (
+          <antivirus-card-button class="header-button new-scan-button" btn-theme="third" onClick={() => this.newScanModal.toggle(true)}>
+            {this.t.msg(['NEW_SCAN_BTN'])}
+          </antivirus-card-button>
+        )}
         <antivirus-card-preview></antivirus-card-preview>
         {this.isProVersion ? (
           [

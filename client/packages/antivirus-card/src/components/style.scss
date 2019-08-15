@@ -1,3 +1,5 @@
+
+
 :host {
   min-width: 680px;
 
@@ -71,4 +73,10 @@
   antivirus-card-hint {
     margin-left: 10px;
   }
+}
+
+.header-button {
+  position: absolute;
+  right: 0;
+  top: -55px;
 }
