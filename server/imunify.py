@@ -70,7 +70,6 @@ class FileStatus(BaseEnum):
     infected = "INFECTED"
     cured = "CURED"
     added_to_exceptions = "EXCEPTED"
-    healed = "HEALED"
     deleted = "DELETED"
 
 
@@ -83,7 +82,7 @@ class ScanType(BaseEnum):
 class FileAction(BaseEnum):
     """Типы операций с файлами"""
     delete = "DELETE"
-    heal = "HEAL"
+    cure = "CURE"
     restore = "RESTORE"
 
 
@@ -355,8 +354,8 @@ def get_file_status(action: str):
     """
     if action == str(FileAction.delete):
         return str(FileStatus.deleted)
-    if action == str(FileAction.heal):
-        return str(FileStatus.healed)
+    if action == str(FileAction.cure):
+        return str(FileStatus.cured)
 
 
 def get_limit_value(limit: str):
@@ -1072,6 +1071,7 @@ class Imunify:
     async def post_site_site_id_files(self, info: HandlerInfo):
         """
         Операции с файлами
+        TODO(d.vitvitskii) Вынести операции с файлами по разным хендлерам
         :param info: Информация о запросе
         :return:
         """
@@ -1095,7 +1095,7 @@ class Imunify:
         data = await response.json()
         host = data.get("host", "")
 
-        file_status = str(FileStatus.healed) if action == str(FileAction.restore) else str(FileStatus.infected)
+        file_status = str(FileStatus.cured) if action == str(FileAction.restore) else str(FileStatus.infected)
 
         ids = ",".join(str(id) for id in file_ids)
         where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, file_status, site_id, info.instance_id)

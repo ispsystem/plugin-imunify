@@ -6,22 +6,13 @@ from argparse import ArgumentParser
 
 
 FILE_ACTION_DELETE = "delete"
-FILE_ACTION_HEAL = "heal"
+FILE_ACTION_CURE = "cure"
 OPERATION_STATUS_SUCCESS = "success"
 OPERATION_STATUS_FAILED = "failed"
 
 
-def get_cmd(host: str):
-    """
-    Возвращает основные команды для выполнения операции
-    :param host: Хост на котором будет выполняться операция
-    :return:
-    """
-    return ["/usr/bin/ssh", "-o", "StrictHostKeyChecking=no", "root@" + host]
-
-
 def get_malicious_list(host: str, action: str):
-    cmd = get_cmd(host)
+    cmd = ["/usr/bin/ssh", "-o", "StrictHostKeyChecking=no", "root@" + host]
     cmd.extend(["imunify-antivirus", "malware", "malicious", "list", "--json"])
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
@@ -51,7 +42,7 @@ def handle_operation(params, extended_cmd):
         except ValueError:
             result["error"] = "Only integer file ids"
 
-        cmd = get_cmd(params.host)
+        cmd = ["/usr/bin/ssh", "-o", "StrictHostKeyChecking=no", "root@" + params.host]
         cmd.extend(extended_cmd)
         cmd.append(iav_file_id)
 
@@ -76,7 +67,7 @@ def process(params):
     if params.action == FILE_ACTION_DELETE:
         extended_cmd = ["imunify-antivirus", "malware", "malicious", "delete"]
         return handle_operation(params, extended_cmd)
-    if params.action == FILE_ACTION_HEAL:
+    if params.action == FILE_ACTION_CURE:
         extended_cmd = ["/bin/python3", "/opt/ispsystem/plugin/imunify/heal.py", "--iav-file-id"]
         return handle_operation(params, extended_cmd)
 
