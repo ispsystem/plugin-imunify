@@ -172,6 +172,12 @@ export class InfectedFiles {
     location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
   }
 
+  /**
+   * Handles file's action menu button
+   * If the file is deleted this method doesnt remembers the chosen file and doesnt toggle the dropdown
+   * @param ev MouseEvent
+   * @param file Menu's file
+   */
   handleBurgerMenuClick(ev: MouseEvent, file: InfectedFile) {
     if (file.status === 'DELETED') {
       ev.preventDefault();
