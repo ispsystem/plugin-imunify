@@ -196,7 +196,7 @@ export namespace AntivirusActions {
           const scanResult: ScanResultResponse = await scanResponse.json();
           const filesResult: GetInfectedFilesResponse = await infectedFilesCount.json();
           userNotification.push({
-            title: this._t.msg(['NOTIFY', 'SCAN_SUCCESS']),
+            title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
             content: '',
             // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
             type: NotifyBannerTypes.NORMAL_FAST,
