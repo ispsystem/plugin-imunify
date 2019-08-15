@@ -77,12 +77,22 @@ export namespace AntivirusActions {
         };
         const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
         if (response.status === 404) {
-          const filename = files[0].name;
-          userNotification.push({
-            type: NotifyBannerTypes.ERROR_FAST,
-            title: t.msg(['VIRUS_DELETE', 'FAIL']),
-            content: t.msg(['VIRUS_DELETE', 'ERROR_404'], { filename }),
-          });
+          if (files.length > 1) {
+            const titleLeftPart = t.msg(['VIRUS_DELETE', 'GROUP', 'FAIL_1']);
+            const titleRightPart = t.msg(['VIRUS_DELETE', 'GROUP', 'FAIL_2'], files.length);
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: `${titleLeftPart} ${files.length} ${titleRightPart}`,
+              content: undefined,
+            });
+          } else {
+            const filename = files[0].name;
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: t.msg(['VIRUS_DELETE', 'FAIL']),
+              content: t.msg(['VIRUS_DELETE', 'ERROR_404'], { filename }),
+            });
+          }
         }
         handleErrors(response);
         const json: TaskManagerResponse = await response.json();
@@ -108,16 +118,21 @@ export namespace AntivirusActions {
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
         let count: number = deletedFiles.length;
 
-        const title =
-          count > 1
-            ? `${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_2'], count)}`
-            : t.msg(['VIRUS_DELETE', 'DONE']);
-        const content = count > 1 ? deletedFiles[0].name : undefined;
-        userNotification.push({
-          title,
-          content,
-          type: NotifyBannerTypes.NORMAL_FAST,
-        });
+        const type = NotifyBannerTypes.NORMAL_FAST;
+        if (count > 1) {
+          userNotification.push({
+            title: `${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_2'], count)}`,
+            content: undefined,
+            type,
+          });
+        } else {
+          userNotification.push({
+            title: t.msg(['VIRUS_DELETE', 'DONE']),
+            content: deletedFiles[0] && deletedFiles[0].name,
+            type,
+          });
+        }
+
         dispatch(deleteFilesPostProcessSuccess(count));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
