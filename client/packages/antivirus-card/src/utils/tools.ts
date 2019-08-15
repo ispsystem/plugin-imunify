@@ -1,3 +1,6 @@
+import { ITranslate } from '../models/translate.reducers';
+import { PricePeriodType } from '../models/antivirus/model';
+
 /**
  * Combination of async function + await + setTimeout
  *
@@ -108,4 +111,30 @@ export function getDayMonthYearAsStr(date: Date): string {
  */
 export function getTimeAsStr(date: Date): string {
   return `${date.getHours()}:${pad(date.getMinutes())}`;
+}
+
+/**
+ * Get currency symbol by ISO
+ * @param currency - currency ISO
+ */
+export function getCurrencySymbol(currency: string): string {
+  switch (currency) {
+    case 'RUB':
+      return '₽';
+    case 'EUR':
+      return '€';
+    case 'USD':
+      return '$';
+    default:
+      return currency;
+  }
+}
+
+/**
+ * Return period as short message
+ * @param period - period
+ * @param t - translate object
+ */
+export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3): string {
+  return t.msg(['PRICE_PERIOD', period.toUpperCase() as 'DAY' | 'MONTH' | 'YEAR']).slice(0, count);
 }

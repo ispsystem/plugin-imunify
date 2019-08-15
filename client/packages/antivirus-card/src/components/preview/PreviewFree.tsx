@@ -6,7 +6,7 @@ import { ImunifyLogo } from '../icons/ImunifyLogo';
  */
 interface PreviewFreeProps {
   title: string;
-  text: string;
+  text?: string;
   onClick: (event: MouseEvent) => void;
 }
 
@@ -18,9 +18,9 @@ interface PreviewFreeProps {
 export const PreviewFree: FunctionalComponent<PreviewFreeProps> = props => (
   <section onClick={props.onClick.bind(this)} class="antivirus-card-preview__free">
     <h4 class="antivirus-card-preview__free-title">{props.title}</h4>
-    <p class="antivirus-card-preview__free-msg">{props.text}</p>
+    {Boolean(props.text) && <p class="antivirus-card-preview__free-msg">{props.text}</p>}
     <div class="antivirus-card-preview__free-icon">
-      <ImunifyLogo></ImunifyLogo>
+      <ImunifyLogo />
     </div>
   </section>
 );
