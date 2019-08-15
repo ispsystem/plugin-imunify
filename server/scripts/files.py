@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 
 FILE_ACTION_DELETE = "delete"
 FILE_ACTION_CURE = "cure"
+FILE_ACTION_RESTORE = "restore"
 OPERATION_STATUS_SUCCESS = "success"
 OPERATION_STATUS_FAILED = "failed"
 
@@ -69,6 +70,9 @@ def process(params):
         return handle_operation(params, extended_cmd)
     if params.action == FILE_ACTION_CURE:
         extended_cmd = ["/bin/python3", "/opt/ispsystem/plugin/imunify/heal.py", "--iav-file-id"]
+        return handle_operation(params, extended_cmd)
+    if params.action == FILE_ACTION_RESTORE:
+        extended_cmd = ["imunify-antivirus", "malware", "malicious", "restore-original"]
         return handle_operation(params, extended_cmd)
 
     return {"action": params.action, "status": OPERATION_STATUS_FAILED, "error": "There is no handler for this action"}
