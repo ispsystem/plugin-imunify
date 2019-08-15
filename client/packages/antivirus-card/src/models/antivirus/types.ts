@@ -283,11 +283,6 @@ interface GetPriceListSuccessAction {
   payload: { data: PriceListPrice[] };
 }
 
-interface GetHistorySuccessAction {
-  type: ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS;
-  payload: any;
-}
-
 interface GetLastScanFailureAction {
   type: ANTIVIRUS_ACTION.GET_LAST_SCAN_FAILURE;
   payload: any;

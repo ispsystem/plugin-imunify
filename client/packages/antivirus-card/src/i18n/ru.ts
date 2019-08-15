@@ -181,6 +181,7 @@ const lang = {
     // LIFETIME: 'вечная',
     // TRIAL: 'триальная',
   },
+  LAST_CHECK_IN: '%{date} в %{time}',
 };
 
 export type Lang = typeof lang;

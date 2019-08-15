@@ -116,16 +116,23 @@ export class AntivirusCard {
     this.items = [...this.items];
   }
 
+  /**
+   * Update status for navigation item history, if history count change
+   *
+   * @param count - new history item count
+   */
   @Watch('historyItemCount')
   lastScanChange(count: number) {
-    const historyTabIndex = this.items && this.items.findIndex(item => item.name === AntivirusCardPages.history);
-    if (historyTabIndex !== undefined && historyTabIndex > -1) {
-      this.items = this.items.map((item, index) => {
-        if (index === historyTabIndex) {
-          item.hidden = count < 1;
-        }
-        return item;
-      });
+    if (Array.isArray(this.items)) {
+      const historyTabIndex = this.items.findIndex(item => item.name === AntivirusCardPages.history);
+      if (historyTabIndex !== undefined && historyTabIndex > -1) {
+        this.items = this.items.map((item, index) => {
+          if (index === historyTabIndex) {
+            item.hidden = count < 1;
+          }
+          return item;
+        });
+      }
     }
   }
 
@@ -191,8 +198,6 @@ export class AntivirusCard {
         }
       });
     }
-
-    // const notifierLoad =
 
     if (this.notifier !== undefined) {
       this.sub.add(

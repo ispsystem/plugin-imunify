@@ -133,9 +133,15 @@ export class Preview {
           lastScan={
             this.scanType === 'PARTIAL'
               ? this.lastScan.partial &&
-                `${getDayMonthYearAsStr(new Date(this.lastScan.partial.date))} в ${getTimeAsStr(new Date(this.lastScan.partial.date))}`
+                this.t.msg(['LAST_CHECK_IN'], {
+                  date: getDayMonthYearAsStr(new Date(this.lastScan.partial.date)),
+                  time: getTimeAsStr(new Date(this.lastScan.partial.date)),
+                })
               : this.lastScan.full &&
-                `${getDayMonthYearAsStr(new Date(this.lastScan.full.date))} в ${getTimeAsStr(new Date(this.lastScan.full.date))}`
+                this.t.msg(['LAST_CHECK_IN'], {
+                  date: getDayMonthYearAsStr(new Date(this.lastScan.full.date)),
+                  time: getTimeAsStr(new Date(this.lastScan.full.date)),
+                })
           }
           scanning={this.scanning}
         ></PreviewStatus>

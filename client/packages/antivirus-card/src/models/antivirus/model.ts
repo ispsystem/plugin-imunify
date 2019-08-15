@@ -26,15 +26,21 @@ export interface NavigationItem {
   hidden?: boolean;
 }
 
+/** Interface for data after scan success */
 export interface ScanSuccessData extends ScanResultResponse {
   infectedFilesCount: number;
 }
 
-export interface GetInfectedFilesResponse {
-  list: any[];
+/** Common response for get list */
+export interface GetListResponse<T> {
+  list: T[];
   size: number;
 }
 
+/** Response by infected file list query */
+export interface GetInfectedFilesResponse extends GetListResponse<InfectedFile> {}
+
+/** Common response for task manager */
 export interface TaskManagerResponse {
   task_id: number;
 }
@@ -49,10 +55,7 @@ export enum TaskEventName {
 }
 
 /** Response by last scan action */
-export interface GetLastScanResponse {
-  list: HistoryItem[];
-  size: number;
-}
+export interface GetLastScanResponse extends GetListResponse<HistoryItem> {}
 
 /** Interface for last scan in state */
 export interface LastScanData {
