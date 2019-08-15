@@ -1,36 +1,36 @@
 import { NotifierEvent } from '../../redux/reducers';
 import {
+  deleteFilesFailure,
+  deleteFilesPostProcessFailure,
+  deleteFilesPostProcessSuccess,
+  deleteFilesSuccess,
+  disablePresetFailure,
+  disablePresetSuccess,
+  getInfectedFilesFailure,
+  getInfectedFilesSuccess,
+  getPresetsFailure,
+  getPresetsSuccess,
+  getStateBegin,
+  getStateFailure,
+  getLastScanSuccess,
+  getLastScanFailure,
+  getStateSuccess,
+  saveAndScanBegin,
+  saveAndScanFailure,
+  saveAndScanSuccess,
+  savePartialPresetSuccess,
+  savePresetFailure,
   scanBegin,
   scanFailure,
   scanning,
   scanSuccess,
-  getStateBegin,
-  getStateSuccess,
-  getStateFailure,
-  getLastScanSuccess,
-  getLastScanFailure,
-  savePartialPresetSuccess,
-  savePresetFailure,
-  saveAndScanFailure,
-  saveAndScanBegin,
-  saveAndScanSuccess,
-  getInfectedFilesSuccess,
-  getInfectedFilesFailure,
-  getPresetsSuccess,
-  getPresetsFailure,
-  disablePresetSuccess,
-  disablePresetFailure,
-  deleteFilesSuccess,
-  deleteFilesFailure,
-  deleteFilesPostProcessSuccess,
-  deleteFilesPostProcessFailure,
   getPriceListSuccess,
   getPriceListFailure,
 } from './types';
 import { endpoint } from '../../constants';
-import { AntivirusState, ScanOption, CheckType, InfectedFile } from './state';
+import { AntivirusState, CheckType, InfectedFile, ScanOption } from './state';
 import { getNestedObject } from '../../utils/tools';
-import { UserNotification, NotifyBannerTypes } from '../../redux/user-notification.interface';
+import { NotifyBannerTypes, UserNotification } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
 import {
   ScanResultResponse,
@@ -68,20 +68,40 @@ export function handleErrors(response: Response): Response {
  */
 export namespace AntivirusActions {
   /**
-   * Deletes the file or files
+   * Deletes a file or files
    *
    * @param siteId Site's id
-   * @param files Files' ids
+   * @param files Files array
+   * @param userNotification User notifications provider
+   * @param t i18n provider
    */
-  export function deleteFiles(siteId: number, files: number[]) {
+  export function deleteFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: ITranslate) {
     return async dispatch => {
       try {
-        const body = { files };
+        const body = { files: files.map(f => f.id) };
         const requestInit: RequestInit = {
           method: 'DELETE',
           body: JSON.stringify(body),
         };
         const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        if (response.status === 404) {
+          if (files.length > 1) {
+            const titleLeftPart = t.msg(['VIRUS_DELETE', 'GROUP', 'FAIL_1']);
+            const titleRightPart = t.msg(['VIRUS_DELETE', 'GROUP', 'FAIL_2'], files.length);
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: `${titleLeftPart} ${files.length} ${titleRightPart}`,
+              content: undefined,
+            });
+          } else {
+            const filename = files[0].name;
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: t.msg(['VIRUS_DELETE', 'FAIL']),
+              content: t.msg(['VIRUS_DELETE', 'ERROR_404'], { filename }),
+            });
+          }
+        }
         handleErrors(response);
         const json: TaskManagerResponse = await response.json();
 
@@ -92,13 +112,36 @@ export namespace AntivirusActions {
     };
   }
 
-  export function deleteFilesPostProcess(notify: { event: NotifierEvent }) {
+  /**
+   * File deletion post process method
+   * It updated the state of the component and sends the user notification
+   * @param notify Notification from notifier
+   * @param userNotification User Notification provider
+   * @param t Translator provider
+   */
+  export function deleteFilesPostProcess(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
         const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
         let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let deletedFilesCount: number = deletedFiles.length;
-        dispatch(deleteFilesPostProcessSuccess(deletedFilesCount));
+        let count: number = deletedFiles.length;
+
+        const type = NotifyBannerTypes.NORMAL_FAST;
+        if (count > 1) {
+          userNotification.push({
+            title: `${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_DELETE', 'GROUP', 'DONE_2'], count)}`,
+            content: undefined,
+            type,
+          });
+        } else {
+          userNotification.push({
+            title: t.msg(['VIRUS_DELETE', 'DONE']),
+            content: deletedFiles[0] && deletedFiles[0].name,
+            type,
+          });
+        }
+
+        dispatch(deleteFilesPostProcessSuccess(count));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
       }

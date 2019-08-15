@@ -243,7 +243,7 @@ export class AntivirusCard {
                   this.getScanResult(notify, this.userNotification, this.t, this.siteId);
                   break;
                 case TaskEventName.filesDelete:
-                  this.deleteFilesPostProcess(notify);
+                  this.deleteFilesPostProcess(notify, this.userNotification, this.t);
                   break;
               }
             }

@@ -45,6 +45,9 @@ export class InfectedFiles {
   /** translate object */
   @State() t: ITranslate;
 
+  /** user notification's provider */
+  @State() userNotification: RootState['userNotification'];
+
   /** Vepp site id */
   @State() siteId: RootState['siteId'];
 
@@ -62,11 +65,16 @@ export class InfectedFiles {
   }
 
   async componentWillLoad() {
-    this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
-    // controlling table state by pagination
+    this.store.mapStateToProps(this, state => ({
+      ...state.antivirus,
+      t: state.translate,
+      siteId: state.siteId,
+      userNotification: state.userNotification,
+    }));
     this.store.mapDispatchToProps(this, {
       deleteFiles: AntivirusActions.deleteFiles,
     });
+    // controlling table state by pagination
     this.paginationController = new TableController.Pagination(
       `${endpoint}/plugin/api/imunify/site/${this.siteId}/files/infected`,
       this.handleFailure,
@@ -137,12 +145,12 @@ export class InfectedFiles {
 
   /**
    * Handles delete modal submit button
-   * @param siteId Site's id
-   * @param fileIds File's id
+   * @param files File's id
    */
-  async deleteSubmitHandler(siteId: number, fileIds: number[]): Promise<void> {
+  async deleteSubmitHandler(files: InfectedFile[]): Promise<void> {
     this.deletionModal.toggle(false);
-    await this.deleteFiles(siteId, fileIds);
+    const fileIds = files.map(f => f.id);
+    await this.deleteFiles(this.siteId, files, this.userNotification, this.t);
     this.tableStore.setStateProperty({
       data: this.tableState.data.map(file => {
         if (fileIds.includes(file.id)) {
@@ -162,6 +170,22 @@ export class InfectedFiles {
     const { path } = this.chosenFiles[0];
     let targetPath = path === '/' ? '' : '/' + encodeURIComponent(path);
     location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
+  }
+
+  /**
+   * Handles file's action menu button
+   * If the file is deleted this method doesnt remembers the chosen file and doesnt toggle the dropdown
+   * @param ev MouseEvent
+   * @param file Menu's file
+   */
+  handleBurgerMenuClick(ev: MouseEvent, file: InfectedFile) {
+    if (file.status === 'DELETED') {
+      ev.preventDefault();
+      return;
+    }
+
+    this.chosenFiles = [file];
+    this.dropdownEl.toggle(ev);
   }
 
   render() {
@@ -253,7 +277,10 @@ export class InfectedFiles {
               </antivirus-card-table-cell>
               <antivirus-card-table-cell doubleline>
                 <span class="main-text">
-                  <span class="menu-icon" onClick={(ev: MouseEvent) => ((this.chosenFiles = [file]), this.dropdownEl.toggle(ev))}>
+                  <span
+                    class={`menu-icon ${file.status === 'DELETED' && 'menu-icon_disabled'}`}
+                    onClick={ev => this.handleBurgerMenuClick(ev, file)}
+                  >
                     <BurgerMenuIcon />
                   </span>
                 </span>
@@ -264,7 +291,9 @@ export class InfectedFiles {
                     event.detail ? this.groupActionController.select(file.id) : this.groupActionController.deselect(file.id);
                     event.stopPropagation;
                   }}
-                  checked={this.tableState.selectedList.includes(file.id)}
+                  onClick={event => file.status === 'DELETED' && event.preventDefault()}
+                  checked={file.status !== 'DELETED' && this.tableState.selectedList.includes(file.id)}
+                  readonly={file.status === 'DELETED'}
                 ></antivirus-card-checkbox>
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
@@ -323,9 +352,7 @@ export class InfectedFiles {
           ?
         </span>
         <div class="flex-container" style={{ marginTop: 30 + 'px' }}>
-          <antivirus-card-button
-            onClick={() => this.deleteSubmitHandler(this.siteId, this.chosenFiles && this.chosenFiles.map(file => file.id))}
-          >
+          <antivirus-card-button onClick={() => this.deleteSubmitHandler(this.chosenFiles)}>
             {this.t.msg(['INFECTED_FILES', 'MODAL', 'DELETE_BUTTON'])}
           </antivirus-card-button>
           <a class="link link_indent-left" onClick={() => this.deletionModal.toggle(false)}>
