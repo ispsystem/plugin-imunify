@@ -188,7 +188,7 @@ export class Store extends AbstractStore<WidgetState> {
         this._userNotification.push({
           title: this._t.msg(['WIDGET', 'SCAN_SUCCESS']),
           content: '',
-          link: this._t.msg(['WIDGET', 'MORE_DETAILS']),
+          // link: this._t.msg(['WIDGET', 'MORE_DETAILS']),
           type: NotifyBannerTypes.NORMAL_FAST,
         });
 
@@ -204,6 +204,7 @@ export class Store extends AbstractStore<WidgetState> {
         this.setStateProperty({
           lastCheck: scanResult.historyItem.date,
           infectedFilesCount: infectedFilesResult.size,
+          scanning: false,
         });
       } else {
         throw new Error('Can not found object started or taskId in a notify!');
@@ -219,16 +220,12 @@ export class Store extends AbstractStore<WidgetState> {
    * @param event - event by notifier
    */
   async updateStateByNotify(event: NotifierEvent): Promise<void> {
+    console.log('EVENT', event, event.additional_data);
     switch (event.additional_data.name) {
       case TaskEventName.scan:
         switch (event.additional_data.status) {
-          case 'deleted':
-            await this.getScanResult(event);
-            break;
           case 'complete':
-            this.setStateProperty({
-              scanning: false,
-            });
+            await this.getScanResult(event);
             break;
           case 'running':
             this.setStateProperty({

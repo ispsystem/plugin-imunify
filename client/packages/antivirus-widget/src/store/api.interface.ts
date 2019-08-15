@@ -1,5 +1,8 @@
 import { Preset, HistoryItem } from './types';
 
+/**
+ * Response interfaces for request of plugin api
+ */
 export namespace API {
   export interface GetPresetsResponse {
     full: Preset;

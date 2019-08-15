@@ -1,5 +1,9 @@
 const lang = {
   TITLE: 'Антивирус ImunifyAV',
+  NOTIFY: {
+    SCAN_SUCCESS: 'Проверка сайта закончилась',
+    MORE_DETAILS: 'Подробнее',
+  },
   MENU_ITEMS: {
     DASHBOARD: 'Обзор',
     INFECTED_FILES: 'Заражённые файлы',
@@ -188,6 +192,7 @@ const lang = {
     },
     ERROR_404: '%{filename} - файл уже был удалён ранее',
   },
+  LAST_CHECK_IN: '%{date} в %{time}',
 };
 
 export type Lang = typeof lang;

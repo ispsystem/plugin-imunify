@@ -6,14 +6,14 @@ import {
   deleteFilesSuccess,
   disablePresetFailure,
   disablePresetSuccess,
-  getHistoryFailure,
-  getHistorySuccess,
   getInfectedFilesFailure,
   getInfectedFilesSuccess,
   getPresetsFailure,
   getPresetsSuccess,
   getStateBegin,
   getStateFailure,
+  getLastScanSuccess,
+  getLastScanFailure,
   getStateSuccess,
   saveAndScanBegin,
   saveAndScanFailure,
@@ -32,7 +32,15 @@ import { AntivirusState, CheckType, InfectedFile, ScanOption } from './state';
 import { getNestedObject } from '../../utils/tools';
 import { NotifyBannerTypes, UserNotification } from '../../redux/user-notification.interface';
 import { ITranslate } from '../translate.reducers';
-import { ScanResultResponse, TaskManagerResponse, PriceListResponse } from './model';
+import {
+  ScanResultResponse,
+  TaskManagerResponse,
+  GetInfectedFilesResponse,
+  ScanSuccessData,
+  GetLastScanResponse,
+  LastScanData,
+  PriceListResponse,
+} from './model';
 
 /**
  *
@@ -173,21 +181,33 @@ export namespace AntivirusActions {
    *
    * @param notify - result from notifier
    */
-  export function getScanResult(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
+  export function getScanResult(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate, siteId: number) {
     return async dispatch => {
       try {
         const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
         const taskId = notify.event.id;
         if (started !== undefined && taskId !== undefined) {
-          let response = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`);
-          handleErrors(response);
-          const data: ScanResultResponse = await response.json();
-          data.infectedFiles.list.forEach(file => {
+          const [scanResponse, infectedFilesCount] = await Promise.all([
+            fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`),
+            fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`),
+          ]);
+          handleErrors(scanResponse);
+          handleErrors(infectedFilesCount);
+          const scanResult: ScanResultResponse = await scanResponse.json();
+          const filesResult: GetInfectedFilesResponse = await infectedFilesCount.json();
+          userNotification.push({
+            title: this._t.msg(['NOTIFY', 'SCAN_SUCCESS']),
+            content: '',
+            // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
+            type: NotifyBannerTypes.NORMAL_FAST,
+          });
+          scanResult.infectedFiles.list.forEach(file => {
             if (file.status === 'INFECTED') {
               userNotification.push({ title: t.msg(['VIRUS_DETECTED']), content: file.threatName, type: NotifyBannerTypes.ERROR_FAST });
             }
           });
-          dispatch(scanSuccess(data));
+          const result: ScanSuccessData = { ...scanResult, infectedFilesCount: filesResult.size };
+          dispatch(scanSuccess(result));
         } else {
           throw 'Can not found object started or taskId in a notify!';
         }
@@ -306,19 +326,28 @@ export namespace AntivirusActions {
    *
    * @param siteId - site ID from vepp
    */
-  export function history(siteId: number) {
+  export function getLastScan(siteId: number) {
     return async dispatch => {
       try {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=0`, requestInit);
-        handleErrors(response);
-        let json = await response.json();
-
-        dispatch(getHistorySuccess(json));
+        const [full, partial] = await Promise.all([
+          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=1&type=FULL`, requestInit),
+          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=0&type=PARTIAL`, requestInit),
+        ]);
+        handleErrors(full);
+        handleErrors(partial);
+        const lastFull: GetLastScanResponse = await full.json();
+        const lastPartial: GetLastScanResponse = await partial.json();
+        const result: LastScanData = {
+          full: lastFull.list.length > 0 ? lastFull.list[0] : null,
+          partial: lastPartial.list.length > 0 ? lastFull.list[0] : null,
+          size: lastFull.size,
+        };
+        dispatch(getLastScanSuccess(result));
       } catch (error) {
-        dispatch(getHistoryFailure(error));
+        dispatch(getLastScanFailure(error));
       }
     };
   }
@@ -328,7 +357,7 @@ export namespace AntivirusActions {
    *
    * @param siteId - site ID from vepp
    */
-  export function infectedFiles(siteId: number) {
+  export function getInfectedFiles(siteId: number) {
     return async dispatch => {
       try {
         const requestInit: RequestInit = {

@@ -1,12 +1,12 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, Prop, Event, EventEmitter, Watch } from '@stencil/core';
+import { Component, h, Host, State, Prop, Event, EventEmitter } from '@stencil/core';
 import { StartCheckIcon } from '../icons/start-check';
 import { LockIcon } from '../icons/lock';
 import { Store } from '@stencil/redux';
 import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { pad } from '../../utils/tools';
+import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
@@ -40,17 +40,15 @@ export class Preview {
   /** flag if antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
   /** list infected files */
-  @State() infectedFiles: AntivirusState['infectedFiles'];
+  @State() infectedFilesCount: AntivirusState['infectedFilesCount'];
   /** flag if a domain is in black lists */
   @State() inBlackLists: AntivirusState['inBlackLists'];
   /** history list */
-  @State() history: AntivirusState['history'];
+  @State() lastScan: AntivirusState['lastScan'];
   /** global notifier object */
   @State() notifier: Notifier;
   /** translate object */
   @State() t: ITranslate;
-  /** last scan date as string */
-  @State() lastScan: string;
   /** Site id */
   @State() siteId: number;
   /** scan option preset */
@@ -76,19 +74,6 @@ export class Preview {
     return this.scanType === 'PARTIAL' ? this.scanPreset.partial : this.scanPreset.full;
   }
 
-  /**
-   * Change last scan date
-   *
-   * @param newValue - new history
-   */
-  @Watch('history')
-  setLastScan(newValue: AntivirusState['history']) {
-    if (Array.isArray(newValue) && newValue.length > 0) {
-      const date = newValue[newValue.length - 1].date;
-      this.lastScan = `${this.getDayMonthYearAsStr(new Date(date))} в ${this.getTimeAsStr(new Date(date))}`;
-    }
-  }
-
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
 
@@ -109,26 +94,6 @@ export class Preview {
       scanVirus: AntivirusActions.scan,
       disablePreset: AntivirusActions.disablePreset,
     });
-
-    this.setLastScan(this.history);
-  }
-
-  /**
-   * Get day, month and year from Data
-   *
-   * @param date - date obj
-   */
-  getDayMonthYearAsStr(date: Date) {
-    return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
-  }
-
-  /**
-   * Get time from Date
-   *
-   * @param date - date obj
-   */
-  getTimeAsStr(date: Date) {
-    return `${date.getHours()}.${pad(date.getMinutes())}`;
   }
 
   /**
@@ -147,6 +112,13 @@ export class Preview {
     this.dropdownEl.toggle(ev);
   }
 
+  /**
+   * Method return infected files count
+   */
+  getInfectedFilesCount(): number {
+    return this.scanType === 'PARTIAL' ? (this.lastScan.partial ? this.lastScan.partial.infectedFilesCount : 0) : this.infectedFilesCount;
+  }
+
   render() {
     return (
       <Host>
@@ -158,7 +130,19 @@ export class Preview {
         <PreviewStatus
           msgWaitCheck={this.t.msg(['PREVIEW', 'WAIT_CHECK'])}
           msgLastCheck={this.t.msg(['PREVIEW', 'LAST_CHECK'])}
-          lastScan={this.lastScan}
+          lastScan={
+            this.scanType === 'PARTIAL'
+              ? this.lastScan.partial &&
+                this.t.msg(['LAST_CHECK_IN'], {
+                  date: getDayMonthYearAsStr(new Date(this.lastScan.partial.date)),
+                  time: getTimeAsStr(new Date(this.lastScan.partial.date)),
+                })
+              : this.lastScan.full &&
+                this.t.msg(['LAST_CHECK_IN'], {
+                  date: getDayMonthYearAsStr(new Date(this.lastScan.full.date)),
+                  time: getTimeAsStr(new Date(this.lastScan.full.date)),
+                })
+          }
           scanning={this.scanning}
         ></PreviewStatus>
 
@@ -174,7 +158,7 @@ export class Preview {
         <PreviewInfectedFiles
           t={this.t}
           clickItem={this.clickItem}
-          infectedFilesCount={Array.isArray(this.infectedFiles) ? this.infectedFiles.length : 0}
+          infectedFilesCount={this.getInfectedFilesCount()}
           isProVersion={this.isProVersion}
           openBuyModal={this.openBuyModal}
         ></PreviewInfectedFiles>
@@ -189,10 +173,14 @@ export class Preview {
         */}
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
-          <span class="link">
-            <StartCheckIcon onClick={() => this.scanVirus(this.scanOption.id, this.siteId)} btnLabel={this.t.msg('BTN_SCAN')} />
+          <span class={this.scanning ? 'link-disabled' : 'link'}>
+            <StartCheckIcon
+              onClick={() => this.scanVirus(this.scanOption.id, this.siteId)}
+              disabled={this.scanning}
+              btnLabel={this.t.msg('BTN_SCAN')}
+            />
           </span>
-          {this.isProVersion && (
+          {this.isProVersion && !this.scanning && (
             <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>
               {this.t.msg('CONFIGURE')}
             </a>
