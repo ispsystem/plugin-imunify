@@ -1,6 +1,6 @@
 import '@ui5/webcomponents/dist/Popover';
 
-import { Component, h, Host, Method, Prop, Element } from '@stencil/core';
+import { Component, h, Method, Prop } from '@stencil/core';
 import { CloseIcon } from '../icons/close';
 
 /** Type for popover element */
@@ -16,14 +16,10 @@ export type PopoverElType = HTMLElement & {
 @Component({
   tag: 'antivirus-card-dropdown',
   styleUrl: 'styles/$.scss',
-  shadow: true,
 })
 export class Dropdown {
   /** Ref for ui5-popover element */
   popoverEl: PopoverElType;
-
-  /** Host element */
-  @Element() host: HTMLAntivirusCardDropdownElement;
 
   /** Element for attaching dropdown component, by default is root component */
   @Prop() attachNode: HTMLElement = document.querySelector('antivirus-card');
@@ -47,22 +43,25 @@ export class Dropdown {
   componentDidLoad() {
     setTimeout(() => {
       // Move dropdown element on attach node
-      this.attachNode.shadowRoot.appendChild(this.host);
+      this.attachNode.shadowRoot.appendChild(this.popoverEl);
     });
+  }
+
+  componentDidUnload() {
+    // Remove dropdown element
+    this.popoverEl.remove();
   }
 
   render() {
     return (
-      <Host>
-        <ui5-popover class="popover" ref={(el: PopoverElType) => (this.popoverEl = el)} no-header>
-          <span class="modal-close" onClick={() => this.popoverEl.close()}>
-            <CloseIcon />
-          </span>
-          <div class="popover-content" style={{ 'max-width': this.maxWidth }}>
-            <slot />
-          </div>
-        </ui5-popover>
-      </Host>
+      <ui5-popover class="popover" ref={(el: PopoverElType) => (this.popoverEl = el)} no-header>
+        <span class="modal-close" onClick={() => this.popoverEl.close()}>
+          <CloseIcon />
+        </span>
+        <div class="popover-content" style={{ 'max-width': this.maxWidth }}>
+          <slot />
+        </div>
+      </ui5-popover>
     );
   }
 }
