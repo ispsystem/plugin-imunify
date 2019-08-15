@@ -15,7 +15,7 @@ import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject, getCurrencySymbol } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
-import { TaskEventName, NavigationItem } from '../models/antivirus/model';
+import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 
 /** Enumerable for card pages */
