@@ -3,11 +3,6 @@
 @import './_pro';
 
 
-:host {
-  --spinner-round__color: #ed81b5;
-  --spinner-round__width: 25px;
-}
-
 antivirus-card-preview {
   @extend .antivirus-card-preview;
 
