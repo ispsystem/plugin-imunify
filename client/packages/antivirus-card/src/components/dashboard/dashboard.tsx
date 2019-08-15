@@ -103,6 +103,7 @@ export class Dashboard {
               currency: getCurrencySymbol(this.priceList[0].currency),
               period: getShortPeriod(this.priceList[0].type, this.t),
             })}
+            /** @todo uncomment if UX decides to return the description for the purchase */
             // text={this.t.msg(['DASHBOARD', 'TEXT'])}
           ></PreviewFree>
         )}
