@@ -6,20 +6,17 @@ const lang = {
     HISTORY: 'История сканирований',
   },
   DASHBOARD: {
-    TITLE: 'Купить ImunifyAV+ за 5 €/мес',
+    TITLE: 'Купить ImunifyAV+ за %{cost} %{currency}/%{period} для лечения файлов',
     TEXT: 'для лечения файлов, проверки репутации, настройки расписания и уведомлений о вирусах на почту.',
   },
   CHECK_TYPE: {
     FULL: 'полная',
   },
   BUY_MODAL: {
-    TITLE: 'Подписка Imunify Pro',
-    LABEL_1: 'Ежедневное сканирование сайта',
+    TITLE: 'Подписка ImunifyAV+',
+    LABEL_1: 'Сканирование сайта',
     LABEL_2: 'Обновление вирусных баз',
-    LABEL_3: 'Поиск сайта в черных списках',
     LABEL_PRO_1: 'Лечение заражённых файлов',
-    LABEL_PRO_2: 'Сканирование по расписанию',
-    LABEL_PRO_3: 'Оповещения об угрозах на почту',
   },
   PAYMENT_FAILED_MODAL: {
     TITLE: 'Ошибка при оплате ImunifyAV+',
@@ -28,7 +25,7 @@ const lang = {
     TRY_AGAIN_BUTTON: 'Попробовать ещё раз',
   },
   NOT_NOW: 'Нет, не сейчас',
-  SUBSCRIBE_FOR: 'Оформить подписку за',
+  SUBSCRIBE_FOR: 'Оформить подписку за %{cost} %{currency}',
   PRO_PERIODS: {
     MONTH: {
       SHORT: 'мес',
@@ -173,6 +170,13 @@ const lang = {
   CONFIGURE: 'Настроить',
   MEGABYTE_SHORT: 'MB',
   VIRUS_DETECTED: 'Обнаружен вирус',
+  PRICE_PERIOD: {
+    DAY: 'день',
+    MONTH: 'месяц',
+    YEAR: 'год',
+    // LIFETIME: 'вечная',
+    // TRIAL: 'триальная',
+  },
   VIRUS_DELETE: {
     DONE: 'Заражённый файл удалён',
     FAIL: 'Ошибка при удалении файла',

@@ -1,0 +1,21 @@
+{
+  "title": "Action with files",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema",
+  "description": "Action with files",
+  "type": "object",
+  "properties": {
+    "files": {
+      "type": "array",
+      "title": "Ids of files",
+      "items": {
+        "type": "number"
+      }
+    },
+    "action": {
+      "type": "string",
+      "title": "Action"
+    }
+  },
+  "required": ["files", "action"],
+  "additionalProperties": false
+}

@@ -1,4 +1,4 @@
-import { DeleteFilesResponse, ScanResultResponse } from './model';
+import { DeleteFilesResponse, ScanResultResponse, PriceListPrice } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -26,6 +26,8 @@ export enum ANTIVIRUS_ACTION {
   DELETE_FILES_FAILURE = 'DELETE_FILES_FAILURE',
   DELETE_FILES_POST_PROCESS_SUCCESS = 'DELETE_FILES_POST_PROCESS_SUCCESS',
   DELETE_FILES_POST_PROCESS_FAILURE = 'DELETE_FILES_POST_PROCESS_FAILURE',
+  GET_PRICE_LIST_FAILURE = 'ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE',
+  GET_PRICE_LIST_SUCCESS = 'ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -71,6 +73,20 @@ export const getStateSuccess = data => async (dispatch: (obj: GetStateSuccessAct
 export const getStateFailure = error => async (dispatch: (obj: GetStateFailureAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_STATE_FAILURE,
+    payload: { error },
+  });
+};
+
+export const getPriceListSuccess = data => async (dispatch: (obj: GetPriceListSuccessAction) => any, _getState) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS,
+    payload: { data },
+  });
+};
+
+export const getPriceListFailure = error => async (dispatch: (obj: GetPriceListFailureAction) => any, _getState) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE,
     payload: { error },
   });
 };
@@ -252,6 +268,16 @@ interface GetStateFailureAction {
   payload: any;
 }
 
+interface GetPriceListFailureAction {
+  type: ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE;
+  payload: any;
+}
+
+interface GetPriceListSuccessAction {
+  type: ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS;
+  payload: { data: PriceListPrice[] };
+}
+
 interface GetHistorySuccessAction {
   type: ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS;
   payload: any;
@@ -339,4 +365,6 @@ export type AntivirusActionTypes =
   | DeleteFilesSuccess
   | DeleteFilesFailure
   | DeleteFilesPostProcessSuccess
-  | DeleteFilesPostProcessFailure;
+  | DeleteFilesPostProcessFailure
+  | GetPriceListSuccessAction
+  | GetPriceListFailureAction;
