@@ -7,9 +7,9 @@
 
 ## Properties
 
-| Property | Attribute | Description | Type                                     | Default |
-| -------- | --------- | ----------- | ---------------------------------------- | ------- |
-| `items`  | --        |             | `{ label: string; active?: boolean; }[]` | `[]`    |
+| Property | Attribute | Description | Type               | Default |
+| -------- | --------- | ----------- | ------------------ | ------- |
+| `items`  | --        |             | `NavigationItem[]` | `[]`    |
 
 
 ## Events

@@ -1,4 +1,5 @@
 import { Component, Prop, Event, h, EventEmitter } from '@stencil/core';
+import { NavigationItem } from '../../models/antivirus/model';
 
 @Component({
   tag: 'antivirus-card-navigation',
@@ -6,11 +7,7 @@ import { Component, Prop, Event, h, EventEmitter } from '@stencil/core';
   shadow: false,
 })
 export class ButtonComponent {
-  @Prop()
-  public items: {
-    label: string;
-    active?: boolean;
-  }[] = [];
+  @Prop() items: NavigationItem[] = [];
 
   @Event({
     bubbles: true,
@@ -21,14 +18,17 @@ export class ButtonComponent {
   render() {
     return (
       <div style={{ '--ngispui-navigation-border-line-top': '-13px', 'margin-bottom': '30px' }} class="ngispui-navigation">
-        {this.items.map((val, index) => (
-          <div
-            onClick={this.handleClickItem.bind(this, index)}
-            class={'ngispui-navigation-item ' + (val.active ? 'ngispui-navigation-item_active' : '')}
-          >
-            {val.label}
-          </div>
-        ))}
+        {this.items.map(
+          (val, index) =>
+            !val.hidden && (
+              <div
+                onClick={this.handleClickItem.bind(this, index)}
+                class={'ngispui-navigation-item ' + (val.active ? 'ngispui-navigation-item_active' : '')}
+              >
+                {val.label}
+              </div>
+            ),
+        )}
       </div>
     );
   }

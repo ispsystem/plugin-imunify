@@ -30,6 +30,9 @@ import {
   Validator,
 } from './utils/validators';
 import {
+  NavigationItem,
+} from './models/antivirus/model';
+import {
   ViewType,
 } from './components/preloader/preloader';
 import {
@@ -178,10 +181,7 @@ export namespace Components {
     'visible': boolean;
   }
   interface AntivirusCardNavigation {
-    'items': {
-      label: string;
-      active?: boolean;
-    }[];
+    'items': NavigationItem[];
   }
   interface AntivirusCardNewScan {
     /**
@@ -687,10 +687,7 @@ declare namespace LocalJSX {
     'visible'?: boolean;
   }
   interface AntivirusCardNavigation extends JSXBase.HTMLAttributes<HTMLAntivirusCardNavigationElement> {
-    'items'?: {
-      label: string;
-      active?: boolean;
-    }[];
+    'items'?: NavigationItem[];
     'onClickItem'?: (event: CustomEvent<any>) => void;
   }
   interface AntivirusCardNewScan extends JSXBase.HTMLAttributes<HTMLAntivirusCardNewScanElement> {

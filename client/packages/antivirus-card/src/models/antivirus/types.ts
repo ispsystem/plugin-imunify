@@ -1,4 +1,4 @@
-import { DeleteFilesResponse, ScanResultResponse, PriceListPrice } from './model';
+import { DeleteFilesResponse, ScanSuccessData, LastScanData, PriceListPrice } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -8,8 +8,8 @@ export enum ANTIVIRUS_ACTION {
   GET_STATE_BEGIN = 'GET_STATE_BEGIN',
   GET_STATE_SUCCESS = 'GET_STATE_SUCCESS',
   GET_STATE_FAILURE = 'GET_STATE_FAILURE',
-  GET_HISTORY_SUCCESS = 'GET_HISTORY_SUCCESS',
-  GET_HISTORY_FAILURE = 'GET_HISTORY_FAILURE',
+  GET_LAST_SCAN_SUCCESS = 'GET_LAST_SCAN_SUCCESS',
+  GET_LAST_SCAN_FAILURE = 'GET_LAST_SCAN_FAILURE',
   SAVE_PARTIAL_PRESET_SUCCESS = 'SAVE_PARTIAL_PRESET_SUCCESS',
   SAVE_PRESET_FAILURE = 'SAVE_PRESET_FAILURE',
   SAVE_AND_SCAN_BEGIN = 'SAVE_AND_SCAN_BEGIN',
@@ -43,7 +43,7 @@ export const scanning = (data: { scanId: number }) => async (dispatch: (obj: Sca
   });
 };
 
-export const scanSuccess = (data: ScanResultResponse) => async (dispatch: (obj: ScanSuccessAction) => any, _getState) => {
+export const scanSuccess = (data: ScanSuccessData) => async (dispatch: (obj: ScanSuccessAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_SUCCESS,
     payload: { data },
@@ -91,9 +91,9 @@ export const getPriceListFailure = error => async (dispatch: (obj: GetPriceListF
   });
 };
 
-export const getHistorySuccess = data => async (dispatch: (obj: GetHistorySuccessAction) => void) => {
+export const getLastScanSuccess = data => async (dispatch: (obj: GetLastScanSuccessAction) => void) => {
   return dispatch({
-    type: ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS,
+    type: ANTIVIRUS_ACTION.GET_LAST_SCAN_SUCCESS,
     payload: { data },
   });
 };
@@ -112,9 +112,9 @@ export const savePresetFailure = error => async (dispatch: (obj: SavePresetFailu
   });
 };
 
-export const getHistoryFailure = error => async (dispatch: (obj: GetHistoryFailureAction) => void) => {
+export const getLastScanFailure = error => async (dispatch: (obj: GetLastScanFailureAction) => void) => {
   return dispatch({
-    type: ANTIVIRUS_ACTION.GET_HISTORY_FAILURE,
+    type: ANTIVIRUS_ACTION.GET_LAST_SCAN_FAILURE,
     payload: { error },
   });
 };
@@ -236,7 +236,7 @@ interface SaveAndScanSuccessAction {
 
 interface ScanSuccessAction {
   type: ANTIVIRUS_ACTION.SCAN_SUCCESS;
-  payload: { data: ScanResultResponse };
+  payload: { data: ScanSuccessData };
 }
 
 interface ScanFailureAction {
@@ -268,6 +268,11 @@ interface GetStateFailureAction {
   payload: any;
 }
 
+interface GetLastScanSuccessAction {
+  type: ANTIVIRUS_ACTION.GET_LAST_SCAN_SUCCESS;
+  payload: { data: LastScanData };
+}
+
 interface GetPriceListFailureAction {
   type: ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE;
   payload: any;
@@ -278,13 +283,8 @@ interface GetPriceListSuccessAction {
   payload: { data: PriceListPrice[] };
 }
 
-interface GetHistorySuccessAction {
-  type: ANTIVIRUS_ACTION.GET_HISTORY_SUCCESS;
-  payload: any;
-}
-
-interface GetHistoryFailureAction {
-  type: ANTIVIRUS_ACTION.GET_HISTORY_FAILURE;
+interface GetLastScanFailureAction {
+  type: ANTIVIRUS_ACTION.GET_LAST_SCAN_FAILURE;
   payload: any;
 }
 
@@ -349,8 +349,8 @@ export type AntivirusActionTypes =
   | GetStateBeginAction
   | GetStateSuccessAction
   | GetStateFailureAction
-  | GetHistorySuccessAction
-  | GetHistoryFailureAction
+  | GetLastScanSuccessAction
+  | GetLastScanFailureAction
   | SavePartialPresetSuccessAction
   | SavePresetFailureAction
   | SaveAndScanBeginAction

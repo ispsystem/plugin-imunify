@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, Host, State, JSX, Listen, Prop, Watch } from '@stencil/core';
+import { Component, h, Host, State, Listen, Prop, Watch } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -9,25 +9,14 @@ import { ActionTypes } from '../redux/actions';
 import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject, getCurrencySymbol } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
+import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
-
-/** Enumirable for card pages */
-enum AntivirusCardPages {
-  dashboard = 'dashboard',
-  infectedFiles = 'infectedFiles',
-  history = 'history',
-}
-
-/**
- * Payment status returned by payment system
- */
-type PaymentStatus = 'failed' | 'success';
 
 /**
  * AntivirusCard component
@@ -38,7 +27,11 @@ type PaymentStatus = 'failed' | 'success';
   shadow: true,
 })
 export class AntivirusCard {
+  /** RXJS subscription */
+  sub = new Subscription();
+
   newScanModal: HTMLAntivirusCardModalElement;
+
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** reference to the failed payment modal */
@@ -56,26 +49,20 @@ export class AntivirusCard {
 
   /** selected period */
   @State() selectedPeriod = 0;
-  /** history list */
-  @State() historyItemCount: RootState['antivirus']['historyItemCount'];
   /** scan option preset */
   @State() scanPreset: RootState['antivirus']['scanPreset'];
   /** scan in process */
   @State() scanning: RootState['antivirus']['scanning'];
   /** list current scan process */
   @State() taskList$: RootState['antivirus']['taskList$'];
+  /** History item count of scanning */
+  @State() historyItemCount: AntivirusState['historyItemCount'];
   /** Price list for buy pro version */
   @State() priceList: AntivirusState['priceList'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
-  @State()
-  items: {
-    name: AntivirusCardPages;
-    label: string;
-    active?: boolean;
-    component: () => JSX.Element;
-  }[];
+  @State() items: NavigationItem[];
 
   /**
    * Update messages when change translate object
@@ -129,14 +116,34 @@ export class AntivirusCard {
     this.items = [...this.items];
   }
 
+  /**
+   * Update status for navigation item history, if history count change
+   *
+   * @param count - new history item count
+   */
+  @Watch('historyItemCount')
+  lastScanChange(count: number) {
+    if (Array.isArray(this.items)) {
+      const historyTabIndex = this.items.findIndex(item => item.name === AntivirusCardPages.history);
+      if (historyTabIndex !== undefined && historyTabIndex > -1) {
+        this.items = this.items.map((item, index) => {
+          if (index === historyTabIndex) {
+            item.hidden = count < 1;
+          }
+          return item;
+        });
+      }
+    }
+  }
+
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
   /** Method to get available antivirus features */
   checkFeatures: typeof AntivirusActions.feature;
   /** Method to get scan history */
-  getScanHistory: typeof AntivirusActions.history;
+  getLastScan: typeof AntivirusActions.getLastScan;
   /** Method to get infected files list */
-  getInfectedFiles: typeof AntivirusActions.infectedFiles;
+  getInfectedFiles: typeof AntivirusActions.getInfectedFiles;
   /** Method to get setting presets */
   getSettingPresets: typeof AntivirusActions.scanSettingPresets;
   /** Method to update global state */
@@ -167,8 +174,8 @@ export class AntivirusCard {
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
       checkFeatures: AntivirusActions.feature,
-      getScanHistory: AntivirusActions.history,
-      getInfectedFiles: AntivirusActions.infectedFiles,
+      getLastScan: AntivirusActions.getLastScan,
+      getInfectedFiles: AntivirusActions.getInfectedFiles,
       getSettingPresets: AntivirusActions.scanSettingPresets,
       updateState: AntivirusActions.updateState,
       getScanResult: AntivirusActions.getScanResult,
@@ -192,62 +199,67 @@ export class AntivirusCard {
       });
     }
 
+    if (this.notifier !== undefined) {
+      this.sub.add(
+        this.notifier
+          .taskList$()
+          .pipe(take(1))
+          .subscribe({
+            next: async (events: NotifierEvent[]) => {
+              console.log('TASK LIST', events);
+              const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+              if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
+                this.updateState({
+                  ...this.store.getState().antivirus,
+                  scanning: true,
+                });
+              }
+            },
+          }),
+      );
+
+      this.sub.add(
+        this.notifier.update$().subscribe({
+          next: async (notify: { event: NotifierEvent }) => {
+            console.log('UPDATE', notify.event);
+            if (notify.event.additional_data.status === 'running' && notify.event.additional_data.name === TaskEventName.scan) {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                scanning: true,
+              });
+            }
+          },
+        }),
+      );
+
+      this.sub.add(
+        this.notifier.delete$().subscribe({
+          next: async (notify: { event: NotifierEvent }) => {
+            console.log('DELETE', notify.event);
+            const taskName = getNestedObject(notify.event, ['additional_data', 'name']);
+            if (taskName !== undefined) {
+              switch (taskName) {
+                case TaskEventName.scan:
+                  this.getScanResult(notify, this.userNotification, this.t, this.siteId);
+                  break;
+                case TaskEventName.filesDelete:
+                  this.deleteFilesPostProcess(notify);
+                  break;
+              }
+            }
+          },
+        }),
+      );
+    }
+
     await Promise.all([
       this.checkFeatures(),
       this.getSettingPresets(this.siteId),
-      this.getScanHistory(this.siteId),
+      this.getLastScan(this.siteId),
       this.getInfectedFiles(this.siteId),
       /** @todo may be get price list for only free version */
       this.getPriceList(),
     ]);
-
-    if (this.notifier !== undefined) {
-      this.notifier
-        .taskList$()
-        .pipe(take(1))
-        .subscribe((d: NotifierEvent[]) => {
-          // wait all scanning process
-          if (d && Array.isArray(d) && d.length > 0) {
-            const runningPluginTasks = d
-              .map(n => {
-                if (
-                  n.additional_data &&
-                  (n.additional_data.status === 'created' ||
-                    n.additional_data.status === 'running' ||
-                    n.additional_data.status === 'deferred')
-                ) {
-                  return n.id;
-                }
-              })
-              .filter(id => id !== undefined);
-            this.taskList$.next([...this.taskList$.getValue(), ...runningPluginTasks]);
-          }
-        });
-
-      // subscribe to tasks
-      this.notifier
-        .ids(this.taskList$.asObservable())
-        .delete$()
-        .subscribe((notify: { event: NotifierEvent }) => {
-          const taskName = notify.event.additional_data.name;
-          switch (taskName) {
-            case 'scan':
-              this.getScanResult(notify, this.userNotification, this.t);
-              break;
-
-            case 'files':
-              this.deleteFilesPostProcess(notify);
-              break;
-          }
-        });
-
-      /** @todo: need query from back has scanning now or has not */
-      setTimeout(() => {
-        if (this.historyItemCount === 0 && !this.scanning) {
-          this.scanVirus(this.scanPreset.full.id, this.siteId);
-        }
-      }, 1000);
-    }
 
     // search page in query params
     const [defaultLocation, queryParam] = location.toString().split('?');
