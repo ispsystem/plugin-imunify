@@ -48,7 +48,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         infectedFilesCount: action.payload.data.infectedFilesCount,
         lastScan: {
           full: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.full,
-          partial: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.partial,
+          partial: action.payload.data.historyItem.checkType === 'PARTIAL' ? action.payload.data.historyItem : state.lastScan.partial,
         },
         historyItemCount: state.historyItemCount++,
       };
