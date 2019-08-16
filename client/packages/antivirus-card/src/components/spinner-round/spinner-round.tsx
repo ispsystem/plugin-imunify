@@ -11,13 +11,15 @@ export class SpinnerRound {
 
   /** Width style for spinner */
   @Prop({ reflect: true }) width = '25px';
+  /** Height style for spinner */
+  @Prop({ reflect: true }) height = '100%';
 
   /** Position absolute or relative, absolute is default */
   @Prop({ reflect: true }) position: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial' = 'absolute';
 
   render() {
     return (
-      <div class="antivirus-card-spinner-round" style={{ width: this.width, position: this.position }}>
+      <div class="antivirus-card-spinner-round" style={{ width: this.width, height: this.height, position: this.position }}>
         <svg class="circular" viewBox="25 25 50 50">
           <defs>
             <linearGradient x1="100%" y1="10%" x2="35%" y2="100%" id={this.uuid}>
