@@ -47,8 +47,10 @@ export class Dropdown {
     });
   }
 
+  /**
+   * Lifecycle, remove dropdown element in attachNode
+   */
   componentDidUnload() {
-    // Remove dropdown element
     this.popoverEl.remove();
   }
 
