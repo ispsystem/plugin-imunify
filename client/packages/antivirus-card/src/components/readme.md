@@ -35,6 +35,7 @@ graph TD;
   antivirus-card --> antivirus-card-navigation
   antivirus-card --> antivirus-card-modal
   antivirus-card --> antivirus-card-button
+  antivirus-card-dashboard --> antivirus-card-button
   antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-dashboard --> antivirus-card-modal
   antivirus-card-dashboard --> antivirus-card-new-scan

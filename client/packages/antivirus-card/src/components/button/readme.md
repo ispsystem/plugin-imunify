@@ -20,6 +20,7 @@
 ### Used by
 
  - [antivirus-card](..)
+ - [antivirus-card-dashboard](../dashboard)
  - [antivirus-card-infected-files](../infected-files)
  - [antivirus-card-new-scan](../new-scan)
  - [antivirus-card-scan-settings](../scan-settings)
@@ -28,6 +29,7 @@
 ```mermaid
 graph TD;
   antivirus-card --> antivirus-card-button
+  antivirus-card-dashboard --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-button
   antivirus-card-new-scan --> antivirus-card-button
   antivirus-card-scan-settings --> antivirus-card-button
