@@ -116,7 +116,11 @@ export class Preview {
    * Method return infected files count
    */
   getInfectedFilesCount(): number {
-    return this.scanType === 'PARTIAL' ? (this.lastScan.partial ? this.lastScan.partial.infectedFilesCount : 0) : this.infectedFilesCount;
+    return this.scanType === 'PARTIAL'
+      ? this.lastScan.partial
+        ? this.lastScan.partial.infectedFilesCount - this.lastScan.partial.curedFilesCount
+        : 0
+      : this.infectedFilesCount;
   }
 
   render() {

@@ -31,14 +31,12 @@
 ### Used by
 
  - [antivirus-card-new-scan](../new-scan)
- - [antivirus-card-scan-settings](../scan-settings)
  - [antivirus-card-zoom](../zoom)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card-new-scan --> antivirus-card-input
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card-zoom --> antivirus-card-input
   style antivirus-card-input fill:#f9f,stroke:#333,stroke-width:4px
 ```

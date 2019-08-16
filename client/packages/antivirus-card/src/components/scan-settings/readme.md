@@ -33,28 +33,22 @@ Type: `Promise<void>`
 
 ### Depends on
 
-- [antivirus-card-switcher](../switcher)
-- [antivirus-card-switcher-option](../switcher-option)
-- [antivirus-card-hint](../hint)
-- [antivirus-card-input](../input)
 - [antivirus-card-checkbox](../checkbox)
 - [antivirus-card-collapse](../collapse)
 - [antivirus-card-select](../select)
 - [antivirus-card-select-option](../select-option)
+- [antivirus-card-hint](../hint)
 - [antivirus-card-preloader](../preloader)
 - [antivirus-card-button](../button)
 
 ### Graph
 ```mermaid
 graph TD;
-  antivirus-card-scan-settings --> antivirus-card-switcher
-  antivirus-card-scan-settings --> antivirus-card-switcher-option
-  antivirus-card-scan-settings --> antivirus-card-hint
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card-scan-settings --> antivirus-card-checkbox
   antivirus-card-scan-settings --> antivirus-card-collapse
   antivirus-card-scan-settings --> antivirus-card-select
   antivirus-card-scan-settings --> antivirus-card-select-option
+  antivirus-card-scan-settings --> antivirus-card-hint
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-hint --> antivirus-card-dropdown

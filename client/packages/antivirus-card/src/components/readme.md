@@ -51,14 +51,11 @@ graph TD;
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-hint --> antivirus-card-dropdown
   antivirus-card-preloader --> antivirus-card-spinner-round
-  antivirus-card-scan-settings --> antivirus-card-switcher
-  antivirus-card-scan-settings --> antivirus-card-switcher-option
-  antivirus-card-scan-settings --> antivirus-card-hint
-  antivirus-card-scan-settings --> antivirus-card-input
   antivirus-card-scan-settings --> antivirus-card-checkbox
   antivirus-card-scan-settings --> antivirus-card-collapse
   antivirus-card-scan-settings --> antivirus-card-select
   antivirus-card-scan-settings --> antivirus-card-select-option
+  antivirus-card-scan-settings --> antivirus-card-hint
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-button
