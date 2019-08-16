@@ -18,18 +18,6 @@ import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 
-/** Enumerable for card pages */
-enum AntivirusCardPages {
-  dashboard = 'dashboard',
-  infectedFiles = 'infectedFiles',
-  history = 'history',
-}
-
-/**
- * Payment status returned by payment system
- */
-type PaymentStatus = 'failed' | 'success';
-
 /**
  * AntivirusCard component
  */
@@ -103,7 +91,6 @@ export class AntivirusCard {
         name: AntivirusCardPages.history,
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
         component: () => <antivirus-card-history />,
-        hidden: this.historyItemCount === 0,
       },
     ];
 
@@ -143,7 +130,7 @@ export class AntivirusCard {
       if (historyTabIndex !== undefined && historyTabIndex > -1) {
         this.items = this.items.map((item, index) => {
           if (index === historyTabIndex) {
-            item.hidden = count === 0;
+            item.hidden = count < 1;
           }
           return item;
         });
@@ -169,8 +156,6 @@ export class AntivirusCard {
   loadTranslate: typeof TranslateActions.load;
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
-  /** Method for removing cured files from infected files list */
-  cureFilesPostProcess: typeof AntivirusActions.cureFilesPostProcess;
   /** Method for get price list by plugin */
   getPriceList: typeof AntivirusActions.getPriceList;
 
@@ -203,7 +188,6 @@ export class AntivirusCard {
       loadTranslate: TranslateActions.load,
       deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
       getPriceList: AntivirusActions.getPriceList,
-      cureFilesPostProcess: AntivirusActions.cureFilesPostProcess,
     });
 
     if (this.notifier !== undefined) {
@@ -251,9 +235,6 @@ export class AntivirusCard {
                   break;
                 case TaskEventName.filesDelete:
                   this.deleteFilesPostProcess(notify, this.userNotification, this.t);
-                  break;
-                case TaskEventName.filesCure:
-                  this.cureFilesPostProcess(notify, this.userNotification, this.t);
                   break;
               }
             }
@@ -331,13 +312,6 @@ export class AntivirusCard {
     }
 
     this.isPreloader.card = false;
-  }
-
-  /**
-   * Lifecycle hook, unsubscribe when component remove
-   */
-  componentDidUnload() {
-    this.sub.unsubscribe();
   }
 
   /**
