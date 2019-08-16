@@ -9,7 +9,7 @@
 
 | Property   | Attribute  | Description                                        | Type                                                                                   | Default      |
 | ---------- | ---------- | -------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------ |
-| `height`   | `height`   | Height style for spinner                           | `string`                                                                               | `'100%'`     |
+| `height`   | `height`   | Height style for spinner                           | `string`                                                                               | `'auto'`     |
 | `position` | `position` | Position absolute or relative, absolute is default | `"absolute" \| "fixed" \| "inherit" \| "initial" \| "relative" \| "static" \| "unset"` | `'absolute'` |
 | `width`    | `width`    | Width style for spinner                            | `string`                                                                               | `'25px'`     |
 

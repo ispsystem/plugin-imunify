@@ -3,7 +3,7 @@ import { ITranslate } from '../../models/translate.reducers';
 import { RootState, Notifier } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
-import { ScanOption, CheckFileType } from '../../models/antivirus/state';
+import { ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 
 /** Types for max time scan result */
@@ -230,11 +230,10 @@ export class ScanSettings {
         <Host>
           <span class="title">{this.t.msg(['SCAN_SETTINGS', 'CONFIGURE_SCAN'])}</span>
 
-          <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'CHECK_FILE_TYPE', 'TEXT'])}</span>
-
-          <div class="flex-container">
+          {/** @todo uncomment when this feature will release in backend */}
+          {/* <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'CHECK_FILE_TYPE', 'TEXT'])}</span> */}
+          {/* <div class="flex-container">
             <antivirus-card-switcher>
-              {/** @todo change to upperCase when backend realise it */}
               {['critical', 'all', 'except_media'].map((type: CheckFileType) => (
                 <antivirus-card-switcher-option
                   active={this.preset.checkFileTypes === type}
@@ -245,8 +244,8 @@ export class ScanSettings {
               ))}
             </antivirus-card-switcher>
             <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_FILE_TYPE', 'HINT_TEXT'])}</antivirus-card-hint>
-          </div>
-
+          </div> */}
+          {/* 
           <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'SAVE_COPY_FILES'])}</span>
           <div class="flex-container">
             <antivirus-card-input
@@ -259,9 +258,10 @@ export class ScanSettings {
               }}
             ></antivirus-card-input>
             <span style={{ 'margin-left': '10px' }}>{this.t.msg(['SCAN_SETTINGS', 'DAY_COUNT'], this.preset.saveCopyFilesDay)}</span>
-          </div>
+          </div> */}
 
           <antivirus-card-checkbox
+            style={{ 'margin-top': '10px' }}
             class="form-label"
             checked={this.preset.cureFoundFiles}
             onChanged={event => {
@@ -283,7 +283,7 @@ export class ScanSettings {
             {this.t.msg(['SCAN_SETTINGS', 'DELETE_ONLY_CONTENT'])}
           </antivirus-card-checkbox>
 
-          {/** @todo uncomment when email notification will release in backend */}
+          {/** @todo uncomment when this feature release in backend */}
           {/* <CheckInput
             isActive={this.useEmailNotify}
             msg={this.t.msg(['SCAN_SETTINGS', 'EMAIL_NOTIFY'])}
@@ -337,7 +337,8 @@ export class ScanSettings {
               <span style={{ 'margin-left': '10px' }}>{this.t.msg(['MEGABYTE_SHORT'])}</span>
             </div>
 
-            <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'DETAIL_LOG', 'TEXT'])}</span>
+            {/** @todo uncomment when this feature will release in backend */}
+            {/* <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'DETAIL_LOG', 'TEXT'])}</span>
             <div class="flex-container">
               <antivirus-card-switcher>
                 {['COMMON', 'FULL'].map((type: LogDetailsType) => (
@@ -349,8 +350,8 @@ export class ScanSettings {
                   </antivirus-card-switcher-option>
                 ))}
               </antivirus-card-switcher>
-            </div>
-
+            </div> */}
+            {/* 
             <span class="form-label">{this.t.msg(['SCAN_SETTINGS', 'MAX_SCAN_TIME', 'TEXT'])}</span>
             <div class="flex-container">
               <antivirus-card-select
@@ -366,9 +367,9 @@ export class ScanSettings {
                   </antivirus-card-select-option>
                 ))}
               </antivirus-card-select>
-            </div>
+            </div> */}
 
-            <antivirus-card-checkbox
+            {/* <antivirus-card-checkbox
               class="form-label"
               checked={this.preset.autoUpdate}
               onChanged={event => {
@@ -377,7 +378,7 @@ export class ScanSettings {
               }}
             >
               {this.t.msg(['SCAN_SETTINGS', 'AUTO_UPDATE_DB'])}
-            </antivirus-card-checkbox>
+            </antivirus-card-checkbox> */}
           </antivirus-card-collapse>
 
           <div style={{ 'margin-top': '30px' }} class="flex-container">
