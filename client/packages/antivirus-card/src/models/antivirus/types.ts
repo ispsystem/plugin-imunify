@@ -1,4 +1,4 @@
-import { DeleteFilesResponse, ScanSuccessData, LastScanData, PriceListPrice } from './model';
+import { DeleteFilesResponse, ScanSuccessData, LastScanData, PriceListPrice, CureFilesResponse } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -24,10 +24,14 @@ export enum ANTIVIRUS_ACTION {
 
   DELETE_FILES_SUCCESS = 'DELETE_FILES_SUCCESS',
   DELETE_FILES_FAILURE = 'DELETE_FILES_FAILURE',
+  CURE_FILES_SUCCESS = 'CURE_FILES_SUCCESS',
+  CURE_FILES_FAILURE = 'CURE_FILES_FAILURE',
   DELETE_FILES_POST_PROCESS_SUCCESS = 'DELETE_FILES_POST_PROCESS_SUCCESS',
   DELETE_FILES_POST_PROCESS_FAILURE = 'DELETE_FILES_POST_PROCESS_FAILURE',
   GET_PRICE_LIST_FAILURE = 'ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE',
   GET_PRICE_LIST_SUCCESS = 'ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS',
+  CURE_FILES_POST_PROCESS_SUCCESS = 'CURE_FILES_POST_PROCESS_SUCCESS',
+  CURE_FILES_POST_PROCESS_FAILURE = 'CURE_FILES_POST_PROCESS_FAILURE',
 }
 
 export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
@@ -194,6 +198,34 @@ export const deleteFilesFailure = error => async (dispatch: (obj: DeleteFilesFai
   });
 };
 
+export const cureFilesSuccess = data => async (dispatch: (obj: CureFilesSuccess) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.CURE_FILES_SUCCESS,
+    payload: { data },
+  });
+};
+
+export const cureFilesFailure = error => async (dispatch: (obj: CureFilesFailure) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.CURE_FILES_FAILURE,
+    payload: { error },
+  });
+};
+
+export const cureFilesPostProcessSuccess = curedFilesCount => async (dispatch: (obj: CureFilesPostProcessSuccess) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_SUCCESS,
+    payload: { curedFilesCount },
+  });
+};
+
+export const cureFilesPostProcessFailure = error => async (dispatch: (obj: CureFilesPostProcessFailure) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_FAILURE,
+    payload: { error },
+  });
+};
+
 export const deleteFilesPostProcessSuccess = deletedFilesCount => async (dispatch: (obj: DeleteFilesPostProcessSuccess) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS,
@@ -330,6 +362,18 @@ interface DeleteFilesFailure {
   payload: any;
 }
 
+interface CureFilesSuccess {
+  type: ANTIVIRUS_ACTION.CURE_FILES_SUCCESS;
+  payload: {
+    data: CureFilesResponse;
+  };
+}
+
+interface CureFilesFailure {
+  type: ANTIVIRUS_ACTION.CURE_FILES_FAILURE;
+  payload: any;
+}
+
 interface DeleteFilesPostProcessSuccess {
   type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_SUCCESS;
   payload: {
@@ -338,6 +382,17 @@ interface DeleteFilesPostProcessSuccess {
 }
 interface DeleteFilesPostProcessFailure {
   type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE;
+  payload: any;
+}
+
+interface CureFilesPostProcessSuccess {
+  type: ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_SUCCESS;
+  payload: {
+    curedFilesCount: number;
+  };
+}
+interface CureFilesPostProcessFailure {
+  type: ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_FAILURE;
   payload: any;
 }
 
@@ -367,4 +422,8 @@ export type AntivirusActionTypes =
   | DeleteFilesPostProcessSuccess
   | DeleteFilesPostProcessFailure
   | GetPriceListSuccessAction
-  | GetPriceListFailureAction;
+  | GetPriceListFailureAction
+  | CureFilesSuccess
+  | CureFilesFailure
+  | CureFilesPostProcessSuccess
+  | CureFilesPostProcessFailure;

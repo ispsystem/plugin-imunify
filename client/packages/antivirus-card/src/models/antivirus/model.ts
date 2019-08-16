@@ -47,10 +47,12 @@ export interface TaskManagerResponse {
 
 export interface DeleteFilesResponse extends TaskManagerResponse {}
 
+export interface CureFilesResponse extends TaskManagerResponse {}
+
 /** Antivirus task event names */
 export enum TaskEventName {
   scan = 'scan',
-  heal = 'files-heal',
+  filesCure = 'files-cure',
   filesDelete = 'files',
 }
 

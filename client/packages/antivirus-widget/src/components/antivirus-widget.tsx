@@ -122,6 +122,9 @@ export class AntivirusWidget {
     }
   }
 
+  /**
+   * Lifecycle hook, unsubscribe when component remove
+   */
   componentDidUnload() {
     this.sub.unsubscribe();
   }
@@ -141,7 +144,9 @@ export class AntivirusWidget {
    */
   async handleClickCure() {
     this.isPreloader = { ...this.isPreloader, button: true };
-    this.state.isProVersion ? (location.href = `${this.url}?page=infectedFiles`) : (location.href = `${this.url}?openModal=buyModal`);
+    this.state.isProVersion
+      ? (location.href = `${this.url}?page=infectedFiles`)
+      : (location.href = `${this.url}?page=infectedFiles&openModal=buyModal`);
     this.isPreloader = { ...this.isPreloader, button: false };
   }
 

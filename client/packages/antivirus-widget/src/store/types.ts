@@ -202,5 +202,29 @@ export interface HistoryItem {
 /** Antivirus task event names */
 export enum TaskEventName {
   scan = 'scan',
-  heal = 'files-heal',
+  cure = 'files-cure',
+}
+
+/** Types for inspected files status */
+export type InfectedStatusType = 'INFECTED' | 'CURED' | 'EXCEPTED' | 'HEALING' | 'DELETED';
+
+/**
+ * Infected file
+ */
+export interface InfectedFile {
+  id: number;
+  // file name, e.g. "beregovoi_orcestr.bat"
+  name: string;
+  // file status, e.g. "заражён"
+  status: InfectedStatusType;
+  // type of threat, e.g. "Troyan.enspect"
+  threatName: string;
+  // path to file
+  path: string;
+  // date and time when the file was detected (timestamp)
+  detectionDate: number;
+  // date and time when the file was created (timestamp)
+  createdDate: number;
+  // date and time when the file was changed (timestamp)
+  lastChangeDate?: number;
 }

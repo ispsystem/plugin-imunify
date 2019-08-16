@@ -89,6 +89,7 @@ export class AntivirusCard {
         name: AntivirusCardPages.history,
         label: this.t.msg(['MENU_ITEMS', 'HISTORY']),
         component: () => <antivirus-card-history />,
+        hidden: this.historyItemCount === 0,
       },
     ];
 
@@ -128,7 +129,7 @@ export class AntivirusCard {
       if (historyTabIndex !== undefined && historyTabIndex > -1) {
         this.items = this.items.map((item, index) => {
           if (index === historyTabIndex) {
-            item.hidden = count < 1;
+            item.hidden = count === 0;
           }
           return item;
         });
@@ -154,6 +155,8 @@ export class AntivirusCard {
   loadTranslate: typeof TranslateActions.load;
   /** Method for removing removed files from infected files list */
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
+  /** Method for removing cured files from infected files list */
+  cureFilesPostProcess: typeof AntivirusActions.cureFilesPostProcess;
   /** Method for get price list by plugin */
   getPriceList: typeof AntivirusActions.getPriceList;
 
@@ -182,6 +185,7 @@ export class AntivirusCard {
       loadTranslate: TranslateActions.load,
       deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
       getPriceList: AntivirusActions.getPriceList,
+      cureFilesPostProcess: AntivirusActions.cureFilesPostProcess,
     });
 
     // prettier-ignore
@@ -245,6 +249,9 @@ export class AntivirusCard {
                 case TaskEventName.filesDelete:
                   this.deleteFilesPostProcess(notify, this.userNotification, this.t);
                   break;
+                case TaskEventName.filesCure:
+                  this.cureFilesPostProcess(notify, this.userNotification, this.t);
+                  break;
               }
             }
           },
@@ -305,6 +312,13 @@ export class AntivirusCard {
       }
       history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
+  }
+
+  /**
+   * Lifecycle hook, unsubscribe when component remove
+   */
+  componentDidUnload() {
+    this.sub.unsubscribe();
   }
 
   /**

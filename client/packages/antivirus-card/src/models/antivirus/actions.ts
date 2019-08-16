@@ -26,6 +26,10 @@ import {
   scanSuccess,
   getPriceListSuccess,
   getPriceListFailure,
+  cureFilesSuccess,
+  cureFilesFailure,
+  cureFilesPostProcessSuccess,
+  cureFilesPostProcessFailure,
 } from './types';
 import { endpoint } from '../../constants';
 import { AntivirusState, CheckType, InfectedFile, ScanOption } from './state';
@@ -144,6 +148,87 @@ export namespace AntivirusActions {
         dispatch(deleteFilesPostProcessSuccess(count));
       } catch (error) {
         dispatch(deleteFilesPostProcessFailure(error));
+      }
+    };
+  }
+
+  /**
+   * Healing a file or files
+   *
+   * @param siteId Site's id
+   * @param files Files array
+   * @param userNotification User notifications provider
+   * @param t i18n provider
+   */
+  export function cureFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: ITranslate) {
+    return async dispatch => {
+      try {
+        const body = { files: files.map(f => f.id), action: 'cure' };
+        const requestInit: RequestInit = {
+          method: 'POST',
+          body: JSON.stringify(body),
+        };
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files`, requestInit);
+        if (response.status === 404) {
+          if (files.length > 1) {
+            const titleLeftPart = t.msg(['VIRUS_CURE', 'GROUP', 'FAIL_1']);
+            const titleRightPart = t.msg(['VIRUS_CURE', 'GROUP', 'FAIL_2'], files.length);
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: `${titleLeftPart} ${files.length} ${titleRightPart}`,
+              content: undefined,
+            });
+          } else {
+            const filename = files[0].name;
+            userNotification.push({
+              type: NotifyBannerTypes.ERROR_FAST,
+              title: t.msg(['VIRUS_CURE', 'FAIL']),
+              content: t.msg(['VIRUS_CURE', 'ERROR_404'], { filename }),
+            });
+          }
+        }
+        handleErrors(response);
+        const json: TaskManagerResponse = await response.json();
+
+        dispatch(cureFilesSuccess(json));
+      } catch (error) {
+        dispatch(cureFilesFailure(error));
+      }
+    };
+  }
+
+  /**
+   * File curing post process method
+   * It updated the state of the component and sends the user notification
+   * @param notify - Notification from notifier
+   * @param userNotification - User Notification provider
+   * @param t - Translator provider
+   */
+  export function cureFilesPostProcess(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
+    return dispatch => {
+      try {
+        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
+        const curedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+        let count: number = curedFiles.length;
+
+        const type = NotifyBannerTypes.NORMAL_FAST;
+        if (count > 1) {
+          userNotification.push({
+            title: `${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_2'], count)}`,
+            content: undefined,
+            type,
+          });
+        } else {
+          userNotification.push({
+            title: t.msg(['VIRUS_CURE', 'DONE']),
+            content: curedFiles[0] && curedFiles[0].name,
+            type,
+          });
+        }
+
+        dispatch(cureFilesPostProcessSuccess(count));
+      } catch (error) {
+        dispatch(cureFilesPostProcessFailure(error));
       }
     };
   }
@@ -334,7 +419,7 @@ export namespace AntivirusActions {
         };
         const [full, partial] = await Promise.all([
           fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=1&type=FULL`, requestInit),
-          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=0&type=PARTIAL`, requestInit),
+          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan/history?limit=1&type=PARTIAL`, requestInit),
         ]);
         handleErrors(full);
         handleErrors(partial);
