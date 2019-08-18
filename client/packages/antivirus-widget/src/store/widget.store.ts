@@ -249,6 +249,11 @@ export class Store extends AbstractStore<WidgetState> {
     }
   }
 
+  /**
+   * Handler for cure success
+   *
+   * @param event - notification event about cure complete
+   */
   handleCureSuccess(event: NotifierEvent): void {
     const results = getNestedObject(event, ['additional_data', 'output', 'content', 'result']);
     const curedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
