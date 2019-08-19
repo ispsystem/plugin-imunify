@@ -1,7 +1,7 @@
 import { AbstractStore } from './abstract.store';
 import { endpoint } from '../constants';
 import { API } from './api.interface';
-import { NotifierEvent, UserNotification, Translate, NotifyBannerTypes, TaskEventName } from './types';
+import { NotifierEvent, UserNotification, Translate, NotifyBannerTypes, TaskEventName, InfectedFile } from './types';
 import { getNestedObject, handleErrors } from '../utils/utils';
 
 /** State for antivirus widget component */
@@ -220,7 +220,6 @@ export class Store extends AbstractStore<WidgetState> {
    * @param event - event by notifier
    */
   async updateStateByNotify(event: NotifierEvent): Promise<void> {
-    console.log('EVENT', event, event.additional_data);
     switch (event.additional_data.name) {
       case TaskEventName.scan:
         switch (event.additional_data.status) {
@@ -234,12 +233,52 @@ export class Store extends AbstractStore<WidgetState> {
             break;
         }
         break;
-      case TaskEventName.heal:
-        this.setStateProperty({
-          healing: event.additional_data.status === 'running',
-        });
+      case TaskEventName.cure:
+        switch (event.additional_data.status) {
+          case 'complete': {
+            this.handleCureSuccess(event);
+            break;
+          }
+          case 'running':
+            this.setStateProperty({
+              healing: true,
+            });
+            break;
+        }
         break;
     }
+  }
+
+  /**
+   * Handler for cure success
+   *
+   * @param event - notification event about cure complete
+   */
+  handleCureSuccess(event: NotifierEvent): void {
+    const results = getNestedObject(event, ['additional_data', 'output', 'content', 'result']);
+    const curedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+    const count = curedFiles.length;
+    const type = NotifyBannerTypes.NORMAL_FAST;
+    if (count > 1) {
+      this._userNotification.push({
+        title: `${this._t.msg(['WIDGET', 'VIRUS_CURE', 'GROUP', 'DONE_1'], count)} ${count} ${this._t.msg(
+          ['WIDGET', 'VIRUS_CURE', 'GROUP', 'DONE_2'],
+          count,
+        )}`,
+        content: undefined,
+        type,
+      });
+    } else {
+      this._userNotification.push({
+        title: this._t.msg(['WIDGET', 'VIRUS_CURE', 'DONE']),
+        content: curedFiles[0] && curedFiles[0].name,
+        type,
+      });
+    }
+    this.setStateProperty({
+      infectedFilesCount: this.state.infectedFilesCount - count > -1 ? this.state.infectedFilesCount - count : 0,
+      healing: false,
+    });
   }
 
   /**

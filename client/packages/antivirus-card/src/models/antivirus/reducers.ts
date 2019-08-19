@@ -226,6 +226,25 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         error: action.payload.error,
       };
     }
+
+    case ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_SUCCESS: {
+      const { curedFilesCount } = action.payload;
+      let infectedFilesCount = state.infectedFilesCount - curedFilesCount;
+      if (infectedFilesCount < 0) {
+        infectedFilesCount = 0;
+      }
+      return {
+        ...state,
+        infectedFilesCount,
+      };
+    }
+
+    case ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE: {
+      return {
+        ...state,
+        error: action.payload.error,
+      };
+    }
   }
 
   return state;

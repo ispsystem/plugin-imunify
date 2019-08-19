@@ -66,7 +66,7 @@ export class History {
     );
 
     // initialize data by controller
-    await this.paginationController.init();
+    await this.paginationController.reFetch();
   }
 
   componentDidUnload() {

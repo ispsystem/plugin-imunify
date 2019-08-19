@@ -13,7 +13,8 @@ export type GroupActionType<K extends string> = {
 };
 
 /** Common state for table with pagination */
-export class TableState<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class TableState<T = any> {
   currentPage: number;
   countOnPage: number;
   elementCount: number;
@@ -55,8 +56,11 @@ export namespace TableController {
     /**
      * Method for initialize table state
      */
-    async init(): Promise<void> {
+    async reFetch(): Promise<void> {
       await this._fetch();
+      this._store.setStateProperty({
+        selectedList: [],
+      });
     }
 
     /**
@@ -142,7 +146,7 @@ export namespace TableController {
     select(id: number | number[]): void {
       const ids = Array.isArray(id) ? id : [id];
       this._store.setStateProperty({
-        selectedList: [...this._store.state.selectedList, ...ids],
+        selectedList: [...ids, ...this._store.state.selectedList.filter(id => !~ids.indexOf(id))],
       });
     }
 
