@@ -7,19 +7,18 @@
 
   text-decoration: none;
 
-  color: var(--ngispui-vmenu-option__color, var(--isp-color__basic-text, $isp-color__basic-text));
+  color:var(--isp-color__basic-text, $isp-color__basic-text);
 
-  font-family: var(--ngispui-vmenu-option__font-family, var(--isp-font-family, $isp-font-family));
-  font-size: var(--ngispui-vmenu-option__font-size, var(--isp-font-size-default, $isp-font-size-default));
+  font-family: var(--isp-font-family, $isp-font-family);
+  font-size: var(--isp-font-size-default, $isp-font-size-default);
 }
 
 :host:not(:last-of-type) {
   margin-bottom: 5px;
 }
 
-@import "./__wrap/ngispui-vmenu-item__wrap";
-@import "./__icon/ngispui-vmenu-item__icon";
-@import "./__label/ngispui-vmenu-item__label";
-@import "./_active/ngispui-vmenu-item_active";
-@import "./_disabled/ngispui-vmenu-item_disabled";
-@import "./_icon-only/ngispui-vmenu-item_icon-only";
+@import "./__wrap/vmenu-item__wrap";
+@import "./__icon/vmenu-item__icon";
+@import "./_active/vmenu-item_active";
+@import "./_disabled/vmenu-item_disabled";
+@import "./_icon-only/vmenu-item_icon-only";

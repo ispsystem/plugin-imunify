@@ -7,11 +7,12 @@
 
 ## Properties
 
-| Property            | Attribute | Description | Type                                                                          | Default     |
-| ------------------- | --------- | ----------- | ----------------------------------------------------------------------------- | ----------- |
-| `routerChangeEvent` | --        |             | `Observable<any>`                                                             | `undefined` |
-| `translateService`  | --        |             | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
-| `url`               | `url`     |             | `string`                                                                      | `undefined` |
+| Property            | Attribute | Description                      | Type                                                                          | Default     |
+| ------------------- | --------- | -------------------------------- | ----------------------------------------------------------------------------- | ----------- |
+| `iconsOnly$`        | --        | Observable of icons only menu    | `Observable<boolean>`                                                         | `undefined` |
+| `routerChangeEvent` | --        | Observable of application router | `Observable<any>`                                                             | `undefined` |
+| `translateService`  | --        | Observable of translate service  | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `url`               | `url`     | Antivirus card plugin url        | `string`                                                                      | `undefined` |
 
 
 ## Dependencies
