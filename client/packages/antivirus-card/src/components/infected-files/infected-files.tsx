@@ -135,20 +135,20 @@ export class InfectedFiles {
   /**
    * Group action delete files
    *
-   * @param ids - id list
+   * @param files - files to delete
    */
-  async delete(ids: number[]) {
-    this.chosenFiles = this.tableState.data.filter(file => ids.includes(file.id));
+  async delete(files: InfectedFile[]) {
+    this.chosenFiles = this.tableState.selectedList.filter(file => files.includes(file));
     this.openDeletionModal();
   }
 
   /**
    * Group action heal files
    *
-   * @param ids - id list
+   * @param files - files to cure
    */
-  async heal(ids: number[]) {
-    await this.cureSubmitHandler(this.tableState.data.filter(file => ids.includes(file.id)));
+  async heal(files: InfectedFile[]) {
+    await this.cureSubmitHandler(this.tableState.selectedList.filter(file => files.includes(file)));
   }
 
   /**
@@ -294,22 +294,22 @@ export class InfectedFiles {
               <antivirus-card-checkbox
                 onChanged={event => {
                   event.detail
-                    ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED').map(d => d.id))
-                    : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED').map(d => d.id));
+                    ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED'))
+                    : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED'));
                   event.stopPropagation;
                 }}
                 checked={
                   this.tableState.data.length > 0 &&
-                  this.tableState.data.filter(f => f.status === 'INFECTED').every(f => this.tableState.selectedList.includes(f.id))
+                  this.tableState.data.filter(f => f.status === 'INFECTED').every(f => this.tableState.selectedList.includes(f))
                 }
-              ></antivirus-card-checkbox>
+              />
             </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
           {this.tableState.data.map(file => (
             <antivirus-card-table-row action-hover>
-              <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file.id)} doubleline>
+              <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file)} doubleline>
                 <span class="main-text">{file.name}</span>
                 <span
                   class="add-text"
@@ -351,13 +351,13 @@ export class InfectedFiles {
               <antivirus-card-table-cell doubleline>
                 <antivirus-card-checkbox
                   onChanged={event => {
-                    event.detail ? this.groupActionController.select(file.id) : this.groupActionController.deselect(file.id);
+                    event.detail ? this.groupActionController.select(file) : this.groupActionController.deselect(file);
                     event.stopPropagation;
                   }}
                   onClick={event => file.status !== 'INFECTED' && event.preventDefault()}
-                  checked={file.status === 'INFECTED' && this.tableState.selectedList.includes(file.id)}
+                  checked={file.status === 'INFECTED' && this.tableState.selectedList.includes(file)}
                   readonly={file.status !== 'INFECTED'}
-                ></antivirus-card-checkbox>
+                />
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}

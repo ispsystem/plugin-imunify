@@ -8,19 +8,19 @@ export interface FetchListResult<T> {
 }
 
 /** Type for group action */
-export type GroupActionType<K extends string> = {
-  [k in K]: (ids: number[]) => Promise<void>;
+export type GroupActionType<K extends string, E = any> = {
+  [k in K]: (entries: E[]) => Promise<void>;
 };
 
 /** Common state for table with pagination */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class TableState<T = any> {
+export class TableState<T> {
   currentPage: number;
   countOnPage: number;
   elementCount: number;
   pageCount: number;
   data: T[];
-  selectedList: number[];
+  selectedList: T[];
 
   constructor(currentPage = 1, countOnPage = 10, selectedList = []) {
     this.currentPage = currentPage;
@@ -130,10 +130,10 @@ export namespace TableController {
    */
   export class GroupAction<T, U extends TableStore<T>, K extends string> {
     /** List of group actions */
-    private _actionList: GroupActionType<K>;
+    private _actionList: GroupActionType<K, T>;
     /** Ref for store */
     private _store: U;
-    constructor(actionList: GroupActionType<K>, store: U) {
+    constructor(actionList: GroupActionType<K, T>, store: U) {
       this._actionList = actionList;
       this._store = store;
     }
@@ -141,24 +141,24 @@ export namespace TableController {
     /**
      * Method for select entity
      *
-     * @param id - id entity
+     * @param entry - an entry or a set of entries
      */
-    select(id: number | number[]): void {
-      const ids = Array.isArray(id) ? id : [id];
+    select(entry: T | T[]): void {
+      const files = Array.isArray(entry) ? entry : [entry];
       this._store.setStateProperty({
-        selectedList: [...ids, ...this._store.state.selectedList.filter(id => !~ids.indexOf(id))],
+        selectedList: [...files, ...this._store.state.selectedList.filter(file => !~files.indexOf(file))],
       });
     }
 
     /**
      * Method for deselect entity
      *
-     * @param id - id entity
+     * @param entry - an entry or a set of entries
      */
-    deselect(id: number | number[]): void {
-      const ids = Array.isArray(id) ? id : [id];
+    deselect(entry: T | T[]): void {
+      const files = Array.isArray(entry) ? entry : [entry];
       this._store.setStateProperty({
-        selectedList: [...this._store.state.selectedList.filter(i => !ids.includes(i))],
+        selectedList: [...this._store.state.selectedList.filter(file => !files.includes(file))],
       });
     }
 
@@ -168,8 +168,8 @@ export namespace TableController {
      * @param actionName - group action name
      */
     async doAction(actionName: K): Promise<void> {
-      const idList = this._store.state.selectedList;
-      await this._actionList[actionName](idList);
+      const entryList = this._store.state.selectedList;
+      await this._actionList[actionName](entryList);
     }
   }
 }
