@@ -83,6 +83,26 @@ export class Store extends AbstractStore<WidgetState> {
   }
 
   /**
+   * Sends the request to cure all the infected files
+   */
+  async cure(): Promise<void> {
+    try {
+      const requestInit: RequestInit = {
+        method: 'POST',
+        body: JSON.stringify({ files: [], action: 'cure' }),
+      };
+      const response = await fetch(`${endpoint}/plugin/api/imunify/site/${this.state.siteId}/files`, requestInit);
+      handleErrors(response);
+
+      this.setStateProperty({
+        healing: true,
+      });
+    } catch (err) {
+      this.setError(err);
+    }
+  }
+
+  /**
    * Action for get feature
    */
   async getFeature(): Promise<void> {
