@@ -195,7 +195,7 @@ export class AntivirusCard {
       cureFilesPostProcess: AntivirusActions.cureFilesPostProcess,
     });
 
-    if (this.notifier !== undefined) {
+    if (Boolean(this.notifier)) {
       this.sub.add(
         this.notifier
           .taskList$()
