@@ -20,6 +20,7 @@
 
 ### Depends on
 
+- [antivirus-card-button](../button)
 - [antivirus-card-preview](../preview)
 - [antivirus-card-modal](../modal)
 - [antivirus-card-new-scan](../new-scan)
@@ -28,6 +29,7 @@
 ### Graph
 ```mermaid
 graph TD;
+  antivirus-card-dashboard --> antivirus-card-button
   antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-dashboard --> antivirus-card-modal
   antivirus-card-dashboard --> antivirus-card-new-scan

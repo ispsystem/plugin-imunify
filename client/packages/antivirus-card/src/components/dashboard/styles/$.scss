@@ -3,4 +3,15 @@ antivirus-card-dashboard {
   flex-wrap: wrap;
   justify-content: space-between;
   width: 969px;
+  position: relative;
+}
+
+.new-scan-button {
+  --ngispui-button__third_border_regular: #{$isp-color__link-regular};
+  --ngispui-button__third_text_regular: #{$isp-color__link-regular};
+  --ngispui-button__third_border_hover: #{$isp-color__link-hover};
+  --ngispui-button__third_text_hover: #{$isp-color__link-hover};
+  --ngispui-button__third_border_active: #{$isp-color__link-active};
+  --ngispui-button__third_text_active: #{$isp-color__link-active};
+  --ngispui-button__box-shadow: none;
 }
