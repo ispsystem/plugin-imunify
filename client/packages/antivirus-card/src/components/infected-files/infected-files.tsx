@@ -111,7 +111,7 @@ export class InfectedFiles {
     await this.paginationController.reFetch();
 
     // update state by notify
-    if (Boolean(this.notifier)) {
+    if (this.notifier !== undefined) {
       this.sub.add(
         this.notifier.delete$().subscribe({
           next: async (notify: { event: NotifierEvent }) => {
@@ -196,6 +196,7 @@ export class InfectedFiles {
   /**
    * Handles cure files
    * @param files - File's
+   * @param event - DOM event
    */
   async cureSubmitHandler(files: InfectedFile[], event?: Event): Promise<void> {
     if (Boolean(event)) {
@@ -224,7 +225,7 @@ export class InfectedFiles {
    */
   showInFileManager(): void {
     const { path } = this.chosenFiles[0];
-    let targetPath = path === '/' ? '' : '/' + encodeURIComponent(path);
+    const targetPath = path === '/' ? '' : '/' + encodeURIComponent(path);
     location.assign(`#/site/${this.siteId}/settings/files${targetPath}`);
   }
 
