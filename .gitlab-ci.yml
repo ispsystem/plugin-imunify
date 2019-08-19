@@ -8,6 +8,7 @@ before_script:
   - cd client
   - npm install
   - npx lerna bootstrap
+  - cd ..
 
 build:
   stage: build
