@@ -7,11 +7,11 @@
 
 ## Properties
 
-| Property   | Attribute   | Description | Type      | Default     |
-| ---------- | ----------- | ----------- | --------- | ----------- |
-| `active`   | `active`    |             | `boolean` | `undefined` |
-| `disabled` | `disabled`  |             | `boolean` | `undefined` |
-| `iconOnly` | `icon-only` |             | `boolean` | `undefined` |
+| Property   | Attribute   | Description                | Type      | Default     |
+| ---------- | ----------- | -------------------------- | --------- | ----------- |
+| `active`   | `active`    | Flag for active status     | `boolean` | `undefined` |
+| `disabled` | `disabled`  | Flag for disable status    | `boolean` | `undefined` |
+| `iconOnly` | `icon-only` | Flag for display only icon | `boolean` | `undefined` |
 
 
 ## Dependencies

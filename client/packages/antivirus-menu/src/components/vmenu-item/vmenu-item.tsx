@@ -1,27 +1,34 @@
 import { Component, h, Prop } from '@stencil/core';
 
 /**
- * Компонент пункта меню
+ * Antivirus menu icon component
  */
 @Component({
   tag: 'antivirus-menu-vmenu-item',
   styleUrls: ['./scss/$.scss'],
-  shadow: true
+  shadow: true,
 })
 export class VMenuItem {
+  /** Flag for active status */
   @Prop({ reflect: true }) active: boolean;
+
+  /** Flag for disable status */
   @Prop({ reflect: true }) disabled: boolean;
+
+  /** Flag for display only icon */
   @Prop({ reflect: true, attribute: 'icon-only' }) iconOnly: boolean;
 
   render() {
     return (
-      <div class="ngispui-vmenu-item__wrap">
-        <div class="ngispui-vmenu-item__icon">
-          <slot name="ngispui-vmenu-icon" />
+      <div class="vmenu-item__wrap">
+        <div class="vmenu-item__icon">
+          <slot name="vmenu-icon" />
         </div>
-        <div class="ngispui-vmenu-item__label">
-          <slot name="ngispui-vmenu-label" />
-        </div>
+        {!this.iconOnly && (
+          <div class="vmenu-item__label">
+            <slot name="vmenu-label" />
+          </div>
+        )}
         <slot />
       </div>
     );

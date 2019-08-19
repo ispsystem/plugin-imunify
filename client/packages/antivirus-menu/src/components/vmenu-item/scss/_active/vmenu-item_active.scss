@@ -1,0 +1,10 @@
+:host([active]) {
+  .vmenu-item__label {
+    font-weight: 700;
+  }
+
+  .vmenu-item__icon {
+    background-color: 
+      var(--isp-color__active-icon-nav-background, $isp-color__active-icon-nav-background);
+  }
+}

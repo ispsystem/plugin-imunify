@@ -18,18 +18,6 @@ import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 
-/** Enumerable for card pages */
-enum AntivirusCardPages {
-  dashboard = 'dashboard',
-  infectedFiles = 'infectedFiles',
-  history = 'history',
-}
-
-/**
- * Payment status returned by payment system
- */
-type PaymentStatus = 'failed' | 'success';
-
 /**
  * AntivirusCard component
  */

@@ -1,7 +1,7 @@
-export type Lang = typeof lang;
-
 const lang = {
-  MENU_ITEM: 'Антивирус ImunifyAV'
+  MENU_ITEM: 'Антивирус ImunifyAV',
 };
+
+export type Lang = typeof lang;
 
 export default lang;

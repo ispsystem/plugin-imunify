@@ -15,13 +15,35 @@ import {
 
 export namespace Components {
   interface AntivirusMenu {
+    /**
+    * Observable of icons only menu
+    */
+    'iconsOnly$': Observable<boolean>;
+    /**
+    * Observable of application router
+    */
     'routerChangeEvent': Observable<any>;
+    /**
+    * Observable of translate service
+    */
     'translateService': { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * Antivirus card plugin url
+    */
     'url': string;
   }
   interface AntivirusMenuVmenuItem {
+    /**
+    * Flag for active status
+    */
     'active': boolean;
+    /**
+    * Flag for disable status
+    */
     'disabled': boolean;
+    /**
+    * Flag for display only icon
+    */
     'iconOnly': boolean;
   }
 }
@@ -48,13 +70,35 @@ declare global {
 
 declare namespace LocalJSX {
   interface AntivirusMenu extends JSXBase.HTMLAttributes<HTMLAntivirusMenuElement> {
+    /**
+    * Observable of icons only menu
+    */
+    'iconsOnly$'?: Observable<boolean>;
+    /**
+    * Observable of application router
+    */
     'routerChangeEvent'?: Observable<any>;
+    /**
+    * Observable of translate service
+    */
     'translateService'?: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
+    /**
+    * Antivirus card plugin url
+    */
     'url'?: string;
   }
   interface AntivirusMenuVmenuItem extends JSXBase.HTMLAttributes<HTMLAntivirusMenuVmenuItemElement> {
+    /**
+    * Flag for active status
+    */
     'active'?: boolean;
+    /**
+    * Flag for disable status
+    */
     'disabled'?: boolean;
+    /**
+    * Flag for display only icon
+    */
     'iconOnly'?: boolean;
   }
 
