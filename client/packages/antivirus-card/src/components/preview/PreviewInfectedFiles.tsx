@@ -12,6 +12,7 @@ interface PreviewInfectedFilesProps {
   clickItem: EventEmitter;
   openBuyModal: EventEmitter;
   isProVersion: boolean;
+  healHandler: () => void;
 }
 
 /**
@@ -29,18 +30,14 @@ export const PreviewInfectedFiles: FunctionalComponent<PreviewInfectedFilesProps
           {props.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_2'], props.infectedFilesCount)}
         </span>
         <div style={{ display: 'inline' }}>
-          {/* <a
+          <a
             class="link link_small link_indent-right"
             onClick={() => {
-              props.isProVersion
-                ? () => {
-                    throw 'disinfectVirusFiles';
-                  }
-                : props.openBuyModal.emit();
+              props.isProVersion ? props.healHandler() : props.openBuyModal.emit();
             }}
           >
             {props.t.msg(['PREVIEW', 'CURE'])}
-          </a> */}
+          </a>
           <a class="link link_small" onClick={() => props.clickItem.emit(1)}>
             {props.t.msg(['PREVIEW', 'DETAIL'])}
           </a>
