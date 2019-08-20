@@ -1,0 +1,21 @@
+image:
+  node:12-alpine
+
+stages:
+  - build
+
+before_script:
+  - cd client
+  - npm install
+  - npx lerna bootstrap
+  - cd ..
+
+build:
+  stage: build
+  script:
+    - sh scripts/build.sh
+  artifacts:
+    when: on_success
+    expire_in: 3 mos
+    paths:
+      - build/
