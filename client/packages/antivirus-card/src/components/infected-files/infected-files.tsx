@@ -59,6 +59,9 @@ export class InfectedFiles {
   /** Vepp site id */
   @State() siteId: RootState['siteId'];
 
+  /** Vepp plugin id */
+  @State() pluginId: RootState['pluginId'];
+
   /** Common table state */
   @State() tableState: TableState<InfectedFile>;
 
@@ -77,6 +80,7 @@ export class InfectedFiles {
       ...state.antivirus,
       t: state.translate,
       siteId: state.siteId,
+      pluginId: state.pluginId,
       userNotification: state.userNotification,
       notifier: state.notifier,
     }));
@@ -111,11 +115,11 @@ export class InfectedFiles {
     await this.paginationController.reFetch();
 
     // update state by notify
-    if (this.notifier !== undefined) {
+    if (this.notifier !== null) {
       this.sub.add(
-        this.notifier.delete$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            const taskName = getNestedObject(notify.event, ['additional_data', 'name']);
+        this.notifier.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
+          next: async (notifierEvent: NotifierEvent) => {
+            const taskName = getNestedObject(notifierEvent, ['additional_data', 'name']);
             if (taskName !== undefined && (taskName === TaskEventName.filesDelete || taskName === TaskEventName.filesCure)) {
               this.paginationController.reFetch();
             }

@@ -71,18 +71,21 @@ export type PaymentStatus = 'failed' | 'success';
 
 /** Interface for get prise list response */
 export interface PriceListResponse {
-  list: {
-    id: string;
-    name: string;
-    description: string;
-    identifier: string;
-    type: string;
-    price: PriceListPrice[];
-  }[];
+  list: PriceListItem[];
 }
 
-/** Interface for price list price */
-export interface PriceListPrice {
+/** Interface for prise list item */
+export interface PriceListItem {
+  id: string;
+  name: string;
+  description: string;
+  identifier: string;
+  type: string;
+  price: PriceListPeriod[];
+}
+
+/** Interface for price list period */
+export interface PriceListPeriod {
   id: string;
   length?: number;
   type: PricePeriodType;

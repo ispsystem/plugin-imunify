@@ -1,5 +1,6 @@
 import { ITranslate } from '../models/translate.reducers';
 import { PricePeriodType } from '../models/antivirus/model';
+import { Notifier, ISPNotifierNotifyType } from '../redux/reducers';
 
 /**
  * Combination of async function + await + setTimeout
@@ -137,4 +138,43 @@ export function getCurrencySymbol(currency: string): string {
  */
 export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3): string {
   return t.msg(['PRICE_PERIOD', period.toUpperCase() as 'DAY' | 'MONTH' | 'YEAR']).slice(0, count);
+}
+
+/**
+ * Configure/reconfigure notifier object
+ *
+ * @param entityIds - ids for the entity
+ */
+export function configureNotifier(notifier: Notifier, entityIds: { [x in 'plugin' | 'market_order']?: number[] }): void {
+  const params = {
+    task_list: true,
+    entities: [],
+  };
+
+  if (entityIds.plugin !== undefined) {
+    params.entities.push({
+      entity: 'plugin',
+      ids: entityIds['plugin'],
+      type: [{ name: ISPNotifierNotifyType.CREATE }, { name: ISPNotifierNotifyType.UPDATE }, { name: ISPNotifierNotifyType.DELETE }],
+      relations: [
+        {
+          entity: 'task',
+          type: [{ name: ISPNotifierNotifyType.CREATE }, { name: ISPNotifierNotifyType.UPDATE }, { name: ISPNotifierNotifyType.DELETE }],
+        },
+      ],
+    });
+  }
+  if (entityIds.market_order !== undefined) {
+    params.entities.push({
+      entity: 'market_order',
+      ids: entityIds['market_order'],
+      type: [
+        { name: ISPNotifierNotifyType.CREATE },
+        { name: ISPNotifierNotifyType.UPDATE, action: '/isp/market/v3/order/{market_order_id}' },
+        { name: ISPNotifierNotifyType.DELETE },
+      ],
+    });
+  }
+
+  notifier && notifier.setParams(params);
 }

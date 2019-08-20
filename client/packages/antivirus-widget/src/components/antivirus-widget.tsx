@@ -153,9 +153,11 @@ export class AntivirusWidget {
   }
 
   /** @todo add handle for stop scan files, when this function realise in backend */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   handleClickStopScan() {}
 
   /** @todo add handle for stop cure files, when this function realise in backend */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   handleClickStopCure() {}
 
   render() {

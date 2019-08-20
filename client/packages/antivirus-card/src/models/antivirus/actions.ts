@@ -119,16 +119,16 @@ export namespace AntivirusActions {
   /**
    * File deletion post process method
    * It updated the state of the component and sends the user notification
-   * @param notify Notification from notifier
+   * @param notifyEvent Notification from notifier
    * @param userNotification User Notification provider
    * @param t Translator provider
    */
-  export function deleteFilesPostProcess(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
+  export function deleteFilesPostProcess(notifyEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
-        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
-        let deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let count: number = deletedFiles.length;
+        const results = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'result']);
+        const deletedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
+        const count: number = deletedFiles.length;
 
         const type = NotifyBannerTypes.NORMAL_FAST;
         if (count > 1) {
@@ -200,16 +200,16 @@ export namespace AntivirusActions {
   /**
    * File curing post process method
    * It updated the state of the component and sends the user notification
-   * @param notify - Notification from notifier
+   * @param notifierEvent - Notification from notifier
    * @param userNotification - User Notification provider
    * @param t - Translator provider
    */
-  export function cureFilesPostProcess(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate) {
+  export function cureFilesPostProcess(notifierEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
-        const results = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'result']);
+        const results = getNestedObject(notifierEvent, ['additional_data', 'output', 'content', 'result']);
         const curedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
-        let count: number = curedFiles.length;
+        const count: number = curedFiles.length;
 
         const type = NotifyBannerTypes.NORMAL_FAST;
         if (count > 1) {
@@ -248,10 +248,10 @@ export namespace AntivirusActions {
           body: JSON.stringify({ preset_id: presetId }),
         };
 
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan`, requestInit);
         handleErrors(response);
 
-        let json = await response.json();
+        const json = await response.json();
 
         dispatch(scanning({ scanId: json.task_id }));
       } catch (error) {
@@ -264,16 +264,16 @@ export namespace AntivirusActions {
    *
    * Get scan result
    *
-   * @param notify - result from notifier
+   * @param notifyEvent - result from notifier
    */
-  export function getScanResult(notify: { event: NotifierEvent }, userNotification: UserNotification, t: ITranslate, siteId: number) {
+  export function getScanResult(notifyEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate, siteId: number) {
     return async dispatch => {
       try {
-        const started = getNestedObject(notify, ['event', 'additional_data', 'output', 'content', 'scan', 'started']);
-        const taskId = notify.event.id;
+        const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);
+        const taskId = notifyEvent.id;
         if (started !== undefined && taskId !== undefined) {
           const [scanResponse, infectedFilesCount] = await Promise.all([
-            fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notify.event.id}&started=${started}`),
+            fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`),
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`),
           ]);
           handleErrors(scanResponse);
@@ -313,9 +313,9 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/feature`, requestInit);
         handleErrors(response);
-        let json = await response.json();
+        const json = await response.json();
 
         dispatch(getStateSuccess(json));
       } catch (error) {
@@ -337,7 +337,7 @@ export namespace AntivirusActions {
         handleErrors(response);
         const priceList: PriceListResponse = await response.json();
         /** @todo in price list only first price in list now */
-        dispatch(getPriceListSuccess(priceList.list[0].price));
+        dispatch(getPriceListSuccess(priceList.list[0]));
       } catch (error) {
         dispatch(getPriceListFailure(error));
       }
@@ -358,7 +358,7 @@ export namespace AntivirusActions {
           method: 'POST',
           body: JSON.stringify({ scan_type: scanType, preset: { ...preset } }),
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/preset`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/preset`, requestInit);
 
         handleErrors(response);
 
@@ -448,9 +448,9 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`, requestInit);
         handleErrors(response);
-        let json = await response.json();
+        const json = await response.json();
 
         dispatch(getInfectedFilesSuccess(json));
       } catch (error) {
@@ -470,9 +470,9 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit);
         handleErrors(response);
-        let json = await response.json();
+        const json = await response.json();
 
         dispatch(getPresetsSuccess(json));
       } catch (error) {
@@ -493,9 +493,9 @@ export namespace AntivirusActions {
           method: 'POST',
           body: JSON.stringify({ is_active: false }),
         };
-        let response = await fetch(`${endpoint}/plugin/api/imunify/preset/${presetId}/status`, requestInit);
+        const response = await fetch(`${endpoint}/plugin/api/imunify/preset/${presetId}/status`, requestInit);
         handleErrors(response);
-        let json = await response.json();
+        const json = await response.json();
 
         dispatch(disablePresetSuccess(json));
       } catch (error) {
