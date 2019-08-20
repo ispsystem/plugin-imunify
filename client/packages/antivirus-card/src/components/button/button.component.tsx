@@ -8,13 +8,13 @@ import { ButtonType, ThemePalette } from './button.interface';
 })
 export class ButtonComponent {
   @Prop({ attribute: 'btn-type' })
-  public btnType: ButtonType = ButtonType.button;
+  btnType: ButtonType = ButtonType.button;
   @Prop({ attribute: 'is-disabled' })
-  public isDisabled: boolean = false;
+  isDisabled = false;
   @Prop({ attribute: 'btn-theme' })
-  public theme: ThemePalette = ThemePalette.primary;
+  theme: ThemePalette = ThemePalette.primary;
   @Prop({ attribute: 'custom-css-class' })
-  public customCSSClass = '';
+  customCSSClass = '';
 
   render() {
     return (
