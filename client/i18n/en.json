@@ -1,159 +1,248 @@
 {
-  "TITLE": "",
+  "TITLE": "Antivirus ImunifyAV",
   "PRO_PERIODS": {
     "MONTH": {
-      "SHORT": "",
-      "LONG": ""
+      "SHORT": "month",
+      "LONG": "Monthly"
     },
     "YEAR": {
-      "SHORT": "",
-      "LONG": "",
+      "SHORT": "year",
+      "LONG": "Yearly",
       "DESCRIPTION": ""
     }
   },
   "MENU_ITEMS": {
-    "PREVIEW": "",
-    "INFECTED_FILES": "",
-    "HISTORY": "",
-    "DASHBOARD": ""
+    "PREVIEW": "Overview ",
+    "INFECTED_FILES": "Infected files ",
+    "HISTORY": "Scanning history ",
+    "DASHBOARD": "Overview "
   },
   "CHECK_TYPE": {
-    "FULL": ""
+    "FULL": "full "
   },
   "BUY_MODAL": {
-    "TITLE": "",
-    "LABEL_1": "",
+    "TITLE": "Imunify Pro subscription ",
+    "LABEL_1": "Daily website scanning ",
     "LABEL_2": "",
     "LABEL_3": "",
     "LABEL_PRO_1": "",
-    "LABEL_PRO_2": "",
+    "LABEL_PRO_2": "Scheduled scanning ",
     "LABEL_PRO_3": ""
   },
-  "NOT_NOW": "",
-  "SUBSCRIBE_FOR": "",
+  "NOT_NOW": "Not now ",
+  "SUBSCRIBE_FOR": "Subscribe for ",
   "TABLE": {
-    "ON_PAGE_LABEL": ""
+    "ON_PAGE_LABEL": "On page",
+    "OF": "",
+    "RECORD_COUNT": "",
+    "SELECTED_COUNT": "",
+    "FILE_COUNT": ""
   },
   "PREVIEW": {
     "HELP": "",
-    "HELP_RECOMMENDATION": "",
-    "WAIT_CHECK": "",
-    "LAST_CHECK": "",
-    "NEXT_CHECK": "",
-    "INFECTED_FILES_WORD_1": "",
-    "INFECTED_FILES_WORD_2": "",
-    "CURE": "",
-    "DETAIL": "",
-    "NOT_INFECTED_FILES": "",
-    "IN_BLACK_LISTS": "",
-    "HOW_TO_FIX": "",
-    "NOT_IN_BLACK_LISTS": ""
+    "HELP_RECOMMENDATION": "We recommend curing the viruses and reindex the website. This process may take 3 to 72 hours. ",
+    "WAIT_CHECK": "Website scanning in progress. It may take ",
+    "LAST_CHECK": "Last check ",
+    "NEXT_CHECK": "Next scanning: 04.06.2019 Daily ",
+    "INFECTED_FILES_WORD_1": "Infected |||| Infected |||| Infected ",
+    "INFECTED_FILES_WORD_2": "file |||| files |||| files ",
+    "CURE": "Cure",
+    "DETAIL": "Details ",
+    "NOT_INFECTED_FILES": "Viruses not found ",
+    "IN_BLACK_LISTS": "Website is blacklisted ",
+    "HOW_TO_FIX": "How to fix",
+    "NOT_IN_BLACK_LISTS": "Website is not blacklisted "
   },
   "INFECTED_FILES": {
-    "NOT_FOUND": "",
-    "SUBSCRIBE_TO_PRO": "",
+    "NOT_FOUND": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. Use Imunify Pro to cure viruses. You can subscribe right now. ",
+    "SUBSCRIBE_TO_PRO": "Subscribe to Imunify Pro",
     "TABLE_HEADER": {
-      "CELL_1": "",
-      "CELL_2": "",
-      "CELL_3": "",
-      "CELL_4": ""
+      "CELL_1": "File name ",
+      "CELL_2": "Threat name ",
+      "CELL_3": "Detected",
+      "CELL_4": "File location"
     },
     "STATUS": {
-      "INFECTED": "",
-      "CURED": "",
-      "EXCEPTED": "",
-      "HEALING": ""
+      "INFECTED": "infected",
+      "CURED": "cured",
+      "EXCEPTED": "added to ignored",
+      "HEALING": "curing ",
+      "DELETED": ""
+    },
+    "NOT_FOUND_PRO": "",
+    "ACTIONS": {
+      "HEAL": "",
+      "EXCLUDE": "",
+      "OPEN_FOLDER": "",
+      "DELETE": ""
+    },
+    "MODAL": {
+      "TITLE": "",
+      "DELETE_BUTTON": "",
+      "CANCEL_BUTTON": "",
+      "GROUP_TITLE": ""
     }
   },
-  "DATETIME_CREATED": "",
-  "DATETIME_CHANGED": "",
+  "DATETIME_CREATED": "created on %{date} at %{time}",
+  "DATETIME_CHANGED": "modified on %{date} at %{time}",
   "HISTORY_TAB": {
     "TABLE_HEADER": {
-      "CELL_1": "",
-      "CELL_2": "",
+      "CELL_1": "Check date ",
+      "CELL_2": "Type ",
       "CELL_3": ""
     },
     "CHECK_TYPE": {
-      "FULL": "",
+      "FULL": "full ",
       "PARTIAL": ""
-    }
+    },
+    "ACTION": {
+      "RETRY": ""
+    },
+    "CURED_COUNT": ""
   },
-  "MENU_ITEM": "",
+  "MENU_ITEM": "Antivirus ImunifyAV",
   "WIDGET": {
-    "ANTIVIRUS": "",
+    "ANTIVIRUS": "Antivirus ",
     "STATUS_MSG": {
       "SAFELY": "",
-      "IN_PROCESS": ""
+      "IN_PROCESS": "scanning website for viruses"
     },
     "DESC_MSG": {
-      "HISTORY": "",
-      "WAIT": ""
+      "HISTORY": "the last scanning: today ",
+      "WAIT": "it will take about 10 minutes"
     },
     "ACTION_MSG": {
       "AGAIN": "",
-      "REPORT": ""
+      "REPORT": "Report "
+    },
+    "STATUS": {
+      "SUCCESS": "",
+      "ACCENT": ""
+    },
+    "LAST_CHECK": "",
+    "CHECK_AGAIN": "",
+    "CURE": "",
+    "ACTION": {
+      "SCANNING": "",
+      "CURE": ""
+    },
+    "VIRUS_DETECTED": "",
+    "SCAN_SUCCESS": "",
+    "CURE_COUNT_FILES": "",
+    "MORE_DETAILS": "",
+    "TODAY": "",
+    "VIRUS_CURE": {
+      "DONE": "",
+      "FAIL": "",
+      "GROUP": {
+        "DONE_1": "",
+        "DONE_2": "",
+        "FAIL_1": "",
+        "FAIL_2": ""
+      },
+      "ERROR_404": ""
     }
   },
-  "NEW_SCAN_BTN": "",
+  "NEW_SCAN_BTN": "New scanning ",
   "DASHBOARD": {
-    "TITLE": "",
+    "TITLE": "Buy ImunifyAV+ for 5 €/month",
     "TEXT": ""
   },
   "SCAN_SETTINGS": {
-    "NEW_SCAN": "",
-    "CHECK_FOLDER": "",
-    "USE_MASK_FOR_CHECK_FILES": "",
-    "USE_MASK_FOR_IGNORE_FILES": "",
+    "NEW_SCAN": "New scanning ",
+    "CHECK_FOLDER": "Directory or file for scanning ",
+    "USE_MASK_FOR_CHECK_FILES": "Use filename mask ",
+    "USE_MASK_FOR_IGNORE_FILES": "Use mask to ignore files ",
     "CHECK_MASK_HINT": "",
     "INSPECTION_INTENSITY": {
-      "LOW": "",
-      "MEDIUM": "",
-      "HIGH": "",
+      "LOW": "Low ",
+      "MEDIUM": "Medium ",
+      "HIGH": "High ",
       "TEXT": "",
-      "HINT_TEXT": ""
+      "HINT_TEXT": "It defines priority and resources that will be used for scanning"
     },
-    "BUTTON_SCAN": "",
-    "BUTTON_SAVE": "",
-    "BUTTON_CANCEL": "",
+    "BUTTON_SCAN": "Scanning ",
+    "BUTTON_SAVE": "Save ",
+    "BUTTON_CANCEL": "Cancel ",
     "CHECK_FILE_TYPE": {
-      "CRITICAL": "",
-      "ALL": "",
-      "EXCEPT_MEDIA": "",
-      "TEXT": "",
+      "CRITICAL": "Critical types",
+      "ALL": "All types",
+      "EXCEPT_MEDIA": "Skip media files ",
+      "TEXT": "Check files",
       "HINT_TEXT": "",
-      "critical": "",
-      "all": "",
-      "except_media": ""
+      "critical": "Critical types",
+      "all": "All types",
+      "except_media": "Skip media files "
     },
-    "CONFIGURE_SCAN": "",
-    "SAVE_COPY_FILES": "",
-    "AUTO_HEAL_MALWARE": "",
-    "DELETE_ONLY_CONTENT": "",
-    "EMAIL_NOTIFY": "",
-    "ADVANCED_SETTINGS": "",
-    "HIDE_ADVANCED_SETTINGS": "",
+    "CONFIGURE_SCAN": "Configure scanning",
+    "SAVE_COPY_FILES": "Store copies of cured files",
+    "AUTO_HEAL_MALWARE": "Cure viruses automatically ",
+    "DELETE_ONLY_CONTENT": "Delete the o",
+    "EMAIL_NOTIFY": "Notify admin via email",
+    "ADVANCED_SETTINGS": "Advanced settings ",
+    "HIDE_ADVANCED_SETTINGS": "Hide advanced settings",
     "CPU_THREAD_COUNT": {
-      "TEXT": "",
+      "TEXT": "Number of scanning threads ",
       "HINT_TEXT": ""
     },
-    "RAM_COUNT": "",
+    "RAM_COUNT": "RAM consumption for scanning ",
     "DETAIL_LOG": {
-      "TEXT": "",
-      "FULL": "",
-      "COMMON": ""
+      "TEXT": "Antivirus log level ",
+      "FULL": "Full ",
+      "COMMON": "Common "
     },
     "MAX_SCAN_TIME": {
-      "ITEM_1": "",
-      "ITEM_3": "",
-      "ITEM_6": "",
-      "ITEM_12": "",
-      "ITEM_24": "",
-      "ITEM_0": "",
-      "TEXT": ""
+      "ITEM_1": "1 hour ",
+      "ITEM_3": "3 hours ",
+      "ITEM_6": "6 hours",
+      "ITEM_12": "12 hours ",
+      "ITEM_24": "24 hours",
+      "ITEM_0": "unlimited ",
+      "TEXT": "Max scanning time "
     },
-    "AUTO_UPDATE_DB": "",
-    "DAY_COUNT": ""
+    "AUTO_UPDATE_DB": "Update antivirus base automatically ",
+    "DAY_COUNT": "day |||| days |||| days"
   },
-  "BTN_SCAN": "",
-  "CONFIGURE": ""
+  "BTN_SCAN": "Scan ",
+  "CONFIGURE": "Configure ",
+  "MEGABYTE_SHORT": "",
+  "VIRUS_DETECTED": "",
+  "NOTIFY": {
+    "SCAN_SUCCESS": "",
+    "MORE_DETAILS": ""
+  },
+  "PAYMENT_FAILED_MODAL": {
+    "TITLE": "",
+    "DESCRIPTION_1": "",
+    "DESCRIPTION_2": "",
+    "TRY_AGAIN_BUTTON": ""
+  },
+  "PRICE_PERIOD": {
+    "DAY": "",
+    "MONTH": "",
+    "YEAR": ""
+  },
+  "LAST_CHECK_IN": "",
+  "VIRUS_DELETE": {
+    "DONE": "",
+    "FAIL": "",
+    "GROUP": {
+      "DONE_1": "",
+      "DONE_2": "",
+      "FAIL_1": "",
+      "FAIL_2": ""
+    },
+    "ERROR_404": ""
+  },
+  "VIRUS_CURE": {
+    "DONE": "",
+    "FAIL": "",
+    "GROUP": {
+      "DONE_1": "",
+      "DONE_2": "",
+      "FAIL_1": "",
+      "FAIL_2": ""
+    },
+    "ERROR_404": ""
+  }
 }
