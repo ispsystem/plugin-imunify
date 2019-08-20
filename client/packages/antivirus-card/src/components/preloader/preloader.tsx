@@ -22,24 +22,20 @@ export class Preloader {
 
   /** Value for css style top */
   @Prop({ reflect: true }) top = '0';
-
   /** Value for css style left */
   @Prop({ reflect: true }) left = '0';
-
   /** Value for css style height */
   @Prop({ reflect: true }) height = '100%';
-
   /** Value for css style width */
   @Prop({ reflect: true }) width = '100%';
-
   /** Spinner size type */
   @Prop({ reflect: true }) size: 'large' | 'medium' | 'small';
-
   /** Flag for loading */
-  @Prop({ reflect: true }) loading: boolean = false;
-
+  @Prop({ reflect: true }) loading = false;
   /** Preloader type */
   @Prop() type: ViewType = 'local';
+  /** if need to set preloader to one of several inline element */
+  @Prop({ reflect: true }) inline = false;
 
   componentDidLoad() {
     let spinnerWidth: string;
@@ -129,7 +125,7 @@ export class Preloader {
 
   render() {
     return (
-      <div class="isp-preloader">
+      <div class="isp-preloader" style={{ display: this.inline ? 'inline-block' : 'block' }}>
         {this.canDisplay() && (
           <div ref={el => (this.contentDiv = el)}>
             <slot />
@@ -137,9 +133,7 @@ export class Preloader {
         )}
         <div style={!this.loading && { display: 'none' }}>
           <div class="isp-preloader__loader">
-            <div class="isp-preloader__snipper_round">
-              <antivirus-card-spinner-round ref={el => (this.spinnerEl = el)}></antivirus-card-spinner-round>
-            </div>
+            <antivirus-card-spinner-round ref={el => (this.spinnerEl = el)}></antivirus-card-spinner-round>
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ export class SpinnerRound {
   /** Width style for spinner */
   @Prop({ reflect: true }) width = '25px';
   /** Height style for spinner */
-  @Prop({ reflect: true }) height = 'auto';
+  @Prop({ reflect: true }) height = 'inherit';
 
   /** Position absolute or relative, absolute is default */
   @Prop({ reflect: true }) position: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial' = 'absolute';
