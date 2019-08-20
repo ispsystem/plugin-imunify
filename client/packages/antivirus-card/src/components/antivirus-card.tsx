@@ -195,30 +195,43 @@ export class AntivirusCard {
       cureFilesPostProcess: AntivirusActions.cureFilesPostProcess,
     });
 
-    if (this.notifier !== undefined) {
-      this.sub.add(
-        this.notifier
-          .taskList$()
-          .pipe(take(1))
-          .subscribe({
-            next: async (events: NotifierEvent[]) => {
-              console.log('TASK LIST', events);
-              const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
-              if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
-                this.updateState({
-                  ...this.store.getState().antivirus,
-                  scanning: true,
-                });
-              }
-            },
-          }),
-      );
+    // prettier-ignore
+    await this.loadTranslate(
+      getNestedObject(this.translateService, ['currentLang'])
+      || getNestedObject(this.translateService, ['defaultLang'])
+      || defaultLang
+    );
+
+    if (this.translateService !== undefined) {
+      this.translateService.onLangChange.subscribe(d => {
+        if (d.lang in languages) {
+          this.loadTranslate(d.lang);
+        }
+      });
+    }
+
+    if (this.notifierService !== undefined) {
+      this.notifierService
+        .getTaskList('plugin', this.pluginId, 'task', '*')
+        .pipe(take(1))
+        .subscribe({
+          next: async (notifyEvents: NotifierEvent[]) => {
+            console.log('TASK LIST', notifyEvents);
+            const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+            if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                scanning: true,
+              });
+            }
+          },
+        });
 
       this.sub.add(
-        this.notifier.update$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            console.log('UPDATE', notify.event);
-            if (notify.event.additional_data.status === 'running' && notify.event.additional_data.name === TaskEventName.scan) {
+        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
+          next: async (notifyEvent: NotifierEvent) => {
+            console.log('UPDATE', notifyEvent);
+            if (notifyEvent.additional_data.status === 'running' && notifyEvent.additional_data.name === TaskEventName.scan) {
               this.updateState({
                 ...this.store.getState().antivirus,
                 scanning: true,
@@ -229,20 +242,21 @@ export class AntivirusCard {
       );
 
       this.sub.add(
-        this.notifier.delete$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            console.log('DELETE', notify.event);
-            const taskName = getNestedObject(notify.event, ['additional_data', 'name']);
+        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
+          next: async (notifyEvent: NotifierEvent) => {
+            console.log('DELETE', notifyEvent);
+            const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName !== undefined) {
               switch (taskName) {
                 case TaskEventName.scan:
-                  await this.getScanResult(notify, this.userNotification, this.t, this.siteId);
+                  await this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
                   break;
                 case TaskEventName.filesDelete:
-                  await this.deleteFilesPostProcess(notify, this.userNotification, this.t);
+                  await this.deleteFilesPostProcess(notifyEvent, this.userNotification, this.t);
                   break;
                 case TaskEventName.filesCure:
-                  await this.cureFilesPostProcess(notify, this.userNotification, this.t);
+                  await this.cureFilesPostProcess(notifyEvent, this.userNotification, this.t);
+                  this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
                   break;
               }
             }
@@ -250,6 +264,8 @@ export class AntivirusCard {
         }),
       );
     }
+
+    configureNotifier(this.notifierService, { plugin: [this.pluginId] });
   }
 
   /**

@@ -111,11 +111,11 @@ export class InfectedFiles {
     await this.paginationController.reFetch();
 
     // update state by notify
-    if (this.notifier !== undefined) {
+    if (this.notifier !== null) {
       this.sub.add(
-        this.notifier.delete$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            const taskName = getNestedObject(notify.event, ['additional_data', 'name']);
+        this.notifier.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
+          next: async (notifierEvent: NotifierEvent) => {
+            const taskName = getNestedObject(notifierEvent, ['additional_data', 'name']);
             if (taskName !== undefined && (taskName === TaskEventName.filesDelete || taskName === TaskEventName.filesCure)) {
               this.paginationController.reFetch();
             }

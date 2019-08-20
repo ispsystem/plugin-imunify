@@ -8,15 +8,6 @@ import { UserNotification } from './user-notification.interface';
 import { TaskEventName } from '../models/antivirus/model';
 
 /** @todo: move to common plugin lib */
-export interface Notifier {
-  ids: (ids$: number[] | Observable<number[]>) => Notifier;
-  create$: (action?: string) => Observable<any>;
-  delete$: (action?: string) => Observable<any>;
-  update$: (action?: string) => Observable<any>;
-  taskList$: () => Observable<any>;
-}
-
-/** @todo: move to common plugin lib */
 export interface NotifierEvent {
   entity: string; // название сущности
   id: number; // id сущности
@@ -45,8 +36,59 @@ export interface NotifierEvent {
   };
 }
 
+/**
+ * ID сущности
+ */
+export type ISPNotifierEntityID = number | '*';
+/**
+ * Путь
+ */
+export type NotifierPath = (string | ISPNotifierEntityID | ISPNotifierNotifyType)[];
+
+/**
+ * Notifier event type
+ */
+export enum ISPNotifierNotifyType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+/** @todo: move to common plugin lib */
+export interface Notifier {
+  getTaskList(...path: NotifierPath): Observable<NotifierEvent[]>;
+  getEvents(...path: NotifierPath): Observable<NotifierEvent>;
+  setParams(params: NotifierParams): void;
+}
+
+/**
+ * Notifier params
+ */
+export interface NotifierParams {
+  last_notify?: number;
+  /**
+   * При этом флаге, после отправки параметро придет список активных задач, для сущностей в запросе
+   */
+  task_list?: boolean;
+  entities: NotifierEntityParams[];
+}
+
+/**
+ * Notifier params
+ */
+export interface NotifierEntityParams {
+  entity: string;
+  ids?: number[];
+  type: {
+    name: ISPNotifierNotifyType;
+    action?: string;
+  }[];
+  relations?: NotifierEntityParams[];
+}
+
 // This interface represents app state by nesting feature states.
 export interface RootState {
+  pluginId: number;
   siteId: number;
   antivirus?: AntivirusState;
   notifier: Notifier;
@@ -56,6 +98,7 @@ export interface RootState {
 
 // Combine feature reducers into a single root reducer
 export const rootReducer = combineReducers({
+  pluginId: (state: number = null) => state,
   siteId: (state: number = null) => state,
   antivirus: antivirusReducer,
   notifier: (state: Notifier = null) => state,
