@@ -111,7 +111,7 @@ export class InfectedFiles {
     await this.paginationController.reFetch();
 
     // update state by notify
-    if (this.notifier !== undefined) {
+    if (this.notifier !== undefined && this.notifier !== null) {
       this.sub.add(
         this.notifier.delete$().subscribe({
           next: async (notify: { event: NotifierEvent }) => {
@@ -245,6 +245,37 @@ export class InfectedFiles {
     this.dropdownEl.toggle(ev);
   }
 
+  /**
+   * Checkbox value change event handler
+   * @param event The emitted change event
+   */
+  headerCheckboxChangeHandler(event: CustomEvent): void {
+    event.detail
+      ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED'))
+      : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED'));
+    event.stopPropagation();
+  }
+
+  /**
+   * Checks if every single file in the page is selected
+   */
+  isHeaderCheckboxChecked(): boolean {
+    return (
+      this.tableState.data.length > 0 &&
+      this.tableState.data
+        .filter(f => f.status === 'INFECTED')
+        .every(f => this.tableState.selectedList.find(({ id }) => id === f.id) !== undefined)
+    );
+  }
+
+  /**
+   * Checks if the file is selected
+   * @param file The infected file record
+   */
+  isFileSelected(file: InfectedFile): boolean {
+    return file.status === 'INFECTED' && this.tableState.selectedList.find(({ id }) => id === file.id) !== undefined;
+  }
+
   render() {
     return (
       <Host>
@@ -292,16 +323,8 @@ export class InfectedFiles {
             <antivirus-card-table-cell style={{ width: 35 + 'px' }} />
             <antivirus-card-table-cell style={{ width: 15 + 'px' }}>
               <antivirus-card-checkbox
-                onChanged={event => {
-                  event.detail
-                    ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED'))
-                    : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED'));
-                  event.stopPropagation;
-                }}
-                checked={
-                  this.tableState.data.length > 0 &&
-                  this.tableState.data.filter(f => f.status === 'INFECTED').every(f => this.tableState.selectedList.includes(f))
-                }
+                onChanged={event => this.headerCheckboxChangeHandler(event)}
+                checked={this.isHeaderCheckboxChecked()}
               />
             </antivirus-card-table-cell>
           </antivirus-card-table-row>
@@ -355,7 +378,7 @@ export class InfectedFiles {
                     event.stopPropagation;
                   }}
                   onClick={event => file.status !== 'INFECTED' && event.preventDefault()}
-                  checked={file.status === 'INFECTED' && this.tableState.selectedList.includes(file)}
+                  checked={this.isFileSelected(file)}
                   readonly={file.status !== 'INFECTED'}
                 />
               </antivirus-card-table-cell>
