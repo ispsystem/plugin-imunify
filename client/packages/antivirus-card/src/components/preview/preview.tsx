@@ -129,6 +129,9 @@ export class Preview {
       : this.infectedFilesCount;
   }
 
+  /**
+   * Calls the file curing handler
+   */
   async heal(): Promise<void> {
     await this.cureFiles(this.siteId, [], this.userNotification, this.t);
   }
