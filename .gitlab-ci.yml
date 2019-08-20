@@ -14,11 +14,8 @@ build:
   stage: build
   script:
     - sh scripts/build.sh
-  cache:
-    key: "$CI_COMMIT_SHA"
-    paths:
-      - client/node_modules
   artifacts:
+    when: on_success
     expire_in: 3 mos
     paths:
       - build/
