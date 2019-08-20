@@ -5,7 +5,7 @@ import { configureNotifier, getNestedObject } from './tools';
 import { take } from 'rxjs/operators';
 
 /**
- *  * Buy PRO antivirus version
+ * Buy PRO antivirus version
  *
  * @param pricelist - tariff identifier
  * @param period - buy period
