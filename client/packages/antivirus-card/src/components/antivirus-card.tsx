@@ -261,7 +261,6 @@ export class AntivirusCard {
                   break;
                 case TaskEventName.filesCure:
                   await this.cureFilesPostProcess(notifyEvent, this.userNotification, this.t);
-                  this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
                   break;
               }
             }
