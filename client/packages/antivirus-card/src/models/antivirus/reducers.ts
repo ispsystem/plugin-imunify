@@ -11,6 +11,7 @@ const getInitialState = (): AntivirusState => {
     hasScheduledActions: false,
     infectedFilesCount: 0,
     scanning: false,
+    purchasing: false,
     inBlackLists: false,
     historyItemCount: 0,
     lastScan: {

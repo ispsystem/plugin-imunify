@@ -59,6 +59,9 @@ export class InfectedFiles {
   /** Vepp site id */
   @State() siteId: RootState['siteId'];
 
+  /** Vepp plugin id */
+  @State() pluginId: RootState['pluginId'];
+
   /** Common table state */
   @State() tableState: TableState<InfectedFile>;
 
@@ -77,6 +80,7 @@ export class InfectedFiles {
       ...state.antivirus,
       t: state.translate,
       siteId: state.siteId,
+      pluginId: state.pluginId,
       userNotification: state.userNotification,
       notifier: state.notifier,
     }));

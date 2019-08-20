@@ -119,6 +119,8 @@ export interface AntivirusState {
   };
   // scanning flag
   scanning: boolean;
+  // purchasing flag
+  purchasing: boolean;
   // domain in black list
   inBlackLists: boolean;
 

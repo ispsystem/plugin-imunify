@@ -12,11 +12,12 @@ import { ITranslate } from '../models/translate.reducers';
 import { Observable, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
-import { getNestedObject, getCurrencySymbol } from '../utils/tools';
+import { getNestedObject, getCurrencySymbol, configureNotifier } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
+import { purchase } from '../utils/controllers';
 
 /**
  * AntivirusCard component
@@ -38,10 +39,12 @@ export class AntivirusCard {
   buyModal: HTMLAntivirusCardModalElement;
   /** reference to the failed payment modal */
   failedPaymentModal: HTMLAntivirusCardModalElement;
+  /** plugin ID from vepp */
+  @Prop() pluginId: number;
   /** site ID from vepp */
   @Prop() siteId: number;
   /** global notifier object */
-  @Prop() notifier: Notifier;
+  @Prop() notifierService: Notifier;
   /** Global user notification service */
   @Prop() userNotification: UserNotification;
   /** main app translate service */
@@ -55,6 +58,8 @@ export class AntivirusCard {
   @State() scanPreset: RootState['antivirus']['scanPreset'];
   /** scan in process */
   @State() scanning: RootState['antivirus']['scanning'];
+  /** purchase in process */
+  @State() purchasing: RootState['antivirus']['purchasing'];
   /** list current scan process */
   @State() taskList$: RootState['antivirus']['taskList$'];
   /** History item count of scanning */
@@ -159,7 +164,6 @@ export class AntivirusCard {
   deleteFilesPostProcess: typeof AntivirusActions.deleteFilesPostProcess;
   /** Method for removing cured files from infected files list */
   cureFilesPostProcess: typeof AntivirusActions.cureFilesPostProcess;
-
   /** Method for get price list by plugin */
   getPriceList: typeof AntivirusActions.getPriceList;
 
@@ -171,7 +175,8 @@ export class AntivirusCard {
     this.store.setStore(
       configureStore({
         siteId: this.siteId,
-        notifier: this.notifier,
+        pluginId: this.pluginId,
+        notifier: this.notifierService,
         userNotification: this.userNotification,
       }),
     );
@@ -339,7 +344,8 @@ export class AntivirusCard {
   }
 
   /**
-   * Lifecycle hook, unsubscribe when component remove
+   * LIFECYCLE
+   * Unsubscribe when component remove
    */
   componentDidUnload() {
     this.sub.unsubscribe();
@@ -348,14 +354,68 @@ export class AntivirusCard {
   /**
    * Handle to buy pro version
    */
-  buyProVersion() {
+  async buyProVersion() {
+    purchase('72', '1', this.pluginId, this.notifierService);
+
     this.updateState({
       ...this.store.getState().antivirus,
-      isProVersion: true,
+      purchasing: true,
     });
-
-    this.buyModal.visible = false;
   }
+
+  renderBuyModal = () => (
+    <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
+      <span class="title" style={{ display: 'block', 'margin-bottom': '20px' }}>
+        {this.t.msg(['BUY_MODAL', 'TITLE'])}
+      </span>
+      {/* <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
+        <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>
+          {this.proPeriods[0].msg}
+        </antivirus-card-switcher-option>
+        <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 1)} last>
+          {this.proPeriods[1].msg}
+        </antivirus-card-switcher-option>
+      </antivirus-card-switcher> */}
+      {/* <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p> */}
+      <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
+      <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
+      {/* <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} /> */}
+      <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
+      {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} /> */}
+      {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} /> */}
+      <div class="button-container">
+        <antivirus-card-preloader type="overlay" inline loading={this.purchasing}>
+          <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
+            {this.t.msg(['SUBSCRIBE_FOR'], { cost: this.priceList[0].cost, currency: getCurrencySymbol(this.priceList[0].currency) })}
+          </antivirus-card-button>
+        </antivirus-card-preloader>
+        {!this.purchasing && (
+          <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
+            {this.t.msg(['NOT_NOW'])}
+          </a>
+        )}
+      </div>
+    </antivirus-card-modal>
+  );
+
+  renderBuyFailedModal = () => (
+    <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
+      <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
+      <p>
+        {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
+        <br />
+        {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
+      </p>
+      <div class="button-container">
+        <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
+          {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
+        </antivirus-card-button>
+        <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
+          {this.t.msg(['NOT_NOW'])}
+        </a>
+      </div>
+    </antivirus-card-modal>
+  );
 
   render() {
     if (this.isPreloader.card) {
@@ -366,50 +426,8 @@ export class AntivirusCard {
         <h2 class="title">{this.t.msg(['TITLE'])}</h2>
         <antivirus-card-navigation items={this.items} />
         {this.items.find(item => item.active).component()}
-        <antivirus-card-modal modal-width="370px" ref={el => (this.buyModal = el)}>
-          <span class="title" style={{ display: 'block', 'margin-bottom': '20px' }}>
-            {this.t.msg(['BUY_MODAL', 'TITLE'])}
-          </span>
-          {/* <antivirus-card-switcher style={{ display: 'block', marginTop: '20px' }}>
-            <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 0)} active>
-              {this.proPeriods[0].msg}
-            </antivirus-card-switcher-option>
-            <antivirus-card-switcher-option onClick={() => (this.selectedPeriod = 1)} last>
-              {this.proPeriods[1].msg}
-            </antivirus-card-switcher-option>
-          </antivirus-card-switcher> */}
-          {/* <p style={{ marginBottom: '30px' }}>{this.proPeriods[this.selectedPeriod].monthCost}</p> */}
-          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_1'])} />
-          <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_2'])} />
-          {/* <LabelForBuyModal text={this.t.msg(['BUY_MODAL', 'LABEL_3'])} /> */}
-          <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_1'])} />
-          {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_2'])} /> */}
-          {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} /> */}
-          <div class="button-container">
-            <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
-              {this.t.msg(['SUBSCRIBE_FOR'], { cost: this.priceList[0].cost, currency: getCurrencySymbol(this.priceList[0].currency) })}
-            </antivirus-card-button>
-            <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
-              {this.t.msg(['NOT_NOW'])}
-            </a>
-          </div>
-        </antivirus-card-modal>
-        <antivirus-card-modal modal-width="370px" ref={el => (this.failedPaymentModal = el)}>
-          <span class="title">{this.t.msg(['PAYMENT_FAILED_MODAL', 'TITLE'])}</span>
-          <p>
-            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_1'])}
-            <br />
-            {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
-          </p>
-          <div class="button-container">
-            <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
-              {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
-            </antivirus-card-button>
-            <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
-              {this.t.msg(['NOT_NOW'])}
-            </a>
-          </div>
-        </antivirus-card-modal>
+        {this.renderBuyModal()}
+        {this.renderBuyFailedModal()}
       </Host>
     );
   }
