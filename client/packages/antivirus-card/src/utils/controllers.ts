@@ -30,7 +30,7 @@ export async function purchase(pricelist: string, period: string, pluginId: numb
 
     const response = await fetch(`${endpoint}/api/isp/market/v3/service/plugin/purchase`, requestInit);
     handleErrors(response);
-    const json = await response.json();
+    const json: { id: number; order_id: number; task: number } = await response.json();
 
     configureNotifier(notifier, { plugin: [pluginId], market_order: [json.order_id] });
 
