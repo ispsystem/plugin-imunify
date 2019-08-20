@@ -364,7 +364,7 @@ export class InfectedFiles {
         </div>
         <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
-            <span>{this.t.msg(['TABLE', 'RECORD_COUNT'], { smart_count: this.tableState.elementCount })}</span>
+            <span>{this.t.msg(['TABLE', 'FILE_COUNT'], { smart_count: this.tableState.elementCount })}</span>
             <TableGroupActions
               selectedCount={this.tableState.selectedList.length}
               action={[
