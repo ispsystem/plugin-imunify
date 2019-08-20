@@ -1,4 +1,4 @@
-import { DeleteFilesResponse, ScanSuccessData, LastScanData, PriceListPrice, CureFilesResponse } from './model';
+import { DeleteFilesResponse, ScanSuccessData, LastScanData, CureFilesResponse, PriceListItem } from './model';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -322,7 +322,7 @@ interface GetPriceListFailureAction {
 
 interface GetPriceListSuccessAction {
   type: ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS;
-  payload: { data: PriceListPrice[] };
+  payload: { data: PriceListItem };
 }
 
 interface GetLastScanFailureAction {

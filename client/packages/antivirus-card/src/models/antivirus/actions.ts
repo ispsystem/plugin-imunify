@@ -337,7 +337,7 @@ export namespace AntivirusActions {
         handleErrors(response);
         const priceList: PriceListResponse = await response.json();
         /** @todo in price list only first price in list now */
-        dispatch(getPriceListSuccess(priceList.list[0].price));
+        dispatch(getPriceListSuccess(priceList.list[0]));
       } catch (error) {
         dispatch(getPriceListFailure(error));
       }

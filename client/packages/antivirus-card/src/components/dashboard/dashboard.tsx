@@ -104,9 +104,9 @@ export class Dashboard {
           <PreviewFree
             onClick={() => this.openBuyModal.emit()}
             title={this.t.msg(['DASHBOARD', 'TITLE'], {
-              cost: this.priceList[0].cost,
-              currency: getCurrencySymbol(this.priceList[0].currency),
-              period: getShortPeriod(this.priceList[0].type, this.t),
+              cost: this.priceList.price[0].cost,
+              currency: getCurrencySymbol(this.priceList.price[0].currency),
+              period: getShortPeriod(this.priceList.price[0].type, this.t),
             })}
             /** @todo uncomment if UX decides to return the description for the purchase */
             // text={this.t.msg(['DASHBOARD', 'TEXT'])}

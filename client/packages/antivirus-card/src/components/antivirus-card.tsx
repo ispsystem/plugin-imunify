@@ -355,7 +355,7 @@ export class AntivirusCard {
    * Handle to buy pro version
    */
   async buyProVersion() {
-    purchase('72', '1', this.pluginId, this.notifierService);
+    purchase(this.priceList.id, this.priceList.price[0].id, this.pluginId, this.notifierService);
 
     this.updateState({
       ...this.store.getState().antivirus,
@@ -386,7 +386,10 @@ export class AntivirusCard {
       <div class="button-container">
         <antivirus-card-preloader type="overlay" inline loading={this.purchasing}>
           <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
-            {this.t.msg(['SUBSCRIBE_FOR'], { cost: this.priceList[0].cost, currency: getCurrencySymbol(this.priceList[0].currency) })}
+            {this.t.msg(['SUBSCRIBE_FOR'], {
+              cost: this.priceList.price[0].cost,
+              currency: getCurrencySymbol(this.priceList.price[0].currency),
+            })}
           </antivirus-card-button>
         </antivirus-card-preloader>
         {!this.purchasing && (
