@@ -77,7 +77,7 @@ export class Dashboard {
             {this.t.msg(['NEW_SCAN_BTN'])}
           </antivirus-card-button>
         )}
-        <antivirus-card-preview></antivirus-card-preview>
+        <antivirus-card-preview />
         {this.isProVersion ? (
           [
             <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
@@ -95,9 +95,9 @@ export class Dashboard {
               </antivirus-card-scan-settings>
             </antivirus-card-modal>,
             this.scanPreset && this.scanPreset.partial ? (
-              <antivirus-card-preview scanType="PARTIAL"></antivirus-card-preview>
+              <antivirus-card-preview scanType="PARTIAL" />
             ) : (
-              <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])}></PreviewNewScan>
+              <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
             ),
           ]
         ) : (
@@ -110,7 +110,7 @@ export class Dashboard {
             })}
             /** @todo uncomment if UX decides to return the description for the purchase */
             // text={this.t.msg(['DASHBOARD', 'TEXT'])}
-          ></PreviewFree>
+          />
         )}
       </Host>
     );
