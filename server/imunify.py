@@ -1099,7 +1099,12 @@ class Imunify:
 
         file_status = str(FileStatus.cured) if action == str(FileAction.restore) else str(FileStatus.infected)
 
-        ids = ",".join(str(id) for id in file_ids)
+        ids = str()
+        if not file_ids:
+            where_statement = "instance={} AND site_id={} AND status='{}' ".format(info.instance_id, site_id, file_status)
+            ids = ",".join(str(file_data["id"]) for file_data in select(table="files", table_fields=["id"], where=where_statement))
+        else:
+            ids = ",".join(str(id) for id in file_ids)
         where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, file_status, site_id, info.instance_id)
         files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
 

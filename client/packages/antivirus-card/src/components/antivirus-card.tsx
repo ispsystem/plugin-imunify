@@ -319,7 +319,7 @@ export class AntivirusCard {
       history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
 
-    this.isPreloader.card = false;
+    this.isPreloader = { ...this.isPreloader, card: false };
   }
 
   /**
