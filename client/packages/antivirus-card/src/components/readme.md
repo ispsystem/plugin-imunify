@@ -5,36 +5,40 @@
 
 ## Properties
 
-| Property           | Attribute | Description                      | Type                                                                                               | Default     |
-| ------------------ | --------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
-| `notifier`         | --        | global notifier object           | `Notifier`                                                                                         | `undefined` |
-| `siteId`           | `site-id` | site ID from vepp                | `number`                                                                                           | `undefined` |
-| `translateService` | --        | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
-| `userNotification` | --        | Global user notification service | `UserNotification`                                                                                 | `undefined` |
+| Property           | Attribute   | Description                      | Type                                                                                               | Default     |
+| ------------------ | ----------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
+| `notifierService`  | --          | global notifier object           | `Notifier`                                                                                         | `undefined` |
+| `pluginId`         | `plugin-id` | plugin ID from vepp              | `number`                                                                                           | `undefined` |
+| `siteId`           | `site-id`   | site ID from vepp                | `number`                                                                                           | `undefined` |
+| `translateService` | --          | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `userNotification` | --          | Global user notification service | `UserNotification`                                                                                 | `undefined` |
 
 
 ## Dependencies
 
 ### Depends on
 
+- [antivirus-card-modal](modal)
+- [antivirus-card-preloader](preloader)
+- [antivirus-card-button](button)
 - [antivirus-card-dashboard](dashboard)
 - [antivirus-card-infected-files](infected-files)
 - [antivirus-card-history](history)
 - [antivirus-card-spinner-round](spinner-round)
 - [antivirus-card-navigation](navigation)
-- [antivirus-card-modal](modal)
-- [antivirus-card-button](button)
 
 ### Graph
 ```mermaid
 graph TD;
+  antivirus-card --> antivirus-card-modal
+  antivirus-card --> antivirus-card-preloader
+  antivirus-card --> antivirus-card-button
   antivirus-card --> antivirus-card-dashboard
   antivirus-card --> antivirus-card-infected-files
   antivirus-card --> antivirus-card-history
   antivirus-card --> antivirus-card-spinner-round
   antivirus-card --> antivirus-card-navigation
-  antivirus-card --> antivirus-card-modal
-  antivirus-card --> antivirus-card-button
+  antivirus-card-preloader --> antivirus-card-spinner-round
   antivirus-card-dashboard --> antivirus-card-button
   antivirus-card-dashboard --> antivirus-card-preview
   antivirus-card-dashboard --> antivirus-card-modal
@@ -51,7 +55,6 @@ graph TD;
   antivirus-card-new-scan --> antivirus-card-checkbox
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-hint --> antivirus-card-dropdown
-  antivirus-card-preloader --> antivirus-card-spinner-round
   antivirus-card-scan-settings --> antivirus-card-checkbox
   antivirus-card-scan-settings --> antivirus-card-collapse
   antivirus-card-scan-settings --> antivirus-card-select

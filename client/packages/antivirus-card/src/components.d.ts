@@ -47,7 +47,11 @@ export namespace Components {
     /**
     * global notifier object
     */
-    'notifier': Notifier;
+    'notifierService': Notifier;
+    /**
+    * plugin ID from vepp
+    */
+    'pluginId': number;
     /**
     * site ID from vepp
     */
@@ -198,6 +202,10 @@ export namespace Components {
     * Value for css style height
     */
     'height': string;
+    /**
+    * if need to set preloader to one of several inline element
+    */
+    'inline': boolean;
     /**
     * Value for css style left
     */
@@ -553,7 +561,11 @@ declare namespace LocalJSX {
     /**
     * global notifier object
     */
-    'notifier'?: Notifier;
+    'notifierService'?: Notifier;
+    /**
+    * plugin ID from vepp
+    */
+    'pluginId'?: number;
     /**
     * site ID from vepp
     */
@@ -709,6 +721,10 @@ declare namespace LocalJSX {
     * Value for css style height
     */
     'height'?: string;
+    /**
+    * if need to set preloader to one of several inline element
+    */
+    'inline'?: boolean;
     /**
     * Value for css style left
     */
