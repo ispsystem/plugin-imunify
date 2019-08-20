@@ -30,11 +30,8 @@ import { purchase } from '../utils/controllers';
 export class AntivirusCard {
   /** RXJS subscription */
   sub = new Subscription();
-  /** first loading flag */
-  isPreloader = { card: true };
-
+  /** modal for create new scan */
   newScanModal: HTMLAntivirusCardModalElement;
-
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** reference to the failed payment modal */
@@ -70,6 +67,8 @@ export class AntivirusCard {
   @State() t: ITranslate;
   /** nested components */
   @State() items: NavigationItem[];
+  /** first loading flag */
+  @State() isPreloader = { card: true };
 
   /**
    * Update messages when change translate object
@@ -300,46 +299,58 @@ export class AntivirusCard {
       });
     }
 
-    // get url params
-    const [defaultLocation, queryParam] = location.toString().split('?');
+    this.isPreloader = { ...this.isPreloader, card: false };
+  }
 
-    if (Boolean(queryParam)) {
-      const searchParams = new URLSearchParams(queryParam);
+  /**
+   * LIFECYCLE
+   * Search params in location url
+   */
+  componentDidUpdate() {
+    if (!this.isPreloader.card) {
+      // get url params
+      const [defaultLocation, queryParam] = location.toString().split('?');
 
-      // search page in query params
-      if (searchParams.has('page')) {
-        const index = this.items.findIndex(i => i.name === searchParams.get('page'));
-        const beforeIndex = this.items.findIndex(item => item.active);
+      if (Boolean(queryParam)) {
+        const searchParams = new URLSearchParams(queryParam);
 
-        if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
-          this.items[beforeIndex].active = false;
-          this.items[index].active = true;
-          this.items = [...this.items];
+        // search page in query params
+        if (searchParams.has('page')) {
+          const index = this.items.findIndex(i => i.name === searchParams.get('page'));
+          const beforeIndex = this.items.findIndex(item => item.active);
+
+          if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
+            this.items[beforeIndex].active = false;
+            this.items[index].active = true;
+            this.items = [...this.items];
+          }
+          searchParams.delete('page');
         }
-        searchParams.delete('page');
-      }
-      // search open modal in query params
-      if (searchParams.has('openModal')) {
-        switch (searchParams.get('openModal')) {
-          case 'buyModal': {
-            this.buyModal.toggle(true);
-            break;
+        // search open modal in query params
+        if (searchParams.has('openModal')) {
+          switch (searchParams.get('openModal')) {
+            case 'buyModal': {
+              this.buyModal.toggle(true);
+              break;
+            }
+          }
+          searchParams.delete('openModal');
+        }
+        // Checks for the payment status and if it's passed and it equals 'failed' -- the expedient modal shows up
+        else if (searchParams.has('payment')) {
+          const paymentStatus = searchParams.get('payment') as PaymentStatus;
+          if (paymentStatus === 'failed') {
+            this.failedPaymentModal.toggle(true);
+            searchParams.delete('payment');
           }
         }
-        searchParams.delete('openModal');
+        history.replaceState(
+          {},
+          document.title,
+          `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`,
+        );
       }
-      // Checks for the payment status and if it's passed and it equals 'failed' -- the expedient modal shows up
-      else if (searchParams.has('payment')) {
-        const paymentStatus = searchParams.get('payment') as PaymentStatus;
-        if (paymentStatus === 'failed') {
-          this.failedPaymentModal.toggle(true);
-          searchParams.delete('payment');
-        }
-      }
-      history.replaceState({}, document.title, `${defaultLocation}${searchParams.toString() !== '' ? '?' + searchParams.toString() : ''}`);
     }
-
-    this.isPreloader = { ...this.isPreloader, card: false };
   }
 
   /**
@@ -422,16 +433,17 @@ export class AntivirusCard {
   render() {
     if (this.isPreloader.card) {
       return <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>;
+    } else {
+      return (
+        <Host>
+          <h2 class="title">{this.t.msg(['TITLE'])}</h2>
+          <antivirus-card-navigation items={this.items} />
+          {this.items.find(item => item.active).component()}
+          {this.renderBuyModal()}
+          {this.renderBuyFailedModal()}
+        </Host>
+      );
     }
-    return (
-      <Host>
-        <h2 class="title">{this.t.msg(['TITLE'])}</h2>
-        <antivirus-card-navigation items={this.items} />
-        {this.items.find(item => item.active).component()}
-        {this.renderBuyModal()}
-        {this.renderBuyFailedModal()}
-      </Host>
-    );
   }
 }
 
