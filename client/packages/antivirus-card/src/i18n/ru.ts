@@ -45,6 +45,7 @@ const lang = {
     ON_PAGE_LABEL: 'На странице',
     OF: 'из',
     RECORD_COUNT: '%{smart_count} запись |||| %{smart_count} записи |||| %{smart_count} записей',
+    FILE_COUNT: '%{smart_count} файл |||| %{smart_count} файлы |||| %{smart_count} файлов',
     SELECTED_COUNT: 'Выбрано %{count}',
   },
   PREVIEW: {
@@ -93,7 +94,7 @@ const lang = {
        * so I can cut only the filename without touching the question mark
        */
       TITLE: 'Удалить файл %{filename}',
-      GROUP_TITLE: 'Удалить %{smart_count} запись |||| Удалить %{smart_count} записи |||| Удалить %{smart_count} записей',
+      GROUP_TITLE: 'Удалить %{smart_count} файл |||| Удалить %{smart_count} файлов |||| Удалить %{smart_count} файлов',
       DELETE_BUTTON: 'Удалить',
       CANCEL_BUTTON: 'Отменить',
     },

@@ -139,20 +139,20 @@ export class InfectedFiles {
   /**
    * Group action delete files
    *
-   * @param ids - id list
+   * @param files - files to delete
    */
-  async delete(ids: number[]) {
-    this.chosenFiles = this.tableState.data.filter(file => ids.includes(file.id));
+  async delete(files: InfectedFile[]) {
+    this.chosenFiles = this.tableState.selectedList.filter(file => files.includes(file));
     this.openDeletionModal();
   }
 
   /**
    * Group action heal files
    *
-   * @param ids - id list
+   * @param files - files to cure
    */
-  async heal(ids: number[]) {
-    await this.cureSubmitHandler(this.tableState.data.filter(file => ids.includes(file.id)));
+  async heal(files: InfectedFile[]) {
+    await this.cureSubmitHandler(this.tableState.selectedList.filter(file => files.includes(file)));
   }
 
   /**
@@ -249,6 +249,37 @@ export class InfectedFiles {
     this.dropdownEl.toggle(ev);
   }
 
+  /**
+   * Checkbox value change event handler
+   * @param event The emitted change event
+   */
+  headerCheckboxChangeHandler(event: CustomEvent): void {
+    event.detail
+      ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED'))
+      : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED'));
+    event.stopPropagation();
+  }
+
+  /**
+   * Checks if every single file in the page is selected
+   */
+  isHeaderCheckboxChecked(): boolean {
+    return (
+      this.tableState.data.length > 0 &&
+      this.tableState.data
+        .filter(f => f.status === 'INFECTED')
+        .every(f => this.tableState.selectedList.find(({ id }) => id === f.id) !== undefined)
+    );
+  }
+
+  /**
+   * Checks if the file is selected
+   * @param file The infected file record
+   */
+  isFileSelected(file: InfectedFile): boolean {
+    return file.status === 'INFECTED' && this.tableState.selectedList.find(({ id }) => id === file.id) !== undefined;
+  }
+
   render() {
     return (
       <Host>
@@ -296,24 +327,16 @@ export class InfectedFiles {
             <antivirus-card-table-cell style={{ width: 35 + 'px' }} />
             <antivirus-card-table-cell style={{ width: 15 + 'px' }}>
               <antivirus-card-checkbox
-                onChanged={event => {
-                  event.detail
-                    ? this.groupActionController.select(this.tableState.data.filter(d => d.status === 'INFECTED').map(d => d.id))
-                    : this.groupActionController.deselect(this.tableState.data.filter(d => d.status === 'INFECTED').map(d => d.id));
-                  event.stopPropagation;
-                }}
-                checked={
-                  this.tableState.data.length > 0 &&
-                  this.tableState.data.filter(f => f.status === 'INFECTED').every(f => this.tableState.selectedList.includes(f.id))
-                }
-              ></antivirus-card-checkbox>
+                onChanged={event => this.headerCheckboxChangeHandler(event)}
+                checked={this.isHeaderCheckboxChecked()}
+              />
             </antivirus-card-table-cell>
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
           {this.tableState.data.map(file => (
             <antivirus-card-table-row action-hover>
-              <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file.id)} doubleline>
+              <antivirus-card-table-cell selected={this.tableState.selectedList.includes(file)} doubleline>
                 <span class="main-text">{file.name}</span>
                 <span
                   class="add-text"
@@ -355,20 +378,20 @@ export class InfectedFiles {
               <antivirus-card-table-cell doubleline>
                 <antivirus-card-checkbox
                   onChanged={event => {
-                    event.detail ? this.groupActionController.select(file.id) : this.groupActionController.deselect(file.id);
+                    event.detail ? this.groupActionController.select(file) : this.groupActionController.deselect(file);
                     event.stopPropagation;
                   }}
                   onClick={event => file.status !== 'INFECTED' && event.preventDefault()}
-                  checked={file.status === 'INFECTED' && this.tableState.selectedList.includes(file.id)}
+                  checked={this.isFileSelected(file)}
                   readonly={file.status !== 'INFECTED'}
-                ></antivirus-card-checkbox>
+                />
               </antivirus-card-table-cell>
             </antivirus-card-table-row>
           ))}
         </div>
         <div slot="table-footer" style={{ display: 'contents' }}>
           <div class="antivirus-card-table-list__footer">
-            <span>{this.t.msg(['TABLE', 'RECORD_COUNT'], { smart_count: this.tableState.elementCount })}</span>
+            <span>{this.t.msg(['TABLE', 'FILE_COUNT'], { smart_count: this.tableState.elementCount })}</span>
             <TableGroupActions
               selectedCount={this.tableState.selectedList.length}
               action={[

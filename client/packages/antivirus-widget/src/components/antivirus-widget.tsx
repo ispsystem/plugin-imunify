@@ -144,9 +144,11 @@ export class AntivirusWidget {
    */
   async handleClickCure() {
     this.isPreloader = { ...this.isPreloader, button: true };
-    this.state.isProVersion
-      ? (location.href = `${this.url}?page=infectedFiles`)
-      : (location.href = `${this.url}?page=infectedFiles&openModal=buyModal`);
+    if (!this.state.isProVersion) {
+      location.href = `${this.url}?page=infectedFiles&openModal=buyModal`;
+      return;
+    }
+    await this.store.cure();
     this.isPreloader = { ...this.isPreloader, button: false };
   }
 

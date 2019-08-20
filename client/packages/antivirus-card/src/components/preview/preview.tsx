@@ -53,6 +53,8 @@ export class Preview {
   @State() siteId: number;
   /** scan option preset */
   @State() scanPreset: RootState['antivirus']['scanPreset'];
+  /** user notification's provider */
+  @State() userNotification: RootState['userNotification'];
 
   /** to open buy modal */
   @Event() openBuyModal: EventEmitter;
@@ -80,6 +82,9 @@ export class Preview {
   /** Action disable preset */
   disablePreset: typeof AntivirusActions.disablePreset;
 
+  /** Reference to delete files action */
+  cureFiles: typeof AntivirusActions.cureFiles;
+
   /**
    * Lifecycle
    */
@@ -93,6 +98,7 @@ export class Preview {
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
       disablePreset: AntivirusActions.disablePreset,
+      cureFiles: AntivirusActions.cureFiles,
     });
   }
 
@@ -123,6 +129,13 @@ export class Preview {
       : this.infectedFilesCount;
   }
 
+  /**
+   * Calls the file curing handler
+   */
+  async heal(): Promise<void> {
+    await this.cureFiles(this.siteId, [], this.userNotification, this.t);
+  }
+
   render() {
     return (
       <Host>
@@ -148,7 +161,7 @@ export class Preview {
                 })
           }
           scanning={this.scanning}
-        ></PreviewStatus>
+        />
 
         {this.hasScheduledActions ? (
           <p class="next-check">
@@ -165,7 +178,8 @@ export class Preview {
           infectedFilesCount={this.getInfectedFilesCount()}
           isProVersion={this.isProVersion}
           openBuyModal={this.openBuyModal}
-        ></PreviewInfectedFiles>
+          healHandler={this.heal.bind(this)}
+        />
 
         {/** @todo: return when imunify released this feature */
         /*
@@ -173,7 +187,7 @@ export class Preview {
           t={this.t}
           inBlackLists={this.inBlackLists}
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
-        ></PreviewInBlackLists> 
+        ></PreviewInBlackLists>
         */}
         {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
