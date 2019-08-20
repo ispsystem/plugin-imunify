@@ -38,7 +38,7 @@ export async function purchase(pricelist: string, period: string, pluginId: numb
       .getEvents('market_order', json.order_id, 'update')
       .pipe(take(1))
       .subscribe({
-        next: async (notifyEvent: NotifierEvent) => {
+        next: (notifyEvent: NotifierEvent) => {
           console.log('UPDATE market_order', notifyEvent);
           const paymentLink = getNestedObject(notifyEvent, ['data', 'payment_link']);
           if (typeof paymentLink === 'string' && notifyEvent.id === json.order_id) {
