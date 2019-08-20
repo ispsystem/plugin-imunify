@@ -1,6 +1,6 @@
 🛠 Documentation status: IN PROCESS
 
-# Плагин ImunifyAV/ImunifyAV+ для vepp
+# Плагин ImunifyAV/ImunifyAV+ для Vepp
 
 ## Разработчикам
 
