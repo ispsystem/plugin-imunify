@@ -111,7 +111,7 @@ export class InfectedFiles {
     await this.paginationController.reFetch();
 
     // update state by notify
-    if (this.notifier !== undefined && this.notifier !== null) {
+    if (this.notifier !== undefined) {
       this.sub.add(
         this.notifier.delete$().subscribe({
           next: async (notify: { event: NotifierEvent }) => {
