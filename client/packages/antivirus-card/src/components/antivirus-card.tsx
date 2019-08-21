@@ -30,11 +30,8 @@ import { purchase } from '../utils/controllers';
 export class AntivirusCard {
   /** RXJS subscription */
   sub = new Subscription();
-  /** first loading flag */
-  isPreloader = { card: true };
-
+  /** modal window for create new scan */
   newScanModal: HTMLAntivirusCardModalElement;
-
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
   /** reference to the failed payment modal */
@@ -70,6 +67,8 @@ export class AntivirusCard {
   @State() t: ITranslate;
   /** nested components */
   @State() items: NavigationItem[];
+  /** first loading flag */
+  @State() isPreloader = { card: true };
 
   /**
    * Update messages when change translate object
@@ -384,12 +383,14 @@ export class AntivirusCard {
       {/* <LabelForBuyModal pro text={this.t.msg(['BUY_MODAL', 'LABEL_PRO_3'])} /> */}
       <div class="button-container">
         <antivirus-card-preloader type="overlay" inline loading={this.purchasing}>
-          <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
-            {this.t.msg(['SUBSCRIBE_FOR'], {
-              cost: this.priceList.price[0].cost,
-              currency: getCurrencySymbol(this.priceList.price[0].currency),
-            })}
-          </antivirus-card-button>
+          {this.priceList && (
+            <antivirus-card-button btn-theme="accent" onClick={this.buyProVersion.bind(this)}>
+              {this.t.msg(['SUBSCRIBE_FOR'], {
+                cost: this.priceList.price[0].cost,
+                currency: getCurrencySymbol(this.priceList.price[0].currency),
+              })}
+            </antivirus-card-button>
+          )}
         </antivirus-card-preloader>
         {!this.purchasing && (
           <a class="link link_indent-left" onClick={() => this.buyModal.toggle(false)}>
