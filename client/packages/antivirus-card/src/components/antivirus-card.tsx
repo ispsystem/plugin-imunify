@@ -173,7 +173,6 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
-    console.log(11, this.notifierService);
 
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
