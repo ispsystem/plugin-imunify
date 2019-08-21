@@ -9,12 +9,12 @@ import { ActionTypes } from '../redux/actions';
 import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject, getCurrencySymbol, configureNotifier } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
-import { UserNotification } from '../redux/user-notification.interface';
+import { UserNotification, NotifyBannerEvents } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 import { purchase } from '../utils/controllers';
@@ -172,6 +172,16 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
+    if (this.userNotification === undefined) {
+      console.warn('User notification service was not provided');
+      this.userNotification = {
+        push: banner => {
+          console.warn('USER NOTIFY!!', banner);
+
+          return of(null);
+        },
+      };
+    }
     this.store.setStore(
       configureStore({
         siteId: this.siteId,

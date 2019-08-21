@@ -70,6 +70,18 @@ const server = http.createServer(function(req, res) {
   });
 });
 
+//
+// Listen to the `upgrade` event and proxy the
+// WebSocket requests as well.
+//
+server.on('upgrade', function (req, socket, head) {
+  proxy.ws(req, socket, head,{
+    target: 'wss://' + SETTINGS.host,
+    secure: false,
+    changeOrigin: true,
+  });
+});
+
 // eslint-disable-next-line no-console
 console.log(`The proxy dev server is listening on port ${SETTINGS.port}...`);
 server.listen(SETTINGS.port);
