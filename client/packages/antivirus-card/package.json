@@ -25,6 +25,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@ispsystem/isp-notice": "0.0.1",
     "@stencil/redux": "^0.1.1",
     "@ui5/webcomponents": "^1.0.0-rc.1",
     "node-polyglot": "^2.3.1",
