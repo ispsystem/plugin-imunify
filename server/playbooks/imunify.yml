@@ -48,9 +48,7 @@
   - name: "Create scan hook"
     command: imunify-antivirus hook add-native --event malware-scanning --path /opt/ispsystem/plugin/imunify/scan.py
     ignore_errors: True
-    when: imunify.stat.exists == False
 
   - name: "Create heal hook"
     command: imunify-antivirus hook add-native --event malware-cleanup --path /opt/ispsystem/plugin/imunify/heal.py
     ignore_errors: True
-    when: imunify.stat.exists == False
