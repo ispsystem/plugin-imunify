@@ -1,0 +1,18 @@
+{
+  "title": "Activate Imunify",
+  "$schema": "http://json-schema.org/draft-04/hyper-schema",
+  "description": "Activate Imunify via license key",
+  "type": "object",
+  "properties": {
+    "instance": {
+      "type": "integer",
+      "title": "Id of user instance"
+    },
+    "license": {
+      "type": "object",
+      "title": "Json license object"
+    }
+  },
+  "required": ["instance", "license"],
+  "additionalProperties": false
+}
