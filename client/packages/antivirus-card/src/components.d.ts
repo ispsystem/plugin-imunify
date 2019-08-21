@@ -7,8 +7,8 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
-  Notifier,
-} from './redux/reducers';
+  ISPNotifier,
+} from '@ispsystem/notice-tools';
 import {
   UserNotification,
 } from './redux/user-notification.interface';
@@ -47,7 +47,7 @@ export namespace Components {
     /**
     * global notifier object
     */
-    'notifierService': Notifier;
+    'notifierService': ISPNotifier;
     /**
     * plugin ID from vepp
     */
@@ -561,7 +561,7 @@ declare namespace LocalJSX {
     /**
     * global notifier object
     */
-    'notifierService'?: Notifier;
+    'notifierService'?: ISPNotifier;
     /**
     * plugin ID from vepp
     */

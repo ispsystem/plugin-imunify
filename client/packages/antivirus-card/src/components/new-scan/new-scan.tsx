@@ -1,12 +1,13 @@
 import { Component, h, Host, State, Prop } from '@stencil/core';
 import { ITranslate } from '../../models/translate.reducers';
-import { RootState, Notifier } from '../../redux/reducers';
+import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
 import { ScanOption, IntensityType } from '../../models/antivirus/state';
 import { CheckByMask } from './CheckByMask';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { filterEmptyString } from '../../utils/tools';
+import { ISPNotifier } from '@ispsystem/notice-tools';
 
 /**
  * New scan settings component
@@ -21,7 +22,7 @@ export class NewScan {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /** global notifier object */
-  @State() notifier: Notifier;
+  @State() notifier: ISPNotifier;
 
   /** Function on modal close */
   @Prop() closeModal: () => void = () => {};

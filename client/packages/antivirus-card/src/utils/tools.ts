@@ -1,6 +1,6 @@
 import { ITranslate } from '../models/translate.reducers';
 import { PricePeriodType } from '../models/antivirus/model';
-import { Notifier, ISPNotifierNotifyType } from '../redux/reducers';
+import { ISPNotifier, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
 
 /**
  * Combination of async function + await + setTimeout
@@ -145,7 +145,7 @@ export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3
  *
  * @param entityIds - ids for the entity
  */
-export function configureNotifier(notifier: Notifier, entityIds: { [x in 'plugin' | 'market_order']?: number[] }): void {
+export function configureNotifier(notifier: ISPNotifier, entityIds: { [x in 'plugin' | 'market_order']?: number[] }): void {
   const params = {
     task_list: true,
     entities: [],
