@@ -23,7 +23,7 @@ import { CloseIcon } from '../icons/close';
 })
 export class Preview {
   /** ref for dropdown element */
-  dropdownEl: HTMLAntivirusCardDropdownElement;
+  // dropdownEl: HTMLAntivirusCardDropdownElement;
 
   /** global stile */
   @Prop({ context: 'store' })
@@ -114,9 +114,9 @@ export class Preview {
    *
    * @param ev - mouse click
    */
-  handleBlackListsHelpClick(ev: MouseEvent) {
-    this.dropdownEl.toggle(ev);
-  }
+  // handleBlackListsHelpClick(ev: MouseEvent) {
+  //   this.dropdownEl.toggle(ev);
+  // }
 
   /**
    * Method return infected files count
@@ -205,10 +205,10 @@ export class Preview {
           )}
         </div>
 
-        <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
+        {/* <antivirus-card-dropdown ref={(el: HTMLAntivirusCardDropdownElement) => (this.dropdownEl = el)}>
           <p style={{ margin: '0' }}>{this.t.msg(['PREVIEW', 'HELP'])}</p>
           <p style={{ margin: '20px 0 0 0' }}>{this.t.msg(['PREVIEW', 'HELP_RECOMMENDATION'])}</p>
-        </antivirus-card-dropdown>
+        </antivirus-card-dropdown> */}
       </Host>
     );
   }

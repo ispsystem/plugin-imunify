@@ -222,16 +222,17 @@ def update(table: str, data: dict, where=None):
     cur.close()
 
 
-def get_settings_value(name, default=""):
+def get_settings_value(instance_id, name, default=""):
     """
     Получение значения определенной настройки плагина по ключу
-    :param name:
-    :param default:
+    :param instance_id: Идентификатор инстанса
+    :param name: Название
+    :param default: Дефолтное значение
     :return:
     """
-    log.info("Get value '{}' from settings table".format(name))
+    log.info("Get value '{}' from settings table for instance {}".format(name, instance_id))
 
-    result = select(table="settings", table_fields=["value"], where="name='{}'".format(name))
+    result = select(table="settings", table_fields=["value"], where="instance={} AND name='{}'".format(instance_id, name))
     return Value(result[0]['value'] if len(result) > 0 else default)
 
 
@@ -486,9 +487,11 @@ class Imunify:
         """
         handler_info = HandlerInfo(request)
 
-        who_ami = await self.who_ami(handler_info.instance_id, handler_info.ses6)
-        if who_ami.status != 200:
-            return web.Response(text=await who_ami.text(), status=who_ami.status, content_type='application/json')
+        if handler_info.headers.get("internal-auth", None) is None:
+            log.debug("Use ses6")
+            who_ami = await self.who_ami(handler_info.instance_id, handler_info.ses6)
+            if who_ami.status != 200:
+                return web.Response(text=await who_ami.text(), status=who_ami.status, content_type='application/json')
 
         handler = get_handler_name(request.method, handler_info.path, handler_info.path_params)
         log.debug("Handler '{}' was chosen".format(handler))
@@ -816,15 +819,15 @@ class Imunify:
                     update(table='files', data=fields, where=where_statement)
 
     @staticmethod
-    async def get_feature(_):
+    async def get_feature(info: HandlerInfo):
         """
         Информация о состоянии плагина
-        :param _:
+        :param info: Информация о запросе
         :return:
         """
         # TODO(d.smirnov): убрать дефолтные значения, когда будут реальные данные
-        resp = {"isProVersion": get_settings_value("isProVersion", "False").get(),
-                "hasScheduledActions": get_settings_value("hasScheduledActions", "False").get()}
+        resp = {"isProVersion": get_settings_value(info.instance_id, "isProVersion", "False").get(),
+                "hasScheduledActions": get_settings_value(info.instance_id, "hasScheduledActions", "False").get()}
         return web.Response(text=dumps(resp))
 
     async def get_site_site_id_presets(self, info: HandlerInfo):
@@ -1135,6 +1138,44 @@ class Imunify:
         result = loads(output)
         return web.Response(text=dumps(result))
 
+    async def post_register(self, info: HandlerInfo):
+        """
+        Активация Imunify
+        :param info: Информация о запросе
+        :return:
+        """
+        request_body = await info.body
+
+        license = request_body.get("license")
+        instance_id = request_body.get("instance")
+        lic_key = license.get("lickey", str())
+
+        if not lic_key:
+            return web.HTTPBadRequest(text="License key not found")
+
+        instance_info = await self.get_instance(instance_id)
+        if instance_info.status != 200:
+            response = await instance_info.text()
+            return web.Response(text=response, status=instance_info.status)
+
+        data = await instance_info.json()
+        host = data.get("host", "")
+
+        env = environ.copy()
+        env["INSTANCE_ID"] = str(instance_id)
+        cmd = ["/usr/bin/ssh", "-o", "StrictHostKeyChecking=no", "root@" + host, "imunify-antivirus", "register", lic_key, "--json"]
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+        proc.wait()
+
+        proc_stdout = proc.stdout.read().decode("utf-8")
+        proc_stderr = proc.stderr.read().decode("utf-8")
+
+        if proc.returncode:
+            return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
+
+        update("settings", data={"value": "True"}, where="instance={} AND name='{}'".format(instance_id, "isProVersion"))
+        return web.HTTPOk(text=proc_stdout)
+
 
 imunify = Imunify()
 
@@ -1228,6 +1269,8 @@ def install_imunufy():
                     instance_id=instance_id,
                     task_env=task_env,
                     lock=IMUNIFY_LOCK.format(instance_id))
+        insert("settings", data={"instance": item['id'], "name": "isProVersion", "value": "False"})
+        insert("settings", data={"instance": item['id'], "name": "hasScheduledActions", "value": "False"})
 
 
 if __name__ == '__main__':
@@ -1259,10 +1302,14 @@ if __name__ == '__main__':
                     make_post('/site/{site_id}/files'),
                     make_post('/site/{site_id}/preset'),
                     make_post('/site/{site_id}/scan'),
+                    make_post('/register'),
                     make_delete('/site/{site_id}/files')])
 
-    fields = [DbField("name", "VARCHAR", 128), DbField("value", "VARCHAR", 256)]
-    create_table("settings", fields)
+    fields = [DbField("instance", "INT"),
+              DbField("name", "VARCHAR", 128),
+              DbField("value", "VARCHAR", 256)]
+    indexes = [DbIndex("UNIQUE INDEX", "settings", ["instance", "name"])]
+    create_table("settings", fields, indexes)
 
     fields = [DbField("id", "INT AUTO_INCREMENT PRIMARY KEY"),
               DbField("instance", "INT"),

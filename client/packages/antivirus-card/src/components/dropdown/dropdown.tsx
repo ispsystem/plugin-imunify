@@ -25,7 +25,7 @@ export class Dropdown {
   @Prop() attachNode: HTMLElement = document.querySelector('antivirus-card');
 
   /** Max width for dropdown content */
-  @Prop({ reflect: true }) maxWidth: string = '330px';
+  @Prop({ reflect: true }) maxWidth = '330px';
 
   /**
    * Toggle dropdown state

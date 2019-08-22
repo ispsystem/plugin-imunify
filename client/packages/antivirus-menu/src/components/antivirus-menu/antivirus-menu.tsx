@@ -91,7 +91,7 @@ export class AntivirusMenu {
   render() {
     return (
       <antivirus-menu-vmenu-item onClick={this.handleClickLink.bind(this)} iconOnly={this.iconOnly} active={this.isActiveVMenuItem}>
-        <div slot="vmenu-icon">
+        <div slot="vmenu-icon" style={{ display: 'flex' }}>
           <MenuIcon />
         </div>
         <div slot="vmenu-label">{this.t.msg('MENU_ITEM')}</div>
