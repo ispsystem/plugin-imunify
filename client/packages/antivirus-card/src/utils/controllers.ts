@@ -1,8 +1,8 @@
 import { handleErrors } from '../models/antivirus/actions';
 import { endpoint } from '../constants';
-import { Notifier, NotifierEvent } from '../redux/reducers';
 import { configureNotifier, getNestedObject } from './tools';
 import { take } from 'rxjs/operators';
+import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
 
 /**
  * Buy PRO antivirus version
@@ -12,7 +12,7 @@ import { take } from 'rxjs/operators';
  * @param pluginId - this plugin ID
  * @param notifier - notifier service
  */
-export async function purchase(pricelist: string, period: string, pluginId: number, notifier: Notifier): Promise<void> {
+export async function purchase(pricelist: string, period: string, pluginId: number, notifier: ISPNotifier): Promise<void> {
   try {
     const searchUrl = location.search.length > 0 ? `${location.search}&` : '?';
     const locationUrl = location.origin + location.pathname + location.hash + searchUrl;
@@ -38,7 +38,7 @@ export async function purchase(pricelist: string, period: string, pluginId: numb
       .getEvents('market_order', json.order_id, 'update')
       .pipe(take(1))
       .subscribe({
-        next: (notifyEvent: NotifierEvent) => {
+        next: (notifyEvent: ISPNotifierEvent) => {
           console.log('UPDATE market_order', notifyEvent);
           const paymentLink = getNestedObject(notifyEvent, ['data', 'payment_link']);
           if (typeof paymentLink === 'string' && notifyEvent.id === json.order_id) {

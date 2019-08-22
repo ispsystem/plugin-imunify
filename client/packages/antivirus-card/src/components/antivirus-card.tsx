@@ -4,12 +4,12 @@ import { Component, h, State, Listen, Prop, Watch, Host } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
-import { RootState, Notifier, NotifierEvent } from '../redux/reducers';
+import { RootState } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
 import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
 import { ITranslate } from '../models/translate.reducers';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject, getCurrencySymbol, configureNotifier } from '../utils/tools';
@@ -18,6 +18,7 @@ import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 import { purchase } from '../utils/controllers';
+import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
 
 /**
  * AntivirusCard component
@@ -41,7 +42,7 @@ export class AntivirusCard {
   /** site ID from vepp */
   @Prop() siteId: number;
   /** global notifier object */
-  @Prop() notifierService: Notifier;
+  @Prop() notifierService: ISPNotifier;
   /** Global user notification service */
   @Prop() userNotification: UserNotification;
   /** main app translate service */
@@ -171,6 +172,17 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
+
+    if (this.userNotification === undefined) {
+      console.warn('User notification service was not provided');
+      this.userNotification = {
+        push: banner => {
+          console.warn('USER NOTIFY!!', banner);
+
+          return of(null);
+        },
+      };
+    }
     this.store.setStore(
       configureStore({
         siteId: this.siteId,
@@ -219,7 +231,7 @@ export class AntivirusCard {
         .getTaskList('plugin', this.pluginId, 'task', '*')
         .pipe(take(1))
         .subscribe({
-          next: async (notifyEvents: NotifierEvent[]) => {
+          next: async (notifyEvents: ISPNotifierEvent[]) => {
             console.log('TASK LIST', notifyEvents);
             const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
             if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
@@ -233,7 +245,7 @@ export class AntivirusCard {
 
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
-          next: async (notifyEvent: NotifierEvent) => {
+          next: async (notifyEvent: ISPNotifierEvent) => {
             console.log('UPDATE', notifyEvent);
             if (notifyEvent.additional_data.status === 'running' && notifyEvent.additional_data.name === TaskEventName.scan) {
               this.updateState({
@@ -247,7 +259,7 @@ export class AntivirusCard {
 
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
-          next: async (notifyEvent: NotifierEvent) => {
+          next: async (notifyEvent: ISPNotifierEvent) => {
             console.log('DELETE', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName !== undefined) {
