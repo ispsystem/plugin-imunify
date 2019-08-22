@@ -14,10 +14,11 @@ import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
 import { getNestedObject, getCurrencySymbol, configureNotifier } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
-import { UserNotification, NotifyBannerEvents } from '../redux/user-notification.interface';
+import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
 import { purchase } from '../utils/controllers';
+import { NotifierActions } from '../models/notifier.actions';
 
 /**
  * AntivirusCard component
@@ -104,6 +105,17 @@ export class AntivirusCard {
   }
 
   /**
+   * Update notifier when change notifierService prop
+   */
+  @Watch('notifierService')
+  updateNotifierState(): void {
+    if (this.notifierService !== undefined) {
+      configureNotifier(this.notifierService, { plugin: [this.pluginId] });
+      this.updateNotifier(this.notifierService);
+    }
+  }
+
+  /**
    * Listening event to open buy modal
    */
   @Listen('openBuyModal')
@@ -166,6 +178,8 @@ export class AntivirusCard {
   cureFilesPostProcess: typeof AntivirusActions.cureFilesPostProcess;
   /** Method for get price list by plugin */
   getPriceList: typeof AntivirusActions.getPriceList;
+  /** Method for update notifier */
+  updateNotifier: typeof NotifierActions.updateNotifier;
 
   /**
    * LIFECYCLE
@@ -208,6 +222,7 @@ export class AntivirusCard {
       deleteFilesPostProcess: AntivirusActions.deleteFilesPostProcess,
       getPriceList: AntivirusActions.getPriceList,
       cureFilesPostProcess: AntivirusActions.cureFilesPostProcess,
+      updateNotifier: NotifierActions.updateNotifier,
     });
 
     // prettier-ignore
