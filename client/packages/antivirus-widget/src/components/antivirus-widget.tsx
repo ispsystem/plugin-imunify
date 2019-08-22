@@ -9,7 +9,7 @@ import { StaticState } from './StaticState';
 import { ActiveState } from './ActiveState';
 
 /**
- * The imunifyav-widget web component
+ * The imunifyAV-widget web component
  */
 @Component({
   tag: 'antivirus-widget',
@@ -61,6 +61,11 @@ export class AntivirusWidget {
     );
   }
 
+  /**
+   * LIFECYCLE
+   *
+   * Initialize data
+   */
   async componentWillLoad() {
     // prettier-ignore
     this.t = await loadTranslate(
@@ -79,7 +84,6 @@ export class AntivirusWidget {
           .subscribe({
             next: async (events: NotifierEvent[]) => {
               console.log('TASK LIST', events);
-
               const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
               if (runningTask !== undefined) {
                 await this.store.updateStateByNotify(runningTask);

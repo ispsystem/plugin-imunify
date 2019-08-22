@@ -40,7 +40,7 @@ export async function loadTranslate(lang: languageTypes): Promise<Translate> {
     const requestInit: RequestInit = {
       method: 'GET',
     };
-    let response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
+    const response = await fetch(`${endpoint}/plugin/imunify/i18n/${lang}.json`, requestInit);
     handleErrors(response);
     json = await response.json();
   }
@@ -60,16 +60,28 @@ export function getNestedObject(nestedObj, pathArr): any {
  *
  * @param n - day or time number
  */
-export function pad(n: number) {
+export function pad(n: number): number | string {
   return n < 10 ? '0' + n : n;
 }
 
 /**
  * Method return input date as string in DD.MM.YYYY format
+ * If in function passed t(translate obj) then function return today or yesterday if it true
  *
- * @param date - input date in timestamp
+ * @param timestamp - input date in timestamp
+ * @param t - translate object
  */
-export function getDayMonthYearAsStr(timestamp: number): string {
+export function getDayMonthYearAsStr(timestamp: number, t?: Translate): string {
+  if (t !== undefined && t !== null) {
+    const today = new Date().setHours(0, 0, 0, 0);
+    const yesterday = today - 864e5;
+    if (timestamp > today) {
+      return t.msg(['WIDGET', 'COMMON_DATE', 'TODAY']).toLowerCase();
+    }
+    if (timestamp > yesterday) {
+      return t.msg(['WIDGET', 'COMMON_DATE', 'YESTERDAY']).toLowerCase();
+    }
+  }
   const date = new Date(timestamp);
   return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
 }

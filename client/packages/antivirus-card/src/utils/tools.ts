@@ -98,8 +98,10 @@ export const filterEmptyString = (arr: string[]): string[] => reduceFilter(arr, 
 
 /**
  * Method return input date as string in DD.MM.YYYY format
+ * If in function passed t(translate obj) then function return today or yesterday if it true
  *
- * @param date - input date in timestamp
+ * @param date - input date in date obj
+ * @param t - translate object
  */
 export function getDayMonthYearAsStr(date: Date, t?: ITranslate): string {
   if (t !== undefined && t !== null) {
@@ -119,7 +121,7 @@ export function getDayMonthYearAsStr(date: Date, t?: ITranslate): string {
 /**
  * Method return input date as string in hh:mm format
  *
- * @param date - input date in timestamp
+ * @param date - input date in date obj
  */
 export function getTimeAsStr(date: Date): string {
   return `${date.getHours()}:${pad(date.getMinutes())}`;
