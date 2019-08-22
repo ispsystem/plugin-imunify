@@ -1,4 +1,3 @@
-import { NotifierEvent } from '../../redux/reducers';
 import {
   deleteFilesFailure,
   deleteFilesPostProcessFailure,
@@ -45,6 +44,7 @@ import {
   LastScanData,
   PriceListResponse,
 } from './model';
+import { ISPNotifierEvent } from '@ispsystem/notice-tools';
 
 /**
  *
@@ -123,7 +123,7 @@ export namespace AntivirusActions {
    * @param userNotification User Notification provider
    * @param t Translator provider
    */
-  export function deleteFilesPostProcess(notifyEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate) {
+  export function deleteFilesPostProcess(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
         const results = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'result']);
@@ -204,7 +204,7 @@ export namespace AntivirusActions {
    * @param userNotification - User Notification provider
    * @param t - Translator provider
    */
-  export function cureFilesPostProcess(notifierEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate) {
+  export function cureFilesPostProcess(notifierEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate) {
     return dispatch => {
       try {
         const results = getNestedObject(notifierEvent, ['additional_data', 'output', 'content', 'result']);
@@ -266,7 +266,7 @@ export namespace AntivirusActions {
    *
    * @param notifyEvent - result from notifier
    */
-  export function getScanResult(notifyEvent: NotifierEvent, userNotification: UserNotification, t: ITranslate, siteId: number) {
+  export function getScanResult(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate, siteId: number) {
     return async dispatch => {
       try {
         const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);

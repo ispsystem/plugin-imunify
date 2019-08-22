@@ -1,6 +1,6 @@
 import { Component, h, Host, Event, EventEmitter, State, Prop } from '@stencil/core';
 import { Store } from '@stencil/redux';
-import { RootState, NotifierEvent } from '../../redux/reducers';
+import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr, getNestedObject } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
@@ -12,6 +12,7 @@ import { BurgerMenuIcon } from '../icons/burgerMenu';
 import { TableGroupActions } from '../table-actions/TableGroupActions';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { TaskEventName } from '../../models/antivirus/model';
+import { ISPNotifierEvent } from '@ispsystem/notice-tools';
 
 type InfectedFilesAction = 'delete' | 'heal';
 
@@ -118,7 +119,7 @@ export class InfectedFiles {
     if (this.notifier !== null) {
       this.sub.add(
         this.notifier.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
-          next: async (notifierEvent: NotifierEvent) => {
+          next: async (notifierEvent: ISPNotifierEvent) => {
             const taskName = getNestedObject(notifierEvent, ['additional_data', 'name']);
             if (taskName !== undefined && (taskName === TaskEventName.filesDelete || taskName === TaskEventName.filesCure)) {
               this.paginationController.reFetch();

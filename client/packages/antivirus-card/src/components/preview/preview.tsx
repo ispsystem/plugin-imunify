@@ -4,7 +4,7 @@ import { Component, h, Host, State, Prop, Event, EventEmitter } from '@stencil/c
 import { StartCheckIcon } from '../icons/start-check';
 import { LockIcon } from '../icons/lock';
 import { Store } from '@stencil/redux';
-import { RootState, Notifier } from '../../redux/reducers';
+import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
@@ -13,6 +13,7 @@ import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
 import { CloseIcon } from '../icons/close';
+import { ISPNotifier } from '@ispsystem/notice-tools';
 
 /**
  * Preview component for antivirus-card
@@ -46,7 +47,7 @@ export class Preview {
   /** history list */
   @State() lastScan: AntivirusState['lastScan'];
   /** global notifier object */
-  @State() notifier: Notifier;
+  @State() notifier: ISPNotifier;
   /** translate object */
   @State() t: ITranslate;
   /** Site id */

@@ -7,7 +7,7 @@
 
 | Property           | Attribute   | Description                      | Type                                                                                               | Default     |
 | ------------------ | ----------- | -------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
-| `notifierService`  | --          | global notifier object           | `Notifier`                                                                                         | `undefined` |
+| `notifierService`  | --          | global notifier object           | `ISPNotifier`                                                                                      | `undefined` |
 | `pluginId`         | `plugin-id` | plugin ID from vepp              | `number`                                                                                           | `undefined` |
 | `siteId`           | `site-id`   | site ID from vepp                | `number`                                                                                           | `undefined` |
 | `translateService` | --          | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |

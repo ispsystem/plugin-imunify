@@ -1,10 +1,11 @@
 import { Component, h, Host, State, Prop, Method, Element } from '@stencil/core';
 import { ITranslate } from '../../models/translate.reducers';
-import { RootState, Notifier } from '../../redux/reducers';
+import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
 import { ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
+import { ISPNotifier } from '@ispsystem/notice-tools';
 
 /** Types for max time scan result */
 export type MaxScanResultType = 'ITEM_1' | 'ITEM_3' | 'ITEM_6' | 'ITEM_12' | 'ITEM_24' | 'ITEM_0';
@@ -28,7 +29,7 @@ export class ScanSettings {
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
 
   /** global notifier object */
-  @State() notifier: Notifier;
+  @State() notifier: ISPNotifier;
 
   /** Method for click close modal */
   @Prop() closeModal: () => void = () => {};
