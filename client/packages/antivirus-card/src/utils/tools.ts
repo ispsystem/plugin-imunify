@@ -101,7 +101,18 @@ export const filterEmptyString = (arr: string[]): string[] => reduceFilter(arr, 
  *
  * @param date - input date in timestamp
  */
-export function getDayMonthYearAsStr(date: Date): string {
+export function getDayMonthYearAsStr(date: Date, t?: ITranslate): string {
+  if (t !== undefined && t !== null) {
+    const today = new Date().setHours(0, 0, 0, 0);
+    const yesterday = today - 864e5;
+    const inputDate = date.getTime();
+    if (inputDate > today) {
+      return t.msg(['COMMON_DATE', 'TODAY']).toLowerCase();
+    }
+    if (inputDate > yesterday) {
+      return t.msg(['COMMON_DATE', 'YESTERDAY']).toLowerCase();
+    }
+  }
   return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
 }
 

@@ -23,6 +23,7 @@
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
     "@ispsystem/notice-tools": "^1.0.1",
+    "@ispsystem/websocket": "^1.0.1",
     "@stencil/core": "1.2.2",
     "@stencil/postcss": "^1.0.1",
     "@stencil/sass": "^1.0.1",

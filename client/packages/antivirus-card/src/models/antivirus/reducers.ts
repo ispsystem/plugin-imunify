@@ -1,6 +1,5 @@
 import { AntivirusState } from './state';
 import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
-import { BehaviorSubject } from 'rxjs';
 
 const getInitialState = (): AntivirusState => {
   return {
@@ -17,7 +16,7 @@ const getInitialState = (): AntivirusState => {
       full: null,
       partial: null,
     },
-    taskList$: new BehaviorSubject([]),
+    priceList: null,
   };
 };
 
@@ -32,7 +31,6 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.SCANNING: {
-      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.scanId]);
       return {
         ...state,
         scanning: true,
@@ -183,7 +181,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
-      state.taskList$.next([...state.taskList$.getValue(), action.payload.data.task_id]);
+      /** @todo A.Tomilov */
       return {
         ...state,
         error: null,

@@ -48,6 +48,12 @@
     text-decoration: underline;
     text-decoration-style: dashed;
   }
+
+  &.disabled {
+    cursor: not-allowed;
+    user-select: none;
+    color: var(--isp-color__additional-text, #9b9b9b);
+  }
 }
 
 .title {

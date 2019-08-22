@@ -27,6 +27,18 @@ antivirus-card-preview {
   line-height: 16px;
   font-size: 14px;
   font-weight: bold;
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.check-path {
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: bottom;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin-right: 5px;
+  display: inline-block;
 }
 
 .next-check {

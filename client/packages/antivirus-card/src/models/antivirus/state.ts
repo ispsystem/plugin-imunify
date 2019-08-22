@@ -1,4 +1,3 @@
-import { BehaviorSubject } from 'rxjs';
 import { PriceListItem } from './model';
 
 /** Types for inspected files status */
@@ -130,6 +129,5 @@ export interface AntivirusState {
     partial?: HistoryItem;
   };
   historyItemCount: number;
-  taskList$: BehaviorSubject<number[]>;
-  priceList?: PriceListItem;
+  priceList: PriceListItem;
 }

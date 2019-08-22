@@ -32,14 +32,12 @@ Type: `Promise<void>`
 
  - [antivirus-card-hint](../hint)
  - [antivirus-card-infected-files](../infected-files)
- - [antivirus-card-preview](../preview)
 
 ### Graph
 ```mermaid
 graph TD;
   antivirus-card-hint --> antivirus-card-dropdown
   antivirus-card-infected-files --> antivirus-card-dropdown
-  antivirus-card-preview --> antivirus-card-dropdown
   style antivirus-card-dropdown fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
