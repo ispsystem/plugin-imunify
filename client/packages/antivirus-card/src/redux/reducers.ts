@@ -6,6 +6,7 @@ import { AntivirusState } from '../models/antivirus/state';
 import { antivirusReducer } from '../models/antivirus/reducers';
 import { UserNotification } from './user-notification.interface';
 import { TaskEventName } from '../models/antivirus/model';
+import { notifierReducer } from '../models/notifier.reducers';
 
 /** @todo: move to common plugin lib */
 export interface NotifierEvent {
@@ -101,7 +102,7 @@ export const rootReducer = combineReducers({
   pluginId: (state: number = null) => state,
   siteId: (state: number = null) => state,
   antivirus: antivirusReducer,
-  notifier: (state: Notifier = null) => state,
+  notifier: notifierReducer,
   translate: translateReducer,
   userNotification: (state: UserNotification = null) => state,
 });
