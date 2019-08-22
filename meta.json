@@ -1,6 +1,7 @@
 {
   "version": "1.0.0",
   "name": "imunify",
+  "intname": "AVP",
   "author": "ISPsystem",
   "product": "vepp",
   "repository": "",
