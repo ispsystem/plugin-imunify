@@ -265,12 +265,8 @@ export class InfectedFiles {
    * Checks if every single file in the page is selected
    */
   isHeaderCheckboxChecked(): boolean {
-    return (
-      this.tableState.data.length > 0 &&
-      this.tableState.data
-        .filter(f => f.status === 'INFECTED')
-        .every(f => this.tableState.selectedList.find(({ id }) => id === f.id) !== undefined)
-    );
+    const filteredData = this.tableState.data.filter(f => f.status === 'INFECTED');
+    return filteredData.length > 0 && filteredData.every(f => this.tableState.selectedList.find(({ id }) => id === f.id) !== undefined);
   }
 
   /**

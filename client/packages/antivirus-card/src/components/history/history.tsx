@@ -10,6 +10,7 @@ import { endpoint } from '../../constants';
 import { TableController, TableState, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 import { AntivirusActions } from '../../models/antivirus/actions';
+import { AntivirusCardPages } from '../../models/antivirus/model';
 
 @Component({
   tag: 'antivirus-card-history',
@@ -24,6 +25,9 @@ export class History {
 
   /** Table controller */
   paginationController: TableController.Pagination<HistoryItem, TableStore<HistoryItem>>;
+
+  /** Ref to main component */
+  cardElement: HTMLAntivirusCardElement;
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
@@ -40,6 +44,9 @@ export class History {
   /** flag if antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
 
+  /** Scan in process */
+  @State() scanning: AntivirusState['scanning'];
+
   /** Action scan */
   scanVirus: typeof AntivirusActions['scan'];
 
@@ -47,6 +54,7 @@ export class History {
     this.tableStore = new TableStore();
   }
   async componentWillLoad() {
+    this.cardElement = document.querySelector('antivirus-card');
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate, siteId: state.siteId }));
     this.store.mapDispatchToProps(this, {
       scanVirus: AntivirusActions.scan,
@@ -84,12 +92,12 @@ export class History {
   }
 
   /**
-   * Handle retry scan by history
+   * Handle retry scan by history and redirect to dashboard
    *
    * @param presetId - scan preset id
    */
   async handleRetryScan(presetId: number) {
-    await this.scanVirus(presetId, this.siteId);
+    await Promise.all([this.scanVirus(presetId, this.siteId), this.cardElement.changeActiveItem(AntivirusCardPages.dashboard)]);
   }
 
   render() {
@@ -122,14 +130,17 @@ export class History {
               <antivirus-card-table-cell doubleline>
                 <span class="isp-table-cell__main-text">{historyItem.infectedFilesCount}</span>
                 {this.isProVersion && historyItem.curedFilesCount > 0 && (
-                  <span class="add-text" style={{ color: '#30ba9a' }}>
-                    {this.t.msg(['HISTORY_TAB', 'CURED_COUNT'], { count: historyItem.curedFilesCount })}
+                  <span class="add-text" style={{ color: '#30ba9a', 'margin-top': '5px' }}>
+                    {this.t.msg(['HISTORY_TAB', 'CURED_COUNT'], { count: historyItem.curedFilesCount }).toLowerCase()}
                   </span>
                 )}
               </antivirus-card-table-cell>
               {this.isProVersion && (
                 <antivirus-card-table-cell doubleline>
-                  <a class="link" onClick={async () => await this.handleRetryScan(historyItem.scanOptionId)}>
+                  <a
+                    class={`link${this.scanning ? ' disabled' : ''}`}
+                    onClick={async ev => (this.scanning ? ev.preventDefault : await this.handleRetryScan(historyItem.scanOptionId))}
+                  >
                     {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
                   </a>
                 </antivirus-card-table-cell>
