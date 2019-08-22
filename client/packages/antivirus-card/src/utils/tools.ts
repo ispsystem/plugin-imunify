@@ -146,6 +146,9 @@ export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3
  * @param entityIds - ids for the entity
  */
 export function configureNotifier(notifier: Notifier, entityIds: { [x in 'plugin' | 'market_order']?: number[] }): void {
+  if (notifier === undefined || notifier === null) {
+    return;
+  }
   const params = {
     task_list: true,
     entities: [],
