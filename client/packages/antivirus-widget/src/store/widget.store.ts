@@ -1,7 +1,8 @@
 import { AbstractStore } from './abstract.store';
 import { endpoint } from '../constants';
 import { API } from './api.interface';
-import { NotifierEvent, UserNotification, Translate, NotifyBannerTypes, TaskEventName, InfectedFile } from './types';
+import { UserNotification, Translate, NotifyBannerTypes, TaskEventName, InfectedFile } from './types';
+import { ISPNotifierEvent } from '@ispsystem/notice-tools';
 import { getNestedObject, handleErrors } from '../utils/utils';
 
 /** State for antivirus widget component */
@@ -19,13 +20,16 @@ export class WidgetState {
   fullPresetId: number = null;
 
   /** Scanning state */
-  scanning: boolean = false;
+  scanning = false;
 
   /** Healing state */
-  healing: boolean = false;
+  healing = false;
 
   /** Vepp site id */
   siteId: number = null;
+
+  /** Plugin id */
+  pluginId: number;
 
   /** Backend can working with scheduled actions */
   hasScheduledActions: boolean;
@@ -36,8 +40,9 @@ export class WidgetState {
   /** Error state */
   error: any;
 
-  constructor(siteId: number) {
+  constructor(siteId: number, pluginId: number) {
     this.siteId = siteId;
+    this.pluginId = pluginId;
   }
 }
 
@@ -55,8 +60,8 @@ export class Store extends AbstractStore<WidgetState> {
   /** Global user notification service */
   private _userNotification: UserNotification;
 
-  constructor(siteId: number, userNotification: UserNotification) {
-    super(new WidgetState(siteId));
+  constructor(siteId: number, pluginId: number, userNotification: UserNotification) {
+    super(new WidgetState(siteId, pluginId));
     this._userNotification = userNotification;
   }
 
@@ -187,7 +192,7 @@ export class Store extends AbstractStore<WidgetState> {
    *
    * @param event - event by notifier
    */
-  async getScanResult(event: NotifierEvent): Promise<void> {
+  async getScanResult(event: ISPNotifierEvent): Promise<void> {
     try {
       const started = getNestedObject(event, ['additional_data', 'output', 'content', 'scan', 'started']);
       const taskId = event.id;
@@ -239,7 +244,7 @@ export class Store extends AbstractStore<WidgetState> {
    *
    * @param event - event by notifier
    */
-  async updateStateByNotify(event: NotifierEvent): Promise<void> {
+  async updateStateByNotify(event: ISPNotifierEvent): Promise<void> {
     switch (event.additional_data.name) {
       case TaskEventName.scan:
         switch (event.additional_data.status) {
@@ -274,7 +279,7 @@ export class Store extends AbstractStore<WidgetState> {
    *
    * @param event - notification event about cure complete
    */
-  handleCureSuccess(event: NotifierEvent): void {
+  handleCureSuccess(event: ISPNotifierEvent): void {
     const results = getNestedObject(event, ['additional_data', 'output', 'content', 'result']);
     const curedFiles: InfectedFile[] = results.filter(file => file.status === 'success');
     const count = curedFiles.length;

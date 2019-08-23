@@ -13,20 +13,22 @@ import {
   languageTypes,
 } from './constants';
 import {
-  Notifier,
+  ISPNotifier,
+} from '@ispsystem/notice-tools';
+import {
   UserNotification,
 } from './store/types';
 
 export namespace Components {
   interface AntivirusWidget {
     /**
-    * infected files count
-    */
-    'infectedCount': number;
-    /**
     * global notifier object
     */
-    'notifier': Notifier;
+    'notifierService': ISPNotifier;
+    /**
+    * Plugin id
+    */
+    'pluginId': number;
     /**
     * Site id
     */
@@ -62,13 +64,13 @@ declare global {
 declare namespace LocalJSX {
   interface AntivirusWidget extends JSXBase.HTMLAttributes<HTMLAntivirusWidgetElement> {
     /**
-    * infected files count
-    */
-    'infectedCount'?: number;
-    /**
     * global notifier object
     */
-    'notifier'?: Notifier;
+    'notifierService'?: ISPNotifier;
+    /**
+    * Plugin id
+    */
+    'pluginId'?: number;
     /**
     * Site id
     */
