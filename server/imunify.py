@@ -148,19 +148,18 @@ def create_table(name, table_fields, indexes=None):
     DB_CONNECTION.commit()
 
 
-def select(table: str, table_fields: list, where=None, use_prefix=True):
+def select(table: str, table_fields: list, where=None):
     """
     Метод, реализующий выборку из таблицы
     :param table: Название таблицы
     :param table_fields: Поля
     :param where: Условие по которому будет вестить выборка
-    :param use_prefix: Использовать ли префикс DB_PREFIX
     :return:
     """
     cur = DB_CONNECTION.cursor()
 
     fields_str = ', '.join(field.lower() for field in table_fields)
-    query = "SELECT {} FROM {}".format(fields_str, (DB_PREFIX + table) if use_prefix else table)
+    query = "SELECT {} FROM {}".format(fields_str, DB_PREFIX + table)
     if where:
         query += " WHERE {}".format(where)
 
@@ -235,11 +234,6 @@ def update(table: str, data: dict, where=None):
     cur.execute(query)
     DB_CONNECTION.commit()
     cur.close()
-
-
-def get_plugin_id():
-    result = select(table="ps_plugin", table_fields=["id"], where="name='imunify'", use_prefix=False)
-    return result[0]['id']
 
 
 def get_settings_value(instance_id, name, default=""):
@@ -1166,14 +1160,14 @@ class Imunify:
         """
         request_body = await info.body
         notify_consul = NotifyConsul()
-        plugin_id = get_plugin_id()
+        plugin_id = getenv("PLUGIN_ID")
 
         license = request_body.get("license")
         instance_id = request_body.get("instance")
         lic_key = license.get("lickey", str())
 
         if not lic_key:
-            notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+            notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
                 "name": "plugin-activate",
                 "reason": "License key not found",
                 "status": "failed"
@@ -1203,7 +1197,7 @@ class Imunify:
         proc_stderr = proc.stderr.read().decode("utf-8")
 
         if proc.returncode:
-            notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+            notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
                 "name": "plugin-activate",
                 "reason": "License key not found",
                 "status": "failed"
@@ -1211,7 +1205,7 @@ class Imunify:
             return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
 
         update("settings", data={"value": "True"}, where="instance={} AND name='{}'".format(instance_id, "isProVersion"))
-        notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+        notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
             "name": "plugin-activate",
             "status": "complete"
         })
