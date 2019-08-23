@@ -141,7 +141,7 @@ export class Preview {
         {this.scanType === 'PARTIAL' && (
           <div
             style={{ position: 'absolute', right: '20px', cursor: this.scanning ? 'not-allowed' : 'pointer' }}
-            onClick={ev => (this.scanning ? ev.preventDefault : this.handleDisablePreset())}
+            onClick={ev => (this.scanning ? ev.preventDefault() : this.handleDisablePreset())}
           >
             <CloseIcon />
           </div>

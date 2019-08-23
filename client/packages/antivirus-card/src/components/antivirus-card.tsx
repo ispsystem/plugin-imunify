@@ -142,6 +142,19 @@ export class AntivirusCard {
     }
   }
 
+  /**
+   * Method for change active item
+   *
+   * @param name - name of item
+   */
+  @Method()
+  async changeActiveItem(name: AntivirusCardPages): Promise<void> {
+    this.items = this.items.map(item => {
+      item.active = item.name === name;
+      return item;
+    });
+  }
+
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
   /** Method to get available antivirus features */
@@ -365,19 +378,6 @@ export class AntivirusCard {
    */
   componentDidUnload() {
     this.sub.unsubscribe();
-  }
-
-  /**
-   * Method for change active item
-   *
-   * @param name - name of item
-   */
-  @Method()
-  async changeActiveItem(name: AntivirusCardPages): Promise<void> {
-    this.items = this.items.map(item => {
-      item.active = item.name === name;
-      return item;
-    });
   }
 
   /**

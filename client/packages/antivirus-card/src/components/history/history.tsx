@@ -139,7 +139,7 @@ export class History {
                 <antivirus-card-table-cell doubleline>
                   <a
                     class={`link${this.scanning ? ' disabled' : ''}`}
-                    onClick={async ev => (this.scanning ? ev.preventDefault : await this.handleRetryScan(historyItem.scanOptionId))}
+                    onClick={async ev => (this.scanning ? ev.preventDefault() : await this.handleRetryScan(historyItem.scanOptionId))}
                   >
                     {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
                   </a>

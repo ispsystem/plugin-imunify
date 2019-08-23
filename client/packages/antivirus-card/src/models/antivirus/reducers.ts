@@ -181,7 +181,6 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     }
 
     case ANTIVIRUS_ACTION.DELETE_FILES_SUCCESS: {
-      /** @todo A.Tomilov */
       return {
         ...state,
         error: null,
