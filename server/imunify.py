@@ -2,6 +2,7 @@
 """ImunifyAV plugin"""
 from aiohttp import web, ClientSession, hdrs
 from argparse import ArgumentParser
+from consul import Consul
 from enum import Enum
 from hashlib import md5
 from json import dumps, loads
@@ -86,6 +87,19 @@ class FileAction(BaseEnum):
     restore = "RESTORE"
 
 
+class NotifyConsul(Consul):
+    def __init__(self):
+        super(NotifyConsul, self).__init__(host=getenv("KV_STORAGE_ADDR"), port=8500)
+
+    def put_key(self, instance_id: str, action: str, entity: str, notifies: list, addition=None):
+        data = dict()
+        data["notifies"] = notifies
+        if addition:
+            data["additional_data"] = addition
+
+        self.kv.put(f"instance/{instance_id}/notify/{action}/{entity}", dumps(data))
+
+
 class Value:
     """Получение значения поля из настроек"""
     def __init__(self, val: str):
@@ -134,18 +148,19 @@ def create_table(name, table_fields, indexes=None):
     DB_CONNECTION.commit()
 
 
-def select(table: str, table_fields: list, where=None):
+def select(table: str, table_fields: list, where=None, use_prefix=True):
     """
     Метод, реализующий выборку из таблицы
     :param table: Название таблицы
     :param table_fields: Поля
     :param where: Условие по которому будет вестить выборка
+    :param use_prefix: Использовать ли префикс DB_PREFIX
     :return:
     """
     cur = DB_CONNECTION.cursor()
 
     fields_str = ', '.join(field.lower() for field in table_fields)
-    query = "SELECT {} FROM {}".format(fields_str, DB_PREFIX + table)
+    query = "SELECT {} FROM {}".format(fields_str, (DB_PREFIX + table) if use_prefix else table)
     if where:
         query += " WHERE {}".format(where)
 
@@ -220,6 +235,11 @@ def update(table: str, data: dict, where=None):
     cur.execute(query)
     DB_CONNECTION.commit()
     cur.close()
+
+
+def get_plugin_id():
+    result = select(table="ps_plugin", table_fields=["id"], where="name='imunify'", use_prefix=False)
+    return result[0]['id']
 
 
 def get_settings_value(instance_id, name, default=""):
@@ -1145,12 +1165,19 @@ class Imunify:
         :return:
         """
         request_body = await info.body
+        notify_consul = NotifyConsul()
+        plugin_id = get_plugin_id()
 
         license = request_body.get("license")
         instance_id = request_body.get("instance")
         lic_key = license.get("lickey", str())
 
         if not lic_key:
+            notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+                "name": "plugin-activate",
+                "reason": "License key not found",
+                "status": "failed"
+            })
             return web.HTTPBadRequest(text="License key not found")
 
         instance_info = await self.get_instance(instance_id)
@@ -1160,6 +1187,11 @@ class Imunify:
 
         data = await instance_info.json()
         host = data.get("host", "")
+
+        notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+            "name": "plugin-activate",
+            "status": "running"
+        })
 
         env = environ.copy()
         env["INSTANCE_ID"] = str(instance_id)
@@ -1171,9 +1203,18 @@ class Imunify:
         proc_stderr = proc.stderr.read().decode("utf-8")
 
         if proc.returncode:
+            notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+                "name": "plugin-activate",
+                "reason": "License key not found",
+                "status": "failed"
+            })
             return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
 
         update("settings", data={"value": "True"}, where="instance={} AND name='{}'".format(instance_id, "isProVersion"))
+        notify_consul.put_key(str(instance_id), "delete", "plugin", [f"plugin/{plugin_id}"], addition={
+            "name": "plugin-activate",
+            "status": "complete"
+        })
         return web.HTTPOk(text=proc_stdout)
 
 
