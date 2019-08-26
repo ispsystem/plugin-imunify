@@ -54,6 +54,7 @@ export enum TaskEventName {
   scan = 'scan',
   filesCure = 'files-cure',
   filesDelete = 'files',
+  pluginActivate = 'plugin-activate',
 }
 
 /** Response by last scan action */
