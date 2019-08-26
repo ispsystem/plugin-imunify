@@ -1,13 +1,9 @@
-@import '../../shared';
-
-
 .antivirus-card-preview__free {
   @extend %antivirus-card-preview;
   justify-content: center;
   background-color: #def3ff;
   cursor: pointer;
 }
-
 
 .antivirus-card-preview__free-title {
   width: 300px;
