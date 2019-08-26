@@ -1,15 +1,16 @@
-import { Component, Prop, h, State } from '@stencil/core';
+import { Component, Prop, h, State, Watch } from '@stencil/core';
 import { loadTranslate, getNestedObject } from '../utils/utils';
 import { languages, defaultLang, languageTypes } from '../constants';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { Translate, Notifier, UserNotification, NotifierEvent } from '../store/types';
+import { Translate, UserNotification } from '../store/types';
 import { Store, WidgetState } from '../store/widget.store';
 import { StaticState } from './StaticState';
 import { ActiveState } from './ActiveState';
+import { ISPNotifier, ISPNotifierEvent, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
 
 /**
- * The imunifyav-widget web component
+ * The imunifyAV-widget web component
  */
 @Component({
   tag: 'antivirus-widget',
@@ -23,9 +24,6 @@ export class AntivirusWidget {
   /** Global store */
   store: Store;
 
-  /** infected files count */
-  @Prop() infectedCount: number;
-
   /** Translate service */
   @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
 
@@ -33,13 +31,16 @@ export class AntivirusWidget {
   @Prop() url: string;
 
   /** global notifier object */
-  @Prop() notifier: Notifier;
+  @Prop() notifierService: ISPNotifier;
 
   /** Global user notification service */
   @Prop() userNotification: UserNotification;
 
   /** Site id */
   @Prop() siteId: number;
+
+  /** Plugin id */
+  @Prop() pluginId: number;
 
   /** Widget state */
   @State() state: WidgetState;
@@ -52,8 +53,25 @@ export class AntivirusWidget {
     button: false,
   };
 
+  /**
+   * Update notification service params
+   */
+  @Watch('notifierService')
+  updateNotificationParams() {
+    this.configureNotifier(this.notifierService);
+  }
+
   constructor() {
-    this.store = new Store(this.siteId, this.userNotification);
+    if (this.userNotification === undefined) {
+      console.warn('User notification service was not provided');
+      this.userNotification = {
+        push: banner => {
+          console.log('USER NOTIFY', banner);
+          return of(null);
+        },
+      };
+    }
+    this.store = new Store(this.siteId, this.pluginId, this.userNotification);
     this.sub.add(
       this.store.state$.subscribe({
         next: newState => (this.state = newState),
@@ -61,6 +79,11 @@ export class AntivirusWidget {
     );
   }
 
+  /**
+   * LIFECYCLE
+   *
+   * Initialize data
+   */
   async componentWillLoad() {
     // prettier-ignore
     this.t = await loadTranslate(
@@ -71,45 +94,7 @@ export class AntivirusWidget {
 
     this.store.t = this.t;
 
-    if (this.notifier !== undefined) {
-      this.sub.add(
-        this.notifier
-          .taskList$()
-          .pipe(take(1))
-          .subscribe({
-            next: async (events: NotifierEvent[]) => {
-              console.log('TASK LIST', events);
-
-              const runningTask = events.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
-              if (runningTask !== undefined) {
-                await this.store.updateStateByNotify(runningTask);
-              }
-            },
-          }),
-      );
-
-      this.sub.add(
-        this.notifier.update$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            console.log('UPDATE', notify.event);
-            if (getNestedObject(notify.event, ['additional_data', 'status']) === 'running') {
-              await this.store.updateStateByNotify(notify.event);
-            }
-          },
-        }),
-      );
-
-      this.sub.add(
-        this.notifier.delete$().subscribe({
-          next: async (notify: { event: NotifierEvent }) => {
-            console.log('DELETE', notify.event);
-            if (getNestedObject(notify.event, ['additional_data', 'status']) !== undefined) {
-              await this.store.updateStateByNotify(notify.event);
-            }
-          },
-        }),
-      );
-    }
+    this.configureNotifier(this.notifierService);
 
     await Promise.all([this.store.getPresets(), this.store.getFeature(), this.store.getInfectedFiles(), this.store.getLastScan()]);
 
@@ -150,6 +135,74 @@ export class AntivirusWidget {
     }
     await this.store.cure();
     this.isPreloader = { ...this.isPreloader, button: false };
+  }
+
+  /**
+   * Method for configure notification service
+   *
+   * @param notifier - notification service
+   */
+  configureNotifier(notifier: ISPNotifier) {
+    if (notifier !== undefined) {
+      this.sub.add(
+        notifier
+          .getTaskList('plugin', this.pluginId, 'task', '*')
+          .pipe(take(1))
+          .subscribe({
+            next: async (notifyEvents: ISPNotifierEvent[]) => {
+              console.log('TASK LIST', notifyEvents);
+
+              const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+              if (runningTask !== undefined) {
+                await this.store.updateStateByNotify(runningTask);
+              }
+            },
+          }),
+      );
+
+      this.sub.add(
+        notifier.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
+          next: async (notifyEvent: ISPNotifierEvent) => {
+            console.log('UPDATE', notifyEvent);
+            if (getNestedObject(notifyEvent, ['additional_data', 'status']) === 'running') {
+              await this.store.updateStateByNotify(notifyEvent);
+            }
+          },
+        }),
+      );
+
+      this.sub.add(
+        notifier.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
+          next: async (notifyEvent: ISPNotifierEvent) => {
+            console.log('DELETE', notifyEvent);
+            if (getNestedObject(notifyEvent, ['additional_data', 'status']) !== undefined) {
+              await this.store.updateStateByNotify(notifyEvent);
+            }
+          },
+        }),
+      );
+
+      notifier.setParams({
+        task_list: true,
+        entities: [
+          {
+            entity: 'plugin',
+            ids: [this.state.pluginId],
+            type: [{ name: ISPNotifierNotifyType.CREATE }, { name: ISPNotifierNotifyType.UPDATE }, { name: ISPNotifierNotifyType.DELETE }],
+            relations: [
+              {
+                entity: 'task',
+                type: [
+                  { name: ISPNotifierNotifyType.CREATE },
+                  { name: ISPNotifierNotifyType.UPDATE },
+                  { name: ISPNotifierNotifyType.DELETE },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+    }
   }
 
   /** @todo add handle for stop scan files, when this function realise in backend */

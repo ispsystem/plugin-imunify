@@ -5,11 +5,12 @@ import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { ITranslate } from '../../models/translate.reducers';
-import { PreviewFree } from '../preview/PreviewFree';
 import { PreviewNewScan } from '../preview/PreviewNewScan';
 import { AntivirusState, ScanOption } from '../../models/antivirus/state';
 import { MOCK } from '../../utils/mock';
+import { PreviewPurchase } from '../preview/PreviewPurchase';
 import { getCurrencySymbol, getShortPeriod } from '../../utils/tools';
+import { PreviewFree } from '../preview/PreviewFree';
 
 /**
  * Dashboard component for antivirus-card
@@ -33,20 +34,21 @@ export class Dashboard {
    *  @todo delete after realise handle for get default preset
    */
   preset: ScanOption = MOCK.defaultPreset;
-
   /** global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
-
   /** flag if antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
-
   /** Preset object for scanning */
   @State() scanPreset: AntivirusState['scanPreset'];
-
   /** Price list for pro version */
   @State() priceList: AntivirusState['priceList'];
+  /** flag if antivirus in purchasing status */
+  @State() purchasing: AntivirusState['purchasing'];
+
+  /** Scan in process */
+  @State() scanning: AntivirusState['scanning'];
 
   /** open ImunifyAV+ buy modal */
   @Event() openBuyModal: EventEmitter<ScanOption>;
@@ -73,11 +75,16 @@ export class Dashboard {
     return (
       <Host>
         {this.isProVersion && Boolean(this.scanPreset.partial) && (
-          <antivirus-card-button class="header-button new-scan-button" btn-theme="third" onClick={() => this.newScanModal.toggle(true)}>
+          <antivirus-card-button
+            isDisabled={this.scanning}
+            class="header-button new-scan-button"
+            btn-theme="third"
+            onClick={ev => (this.scanning ? ev.preventDefault() : this.newScanModal.toggle(true))}
+          >
             {this.t.msg(['NEW_SCAN_BTN'])}
           </antivirus-card-button>
         )}
-        <antivirus-card-preview />
+        <antivirus-card-preview scanType="FULL" />
         {this.isProVersion ? (
           [
             <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
@@ -100,6 +107,8 @@ export class Dashboard {
               <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
             ),
           ]
+        ) : this.purchasing ? (
+          <PreviewPurchase t={this.t} />
         ) : (
           <PreviewFree
             onClick={() => this.openBuyModal.emit()}

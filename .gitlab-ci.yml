@@ -5,10 +5,7 @@ stages:
   - build
 
 before_script:
-  - cd client
-  - npm install
-  - npx lerna bootstrap
-  - cd ..
+  - (cd client && npm install && npx lerna bootstrap)
 
 build:
   stage: build

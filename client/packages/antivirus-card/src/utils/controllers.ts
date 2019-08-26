@@ -20,8 +20,7 @@ export async function purchase(
   pluginId: number,
   notifier: ISPNotifier,
 ): Promise<Observable<string | null>> {
-  const searchUrl = location.search.length > 0 ? `${location.search}&` : '?';
-  const locationUrl = location.origin + location.pathname + location.hash + searchUrl;
+  const locationUrl = location.origin + location.pathname + location.hash + '?';
 
   const requestInit: RequestInit = {
     method: 'POST',
@@ -29,7 +28,7 @@ export async function purchase(
       pricelist,
       period,
       fail_url: locationUrl + 'payment=failed',
-      pending_url: location.href,
+      pending_url: location.href + 'payment=pending',
       success_url: locationUrl + 'payment=success',
     }),
   };

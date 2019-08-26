@@ -14,6 +14,19 @@
 | `userNotification` | --          | Global user notification service | `UserNotification`                                                                                 | `undefined` |
 
 
+## Methods
+
+### `changeActiveItem(name: AntivirusCardPages) => Promise<void>`
+
+Method for change active item
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
 ## Dependencies
 
 ### Depends on

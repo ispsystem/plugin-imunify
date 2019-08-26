@@ -6,7 +6,6 @@ import { LockIcon } from '../icons/lock';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { ITranslate } from '../../models/translate.reducers';
 import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
@@ -31,8 +30,7 @@ export class Preview {
   store: Store<RootState, ActionTypes>;
 
   /** scan type for this card */
-  @Prop()
-  scanType: CheckType = 'FULL';
+  @Prop() scanType: CheckType = 'FULL';
 
   /** scan loading */
   @State() scanning: AntivirusState['scanning'];
@@ -141,26 +139,22 @@ export class Preview {
     return (
       <Host>
         {this.scanType === 'PARTIAL' && (
-          <div style={{ position: 'absolute', right: '20px', cursor: 'pointer' }} onClick={() => this.handleDisablePreset()}>
+          <div
+            style={{ position: 'absolute', right: '20px', cursor: this.scanning ? 'not-allowed' : 'pointer' }}
+            onClick={ev => (this.scanning ? ev.preventDefault() : this.handleDisablePreset())}
+          >
             <CloseIcon />
           </div>
         )}
         <PreviewStatus
-          msgWaitCheck={this.t.msg(['PREVIEW', 'WAIT_CHECK'])}
-          msgLastCheck={this.t.msg(['PREVIEW', 'LAST_CHECK'])}
-          lastScan={
+          t={this.t}
+          type={this.scanType}
+          lastScanDate={
             this.scanType === 'PARTIAL'
-              ? this.lastScan.partial &&
-                this.t.msg(['LAST_CHECK_IN'], {
-                  date: getDayMonthYearAsStr(new Date(this.lastScan.partial.date)),
-                  time: getTimeAsStr(new Date(this.lastScan.partial.date)),
-                })
-              : this.lastScan.full &&
-                this.t.msg(['LAST_CHECK_IN'], {
-                  date: getDayMonthYearAsStr(new Date(this.lastScan.full.date)),
-                  time: getTimeAsStr(new Date(this.lastScan.full.date)),
-                })
+              ? this.lastScan.partial && this.lastScan.partial.date
+              : this.lastScan.full && this.lastScan.full.date
           }
+          pathList={this.scanType === 'PARTIAL' ? this.scanOption.path : null}
           scanning={this.scanning}
         />
 
@@ -175,6 +169,7 @@ export class Preview {
 
         <PreviewInfectedFiles
           t={this.t}
+          type={this.scanType}
           clickItem={this.clickItem}
           infectedFilesCount={this.getInfectedFilesCount()}
           isProVersion={this.isProVersion}

@@ -2,7 +2,7 @@
 
 
 .antivirus-card-preview__free {
-  @extend .antivirus-card-preview;
+  @extend %antivirus-card-preview;
   justify-content: center;
   background-color: #def3ff;
   cursor: pointer;
