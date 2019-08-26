@@ -2,6 +2,7 @@
 """ImunifyAV plugin"""
 from aiohttp import web, ClientSession, hdrs
 from argparse import ArgumentParser
+from consul import Consul
 from enum import Enum
 from hashlib import md5
 from json import dumps, loads
@@ -84,6 +85,19 @@ class FileAction(BaseEnum):
     delete = "DELETE"
     cure = "CURE"
     restore = "RESTORE"
+
+
+class NotifyConsul(Consul):
+    def __init__(self):
+        super(NotifyConsul, self).__init__(host=getenv("KV_STORAGE_ADDR"), port=8500)
+
+    def put_key(self, instance_id: str, action: str, entity: str, notifies: list, addition=None):
+        data = dict()
+        data["notifies"] = notifies
+        if addition:
+            data["additional_data"] = addition
+
+        self.kv.put(f"instance/{instance_id}/notify/{action}/{entity}", dumps(data))
 
 
 class Value:
@@ -1145,12 +1159,19 @@ class Imunify:
         :return:
         """
         request_body = await info.body
+        notify_consul = NotifyConsul()
+        plugin_id = getenv("PLUGIN_ID")
 
         license = request_body.get("license")
         instance_id = request_body.get("instance")
         lic_key = license.get("lickey", str())
 
         if not lic_key:
+            notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+                "name": "plugin-activate",
+                "reason": "License key not found",
+                "status": "failed"
+            })
             return web.HTTPBadRequest(text="License key not found")
 
         instance_info = await self.get_instance(instance_id)
@@ -1160,6 +1181,11 @@ class Imunify:
 
         data = await instance_info.json()
         host = data.get("host", "")
+
+        notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+            "name": "plugin-activate",
+            "status": "running"
+        })
 
         env = environ.copy()
         env["INSTANCE_ID"] = str(instance_id)
@@ -1171,9 +1197,18 @@ class Imunify:
         proc_stderr = proc.stderr.read().decode("utf-8")
 
         if proc.returncode:
+            notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+                "name": "plugin-activate",
+                "reason": "License key not found",
+                "status": "failed"
+            })
             return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
 
         update("settings", data={"value": "True"}, where="instance={} AND name='{}'".format(instance_id, "isProVersion"))
+        notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+            "name": "plugin-activate",
+            "status": "complete"
+        })
         return web.HTTPOk(text=proc_stdout)
 
 
