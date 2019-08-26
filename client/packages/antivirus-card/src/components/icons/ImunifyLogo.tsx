@@ -1,9 +1,16 @@
 import { h, FunctionalComponent } from '@stencil/core';
 
+/**
+ * Properties for ImunifyLogo component
+ */
 export interface ImunifyLogoProps {
   color?: string;
 }
 
+/**
+ * ImunifyLogo Functional Components
+ * @param props - properties
+ */
 export const ImunifyLogo: FunctionalComponent<ImunifyLogoProps> = props => {
   const color = props.color ? props.color : '#187ABD';
   return (
