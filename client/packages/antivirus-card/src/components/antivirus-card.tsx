@@ -111,7 +111,7 @@ export class AntivirusCard {
    */
   @Watch('notifierService')
   updateNotifierState(): void {
-    if (this.notifierService !== undefined) {
+    if (this.notifierService !== undefined && this.updateNotifier !== undefined) {
       this.notifierService
         .getTaskList('plugin', this.pluginId, 'task', '*')
         .pipe(take(1))
@@ -511,7 +511,13 @@ export class AntivirusCard {
         {this.t.msg(['PAYMENT_FAILED_MODAL', 'DESCRIPTION_2'])}
       </p>
       <div class="button-container">
-        <antivirus-card-button btn-theme="accent" onClick={() => this.failedPaymentModal.toggle(false)}>
+        <antivirus-card-button
+          btn-theme="accent"
+          onClick={() => {
+            this.buyProVersion();
+            this.failedPaymentModal.toggle(false);
+          }}
+        >
           {this.t.msg(['PAYMENT_FAILED_MODAL', 'TRY_AGAIN_BUTTON'])}
         </antivirus-card-button>
         <a class="link link_indent-left" onClick={() => this.failedPaymentModal.toggle(false)}>
