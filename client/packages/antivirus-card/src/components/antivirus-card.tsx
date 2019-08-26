@@ -12,12 +12,12 @@ import { ITranslate } from '../models/translate.reducers';
 import { Observable, Subscription, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
-import { getNestedObject, getCurrencySymbol, configureNotifier } from '../utils/tools';
+import { getNestedObject, getCurrencySymbol, configureNotifier, NotifierEntityIds } from '../utils/tools';
 import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
-import { purchase } from '../utils/controllers';
+import { purchase, getPaymentOrders } from '../utils/controllers';
 import { NotifierActions } from '../models/notifier.actions';
 import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
 
@@ -65,6 +65,8 @@ export class AntivirusCard {
   @State() historyItemCount: AntivirusState['historyItemCount'];
   /** Price list for buy pro version */
   @State() priceList: AntivirusState['priceList'];
+  /** flag is true if this antivirus is pro version */
+  @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
   @State() t: ITranslate;
   /** nested components */
@@ -110,8 +112,132 @@ export class AntivirusCard {
   @Watch('notifierService')
   updateNotifierState(): void {
     if (this.notifierService !== undefined) {
-      configureNotifier(this.notifierService, { plugin: [this.pluginId] });
+      this.notifierService
+        .getTaskList('plugin', this.pluginId, 'task', '*')
+        .pipe(take(1))
+        .subscribe({
+          next: async (notifyEvents: ISPNotifierEvent[]) => {
+            console.log('TASK LIST', notifyEvents);
+            const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+            if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                scanning: true,
+              });
+            }
+          },
+        });
+
+      this.sub.add(
+        this.notifierService.getEvents('plugin', this.pluginId, 'update').subscribe({
+          next: async (notifyEvent: ISPNotifierEvent) => {
+            console.log('UPDATE activate', notifyEvent);
+            const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
+            if (taskName === TaskEventName.pluginActivate && notifyEvent.additional_data.status === 'complete') {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                purchasing: false,
+                isProVersion: true,
+              });
+            }
+          },
+        }),
+      );
+
+      this.sub.add(
+        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
+          next: async (notifyEvent: ISPNotifierEvent) => {
+            console.log('UPDATE scan', notifyEvent);
+            const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
+            if (taskName === TaskEventName.scan && notifyEvent.additional_data.status === 'running') {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                scanning: true,
+              });
+            }
+          },
+        }),
+      );
+
+      this.sub.add(
+        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
+          next: async (notifyEvent: ISPNotifierEvent) => {
+            console.log('DELETE', notifyEvent);
+            const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
+            if (taskName !== undefined) {
+              switch (taskName) {
+                case TaskEventName.scan:
+                  await this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
+                  break;
+                case TaskEventName.filesDelete:
+                  await this.deleteFilesPostProcess(notifyEvent, this.userNotification, this.t);
+                  break;
+                case TaskEventName.filesCure:
+                  await this.cureFilesPostProcess(notifyEvent, this.userNotification, this.t);
+                  break;
+              }
+            }
+          },
+        }),
+      );
+
+      const notifierParams: NotifierEntityIds = { plugin: [this.pluginId] };
+      if (!this.isProVersion) {
+        getPaymentOrders().subscribe({
+          next: data => {
+            const orders = data.list
+              .map(order => {
+                if (order.service_type === 'plugin' && order.type === 'purchase' && order.status === 'Payment') {
+                  return order.id;
+                }
+              })
+              .filter(order => order);
+
+            if (orders.length > 0) {
+              notifierParams.market_order = orders;
+              this.updateState({
+                ...this.store.getState().antivirus,
+                purchasing: true,
+              });
+              this.sub.add(
+                this.notifierService.getEvents('market_order', '*', 'task', '*', 'delete').subscribe({
+                  next: async (notifyEvent: ISPNotifierEvent) => {
+                    console.log('MARKET_ORDER TASK DELETE', notifyEvent);
+                    this.checkFeatures();
+                  },
+                }),
+              );
+            }
+            configureNotifier(this.notifierService, notifierParams);
+          },
+          error: error => {
+            console.warn(error);
+            configureNotifier(this.notifierService, notifierParams);
+          },
+        });
+      }
+
       this.updateNotifier(this.notifierService);
+    }
+  }
+
+  /**
+   * Update status for navigation item history, if history count change
+   *
+   * @param count - new history item count
+   */
+  @Watch('historyItemCount')
+  lastScanChange(count: number) {
+    if (Array.isArray(this.items)) {
+      const historyTabIndex = this.items.findIndex(item => item.name === AntivirusCardPages.history);
+      if (historyTabIndex !== undefined && historyTabIndex > -1) {
+        this.items = this.items.map((item, index) => {
+          if (index === historyTabIndex) {
+            item.hidden = count === 0;
+          }
+          return item;
+        });
+      }
     }
   }
 
@@ -134,26 +260,6 @@ export class AntivirusCard {
     this.items[e.detail].active = true;
 
     this.items = [...this.items];
-  }
-
-  /**
-   * Update status for navigation item history, if history count change
-   *
-   * @param count - new history item count
-   */
-  @Watch('historyItemCount')
-  lastScanChange(count: number) {
-    if (Array.isArray(this.items)) {
-      const historyTabIndex = this.items.findIndex(item => item.name === AntivirusCardPages.history);
-      if (historyTabIndex !== undefined && historyTabIndex > -1) {
-        this.items = this.items.map((item, index) => {
-          if (index === historyTabIndex) {
-            item.hidden = count === 0;
-          }
-          return item;
-        });
-      }
-    }
   }
 
   /** Action scan */
@@ -186,6 +292,8 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
+    this.updateNotifierState();
+
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {
@@ -239,62 +347,6 @@ export class AntivirusCard {
         }
       });
     }
-
-    if (this.notifierService !== undefined) {
-      this.notifierService
-        .getTaskList('plugin', this.pluginId, 'task', '*')
-        .pipe(take(1))
-        .subscribe({
-          next: async (notifyEvents: ISPNotifierEvent[]) => {
-            console.log('TASK LIST', notifyEvents);
-            const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
-            if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
-              this.updateState({
-                ...this.store.getState().antivirus,
-                scanning: true,
-              });
-            }
-          },
-        });
-
-      this.sub.add(
-        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
-          next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('UPDATE', notifyEvent);
-            if (notifyEvent.additional_data.status === 'running' && notifyEvent.additional_data.name === TaskEventName.scan) {
-              this.updateState({
-                ...this.store.getState().antivirus,
-                scanning: true,
-              });
-            }
-          },
-        }),
-      );
-
-      this.sub.add(
-        this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
-          next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('DELETE', notifyEvent);
-            const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
-            if (taskName !== undefined) {
-              switch (taskName) {
-                case TaskEventName.scan:
-                  await this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
-                  break;
-                case TaskEventName.filesDelete:
-                  await this.deleteFilesPostProcess(notifyEvent, this.userNotification, this.t);
-                  break;
-                case TaskEventName.filesCure:
-                  await this.cureFilesPostProcess(notifyEvent, this.userNotification, this.t);
-                  break;
-              }
-            }
-          },
-        }),
-      );
-    }
-
-    configureNotifier(this.notifierService, { plugin: [this.pluginId] });
   }
 
   /**
@@ -391,11 +443,22 @@ export class AntivirusCard {
    * Handle to buy pro version
    */
   async buyProVersion() {
-    purchase(this.priceList.id, this.priceList.price[0].id, this.pluginId, this.notifierService);
-
     this.updateState({
       ...this.store.getState().antivirus,
       purchasing: true,
+    });
+    const orderNotifier = await purchase(this.priceList.id, this.priceList.price[0].id, this.pluginId, this.notifierService);
+    orderNotifier.subscribe({
+      next: paymentLink => {
+        location.replace(paymentLink);
+      },
+      error: error => {
+        console.warn(error);
+        this.updateState({
+          ...this.store.getState().antivirus,
+          purchasing: false,
+        });
+      },
     });
   }
 
