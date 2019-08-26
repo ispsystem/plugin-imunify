@@ -54,6 +54,7 @@ export enum TaskEventName {
   scan = 'scan',
   filesCure = 'files-cure',
   filesDelete = 'files',
+  pluginActivate = 'plugin-activate',
 }
 
 /** Response by last scan action */
@@ -67,7 +68,7 @@ export interface LastScanData {
 }
 
 /** Payment status returned by payment system */
-export type PaymentStatus = 'failed' | 'success';
+export type PaymentStatus = 'failed' | 'success' | 'pending';
 
 /** Interface for get prise list response */
 export interface PriceListResponse {

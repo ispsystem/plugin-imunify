@@ -1,11 +1,7 @@
-@import '../../shared';
-
-
 .antivirus-card-preview__purchase {
-  @extend .antivirus-card-preview;
+  @extend %antivirus-card-preview;
   justify-content: center;
 }
-
 
 .antivirus-card-preview__purchase-title {
   width: 300px;

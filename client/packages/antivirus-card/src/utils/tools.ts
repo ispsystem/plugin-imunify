@@ -154,11 +154,20 @@ export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3
 }
 
 /**
+ * Property entity types for configureNotifier function
+ */
+export type NotifierEntityIds = { [x in 'plugin' | 'market_order']?: number[] };
+
+/**
  * Configure/reconfigure notifier object
  *
+ * @param notifier - notifier service object
  * @param entityIds - ids for the entity
  */
-export function configureNotifier(notifier: ISPNotifier, entityIds: { [x in 'plugin' | 'market_order']?: number[] }): void {
+export function configureNotifier(notifier: ISPNotifier, entityIds: NotifierEntityIds): void {
+  if (notifier === undefined || notifier === null) {
+    return;
+  }
   const params = {
     task_list: true,
     entities: [],

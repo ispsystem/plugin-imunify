@@ -5,6 +5,7 @@ import { translateReducer, ITranslate } from '../models/translate.reducers';
 import { AntivirusState } from '../models/antivirus/state';
 import { antivirusReducer } from '../models/antivirus/reducers';
 import { UserNotification } from './user-notification.interface';
+import { notifierReducer } from '../models/notifier.reducers';
 
 // This interface represents app state by nesting feature states.
 export interface RootState {
@@ -21,7 +22,7 @@ export const rootReducer = combineReducers({
   pluginId: (state: number = null) => state,
   siteId: (state: number = null) => state,
   antivirus: antivirusReducer,
-  notifier: (state: ISPNotifier = null) => state,
+  notifier: notifierReducer,
   translate: translateReducer,
   userNotification: (state: UserNotification = null) => state,
 });
