@@ -8,7 +8,11 @@ build() {
   rm -rf ./$build_folder && mkdir ./$build_folder
 
   # Build and copy client files
-  (cd ./client && npm run build)
+  (cd ./client && npm run build); EXITCODE=$?
+
+  if [ $EXITCODE -ne 0 ]; then
+    exit $EXITCODE
+  fi
 
   # Copy server files
   cp -R ./server/. ./$build_folder/ && cp ./meta.json ./$build_folder/
