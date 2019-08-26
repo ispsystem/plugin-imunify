@@ -8,48 +8,54 @@
     "YEAR": {
       "SHORT": "year",
       "LONG": "Yearly",
-      "DESCRIPTION": ""
+      "DESCRIPTION": "when you pay for 1 year"
     }
   },
   "MENU_ITEMS": {
     "PREVIEW": "Overview ",
     "INFECTED_FILES": "Infected files ",
-    "HISTORY": "Scanning history ",
+    "HISTORY": "Scan history ",
     "DASHBOARD": "Overview "
   },
   "CHECK_TYPE": {
     "FULL": "full "
   },
   "BUY_MODAL": {
-    "TITLE": "Imunify Pro subscription ",
-    "LABEL_1": "Daily website scanning ",
-    "LABEL_2": "",
-    "LABEL_3": "",
-    "LABEL_PRO_1": "",
+    "TITLE": "Subscription ImunifyAV+",
+    "LABEL_1": "Website scanning ",
+    "LABEL_2": "Virus bases updates",
+    "LABEL_3": "Search for website in blacklists",
+    "LABEL_PRO_1": "Infected files cleanup",
     "LABEL_PRO_2": "Scheduled scanning ",
-    "LABEL_PRO_3": ""
+    "LABEL_PRO_3": "Email threats notifications "
   },
   "NOT_NOW": "Not now ",
-  "SUBSCRIBE_FOR": "Subscribe for ",
+  "SUBSCRIBE_FOR": "Subscribe for %{cost} %{currency} ",
   "TABLE": {
     "ON_PAGE_LABEL": "On page",
-    "OF": "",
-    "RECORD_COUNT": "",
-    "SELECTED_COUNT": "",
-    "FILE_COUNT": ""
+    "OF": "of",
+    "RECORD_COUNT": "%{smart_count} record |||| %{smart_count} records |||| %{smart_count} records ",
+    "SELECTED_COUNT": "Selected %{count}",
+    "FILE_COUNT": "%{smart_count} file |||| %{smart_count} files |||| %{smart_count} files"
   },
   "PREVIEW": {
-    "HELP": "",
-    "HELP_RECOMMENDATION": "We recommend curing the viruses and reindex the website. This process may take 3 to 72 hours. ",
-    "WAIT_CHECK": "Website scanning in progress. It may take ",
-    "LAST_CHECK": "Last check ",
+    "HELP": "This website is blacklisted by Roskomnadzor, Yandex, and Google. A possible reason can be a hacking attack on the website, inappropriate or prohibited website content. ",
+    "HELP_RECOMMENDATION": "We recommend curing the viruses and reindexing the website. This process may take from 3 to 72 hours. ",
+    "WAIT_CHECK": {
+      "FULL": "",
+      "PARTIAL": ""
+    },
+    "LAST_CHECK": {
+      "FULL": "",
+      "PARTIAL": ""
+    },
     "NEXT_CHECK": "Next scanning: 04.06.2019 Daily ",
     "INFECTED_FILES_WORD_1": "Infected |||| Infected |||| Infected ",
     "INFECTED_FILES_WORD_2": "file |||| files |||| files ",
     "CURE": "Cure",
     "DETAIL": "Details ",
     "NOT_INFECTED_FILES": "Viruses not found ",
-    "IN_BLACK_LISTS": "Website is blacklisted ",
+    "IN_BLACK_LISTS": "The website is blacklisted ",
     "HOW_TO_FIX": "How to fix",
     "NOT_IN_BLACK_LISTS": "Website is not blacklisted "
   },
@@ -64,101 +70,106 @@
     },
     "STATUS": {
       "INFECTED": "infected",
-      "CURED": "cured",
-      "EXCEPTED": "added to ignored",
+      "CURED": "Cured",
+      "EXCEPTED": "added to Ignore list\n",
       "HEALING": "curing ",
-      "DELETED": ""
+      "DELETED": "deleting "
     },
-    "NOT_FOUND_PRO": "",
+    "NOT_FOUND_PRO": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. ",
     "ACTIONS": {
-      "HEAL": "",
-      "EXCLUDE": "",
-      "OPEN_FOLDER": "",
-      "DELETE": ""
+      "HEAL": "Cure",
+      "EXCLUDE": "Add to Ignore list",
+      "OPEN_FOLDER": "Show in folder",
+      "DELETE": "Delete"
     },
     "MODAL": {
-      "TITLE": "",
-      "DELETE_BUTTON": "",
-      "CANCEL_BUTTON": "",
-      "GROUP_TITLE": ""
+      "TITLE": "Delete the file %{filename}",
+      "DELETE_BUTTON": "Delete ",
+      "CANCEL_BUTTON": "Cancel ",
+      "GROUP_TITLE": "Delete %{smart_count} file |||| Delete %{smart_count} files |||| Delete %{smart_count} files "
     }
   },
   "DATETIME_CREATED": "created on %{date} at %{time}",
   "DATETIME_CHANGED": "modified on %{date} at %{time}",
   "HISTORY_TAB": {
     "TABLE_HEADER": {
-      "CELL_1": "Check date ",
+      "CELL_1": "Scanning date ",
       "CELL_2": "Type ",
-      "CELL_3": ""
+      "CELL_3": "Threats found"
     },
     "CHECK_TYPE": {
       "FULL": "full ",
-      "PARTIAL": ""
+      "PARTIAL": "partial"
     },
     "ACTION": {
-      "RETRY": ""
+      "RETRY": "Re-try "
     },
-    "CURED_COUNT": ""
+    "CURED_COUNT": "Cured %{count}"
   },
   "MENU_ITEM": "Antivirus ImunifyAV",
   "WIDGET": {
     "ANTIVIRUS": "Antivirus ",
     "STATUS_MSG": {
-      "SAFELY": "",
-      "IN_PROCESS": "scanning website for viruses"
+      "SAFELY": "threats not found ",
+      "IN_PROCESS": "scanning the website for viruses"
     },
     "DESC_MSG": {
-      "HISTORY": "the last scanning: today ",
+      "HISTORY": "last scanning: today ",
       "WAIT": "it will take about 10 minutes"
     },
     "ACTION_MSG": {
-      "AGAIN": "",
+      "AGAIN": "Scan again",
       "REPORT": "Report "
     },
     "STATUS": {
-      "SUCCESS": "",
-      "ACCENT": ""
+      "SUCCESS": "threats not found ",
+      "ACCENT": "%{smart_count} virus has been found |||| %{smart_count} have been found |||| %{smart_count} have been found"
     },
-    "LAST_CHECK": "",
-    "CHECK_AGAIN": "",
-    "CURE": "",
+    "LAST_CHECK": "last scanning: %{value}",
+    "CHECK_AGAIN": "Scan again ",
+    "CURE": "Cure",
     "ACTION": {
-      "SCANNING": "",
-      "CURE": ""
+      "SCANNING": "scanning the website for viruses",
+      "CURE": "curing the virus"
     },
-    "VIRUS_DETECTED": "",
-    "SCAN_SUCCESS": "",
-    "CURE_COUNT_FILES": "",
-    "MORE_DETAILS": "",
-    "TODAY": "",
+    "VIRUS_DETECTED": "Virus detected ",
+    "SCAN_SUCCESS": "Website scanning has been completed ",
+    "CURE_COUNT_FILES": "${smart_count} file has been cured |||| ${smart_count} files have been cured |||| ${smart_count} files have been cured ",
+    "MORE_DETAILS": "Details",
+    "TODAY": "today",
     "VIRUS_CURE": {
-      "DONE": "",
-      "FAIL": "",
+      "DONE": "The infected file has been cured ",
+      "FAIL": "Error curing the file ",
       "GROUP": {
-        "DONE_1": "",
-        "DONE_2": "",
-        "FAIL_1": "",
-        "FAIL_2": ""
+        "DONE_1": "Cured |||| Cured |||| Cured ",
+        "DONE_2": "infected file |||| infcфайла |||| заражённых файлов",
+        "FAIL_1": "Could not cure the file ",
+        "FAIL_2": "file |||| files |||| files"
       },
-      "ERROR_404": ""
+      "ERROR_404": "%{filename} - this file doesn't exist on the server "
+    },
+    "CHECK_SITE": "",
+    "COMMON_DATE": {
+      "TODAY": "",
+      "YESTERDAY": ""
     }
   },
   "NEW_SCAN_BTN": "New scanning ",
   "DASHBOARD": {
-    "TITLE": "Buy ImunifyAV+ for 5 €/month",
-    "TEXT": ""
+    "TITLE": "Buy ImunifyAV+ for %{cost} %{currency}/%{period} to cure infected files",
+    "TEXT": "to cure files, check reputation, configure a schedule and email notifications about viruses. "
   },
   "SCAN_SETTINGS": {
     "NEW_SCAN": "New scanning ",
     "CHECK_FOLDER": "Directory or file for scanning ",
     "USE_MASK_FOR_CHECK_FILES": "Use filename mask ",
     "USE_MASK_FOR_IGNORE_FILES": "Use mask to ignore files ",
-    "CHECK_MASK_HINT": "",
+    "CHECK_MASK_HINT": "Use the symbol \"?\" to change one character and \"*\" to change any sequence of characters.",
     "INSPECTION_INTENSITY": {
       "LOW": "Low ",
       "MEDIUM": "Medium ",
       "HIGH": "High ",
-      "TEXT": "",
+      "TEXT": "Intensity ",
       "HINT_TEXT": "It defines priority and resources that will be used for scanning"
     },
     "BUTTON_SCAN": "Scanning ",
@@ -169,7 +180,7 @@
       "ALL": "All types",
       "EXCEPT_MEDIA": "Skip media files ",
       "TEXT": "Check files",
-      "HINT_TEXT": "",
+      "HINT_TEXT": "ph*, htm*, js, txt, tpl, etc. files are infected more often. Media files, such as images contain viruses very seldom. Excluding them from the check helps prevent unnecessary server load and reduce scanning time.",
       "critical": "Critical types",
       "all": "All types",
       "except_media": "Skip media files "
@@ -183,7 +194,7 @@
     "HIDE_ADVANCED_SETTINGS": "Hide advanced settings",
     "CPU_THREAD_COUNT": {
       "TEXT": "Number of scanning threads ",
-      "HINT_TEXT": ""
+      "HINT_TEXT": "Optimal value: half of the available server cores. E.g., if the server has 4 cores, the recommended value is 2. "
     },
     "RAM_COUNT": "RAM consumption for scanning ",
     "DETAIL_LOG": {
@@ -205,44 +216,54 @@
   },
   "BTN_SCAN": "Scan ",
   "CONFIGURE": "Configure ",
-  "MEGABYTE_SHORT": "",
-  "VIRUS_DETECTED": "",
+  "MEGABYTE_SHORT": "MB",
+  "VIRUS_DETECTED": "Virus detected ",
   "NOTIFY": {
-    "SCAN_SUCCESS": "",
-    "MORE_DETAILS": ""
+    "SCAN_SUCCESS": "Website scanning has been completed ",
+    "MORE_DETAILS": "Details "
   },
   "PAYMENT_FAILED_MODAL": {
-    "TITLE": "",
-    "DESCRIPTION_1": "",
-    "DESCRIPTION_2": "",
-    "TRY_AGAIN_BUTTON": ""
+    "TITLE": "Error paying for ImunifyAV+",
+    "DESCRIPTION_1": "An error occurred when making a payment ",
+    "DESCRIPTION_2": "Try to make a payment in 1 minute ",
+    "TRY_AGAIN_BUTTON": "Try again"
   },
   "PRICE_PERIOD": {
-    "DAY": "",
-    "MONTH": "",
-    "YEAR": ""
+    "DAY": "day",
+    "MONTH": "month",
+    "YEAR": "year"
   },
-  "LAST_CHECK_IN": "",
+  "LAST_CHECK_IN": "%{date} at %{time}",
   "VIRUS_DELETE": {
-    "DONE": "",
-    "FAIL": "",
+    "DONE": "The infected file will be deleted ",
+    "FAIL": "Error deleting the file ",
     "GROUP": {
-      "DONE_1": "",
-      "DONE_2": "",
-      "FAIL_1": "",
-      "FAIL_2": ""
+      "DONE_1": "Deleted |||| Deleted |||| Deleted ",
+      "DONE_2": "infected file |||| infected files |||| infected files",
+      "FAIL_1": "Failed to delete ",
+      "FAIL_2": "file |||| files |||| files"
     },
-    "ERROR_404": ""
+    "ERROR_404": "%{filename} - this file has been already deleted"
   },
   "VIRUS_CURE": {
-    "DONE": "",
-    "FAIL": "",
+    "DONE": "The infected file has been cured",
+    "FAIL": "Failed to cure the file ",
     "GROUP": {
-      "DONE_1": "",
-      "DONE_2": "",
-      "FAIL_1": "",
-      "FAIL_2": ""
+      "DONE_1": "Cured |||| Cured |||| Cured ",
+      "DONE_2": "infected file |||| infected files |||| infected files",
+      "FAIL_1": "Failed to  cure",
+      "FAIL_2": "file |||| files |||| files"
     },
-    "ERROR_404": ""
+    "ERROR_404": "%{filename} - this file doesn't exist on the server"
+  },
+  "COMMON_DATE": {
+    "TODAY": "",
+    "YESTERDAY": ""
+  },
+  "PURCHASE": {
+    "PREVIEW": {
+      "TITLE": "",
+      "MSG": ""
+    }
   }
 }
