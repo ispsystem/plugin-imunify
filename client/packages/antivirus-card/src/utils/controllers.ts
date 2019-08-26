@@ -47,7 +47,6 @@ export async function purchase(
       const status = getNestedObject(notifyEvent, ['data', 'status']);
 
       if (status !== 'Fail' && typeof paymentLink === 'string' && notifyEvent.id === json.order_id) {
-        location.replace(paymentLink);
         return of(paymentLink);
       } else {
         throw { status, paymentLink };
