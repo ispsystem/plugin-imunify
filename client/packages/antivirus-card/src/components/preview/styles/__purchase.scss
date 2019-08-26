@@ -1,0 +1,26 @@
+@import '../../shared';
+
+
+.antivirus-card-preview__purchase {
+  @extend .antivirus-card-preview;
+  justify-content: center;
+}
+
+
+.antivirus-card-preview__purchase-title {
+  width: 300px;
+  margin: 5px auto;
+  text-align: center;
+  line-height: 16px;
+  font-size: var(--isp-font-size__input, 14px);
+  font-weight: 500;
+}
+
+.antivirus-card-preview__purchase-msg {
+  text-align: center;
+  margin: 0 0 15px;
+}
+
+.antivirus-card-preview__purchase-icon {
+  text-align: center;
+}

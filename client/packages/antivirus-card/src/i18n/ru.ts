@@ -205,6 +205,12 @@ const lang = {
     ERROR_404: '%{filename} - данного файла нет на сервере',
   },
   LAST_CHECK_IN: '%{date} в %{time}',
+  PURCHASE: {
+    PREVIEW: {
+      TITLE: 'Подписка на ImunifyAV оплачивается',
+      MSG: 'Обычно это занимает до 30 минут',
+    },
+  },
 };
 
 export type Lang = typeof lang;
