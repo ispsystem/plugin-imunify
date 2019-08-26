@@ -118,7 +118,7 @@ export class AntivirusCard {
         .subscribe({
           next: async (notifyEvents: ISPNotifierEvent[]) => {
             console.log('TASK LIST', notifyEvents);
-            const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
+            const runningTask = notifyEvents.find(event => getNestedObject(event, ['additional_data', 'status']) === 'running');
             if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
               this.updateState({
                 ...this.store.getState().antivirus,
