@@ -215,6 +215,12 @@ const lang = {
     TODAY: 'Сегодня',
     YESTERDAY: 'Вчера',
   },
+  PURCHASE: {
+    PREVIEW: {
+      TITLE: 'Подписка на ImunifyAV оплачивается',
+      MSG: 'Обычно это занимает до 30 минут',
+    },
+  },
 };
 
 export type Lang = typeof lang;
