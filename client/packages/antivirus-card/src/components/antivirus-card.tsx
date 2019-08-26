@@ -111,7 +111,7 @@ export class AntivirusCard {
    */
   @Watch('notifierService')
   updateNotifierState(): void {
-    if (this.notifierService !== undefined && this.updateNotifier !== undefined) {
+    if (this.notifierService !== undefined) {
       this.notifierService
         .getTaskList('plugin', this.pluginId, 'task', '*')
         .pipe(take(1))
@@ -292,8 +292,6 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
-    this.updateNotifierState();
-
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {
@@ -347,6 +345,8 @@ export class AntivirusCard {
         }
       });
     }
+
+    this.updateNotifierState();
   }
 
   /**
