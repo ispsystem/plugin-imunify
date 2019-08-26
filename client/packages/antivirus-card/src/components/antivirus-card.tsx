@@ -1,6 +1,6 @@
 import '@stencil/redux';
 
-import { Component, h, State, Listen, Prop, Watch, Host } from '@stencil/core';
+import { Component, h, State, Listen, Prop, Watch, Host, Method } from '@stencil/core';
 import { FreeIcon } from './icons/free';
 import { Store } from '@stencil/redux';
 import { configureStore } from '../redux/store';
@@ -31,7 +31,7 @@ import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
 export class AntivirusCard {
   /** RXJS subscription */
   sub = new Subscription();
-  /** modal window for create new scan */
+  /** Modal for new scan */
   newScanModal: HTMLAntivirusCardModalElement;
   /** reference to modal element */
   buyModal: HTMLAntivirusCardModalElement;
@@ -58,8 +58,6 @@ export class AntivirusCard {
   @State() scanning: RootState['antivirus']['scanning'];
   /** purchase in process */
   @State() purchasing: RootState['antivirus']['purchasing'];
-  /** list current scan process */
-  @State() taskList$: RootState['antivirus']['taskList$'];
   /** History item count of scanning */
   @State() historyItemCount: AntivirusState['historyItemCount'];
   /** Price list for buy pro version */
@@ -144,6 +142,19 @@ export class AntivirusCard {
     }
   }
 
+  /**
+   * Method for change active item
+   *
+   * @param name - name of item
+   */
+  @Method()
+  async changeActiveItem(name: AntivirusCardPages): Promise<void> {
+    this.items = this.items.map(item => {
+      item.active = item.name === name;
+      return item;
+    });
+  }
+
   /** Action scan */
   scanVirus: typeof AntivirusActions.scan;
   /** Method to get available antivirus features */
@@ -172,7 +183,6 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
-
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {
@@ -318,7 +328,7 @@ export class AntivirusCard {
    * LIFECYCLE
    * Search params in location url
    */
-  componentDidUpdate() {
+  async componentDidUpdate() {
     if (!this.isPreloader.card) {
       // get url params
       const [defaultLocation, queryParam] = location.toString().split('?');
@@ -328,13 +338,10 @@ export class AntivirusCard {
 
         // search page in query params
         if (searchParams.has('page')) {
-          const index = this.items.findIndex(i => i.name === searchParams.get('page'));
-          const beforeIndex = this.items.findIndex(item => item.active);
+          const foundItem = this.items.find(i => i.name === searchParams.get('page'));
 
-          if (index > -1 && beforeIndex > -1 && index !== beforeIndex) {
-            this.items[beforeIndex].active = false;
-            this.items[index].active = true;
-            this.items = [...this.items];
+          if (foundItem !== undefined) {
+            await this.changeActiveItem(foundItem.name);
           }
           searchParams.delete('page');
         }

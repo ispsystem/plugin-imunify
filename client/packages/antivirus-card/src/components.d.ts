@@ -19,6 +19,10 @@ import {
   languageTypes,
 } from './constants';
 import {
+  AntivirusCardPages,
+  NavigationItem,
+} from './models/antivirus/model';
+import {
   ButtonType,
   ThemePalette,
 } from './components/button/button.interface';
@@ -29,9 +33,6 @@ import {
 import {
   Validator,
 } from './utils/validators';
-import {
-  NavigationItem,
-} from './models/antivirus/model';
 import {
   ViewType,
 } from './components/preloader/preloader';
@@ -44,6 +45,11 @@ import {
 
 export namespace Components {
   interface AntivirusCard {
+    /**
+    * Method for change active item
+    * @param name - name of item
+    */
+    'changeActiveItem': (name: AntivirusCardPages) => Promise<void>;
     /**
     * global notifier object
     */

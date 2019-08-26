@@ -33,6 +33,10 @@ const lang = {
       },
       ERROR_404: '%{filename} - данного файла нет на сервере',
     },
+    COMMON_DATE: {
+      TODAY: 'Сегодня',
+      YESTERDAY: 'Вчера',
+    },
   },
 };
 

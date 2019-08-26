@@ -24,10 +24,7 @@ interface StaticStateProps {
 export const StaticState: FunctionalComponent<StaticStateProps> = props => {
   const status = props.infectedFilesCount === 0 ? 'SUCCESS' : 'ACCENT';
   const isSuccess = status === 'SUCCESS';
-  const checkDate = (timestamp: number): string => {
-    const startOfDay = new Date().setHours(0, 0, 0, 0);
-    return startOfDay <= timestamp ? props.t.msg(['WIDGET', 'TODAY']) : getDayMonthYearAsStr(timestamp);
-  };
+
   return [
     props.lastCheck !== null && (
       <div
@@ -38,7 +35,7 @@ export const StaticState: FunctionalComponent<StaticStateProps> = props => {
     ),
     isSuccess && props.lastCheck !== null && (
       <div class="overview-widget-list__item-overflow widget-text_additional widget-text_with-margin-adaptive">
-        {props.t.msg(['WIDGET', 'LAST_CHECK'], { value: checkDate(props.lastCheck) })}
+        {props.t.msg(['WIDGET', 'LAST_CHECK'], { value: getDayMonthYearAsStr(props.lastCheck, props.t) })}
       </div>
     ),
     <div class="widget-icon_adaptive">{isSuccess ? <AntivirusShieldIcon /> : <AntivirusShieldDisableIcon />}</div>,

@@ -2,6 +2,7 @@ import { FunctionalComponent, h, EventEmitter } from '@stencil/core';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
 import { ITranslate } from '../../models/translate.reducers';
+import { CheckType } from '../../models/antivirus/state';
 
 /**
  * PreviewInfectedFiles component props
@@ -12,6 +13,7 @@ interface PreviewInfectedFilesProps {
   clickItem: EventEmitter;
   openBuyModal: EventEmitter;
   isProVersion: boolean;
+  type: CheckType;
   healHandler: () => void;
 }
 
@@ -30,14 +32,16 @@ export const PreviewInfectedFiles: FunctionalComponent<PreviewInfectedFilesProps
           {props.t.msg(['PREVIEW', 'INFECTED_FILES_WORD_2'], props.infectedFilesCount)}
         </span>
         <div style={{ display: 'inline' }}>
-          <a
-            class="link link_small link_indent-right"
-            onClick={() => {
-              props.isProVersion ? props.healHandler() : props.openBuyModal.emit();
-            }}
-          >
-            {props.t.msg(['PREVIEW', 'CURE'])}
-          </a>
+          {props.type === 'FULL' && (
+            <a
+              class="link link_small link_indent-right"
+              onClick={() => {
+                props.isProVersion ? props.healHandler() : props.openBuyModal.emit();
+              }}
+            >
+              {props.t.msg(['PREVIEW', 'CURE'])}
+            </a>
+          )}
           <a class="link link_small" onClick={() => props.clickItem.emit(1)}>
             {props.t.msg(['PREVIEW', 'DETAIL'])}
           </a>

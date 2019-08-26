@@ -10,7 +10,7 @@ import { ActiveState } from './ActiveState';
 import { ISPNotifier, ISPNotifierEvent, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
 
 /**
- * The imunifyav-widget web component
+ * The imunifyAV-widget web component
  */
 @Component({
   tag: 'antivirus-widget',
@@ -79,6 +79,11 @@ export class AntivirusWidget {
     );
   }
 
+  /**
+   * LIFECYCLE
+   *
+   * Initialize data
+   */
   async componentWillLoad() {
     // prettier-ignore
     this.t = await loadTranslate(

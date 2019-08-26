@@ -47,6 +47,9 @@ export class Dashboard {
   /** flag if antivirus in purchasing status */
   @State() purchasing: AntivirusState['purchasing'];
 
+  /** Scan in process */
+  @State() scanning: AntivirusState['scanning'];
+
   /** open ImunifyAV+ buy modal */
   @Event() openBuyModal: EventEmitter<ScanOption>;
 
@@ -72,11 +75,16 @@ export class Dashboard {
     return (
       <Host>
         {this.isProVersion && Boolean(this.scanPreset.partial) && (
-          <antivirus-card-button class="header-button new-scan-button" btn-theme="third" onClick={() => this.newScanModal.toggle(true)}>
+          <antivirus-card-button
+            isDisabled={this.scanning}
+            class="header-button new-scan-button"
+            btn-theme="third"
+            onClick={ev => (this.scanning ? ev.preventDefault() : this.newScanModal.toggle(true))}
+          >
             {this.t.msg(['NEW_SCAN_BTN'])}
           </antivirus-card-button>
         )}
-        <antivirus-card-preview />
+        <antivirus-card-preview scanType="FULL" />
         {this.isProVersion ? (
           [
             <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
