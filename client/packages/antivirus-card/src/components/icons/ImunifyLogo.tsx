@@ -12,7 +12,7 @@ export interface ImunifyLogoProps {
  * @param props - properties
  */
 export const ImunifyLogo: FunctionalComponent<ImunifyLogoProps> = props => {
-  const color = props.color ? props.color : '#187ABD';
+  const color = props && props.color ? props.color : '#187ABD';
   return (
     <svg width="50" height="50" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M26.5911 22.0457L22.8447 34.1363L27.4236 31.2179L32.4188 33.3025L26.5911 22.0457Z" stroke={color} />
