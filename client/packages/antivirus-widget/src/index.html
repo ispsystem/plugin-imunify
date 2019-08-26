@@ -21,12 +21,15 @@
     src="/build/antivirus-widget.js"
   ></script>
 
+  <script type="module" src="https://unpkg.com/@ispsystem/isp-notice@1.0.1/dist/isp-notice/isp-notice.esm.js"></script>
+  <script nomodule src="https://unpkg.com/@ispsystem/isp-notice@1.0.1/dist/isp-notice/isp-notice.js"></script>
+
 </head>
 
 <body>
-
-  <antivirus-widget site-id="1"></antivirus-widget>
-
+  <isp-notice>
+    <antivirus-widget site-id="1" plugin-id="1"></antivirus-widget>
+  </isp-notice>
 </body>
 
 </html>

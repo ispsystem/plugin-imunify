@@ -26,11 +26,13 @@ export const StaticState: FunctionalComponent<StaticStateProps> = props => {
   const isSuccess = status === 'SUCCESS';
 
   return [
-    <div
-      class={`overview-widget-list__item-overflow widget-text_additional widget-text_with-margin-adaptive widget-text_${status.toLowerCase()}`}
-    >
-      {props.t.msg(['WIDGET', 'STATUS', status], { smart_count: props.infectedFilesCount })}
-    </div>,
+    props.lastCheck !== null && (
+      <div
+        class={`overview-widget-list__item-overflow widget-text_additional widget-text_with-margin-adaptive widget-text_${status.toLowerCase()}`}
+      >
+        {props.t.msg(['WIDGET', 'STATUS', status], { smart_count: props.infectedFilesCount })}
+      </div>
+    ),
     isSuccess && props.lastCheck !== null && (
       <div class="overview-widget-list__item-overflow widget-text_additional widget-text_with-margin-adaptive">
         {props.t.msg(['WIDGET', 'LAST_CHECK'], { value: getDayMonthYearAsStr(props.lastCheck, props.t) })}
@@ -46,7 +48,11 @@ export const StaticState: FunctionalComponent<StaticStateProps> = props => {
         event.stopPropagation();
       }}
     >
-      {isSuccess ? props.t.msg(['WIDGET', 'CHECK_AGAIN']) : props.t.msg(['WIDGET', 'CURE'])}
+      {!props.lastCheck
+        ? props.t.msg(['WIDGET', 'CHECK_SITE'])
+        : isSuccess
+        ? props.t.msg(['WIDGET', 'CHECK_AGAIN'])
+        : props.t.msg(['WIDGET', 'CURE'])}
     </a>,
   ];
 };

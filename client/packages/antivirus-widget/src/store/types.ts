@@ -10,46 +10,6 @@ export interface Translate {
   loading: boolean;
 }
 
-/** @todo: move to common plugin lib */
-export interface Notifier {
-  ids: (ids$: number[] | Observable<number[]>) => Notifier;
-  create$: (action?: string) => Observable<any>;
-  delete$: (action?: string) => Observable<any>;
-  update$: (action?: string) => Observable<any>;
-  taskList$: () => Observable<any>;
-}
-
-export type TaskStatus = 'created' | 'deferred' | 'running' | 'failed' | 'complete';
-
-/** @todo: move to common plugin lib */
-export interface NotifierEvent {
-  entity: string; // название сущности
-  id: number; // id сущности
-  path: string; // путь до сущности (например host/1/image/1 или host/1)
-  type: 'create' | 'update' | 'delete'; // тип нотификации
-  relations: {
-    [entity: string]: number; // объект, где ключ - название сущности, значение - id (формируется из поля `path`)
-  };
-  data?: any; // данные полученные из хендлера для типа, если он был указан
-  // если нотификация по задаче (сущность 'task')
-  additional_data?: {
-    id?: number; // id задачи
-    output?: any;
-    name: TaskEventName; // название задачи
-    status: string; // статус задачи
-    // прогресс задачи, такой формат вроде как формализован на BE но может быть что угодно
-    progress?:
-      | {
-          state?: string; // состояние
-          params?: {
-            [key: string]: any;
-          } | null; // параметры
-        }
-      | any;
-    deferred_reason?: string; // причина, по которой задача отложена (если статус deferred)
-  };
-}
-
 /** интерфейс события нотификации */
 export interface NotifyEvent {
   type: NotifyBannerEvents;
