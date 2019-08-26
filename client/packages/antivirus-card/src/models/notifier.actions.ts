@@ -1,4 +1,4 @@
-import { Notifier } from '../redux/reducers';
+import { ISPNotifier } from '@ispsystem/notice-tools';
 
 export enum NOTIFIER_ACTION {
   UPDATE_NOTIFIER_SUCCESS = 'UPDATE_NOTIFIER_SUCCESS',
@@ -13,7 +13,7 @@ export const updateNotifierSuccess = data => async (dispatch: (obj: UpdateNotifi
 
 interface UpdateNotifierSuccessAction {
   type: NOTIFIER_ACTION.UPDATE_NOTIFIER_SUCCESS;
-  payload: { data: Notifier };
+  payload: { data: ISPNotifier };
 }
 export type NotifierActionTypes = UpdateNotifierSuccessAction;
 
@@ -28,7 +28,7 @@ export namespace NotifierActions {
    *
    * @param state - new state
    */
-  export function updateNotifier(state: Notifier) {
+  export function updateNotifier(state: ISPNotifier) {
     return dispatch => {
       dispatch(updateNotifierSuccess(state));
     };
