@@ -44,7 +44,6 @@ graph TD;
   antivirus-card-dashboard --> antivirus-card-modal
   antivirus-card-dashboard --> antivirus-card-new-scan
   antivirus-card-dashboard --> antivirus-card-scan-settings
-  antivirus-card-preview --> antivirus-card-dropdown
   antivirus-card-preview --> antivirus-card-spinner-round
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-new-scan --> antivirus-card-hint
