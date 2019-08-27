@@ -11,7 +11,7 @@
   },
   "checkFileTypes": "critical",
   "saveCopyFilesDay": 14,
-  "cureFoundFiles": false,
+  "cureFoundFiles": true,
   "removeInfectedFileContent": true,
   "checkDomainReputation": false,
   "parallelChecks": 1,
