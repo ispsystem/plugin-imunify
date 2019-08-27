@@ -45,7 +45,7 @@ const lang = {
     ON_PAGE_LABEL: 'На странице',
     OF: 'из',
     RECORD_COUNT: '%{smart_count} запись |||| %{smart_count} записи |||| %{smart_count} записей',
-    FILE_COUNT: '%{smart_count} файл |||| %{smart_count} файлы |||| %{smart_count} файлов',
+    FILE_COUNT: '%{smart_count} файл |||| %{smart_count} файла |||| %{smart_count} файлов',
     SELECTED_COUNT: 'Выбрано %{count}',
   },
   PREVIEW: {
