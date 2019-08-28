@@ -114,7 +114,7 @@ export class History {
             <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
             </antivirus-card-table-cell>
-            {this.isProVersion && <antivirus-card-table-cell style={{ width: 60 + 'px' }}></antivirus-card-table-cell>}
+            {this.isProVersion && <antivirus-card-table-cell style={{ width: 70 + 'px' }}></antivirus-card-table-cell>}
           </antivirus-card-table-row>
         </div>
         <div slot="table-body" style={{ display: 'contents' }}>
@@ -136,7 +136,7 @@ export class History {
                 )}
               </antivirus-card-table-cell>
               {this.isProVersion && (
-                <antivirus-card-table-cell doubleline>
+                <antivirus-card-table-cell style={{ 'text-align': 'right' }} doubleline>
                   <a
                     class={`link${this.scanning ? ' disabled' : ''}`}
                     onClick={async ev => (this.scanning ? ev.preventDefault() : await this.handleRetryScan(historyItem.scanOptionId))}

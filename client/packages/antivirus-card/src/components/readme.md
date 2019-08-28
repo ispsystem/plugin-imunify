@@ -59,8 +59,6 @@ graph TD;
   antivirus-card-dashboard --> antivirus-card-button
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-new-scan --> antivirus-card-hint
-  antivirus-card-new-scan --> antivirus-card-switcher
-  antivirus-card-new-scan --> antivirus-card-switcher-option
   antivirus-card-new-scan --> antivirus-card-preloader
   antivirus-card-new-scan --> antivirus-card-button
   antivirus-card-new-scan --> antivirus-card-checkbox

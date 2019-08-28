@@ -23,8 +23,6 @@
 
 - [antivirus-card-input](../input)
 - [antivirus-card-hint](../hint)
-- [antivirus-card-switcher](../switcher)
-- [antivirus-card-switcher-option](../switcher-option)
 - [antivirus-card-preloader](../preloader)
 - [antivirus-card-button](../button)
 - [antivirus-card-checkbox](../checkbox)
@@ -35,8 +33,6 @@
 graph TD;
   antivirus-card-new-scan --> antivirus-card-input
   antivirus-card-new-scan --> antivirus-card-hint
-  antivirus-card-new-scan --> antivirus-card-switcher
-  antivirus-card-new-scan --> antivirus-card-switcher-option
   antivirus-card-new-scan --> antivirus-card-preloader
   antivirus-card-new-scan --> antivirus-card-button
   antivirus-card-new-scan --> antivirus-card-checkbox
