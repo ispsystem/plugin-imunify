@@ -14,12 +14,10 @@ import base64
 import calendar
 import logging as log
 import re
-import requests
 import socket
 import subprocess
 import websockets
 import asyncio
-import time
 
 
 TASK_CREATOR = '/opt/ispsystem/plugin_service/bin/task_creator'
@@ -361,6 +359,45 @@ def get_utc_timestamp():
     return calendar.timegm(datetime.utcnow().utctimetuple()) * 1000
 
 
+async def instance_waiter(callback):
+    """
+    Механим отслеживания новых инстансов
+    :param callback: Будет вызван как только инстанс будет создан
+    :return:
+    """
+    log.debug("Begin new instance waiter")
+    entities = {
+        "entities": [
+            {
+                "entity": "instance",
+                "type": [
+                    {"name": "create", "action": "/auth/v3/instance/{instance_id}"}
+                ]
+            }
+        ]
+    }
+
+    extra_headers = {"internal-auth": "on"}
+    host, port = PROXY_SERVICE.split(':', 1)
+
+    ws = await websockets.connect("ws://instance-auth/notifier", extra_headers=extra_headers, host=host, port=port)
+    await ws.send(dumps(entities))
+    while True:  # Пока не смог придумать адекватного решения
+        result = await ws.recv()
+        instance_info = loads(result)
+        await callback(instance_info)
+
+
+async def start_background_tasks(app):
+    """
+    Запуск background задач
+    :param app: web.Application
+    :return:
+    """
+    app['install_imunify'] = app.loop.create_task(install_imunufy())  # Установка антивируса на уже имеющиеся инстансы
+    app['instance_waiter'] = app.loop.create_task(instance_waiter(new_instance))
+
+
 def get_file_status(action: str):
     """
     Возвращает статус файла для обновления
@@ -491,6 +528,55 @@ class HandlerInfo:
         return await self.__request.json()
 
 
+async def new_instance(instance_info: dict):
+    """
+    Callback на установку антивируса при создании нового инстанса
+    :param instance_info: Информация об инстансе
+    :return:
+    """
+    log.debug("Found new instance. Info: {}".format(dumps(instance_info)))
+    instance_id = int(instance_info.get("id"))
+
+    instance_data = instance_info.get("data", dict())
+    product_name = instance_data.get("product", str())
+
+    # Раньше проверяли еще и host
+    # Но т.к. хост добавлется не сразу при создании инстанса, то эту проверку унес в get_vepp_list()
+    if product_name == 'vepp':
+        await install_imunufy(instance=instance_id)
+
+
+async def get_instance(instance_id):
+    """
+    Получение информации об инстансе пользователя
+    :param instance_id: Идентификатор инстанса
+    :return:
+    """
+    attempt = 0
+    request = None
+    async with ClientSession() as ses:
+        while attempt < MAX_REQUEST_ATTEMPTS:
+            request = await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
+                                    headers={"internal-auth": "on"})
+            data = await request.json()
+            if data.get("host"):
+                break
+            attempt += 1
+            await asyncio.sleep(1)
+        return request
+
+
+async def get_vepp_list():
+    """
+    Получение списка инстансов на которых установлен vepp
+    :return:
+    """
+    async with ClientSession() as ses:
+        return await ses.get("http://" + PROXY_SERVICE + "/auth/v3/instance",
+                             headers={"internal-auth": "on"},
+                             params={"where": "product EQ 'vepp'"})
+
+
 class Imunify:
     """Основной класс, реализующий хендлеры"""
     async def __call__(self, request: web.Request) -> web.Response:
@@ -522,7 +608,7 @@ class Imunify:
                 except (SchemaError, ValueError):
                     return web.HTTPBadRequest(text="Invalid validation schema")
                 except IOError:
-                    return web.HTTPNotFound(text="Validation schema not found")
+                    log.warning("Validation schema not found. Skiping...")
             result = await getattr(self, handler)(handler_info)
             log.debug("Response body: '{}'".format(result.body.decode()))
             result.content_type = 'application/json'
@@ -567,17 +653,6 @@ class Imunify:
                     await asyncio.sleep(1)
             return result
 
-    @staticmethod
-    async def get_instance(instance_id):
-        """
-        Получение информации об инстансе пользователя
-        :param instance_id: Идентификатор инстанса
-        :return:
-        """
-        async with ClientSession() as ses:
-            return await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
-                                 headers={"internal-auth": "on"})
-
     async def post_site_site_id_scan(self, info: HandlerInfo):
         """
         Хендлер запуска сканирования
@@ -596,7 +671,7 @@ class Imunify:
         site_info = await site_info_response.json()
 
         request_body = await info.body
-        response = await self.get_instance(info.instance_id)
+        response = await get_instance(info.instance_id)
         data = await response.json()
         log.debug(dumps(data))
         start_scan_time = get_utc_timestamp()
@@ -1051,7 +1126,7 @@ class Imunify:
         site_info = await site_info_response.json()
 
         file_ids = request_body.get("files")
-        response = await self.get_instance(info.instance_id)
+        response = await get_instance(info.instance_id)
         data = await response.json()
         host = data.get("host", "")
 
@@ -1110,7 +1185,7 @@ class Imunify:
         if not FileAction.has_value(action):
             return web.HTTPNotFound(text="There is no handler to process this action")
 
-        response = await self.get_instance(info.instance_id)
+        response = await get_instance(info.instance_id)
         data = await response.json()
         host = data.get("host", "")
 
@@ -1174,7 +1249,7 @@ class Imunify:
             })
             return web.HTTPBadRequest(text="License key not found")
 
-        instance_info = await self.get_instance(instance_id)
+        instance_info = await get_instance(instance_id)
         if instance_info.status != 200:
             response = await instance_info.text()
             return web.Response(text=response, status=instance_info.status)
@@ -1271,20 +1346,22 @@ class DbIndex:
         return "{} index_{} ({})".format(self._type, self._name, index_str)
 
 
-def install_imunufy():
+async def install_imunufy(instance=None):
     """
     Установка антивируса
+    Вызывается при старте основного приложения и устанавливает антивирус на все существующие инстансы vepp'а
+    Выступает в качестве callback'а для фоновой задачи, которая отслеживает новые инстансы
     :return:
     """
-    vepp_list = []
+    log.debug("Start installing ImunifyAV")
+    vepp_list = list()
     try:
-        url = "http://" + PROXY_SERVICE + "/auth/v3/instance"
-        params = {"where": "product EQ 'vepp'"}
-        response = requests.get(url, headers={"internal-auth": "on"}, params=params)
-        if response.ok:
-            vepp_list = response.json()['list']
+        response = await get_vepp_list() if instance is None else await get_instance(instance)
+        if response.status == 200:
+            data = await response.json()
+            vepp_list = data['list'] if instance is None else [data]
     except ValueError as e:
-        exit("Can not get instances. Error '{}'".format(e))
+        log.error("Can not get instance or instances. Error '{}'".format(e))
 
     task_env = {
         "ANSIBLE_LOAD_CALLBACK_PLUGINS": "True",
@@ -1297,13 +1374,17 @@ def install_imunufy():
 
     for item in vepp_list:
         instance_id = str(item['id'])
+        if not item.get("host", ""):
+            log.error("Can not get host for instance {}".format(instance_id))
+            continue
         task_env["INSTANCE_ID"] = instance_id
-        create_task(exec_bin=ANSIBLE_PLAYBOOK_COMMAND,
-                    name='imunify_install',
-                    params=["--inventory", item["host"] + ',', getcwd() + "/playbooks/imunify.yml"],
-                    instance_id=instance_id,
-                    task_env=task_env,
-                    lock=IMUNIFY_LOCK.format(instance_id))
+        output = create_task(exec_bin=ANSIBLE_PLAYBOOK_COMMAND,
+                             name='imunify_install',
+                             params=["--inventory", item["host"] + ',', getcwd() + "/playbooks/imunify.yml"],
+                             instance_id=instance_id,
+                             task_env=task_env,
+                             lock=IMUNIFY_LOCK.format(instance_id))
+        log.debug("Install task id: {}".format(output))
         insert("settings", data={"instance": item['id'], "name": "isProVersion", "value": "False"})
         insert("settings", data={"instance": item['id'], "name": "hasScheduledActions", "value": "False"})
 
@@ -1326,6 +1407,9 @@ if __name__ == '__main__':
     subprocess.call(['chmod', '0666', args.socket])
 
     app = web.Application()
+    app.on_startup.append(start_background_tasks)
+    # Возможно стоит добавить on_cleanup
+
     app.add_routes([make_get('/feature'),
                     make_get('/site/{site_id}/files/{type}'),
                     make_get('/site/{site_id}/preset/{preset_id}'),
@@ -1378,7 +1462,6 @@ if __name__ == '__main__':
               DbField("date_use", "BIGINT"),
               DbField("is_active", "TINYINT", size=1, default="1")]
     create_table("presets", fields)
-    install_imunufy()
 
     log.info("Starting Imunify service".format(sock_path))
     web.run_app(app, sock=sock)
