@@ -286,11 +286,24 @@ export namespace AntivirusActions {
             // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
             type: NotifyBannerTypes.NORMAL_FAST,
           });
-          scanResult.infectedFiles.list.forEach(file => {
-            if (file.status === 'INFECTED') {
-              userNotification.push({ title: t.msg(['VIRUS_DETECTED']), content: file.threatName, type: NotifyBannerTypes.ERROR_FAST });
-            }
-          });
+
+          // Infected files notifications
+          const infectedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'INFECTED');
+          if (infectedFiles.length > 1) {
+            userNotification.push({
+              title: t.msg(['VIRUS_GROUP_DETECTED'], { amount: infectedFiles.length }),
+              content: undefined,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          } else if (infectedFiles.length === 1) {
+            const file = infectedFiles[0];
+            userNotification.push({
+              title: t.msg(['VIRUS_DETECTED']),
+              content: file.threatName,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          }
+
           const result: ScanSuccessData = { ...scanResult, infectedFilesCount: filesResult.size };
           dispatch(scanSuccess(result));
         } else {
