@@ -545,7 +545,7 @@ export class AntivirusCard {
     } else {
       return (
         <Host>
-          <h2 class="title">{this.t.msg(['TITLE'])}</h2>
+          <h2 class="title">{this.t.msg(['TITLE', this.isProVersion ? 'PRO' : 'FREE'])}</h2>
           <antivirus-card-navigation items={this.items} />
           {this.items.find(item => item.active).component()}
           {this.renderBuyModal()}

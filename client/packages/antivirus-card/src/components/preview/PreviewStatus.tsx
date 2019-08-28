@@ -34,11 +34,13 @@ export const PreviewStatus: FunctionalComponent<PreviewStatusProps> = props =>
           directory: Array.isArray(props.pathList) && props.pathList.length > 0 ? props.pathList[0] : '',
         })}
       </span>
-      <span style={{ 'margin-right': '40px' }}>
-        {props.t.msg(['LAST_CHECK_IN'], {
-          date: getDayMonthYearAsStr(new Date(props.lastScanDate), props.t),
-          time: getTimeAsStr(new Date(props.lastScanDate)),
-        })}
-      </span>
+      {props.lastScanDate > 0 && (
+        <span style={{ 'margin-right': '40px' }}>
+          {props.t.msg(['LAST_CHECK_IN'], {
+            date: getDayMonthYearAsStr(new Date(props.lastScanDate), props.t),
+            time: getTimeAsStr(new Date(props.lastScanDate)),
+          })}
+        </span>
+      )}
     </p>
   );
