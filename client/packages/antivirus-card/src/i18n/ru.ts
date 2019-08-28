@@ -1,5 +1,8 @@
 const lang = {
-  TITLE: 'Антивирус ImunifyAV',
+  TITLE: {
+    FREE: 'Антивирус ImunifyAV',
+    PRO: 'Антивирус ImunifyAV+',
+  },
   NOTIFY: {
     SCAN_SUCCESS: 'Проверка сайта закончилась',
     MORE_DETAILS: 'Подробнее',

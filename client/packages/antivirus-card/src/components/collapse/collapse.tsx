@@ -21,7 +21,7 @@ export class Collapse {
    */
   @Method()
   async toggle(value?: boolean) {
-    this.isOpen = value ? value : !this.isOpen;
+    this.isOpen = value !== undefined ? value : !this.isOpen;
   }
 
   render() {

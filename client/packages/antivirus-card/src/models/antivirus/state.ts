@@ -115,6 +115,7 @@ export interface AntivirusState {
   scanPreset?: {
     full: ScanOption;
     partial?: ScanOption;
+    default: ScanOption;
   };
   // scanning flag
   scanning: boolean;

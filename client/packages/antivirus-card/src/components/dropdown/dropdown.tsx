@@ -15,7 +15,6 @@ export type PopoverElType = HTMLElement & {
  */
 @Component({
   tag: 'antivirus-card-dropdown',
-  styleUrl: 'styles/$.scss',
 })
 export class Dropdown {
   /** Ref for ui5-popover element */

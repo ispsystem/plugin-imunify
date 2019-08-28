@@ -4,4 +4,9 @@
   cursor: pointer;
   text-align: center;
   color: #187abd;
+
+  &.disabled {
+    cursor: not-allowed;
+    color: #9b9b9b;
+  }
 }

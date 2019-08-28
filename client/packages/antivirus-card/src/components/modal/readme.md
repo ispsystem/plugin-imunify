@@ -11,7 +11,7 @@
 | --------------- | ----------------- | -------------------------- | --------- | ----------- |
 | `maxModalWidth` | `max-modal-width` | Modal max width            | `string`  | `undefined` |
 | `modalWidth`    | `modal-width`     | Modal width                | `string`  | `undefined` |
-| `visible`       | `visible`         | Flag for visible component | `boolean` | `undefined` |
+| `visible`       | `visible`         | Flag for visible component | `boolean` | `false`     |
 
 
 ## Methods
