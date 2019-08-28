@@ -25,7 +25,7 @@ export class NewScan {
   @State() notifier: ISPNotifier;
 
   /** Function on modal close */
-  @Prop() closeModal: () => void = () => {};
+  @Prop() closeModal = async () => {};
 
   /** Model settings for new scan */
   @Prop({ mutable: true }) preset!: ScanOption;
@@ -123,7 +123,7 @@ export class NewScan {
       console.warn('Oops, failed to save preset or start scanning', res['error']);
       return;
     } else {
-      this.closeModal();
+      await this.closeModal();
     }
   }
 
@@ -139,7 +139,7 @@ export class NewScan {
       console.warn('Oops, failed to save preset or start scanning', res['error']);
       return;
     } else {
-      this.closeModal();
+      await this.closeModal();
     }
   }
 
@@ -216,10 +216,12 @@ export class NewScan {
 
         <div style={{ 'margin-top': '30px' }} class="flex-container">
           <antivirus-card-preloader type="overlay" loading={this.isPreloader.submit}>
-            <antivirus-card-button onClick={() => this.handleScan()}>{this.t.msg(['SCAN_SETTINGS', 'BUTTON_SCAN'])}</antivirus-card-button>
+            <antivirus-card-button onClick={async () => await this.handleScan()}>
+              {this.t.msg(['SCAN_SETTINGS', 'BUTTON_SCAN'])}
+            </antivirus-card-button>
           </antivirus-card-preloader>
           <antivirus-card-preloader type="overlay" loading={this.isPreloader.submit}>
-            <a class="link link_indent-left" onClick={() => this.handleSave()}>
+            <a class="link link_indent-left" onClick={async () => await this.handleSave()}>
               {this.t.msg(['SCAN_SETTINGS', 'BUTTON_SAVE'])}
             </a>
           </antivirus-card-preloader>

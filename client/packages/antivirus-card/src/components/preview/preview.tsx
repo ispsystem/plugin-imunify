@@ -59,7 +59,7 @@ export class Preview {
   @Event() openBuyModal: EventEmitter;
 
   /** to open scan settings modal */
-  @Event() openScanSettingsModal: EventEmitter;
+  @Event() openScanSettingsModal: EventEmitter<{ preset: ScanOption; type: CheckType }>;
 
   /** to change selected tab item (horizontal menu) */
   @Event({
@@ -185,7 +185,6 @@ export class Preview {
           dropdownElToggle={this.handleBlackListsHelpClick.bind(this)}
         ></PreviewInBlackLists>
         */}
-        {/** @todo change presetId parameter */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
           <span class={this.scanning ? 'link-disabled' : 'link'}>
             <StartCheckIcon
@@ -195,7 +194,11 @@ export class Preview {
             />
           </span>
           {this.isProVersion && !this.scanning && (
-            <a class="link" onClick={() => this.openScanSettingsModal.emit(this.scanOption)} style={{ 'margin-left': '20px' }}>
+            <a
+              class="link"
+              onClick={() => this.openScanSettingsModal.emit({ preset: this.scanOption, type: this.scanType })}
+              style={{ 'margin-left': '20px' }}
+            >
               {this.t.msg('CONFIGURE')}
             </a>
           )}

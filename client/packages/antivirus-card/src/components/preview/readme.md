@@ -14,11 +14,11 @@
 
 ## Events
 
-| Event                   | Description                                   | Type               |
-| ----------------------- | --------------------------------------------- | ------------------ |
-| `clickItem`             | to change selected tab item (horizontal menu) | `CustomEvent<any>` |
-| `openBuyModal`          | to open buy modal                             | `CustomEvent<any>` |
-| `openScanSettingsModal` | to open scan settings modal                   | `CustomEvent<any>` |
+| Event                   | Description                                   | Type                                                    |
+| ----------------------- | --------------------------------------------- | ------------------------------------------------------- |
+| `clickItem`             | to change selected tab item (horizontal menu) | `CustomEvent<any>`                                      |
+| `openBuyModal`          | to open buy modal                             | `CustomEvent<any>`                                      |
+| `openScanSettingsModal` | to open scan settings modal                   | `CustomEvent<{ preset: ScanOption; type: CheckType; }>` |
 
 
 ## Dependencies

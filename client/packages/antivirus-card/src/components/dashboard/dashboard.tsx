@@ -6,8 +6,7 @@ import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { ITranslate } from '../../models/translate.reducers';
 import { PreviewNewScan } from '../preview/PreviewNewScan';
-import { AntivirusState, ScanOption } from '../../models/antivirus/state';
-import { MOCK } from '../../utils/mock';
+import { AntivirusState, ScanOption, CheckType } from '../../models/antivirus/state';
 import { PreviewPurchase } from '../preview/PreviewPurchase';
 import { getCurrencySymbol, getShortPeriod } from '../../utils/tools';
 import { PreviewFree } from '../preview/PreviewFree';
@@ -29,11 +28,6 @@ export class Dashboard {
   /** Ref for scan settings component */
   scanSettings: HTMLAntivirusCardScanSettingsElement;
 
-  /**
-   *  Its Mock DATA
-   *  @todo delete after realise handle for get default preset
-   */
-  preset: ScanOption = MOCK.defaultPreset;
   /** global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
   /** flag if antivirus is pro version */
@@ -46,7 +40,6 @@ export class Dashboard {
   @State() priceList: AntivirusState['priceList'];
   /** flag if antivirus in purchasing status */
   @State() purchasing: AntivirusState['purchasing'];
-
   /** Scan in process */
   @State() scanning: AntivirusState['scanning'];
 
@@ -59,8 +52,8 @@ export class Dashboard {
    * @param event - custom event
    */
   @Listen('openScanSettingsModal')
-  openSettingModal(event: CustomEvent<ScanOption>) {
-    this.scanSettings.setPreset(event.detail);
+  openSettingModal(event: CustomEvent<{ preset: ScanOption; type: CheckType }>) {
+    this.scanSettings.setPreset(event.detail.preset, event.detail.type);
     this.scanSettingsModal.toggle(true);
   }
 
@@ -70,6 +63,73 @@ export class Dashboard {
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ ...state.antivirus, t: state.translate }));
   }
+
+  /**
+   * Render modals: new scan and preset settings
+   */
+  renderModals = () =>
+    this.isProVersion && (
+      <div>
+        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
+          <antivirus-card-new-scan
+            preset={this.scanPreset.default}
+            closeModal={async () => {
+              await this.newScanModal.toggle(false);
+            }}
+          >
+            <span class="title" slot="title">
+              {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
+            </span>
+          </antivirus-card-new-scan>
+        </antivirus-card-modal>
+        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.scanSettingsModal = el)}>
+          <antivirus-card-scan-settings
+            ref={el => (this.scanSettings = el)}
+            closeModal={async () => await this.scanSettingsModal.toggle(false)}
+          >
+            <span class="title" slot="title">
+              {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
+            </span>
+          </antivirus-card-scan-settings>
+        </antivirus-card-modal>
+      </div>
+    );
+
+  /**
+   * Render purchase status
+   */
+  renderPurchase = () => this.purchasing && <PreviewPurchase t={this.t} />;
+
+  /**
+   * Render partial scan preview
+   */
+  renderPreviewPartial = () =>
+    this.scanPreset && this.scanPreset.partial ? (
+      <antivirus-card-preview scanType="PARTIAL" />
+    ) : (
+      <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
+    );
+
+  /**
+   * Render for non pro version status
+   */
+  renderFree = () =>
+    !this.isProVersion && (
+      <PreviewFree
+        onClick={() => this.openBuyModal.emit()}
+        title={
+          this.priceList
+            ? this.t.msg(['DASHBOARD', 'TITLE'], {
+                cost: this.priceList.price[0].cost,
+                currency: getCurrencySymbol(this.priceList.price[0].currency),
+                period: getShortPeriod(this.priceList.price[0].type, this.t),
+              })
+            : ''
+        }
+        /** @todo uncomment if UX decides to return the description for the purchase */
+        // text={this.t.msg(['DASHBOARD', 'TEXT'])}
+      />
+    );
 
   render() {
     return (
@@ -85,46 +145,10 @@ export class Dashboard {
           </antivirus-card-button>
         )}
         <antivirus-card-preview scanType="FULL" />
-        {this.isProVersion ? (
-          [
-            <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
-              <antivirus-card-new-scan preset={this.preset} closeModal={() => this.newScanModal.toggle(false)}>
-                <span class="title" slot="title">
-                  {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
-                </span>
-              </antivirus-card-new-scan>
-            </antivirus-card-modal>,
-            <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.scanSettingsModal = el)}>
-              <antivirus-card-scan-settings ref={el => (this.scanSettings = el)} closeModal={() => this.scanSettingsModal.toggle(false)}>
-                <span class="title" slot="title">
-                  {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
-                </span>
-              </antivirus-card-scan-settings>
-            </antivirus-card-modal>,
-            this.scanPreset && this.scanPreset.partial ? (
-              <antivirus-card-preview scanType="PARTIAL" />
-            ) : (
-              <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
-            ),
-          ]
-        ) : this.purchasing ? (
-          <PreviewPurchase t={this.t} />
-        ) : (
-          <PreviewFree
-            onClick={() => this.openBuyModal.emit()}
-            title={
-              this.priceList
-                ? this.t.msg(['DASHBOARD', 'TITLE'], {
-                    cost: this.priceList.price[0].cost,
-                    currency: getCurrencySymbol(this.priceList.price[0].currency),
-                    period: getShortPeriod(this.priceList.price[0].type, this.t),
-                  })
-                : ''
-            }
-            /** @todo uncomment if UX decides to return the description for the purchase */
-            // text={this.t.msg(['DASHBOARD', 'TEXT'])}
-          />
-        )}
+        {this.renderModals()}
+        {this.renderPurchase()}
+        {this.renderPreviewPartial()}
+        {this.renderFree()}
       </Host>
     );
   }

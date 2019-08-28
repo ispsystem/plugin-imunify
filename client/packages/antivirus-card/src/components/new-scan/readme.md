@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property              | Attribute | Description                 | Type         | Default     |
-| --------------------- | --------- | --------------------------- | ------------ | ----------- |
-| `closeModal`          | --        | Function on modal close     | `() => void` | `() => {}`  |
-| `preset` _(required)_ | --        | Model settings for new scan | `ScanOption` | `undefined` |
+| Property              | Attribute | Description                 | Type                  | Default          |
+| --------------------- | --------- | --------------------------- | --------------------- | ---------------- |
+| `closeModal`          | --        | Function on modal close     | `() => Promise<void>` | `async () => {}` |
+| `preset` _(required)_ | --        | Model settings for new scan | `ScanOption`          | `undefined`      |
 
 
 ## Dependencies

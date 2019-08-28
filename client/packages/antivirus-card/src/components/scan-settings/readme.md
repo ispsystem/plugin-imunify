@@ -14,7 +14,7 @@
 
 ## Methods
 
-### `setPreset(preset: ScanOption) => Promise<void>`
+### `setPreset(preset: ScanOption, type: CheckType) => Promise<void>`
 
 Method for set preset in modal
 
