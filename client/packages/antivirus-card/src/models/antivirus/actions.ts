@@ -299,7 +299,7 @@ export namespace AntivirusActions {
             const file = infectedFiles[0];
             userNotification.push({
               title: t.msg(['VIRUS_DETECTED']),
-              content: file.threatName,
+              content: file.name,
               type: NotifyBannerTypes.ERROR_FAST,
             });
           }
