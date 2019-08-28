@@ -18,7 +18,7 @@ interface PreviewNewScanProps {
 export const PreviewNewScan: FunctionalComponent<PreviewNewScanProps> = props => (
   <section
     onClick={ev => (props.scanning ? ev.preventDefault() : props.onClick(ev))}
-    class={`antivirus-card-preview__pro${props.scanning ? ' disabled' : ''}`}
+    class={`antivirus-card-preview__pro ${props.scanning ? 'disabled' : ''}`}
   >
     <div>
       <NewScanIcon disabled={props.scanning} />
