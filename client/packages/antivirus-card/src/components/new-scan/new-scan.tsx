@@ -201,7 +201,7 @@ export class NewScan {
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'CHECK_MASK_HINT'])}</antivirus-card-hint>
         </CheckByMask>
 
-        <div class="flex-container form-label" style={{ 'margin-top': '15px' }}>
+        {/* <div class="flex-container form-label" style={{ 'margin-top': '15px' }}>
           <span>{this.t.msg(['SCAN_SETTINGS', 'INSPECTION_INTENSITY', 'TEXT'])}</span>
           <antivirus-card-hint>{this.t.msg(['SCAN_SETTINGS', 'INSPECTION_INTENSITY', 'HINT_TEXT'])}</antivirus-card-hint>
         </div>
@@ -212,7 +212,7 @@ export class NewScan {
               {this.t.msg(['SCAN_SETTINGS', 'INSPECTION_INTENSITY', type])}
             </antivirus-card-switcher-option>
           ))}
-        </antivirus-card-switcher>
+        </antivirus-card-switcher> */}
 
         <div style={{ 'margin-top': '30px' }} class="flex-container">
           <antivirus-card-preloader type="overlay" loading={this.isPreloader.submit}>
@@ -220,11 +220,11 @@ export class NewScan {
               {this.t.msg(['SCAN_SETTINGS', 'BUTTON_SCAN'])}
             </antivirus-card-button>
           </antivirus-card-preloader>
-          <antivirus-card-preloader type="overlay" loading={this.isPreloader.submit}>
+          {/* <antivirus-card-preloader type="overlay" loading={this.isPreloader.submit}>
             <a class="link link_indent-left" onClick={async () => await this.handleSave()}>
               {this.t.msg(['SCAN_SETTINGS', 'BUTTON_SAVE'])}
             </a>
-          </antivirus-card-preloader>
+          </antivirus-card-preloader> */}
           <a
             class="link link_indent-left"
             onClick={() => {

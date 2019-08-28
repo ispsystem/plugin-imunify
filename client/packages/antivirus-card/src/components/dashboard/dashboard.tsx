@@ -107,7 +107,7 @@ export class Dashboard {
     this.scanPreset && this.scanPreset.partial ? (
       <antivirus-card-preview scanType="PARTIAL" />
     ) : (
-      <PreviewNewScan onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
+      <PreviewNewScan scanning={this.scanning} onClick={() => this.newScanModal.toggle(true)} text={this.t.msg(['NEW_SCAN_BTN'])} />
     );
 
   /**
