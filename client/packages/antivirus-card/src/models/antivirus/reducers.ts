@@ -9,6 +9,7 @@ const getInitialState = (): AntivirusState => {
     hasScheduledActions: false,
     infectedFilesCount: 0,
     scanning: false,
+    healing: false,
     purchasing: false,
     inBlackLists: false,
     historyItemCount: 0,

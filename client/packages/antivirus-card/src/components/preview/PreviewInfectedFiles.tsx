@@ -15,6 +15,7 @@ interface PreviewInfectedFilesProps {
   isProVersion: boolean;
   type: CheckType;
   healHandler: () => void;
+  healing: boolean;
 }
 
 /**
@@ -23,7 +24,16 @@ interface PreviewInfectedFilesProps {
  * @param props - properties
  */
 export const PreviewInfectedFiles: FunctionalComponent<PreviewInfectedFilesProps> = props =>
-  props.infectedFilesCount > 0 ? (
+  props.healing && props.type === 'FULL' ? (
+    <div class="antivirus-card-preview__container">
+      <div class="antivirus-card-preview__healing">
+        <antivirus-card-spinner-round height="30px" />
+      </div>
+      <div class="antivirus-card-preview__container-msg">
+        <span>{props.t.msg(['PREVIEW', 'HEALING'])}</span>
+      </div>
+    </div>
+  ) : props.infectedFilesCount > 0 ? (
     <div class="antivirus-card-preview__container">
       <VirusesCheckBadIcon />
       <div class="antivirus-card-preview__container-msg">

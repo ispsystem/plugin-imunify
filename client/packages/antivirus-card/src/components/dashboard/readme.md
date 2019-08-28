@@ -50,6 +50,7 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-preview --> antivirus-card-spinner-round
+  antivirus-card-preview --> antivirus-card-spinner-round
   antivirus-card --> antivirus-card-dashboard
   style antivirus-card-dashboard fill:#f9f,stroke:#333,stroke-width:4px
 ```
