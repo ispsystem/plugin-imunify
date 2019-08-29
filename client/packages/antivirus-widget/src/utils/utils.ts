@@ -47,7 +47,7 @@ export async function loadTranslate(lang: languageTypes): Promise<Translate> {
 
   const _polyglot = new Polyglot({ phrases: { ...json }, locale: lang });
 
-  return { msg: msg.bind(null, _polyglot), error: null, loading: false };
+  return { msg: msg.bind(null, _polyglot), error: null, loading: false, lang };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,16 +72,31 @@ export function pad(n: number): number | string {
  * @param t - translate object
  */
 export function getDayMonthYearAsStr(timestamp: number, t?: Translate): string {
+  // get Date object
+  const date = new Date(timestamp);
+
+  // if there are translations
   if (t !== undefined && t !== null) {
     const today = new Date().setHours(0, 0, 0, 0);
     const yesterday = today - 864e5;
+
     if (timestamp > today) {
       return t.msg(['WIDGET', 'COMMON_DATE', 'TODAY']).toLowerCase();
     }
+
     if (timestamp > yesterday) {
       return t.msg(['WIDGET', 'COMMON_DATE', 'YESTERDAY']).toLowerCase();
     }
+
+    if (Intl !== undefined) {
+      // create date formatter for show an date as '31 дек.' or 'Dec 31'
+      const formatter = new Intl.DateTimeFormat(t.lang, {
+        month: 'short',
+        day: 'numeric',
+      });
+      return formatter.format(date);
+    }
   }
-  const date = new Date(timestamp);
+
   return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()}`;
 }

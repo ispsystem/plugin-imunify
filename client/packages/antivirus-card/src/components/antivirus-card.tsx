@@ -223,6 +223,8 @@ export class AntivirusCard {
             configureNotifier(this.notifierService, notifierParams);
           },
         });
+      } else {
+        configureNotifier(this.notifierService, notifierParams);
       }
 
       this.updateNotifier(this.notifierService);
@@ -312,6 +314,8 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
+    configureNotifier(this.notifierService, { plugin: [this.pluginId] });
+
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {

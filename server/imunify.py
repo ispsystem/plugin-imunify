@@ -7,7 +7,7 @@ from enum import Enum
 from hashlib import md5
 from json import dumps, loads
 from jsonschema import validate, ValidationError, SchemaError
-from mysql import connector
+from aiomysql import create_pool
 from os import getenv, environ, remove, getcwd, path
 from datetime import datetime
 import base64
@@ -28,13 +28,8 @@ MAX_REQUEST_ATTEMPTS = 10
 OPERATION_STATUS_SUCCESS = "success"
 DEFAULT_LIMIT_VALUE = 15
 LIMIT_REGEXP = r"^\d+,\d+$|^\d+$"
-
-DB_CONNECTION = connector.connect(
-    host='mysql',
-    user=getenv('MYSQL_USER'),
-    passwd=getenv('MYSQL_PASSWORD'),
-    database=getenv('MYSQL_DATABASE')
-)
+MIN_POOL_SIZE = 1
+MAX_POOL_SIZE = 20  # Установить в 0 и не ограничивать размер пула?
 
 DB_PREFIX = 'imunify_'
 IMUNIFY_LOCK = "imunify-instance-{}"
@@ -115,7 +110,7 @@ class Value:
         return self._val
 
 
-def create_table(name, table_fields, indexes=None):
+async def create_table(name, table_fields, indexes=None):
     """
     Создание таблицы
     :param name: Название таблицы
@@ -126,115 +121,116 @@ def create_table(name, table_fields, indexes=None):
     table_name = DB_PREFIX + name
 
     log.info("Create table: {}".format(table_name))
-    cur = DB_CONNECTION.cursor()
-    cur.execute("SHOW TABLES LIKE '{}'".format(table_name))
-    cur.fetchall()
-    if cur.rowcount > 0:
-        log.debug("Table {} already exists".format(table_name))
-        return
+    async with app["DB_CONNECTION_POOL"].acquire() as connection:
+        async with connection.cursor() as cur:
+            command = "CREATE TABLE IF NOT EXISTS " + table_name + " ({})"
+            fields_str = ', '.join(str(field) for field in table_fields)
+            if indexes and fields_str:
+                for index in indexes:
+                    fields_str += ', {}'.format(str(index))
 
-    command = "CREATE TABLE " + table_name + " ({})"
-    fields_str = ', '.join(str(field) for field in table_fields)
-    if indexes and fields_str:
-        for index in indexes:
-            fields_str += ', {}'.format(str(index))
-
-    command = command.format(fields_str)
-    log.debug("Execute command: {}".format(command))
-    cur.execute(command)
-    cur.close()
-    DB_CONNECTION.commit()
+            command = command.format(fields_str)
+            log.debug("Execute command: {}".format(command))
+            await cur.execute(command)
+            await cur.close()
+            await connection.commit()
 
 
-def select(table: str, table_fields: list, where=None):
+async def select(table: str, table_fields: list, where=None, params=None):
     """
     Метод, реализующий выборку из таблицы
     :param table: Название таблицы
     :param table_fields: Поля
     :param where: Условие по которому будет вестить выборка
+    :param params: Параметры для подстановки
     :return:
     """
-    cur = DB_CONNECTION.cursor()
+    async with app["DB_CONNECTION_POOL"].acquire() as connection:
+        async with connection.cursor() as cur:
+            fields_str = ', '.join(field.lower() for field in table_fields)
+            query = "SELECT {} FROM {}".format(fields_str, DB_PREFIX + table)
+            if where:
+                query += " WHERE {}".format(where)
 
-    fields_str = ', '.join(field.lower() for field in table_fields)
-    query = "SELECT {} FROM {}".format(fields_str, DB_PREFIX + table)
-    if where:
-        query += " WHERE {}".format(where)
+            log.debug("Execute query: '{}' with params: '{}'".format(query, str(params)))
+            await cur.execute(query) if params is None else await cur.execute(query, params)
+            row_headers = [x[0] for x in cur.description]
+            rows = await cur.fetchall()
+            await cur.close()
+            await connection.commit()
 
-    log.debug("Execute query: '{}'".format(query))
-    cur.execute(query)
-    row_headers = [x[0] for x in cur.description]
-    rows = cur.fetchall()
-    cur.close()
-    DB_CONNECTION.commit()
-
-    result = list()
-    for row in rows:
-        result.append(dict(zip(row_headers, row)))
-    return result
+            result = list()
+            for row in rows:
+                result.append(dict(zip(row_headers, row)))
+            return result
 
 
-def insert(table: str, data: dict):
+async def insert(table: str, data: dict):
     """
     Метод, реализующий добавление записи в таблицу
     :param table: Название таблицы
     :param data: Словарь который содержит данные для вставки (поля в виде ключей и значения)
     :return:
     """
-    cur = DB_CONNECTION.cursor()
+    async with app["DB_CONNECTION_POOL"].acquire() as connection:
+        async with connection.cursor() as cur:
+            fields_str = str()
+            values_str = str()
+            params = list()
+            for field, value in data.items():
+                if fields_str:
+                    fields_str += ', '
+                fields_str += field
+                if values_str:
+                    values_str += ', '
+                values_str += "%s"
+                params.append(value)
 
-    fields_str = str()
-    values_str = str()
-    for field, value in data.items():
-        if fields_str:
-            fields_str += ', '
-        fields_str += field
-        if values_str:
-            values_str += ', '
-        values_str += "'{}'".format(value) if isinstance(value, str) else str(value)
+            query = "INSERT INTO {} ({}) VALUES ({})".format(DB_PREFIX + table, fields_str, values_str)
 
-    query = "INSERT INTO {} ({}) VALUES ({})".format(DB_PREFIX + table, fields_str, values_str)
-
-    log.debug("Execute query: '{}'".format(query))
-    row_id = None
-    try:
-        cur.execute(query)
-        DB_CONNECTION.commit()
-        row_id = cur.lastrowid
-    except Exception as e:
-        log.error("Error while execute query: '{}'".format(e))
-    cur.close()
-    return row_id
+            log.debug("Execute query: '{}' with params: '{}'".format(query, str(params)))
+            row_id = None
+            try:
+                await cur.execute(query, params)
+                await connection.commit()
+                row_id = cur.lastrowid
+            except Exception as e:
+                log.error("Error while execute query: '{}'".format(e))
+            await cur.close()
+            return row_id
 
 
-def update(table: str, data: dict, where=None):
+async def update(table: str, data: dict, where=None, params=None):
     """
     Метод, реализующий обновление записи в таблицу
     :param table: Название таблицы
     :param data: Словарь который содержит данные для обновления данных полей
     :param where: Условие по которому будет выбрана запись или записи для обновления
+    :param params: Параметры для подстановки
     :return:
     """
-    cur = DB_CONNECTION.cursor()
+    async with app["DB_CONNECTION_POOL"].acquire() as connection:
+        async with connection.cursor() as cur:
+            key_values_str = str()
+            arguments = list()
+            for field, value in data.items():
+                if key_values_str:
+                    key_values_str += ', '
+                key_values_str += "{}=%s".format(field, value)
+                arguments.append(value)
 
-    key_values_str = str()
-    for field, value in data.items():
-        if key_values_str:
-            key_values_str += ', '
-        value = "'{}'".format(value) if isinstance(value, str) else str(value)
-        key_values_str += "{}={}".format(field, value)
+            query = "UPDATE {} SET {}".format(DB_PREFIX + table, key_values_str)
+            if where and params:
+                query += " WHERE {}".format(where)
+                arguments.extend(params)
 
-    query = "UPDATE {} SET {}".format(DB_PREFIX + table, key_values_str)
-    if where:
-        query += " WHERE {}".format(where)
-
-    log.debug("Execute query: '{}'".format(query))
-    cur.execute(query)
-    DB_CONNECTION.commit()
-    cur.close()
+            log.debug("Execute query: '{}' with params: '{}'".format(query, str(arguments)))
+            await cur.execute(query, arguments)
+            await connection.commit()
+            await cur.close()
 
 
-def get_settings_value(instance_id, name, default=""):
+async def get_settings_value(instance_id, name, default=""):
     """
     Получение значения определенной настройки плагина по ключу
     :param instance_id: Идентификатор инстанса
@@ -244,7 +240,7 @@ def get_settings_value(instance_id, name, default=""):
     """
     log.info("Get value '{}' from settings table for instance {}".format(name, instance_id))
 
-    result = select(table="settings", table_fields=["value"], where="instance={} AND name='{}'".format(instance_id, name))
+    result = await select(table="settings", table_fields=["value"], where="instance=%s AND name=%s", params=(instance_id, name))
     return Value(result[0]['value'] if len(result) > 0 else default)
 
 
@@ -348,7 +344,7 @@ async def task_wait(task_id: int, scan_info: dict, callback):
 
         result = await ws.recv()
         task_info = loads(result)
-        callback(task_info, scan_info)
+        await callback(task_info, scan_info)
 
 
 def get_utc_timestamp():
@@ -394,8 +390,7 @@ async def start_background_tasks(app):
     :param app: web.Application
     :return:
     """
-    app['install_imunify'] = app.loop.create_task(install_imunufy())  # Установка антивируса на уже имеющиеся инстансы
-    app['instance_waiter'] = app.loop.create_task(instance_waiter(new_instance))
+    app['init_db'] = app.loop.create_task(init_db(app))
 
 
 def get_file_status(action: str):
@@ -678,16 +673,15 @@ class Imunify:
         host = data.get("host", "")
         preset_id = request_body.get("preset_id")
 
-        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
-        table_fields = ['preset', 'type']
-        result = select(table='presets', table_fields=table_fields, where=where_statement)
-
+        result = await select(table='presets',
+                              table_fields=['preset', 'type'],
+                              where="id=%s AND instance=%s",
+                              params=(preset_id, info.instance_id))
         if not result:
             return web.HTTPNotFound(text="The identifier of the preset for this instance is not valid or does not exist")
 
-        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
         fields = {"date_use": start_scan_time}
-        update(table='presets', data=fields, where=where_statement)
+        await update(table='presets', data=fields, where="id=%s AND instance=%s", params=[preset_id, info.instance_id])
 
         preset_value = result[0]["preset"]
         log.debug("Scan params: {}".format(preset_value))
@@ -734,9 +728,12 @@ class Imunify:
 
         attempt = 0
         report_result = list()
-        where_statement = "task_id={} AND scan_date={}".format(task_id, date)
+        where_statement = "task_id=%s AND scan_date=%s"
         while attempt < MAX_REQUEST_ATTEMPTS and not report_result:
-            report_result = select(table='report', table_fields=['report', 'scan_date', 'preset_id'], where=where_statement)
+            report_result = await select(table='report',
+                                         table_fields=['report', 'scan_date', 'preset_id'],
+                                         where=where_statement,
+                                         params=(task_id, date))
             attempt += 1
             await asyncio.sleep(0.5)
         log.debug("Attempt: '{}'. Result: {}".format(attempt, report_result))
@@ -746,9 +743,8 @@ class Imunify:
 
         file_list = list()
         for file_id in loads(report_result[0]["report"])["infected"]:
-            where_statement = "id={}".format(file_id, date)
             table_fields = ['id', 'file', 'status', 'malicious_type', 'path', 'detected', 'created', 'last_modified']
-            result = select(table='files', table_fields=table_fields, where=where_statement)
+            result = await select(table='files', table_fields=table_fields, where="id=%s", params=(file_id))
 
             file = result[0]
             infected_file = {
@@ -803,7 +799,7 @@ class Imunify:
             "date_use": get_utc_timestamp()
         }
 
-        preset_id = insert(table="presets", data=preset_info)
+        preset_id = await insert(table="presets", data=preset_info)
         if not preset_id:
             return web.HTTPServerError(text="Error while creating preset")
 
@@ -824,13 +820,12 @@ class Imunify:
         except ValueError:
             return web.HTTPBadRequest(text="Preset's id or status is not valid")
 
-        where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
         fields = {"is_active": is_active}
-        update(table='presets', data=fields, where=where_statement)
+        await update(table='presets', data=fields, where="id=%s AND instance=%s", params=[preset_id, info.instance_id])
         return web.Response(text=dumps({"preset_id": preset_id}))
 
     @staticmethod
-    def scan_done(task_info: dict, scan_info: dict):
+    async def scan_done(task_info: dict, scan_info: dict):
         """
         Callback который будет вызван после завершения задачи на сканирование
         :param task_info: Таска
@@ -847,9 +842,7 @@ class Imunify:
             "preset_id": scan_info["preset_id"]
         }
 
-        where_statement = "id={}".format(scan_info["preset_id"])
-        presets = select(table='presets', table_fields=['type'], where=where_statement)
-
+        presets = await select(table='presets', table_fields=['type'], where="id=%s", params=(scan_info["preset_id"]))
         report = {"type": presets[0]["type"], "infected": []}
 
         for infected_file in scan_report.get("infected", []):
@@ -871,23 +864,26 @@ class Imunify:
                 "created": scan_info["started"]  # TODO(d.vitvitskii) Получать дату создания файла
             }
 
-            file_id = insert(table="files", data=file_data)
+            file_id = await insert(table="files", data=file_data)
             if not file_id:
-                where_statement = "instance={} AND site_id={} AND path_hash='{}'".format(scan_info["instance"], scan_info["site_id"], path_hash)
-                file_row = select(table="files", table_fields=["id"], where=where_statement)
+                where_statement = "instance=%s AND site_id=%s AND path_hash=%s"
+                file_row = await select(table="files",
+                                        table_fields=["id"],
+                                        where=where_statement,
+                                        params=(scan_info["instance"], scan_info["site_id"], path_hash))
                 file_id = file_row[0]["id"]
 
                 data = {"iav_file_id": infected_file["iav_file_id"],
                         "status": infected_file["status"] if FileStatus.has_value(infected_file["status"]) else str(FileStatus.infected)}
-                update(table="files", data=data, where="id={}".format(file_id))
+                await update(table="files", data=data, where="id=%s", params=[file_id])
 
             report["infected"].append(file_id)
         report["cured"] = scan_report.get("cured", 0)
         report_data["report"] = dumps(report)
-        insert(table="report", data=report_data)
+        await insert(table="report", data=report_data)
 
     @staticmethod
-    def files_done(task_info: dict, info: dict):
+    async def files_done(task_info: dict, info: dict):
         """
         Callback который будет вызван после завершения операции с файлами
         :param task_info: Таска
@@ -903,9 +899,8 @@ class Imunify:
             file_status = get_file_status(info["action"].upper())
             for operation in operations:
                 if operation["status"] == OPERATION_STATUS_SUCCESS:
-                    where_statement = "id={}".format(operation["id"])
                     fields = {"status": str(file_status)}
-                    update(table='files', data=fields, where=where_statement)
+                    await update(table='files', data=fields, where="id=%s", params=[operation["id"]])
 
     @staticmethod
     async def get_feature(info: HandlerInfo):
@@ -914,9 +909,11 @@ class Imunify:
         :param info: Информация о запросе
         :return:
         """
+        is_pro_version = await get_settings_value(info.instance_id, "isProVersion", "False")
+        has_scheduled_actions = await get_settings_value(info.instance_id, "hasScheduledActions", "False")
         # TODO(d.smirnov): убрать дефолтные значения, когда будут реальные данные
-        resp = {"isProVersion": get_settings_value(info.instance_id, "isProVersion", "False").get(),
-                "hasScheduledActions": get_settings_value(info.instance_id, "hasScheduledActions", "False").get()}
+        resp = {"isProVersion": is_pro_version.get(),
+                "hasScheduledActions": has_scheduled_actions.get()}
         return web.Response(text=dumps(resp))
 
     async def get_site_site_id_presets(self, info: HandlerInfo):
@@ -938,9 +935,12 @@ class Imunify:
             return web.Response(text=response, status=site_info_response.status)
 
         where_statement = "date_use IN (SELECT MAX(date_use) FROM imunify_presets " \
-                          "WHERE site_id={site} AND instance={instance} GROUP BY type) " \
-                          "AND site_id={site} AND instance={instance}".format(site=site_id, instance=info.instance_id)
-        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
+                          "WHERE site_id=%s AND instance=%s GROUP BY type) " \
+                          "AND site_id=%s AND instance=%s"
+        presets = await select(table="presets",
+                               table_fields=["id", "type", "preset", "is_active"],
+                               where=where_statement,
+                               params=(site_id, info.instance_id, site_id, info.instance_id))
 
         presets_list = dict()
         if not presets:
@@ -955,7 +955,7 @@ class Imunify:
                 "preset": str(dumps(default_preset)),
                 "date_use": get_utc_timestamp()
             }
-            preset_id = insert(table="presets", data=preset_info)
+            preset_id = await insert(table="presets", data=preset_info)
             default_preset["id"] = preset_id
             default_preset["isActive"] = True
             presets_list["full"] = default_preset
@@ -1012,8 +1012,11 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
-        where_statement = "id={} AND site_id={} AND instance={}".format(preset_id, site_id, info.instance_id)
-        presets = select(table="presets", table_fields=["id", "type", "preset", "is_active"], where=where_statement)
+        where_statement = "id=%s AND site_id=%s AND instance=%s"
+        presets = await select(table="presets",
+                               table_fields=["id", "type", "preset", "is_active"],
+                               where=where_statement,
+                               params=(preset_id, site_id, info.instance_id))
 
         if not presets:
             return web.HTTPNotFound(text="Preset does not exist")
@@ -1042,17 +1045,23 @@ class Imunify:
             response = await site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
-        where_statement = "instance={} AND site_id={} ".format(info.instance_id, site_id)
+        where_statement = "instance=%s AND site_id=%s "
         order_statement = "ORDER BY scan_date DESC "
-        all_rows = select(table="report", table_fields=["COUNT(*) as count"], where=where_statement + order_statement)
+        all_rows = await select(table="report",
+                                table_fields=["COUNT(*) as count"],
+                                where=where_statement + order_statement,
+                                params=(info.instance_id, site_id))
 
         scan_type = info.query_params.get("type", str())
+        params = [info.instance_id, site_id]
         if scan_type:
-            where_statement += "AND report->'$.type' = '{}' ".format(scan_type)
+            where_statement += "AND report->'$.type' = %s "
+            params.append(scan_type)
         where_statement += order_statement + get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
-        reports = select(table="report",
-                         table_fields=["report", "scan_date", "preset_id"],
-                         where=where_statement)
+        reports = await select(table="report",
+                               table_fields=["report", "scan_date", "preset_id"],
+                               where=where_statement,
+                               params=params)
 
         for scan in reports:
             report = loads(scan["report"])
@@ -1087,11 +1096,17 @@ class Imunify:
             return web.HTTPBadRequest(text="File type is not valid")
 
         table_fields = ["id", "file", "status", "malicious_type", "path", "detected", "created", "last_modified"]
-        where_statement = "site_id={} AND instance={} AND status='{}' ORDER BY detected DESC".format(site_id, info.instance_id, file_type)
-        all_rows = select(table="files", table_fields=["COUNT(*) as count"], where=where_statement)
+        where_statement = "site_id=%s AND instance=%s AND status=%s ORDER BY detected DESC"
+        all_rows = await select(table="files",
+                                table_fields=["COUNT(*) as count"],
+                                where=where_statement,
+                                params=(site_id, info.instance_id, file_type))
 
         where_statement += get_limit_value(info.query_params.get("limit", str(DEFAULT_LIMIT_VALUE)))
-        files = select(table="files", table_fields=table_fields, where=where_statement)
+        files = await select(table="files",
+                             table_fields=table_fields,
+                             where=where_statement,
+                             params=(site_id, info.instance_id, file_type))
 
         for file_info in files:
             file = {
@@ -1131,8 +1146,11 @@ class Imunify:
         host = data.get("host", "")
 
         ids = ",".join(str(id) for id in file_ids)
-        where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, str(FileStatus.infected), site_id, info.instance_id)
-        files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
+        where_statement = "id IN ({}) AND status=%s AND site_id=%s AND instance=%s".format(ids)
+        files = await select(table="files",
+                             table_fields=["id", "iav_file_id", "file", "path"],
+                             where=where_statement,
+                             params=(str(FileStatus.infected), site_id, info.instance_id))
 
         if not files:
             return web.HTTPNotFound(text="There is no files to delete")
@@ -1193,12 +1211,15 @@ class Imunify:
 
         ids = str()
         if not file_ids:
-            where_statement = "instance={} AND site_id={} AND status='{}' ".format(info.instance_id, site_id, file_status)
-            ids = ",".join(str(file_data["id"]) for file_data in select(table="files", table_fields=["id"], where=where_statement))
+            where_statement = "instance=%s AND site_id=%s AND status=%s "
+            ids = ",".join(str(file_data["id"]) for file_data in await select(table="files", table_fields=["id"], where=where_statement, params=(info.instance_id, site_id, file_status)))
         else:
             ids = ",".join(str(id) for id in file_ids)
-        where_statement = "id IN ({}) AND status='{}' AND site_id={} AND instance={}".format(ids, file_status, site_id, info.instance_id)
-        files = select(table="files", table_fields=["id", "iav_file_id", "file", "path"], where=where_statement)
+        where_statement = "id IN ({}) AND status=%s AND site_id=%s AND instance=%s".format(ids)
+        files = await select(table="files",
+                             table_fields=["id", "iav_file_id", "file", "path"],
+                             where=where_statement,
+                             params=(file_status, site_id, info.instance_id))
 
         if not files:
             return web.HTTPNotFound(text="There is no files to process")
@@ -1279,7 +1300,7 @@ class Imunify:
             })
             return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
 
-        update("settings", data={"value": "True"}, where="instance={} AND name='{}'".format(instance_id, "isProVersion"))
+        await update("settings", data={"value": "True"}, where="instance=%s AND name=%s", params=[instance_id, "isProVersion"])
         notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
             "name": "plugin-activate",
             "status": "complete"
@@ -1385,9 +1406,60 @@ async def install_imunufy(instance=None):
                              task_env=task_env,
                              lock=IMUNIFY_LOCK.format(instance_id))
         log.debug("Install task id: {}".format(output))
-        insert("settings", data={"instance": item['id'], "name": "isProVersion", "value": "False"})
-        insert("settings", data={"instance": item['id'], "name": "hasScheduledActions", "value": "False"})
+        await insert("settings", data={"instance": item['id'], "name": "isProVersion", "value": "False"})
+        await insert("settings", data={"instance": item['id'], "name": "hasScheduledActions", "value": "False"})
 
+
+async def init_db(app):
+    app["DB_CONNECTION_POOL"] = await create_pool(host='mysql',
+                                                  port=3306,
+                                                  user=getenv('MYSQL_USER'),
+                                                  password=getenv('MYSQL_PASSWORD'),
+                                                  db=getenv('MYSQL_DATABASE'),
+                                                  minsize=MIN_POOL_SIZE,
+                                                  maxsize=MAX_POOL_SIZE,
+                                                  autocommit=False)
+    fields = [DbField("instance", "INT"),
+              DbField("name", "VARCHAR", 128),
+              DbField("value", "VARCHAR", 256)]
+    indexes = [DbIndex("UNIQUE INDEX", "settings", ["instance", "name"])]
+    await create_table("settings", fields, indexes)
+
+    fields = [DbField("id", "INT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("instance", "INT"),
+              DbField("site_id", "INT"),
+              DbField("task_id", "INT"),
+              DbField("report", "JSON"),
+              DbField("scan_date", "BIGINT"),
+              DbField("preset_id", "BIGINT")]
+    await create_table("report", fields)
+
+    fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("iav_file_id", "BIGINT"),
+              DbField("instance", "INT"),
+              DbField("site_id", "INT"),
+              DbField("path_hash", "VARCHAR", 32),
+              DbField("file", "TEXT"),
+              DbField("path", "TEXT"),
+              DbField("status", FileStatus.to_sql_enum()),
+              DbField("malicious_type", "VARCHAR", 255),
+              DbField("last_modified", "BIGINT"),
+              DbField("detected", "BIGINT"),
+              DbField("created", "BIGINT")]
+    indexes = [DbIndex("UNIQUE INDEX", "files", ["instance", "site_id", "path_hash"])]
+    await create_table("files", fields, indexes)
+
+    fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
+              DbField("instance", "INT"),
+              DbField("site_id", "INT"),
+              DbField("type", ScanType.to_sql_enum()),
+              DbField("preset", "JSON"),
+              DbField("date_use", "BIGINT"),
+              DbField("is_active", "TINYINT", size=1, default="1")]
+    await create_table("presets", fields)
+
+    app['install_imunify'] = app.loop.create_task(install_imunufy())  # Установка антивируса на уже имеющиеся инстансы
+    app['instance_waiter'] = app.loop.create_task(instance_waiter(new_instance))
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -1424,47 +1496,7 @@ if __name__ == '__main__':
                     make_post('/register'),
                     make_delete('/site/{site_id}/files')])
 
-    fields = [DbField("instance", "INT"),
-              DbField("name", "VARCHAR", 128),
-              DbField("value", "VARCHAR", 256)]
-    indexes = [DbIndex("UNIQUE INDEX", "settings", ["instance", "name"])]
-    create_table("settings", fields, indexes)
-
-    fields = [DbField("id", "INT AUTO_INCREMENT PRIMARY KEY"),
-              DbField("instance", "INT"),
-              DbField("site_id", "INT"),
-              DbField("task_id", "INT"),
-              DbField("report", "JSON"),
-              DbField("scan_date", "BIGINT"),
-              DbField("preset_id", "BIGINT")]
-    create_table("report", fields)
-
-    fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
-              DbField("iav_file_id", "BIGINT"),
-              DbField("instance", "INT"),
-              DbField("site_id", "INT"),
-              DbField("path_hash", "VARCHAR", 32),
-              DbField("file", "TEXT"),
-              DbField("path", "TEXT"),
-              DbField("status", FileStatus.to_sql_enum()),
-              DbField("malicious_type", "VARCHAR", 255),
-              DbField("last_modified", "BIGINT"),
-              DbField("detected", "BIGINT"),
-              DbField("created", "BIGINT")]
-    indexes = [DbIndex("UNIQUE INDEX", "files", ["instance", "site_id", "path_hash"])]
-    create_table("files", fields, indexes)
-
-    fields = [DbField("id", "BIGINT AUTO_INCREMENT PRIMARY KEY"),
-              DbField("instance", "INT"),
-              DbField("site_id", "INT"),
-              DbField("type", ScanType.to_sql_enum()),
-              DbField("preset", "JSON"),
-              DbField("date_use", "BIGINT"),
-              DbField("is_active", "TINYINT", size=1, default="1")]
-    create_table("presets", fields)
-
     log.info("Starting Imunify service".format(sock_path))
     web.run_app(app, sock=sock)
 
     remove(args.socket)
-    DB_CONNECTION.close()
