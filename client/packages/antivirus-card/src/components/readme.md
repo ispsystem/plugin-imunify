@@ -72,6 +72,7 @@ graph TD;
   antivirus-card-scan-settings --> antivirus-card-preloader
   antivirus-card-scan-settings --> antivirus-card-button
   antivirus-card-preview --> antivirus-card-spinner-round
+  antivirus-card-preview --> antivirus-card-spinner-round
   antivirus-card-infected-files --> antivirus-card-button
   antivirus-card-infected-files --> antivirus-card-table
   antivirus-card-infected-files --> antivirus-card-table-row

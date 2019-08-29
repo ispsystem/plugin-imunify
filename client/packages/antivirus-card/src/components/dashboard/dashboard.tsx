@@ -67,38 +67,37 @@ export class Dashboard {
   /**
    * Render modals: new scan and preset settings
    */
-  renderModals = () =>
-    this.isProVersion && (
-      <div>
-        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
-          <antivirus-card-new-scan
-            preset={this.scanPreset.default}
-            closeModal={async () => {
-              await this.newScanModal.toggle(false);
-            }}
-          >
-            <span class="title" slot="title">
-              {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
-            </span>
-          </antivirus-card-new-scan>
-        </antivirus-card-modal>
-        <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.scanSettingsModal = el)}>
-          <antivirus-card-scan-settings
-            ref={el => (this.scanSettings = el)}
-            closeModal={async () => await this.scanSettingsModal.toggle(false)}
-          >
-            <span class="title" slot="title">
-              {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
-            </span>
-          </antivirus-card-scan-settings>
-        </antivirus-card-modal>
-      </div>
-    );
+  renderModals = () => (
+    <div>
+      <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.newScanModal = el)}>
+        <antivirus-card-new-scan
+          preset={this.scanPreset.default}
+          closeModal={async () => {
+            await this.newScanModal.toggle(false);
+          }}
+        >
+          <span class="title" slot="title">
+            {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
+          </span>
+        </antivirus-card-new-scan>
+      </antivirus-card-modal>
+      <antivirus-card-modal modal-width={`${640 - 50}px`} ref={el => (this.scanSettingsModal = el)}>
+        <antivirus-card-scan-settings
+          ref={el => (this.scanSettings = el)}
+          closeModal={async () => await this.scanSettingsModal.toggle(false)}
+        >
+          <span class="title" slot="title">
+            {this.t.msg(['SCAN_SETTINGS', 'NEW_SCAN'])}
+          </span>
+        </antivirus-card-scan-settings>
+      </antivirus-card-modal>
+    </div>
+  );
 
   /**
    * Render purchase status
    */
-  renderPurchase = () => this.purchasing && <PreviewPurchase t={this.t} />;
+  renderPurchase = () => <PreviewPurchase t={this.t} />;
 
   /**
    * Render partial scan preview
@@ -113,23 +112,29 @@ export class Dashboard {
   /**
    * Render for non pro version status
    */
-  renderFree = () =>
-    !this.isProVersion && (
-      <PreviewFree
-        onClick={() => this.openBuyModal.emit()}
-        title={
-          this.priceList
-            ? this.t.msg(['DASHBOARD', 'TITLE'], {
-                cost: this.priceList.price[0].cost,
-                currency: getCurrencySymbol(this.priceList.price[0].currency),
-                period: getShortPeriod(this.priceList.price[0].type, this.t),
-              })
-            : ''
-        }
-        /** @todo uncomment if UX decides to return the description for the purchase */
-        // text={this.t.msg(['DASHBOARD', 'TEXT'])}
-      />
-    );
+  renderFree = () => (
+    <PreviewFree
+      onClick={() => this.openBuyModal.emit()}
+      title={
+        this.priceList
+          ? this.t.msg(['DASHBOARD', 'TITLE'], {
+              cost: this.priceList.price[0].cost,
+              currency: getCurrencySymbol(this.priceList.price[0].currency),
+              period: getShortPeriod(this.priceList.price[0].type, this.t),
+            })
+          : ''
+      }
+      /** @todo uncomment if UX decides to return the description for the purchase */
+      // text={this.t.msg(['DASHBOARD', 'TEXT'])}
+    />
+  );
+
+  renderPreviews = () => {
+    if (!this.isProVersion) {
+      return this.purchasing ? this.renderPurchase() : this.renderFree();
+    }
+    return this.renderPreviewPartial();
+  };
 
   render() {
     return (
@@ -145,10 +150,8 @@ export class Dashboard {
           </antivirus-card-button>
         )}
         <antivirus-card-preview scanType="FULL" />
-        {this.renderModals()}
-        {this.renderPurchase()}
-        {this.renderPreviewPartial()}
-        {this.renderFree()}
+        {this.isProVersion && this.renderModals()}
+        {this.renderPreviews()}
       </Host>
     );
   }

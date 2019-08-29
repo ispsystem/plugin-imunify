@@ -34,6 +34,8 @@ export class Preview {
 
   /** scan loading */
   @State() scanning: AntivirusState['scanning'];
+  /** Healing in process */
+  @State() healing: AntivirusState['healing'];
   /** flag has schedule */
   @State() hasScheduledActions: AntivirusState['hasScheduledActions'];
   /** flag if antivirus is pro version */
@@ -175,6 +177,7 @@ export class Preview {
           isProVersion={this.isProVersion}
           openBuyModal={this.openBuyModal}
           healHandler={this.heal.bind(this)}
+          healing={this.healing}
         />
 
         {/** @todo: return when imunify released this feature */
