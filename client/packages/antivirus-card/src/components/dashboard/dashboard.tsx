@@ -129,6 +129,13 @@ export class Dashboard {
     />
   );
 
+  renderPreviews = () => {
+    if (!this.isProVersion) {
+      return this.purchasing ? this.renderPurchase() : this.renderFree();
+    }
+    return this.renderPreviewPartial();
+  };
+
   render() {
     return (
       <Host>
@@ -144,7 +151,7 @@ export class Dashboard {
         )}
         <antivirus-card-preview scanType="FULL" />
         {this.isProVersion && this.renderModals()}
-        {!this.isProVersion ? (this.purchasing ? this.renderPurchase() : this.renderFree()) : this.renderPreviewPartial()}
+        {this.renderPreviews()}
       </Host>
     );
   }
