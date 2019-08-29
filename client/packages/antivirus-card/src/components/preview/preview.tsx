@@ -192,7 +192,7 @@ export class Preview {
           <span class={this.scanning ? 'link-disabled' : 'link'}>
             <StartCheckIcon
               onClick={() => this.scanVirus(this.scanOption.id, this.scanType, this.siteId)}
-              disabled={Boolean(this.scanning)}
+              disabled={this.scanning !== null}
               btnLabel={this.t.msg('BTN_SCAN')}
             />
           </span>
