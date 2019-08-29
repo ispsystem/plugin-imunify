@@ -569,7 +569,7 @@ export class AntivirusCard {
         <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_1'])}</span>
         <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_2'])}</span>
         <div style={{ display: 'inline-block', 'margin-top': '25px' }}>
-          <antivirus-card-button theme={ThemePalette.accent} onClick={() => this.scanVirus(this.scanPreset.full.id, this.siteId)}>
+          <antivirus-card-button theme={ThemePalette.accent} onClick={() => this.scanVirus(this.scanPreset.full.id, 'FULL', this.siteId)}>
             {this.t.msg(['PREVIEW', 'FIRST_SCAN', 'BUTTON'])}
           </antivirus-card-button>
         </div>
