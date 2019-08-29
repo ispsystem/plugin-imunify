@@ -679,7 +679,7 @@ class Imunify:
         preset_id = request_body.get("preset_id")
 
         where_statement = "id={} AND instance={}".format(preset_id, info.instance_id)
-        table_fields = ['preset']
+        table_fields = ['preset', 'type']
         result = select(table='presets', table_fields=table_fields, where=where_statement)
 
         if not result:
@@ -694,7 +694,7 @@ class Imunify:
         preset = base64.b64encode(preset_value.encode("utf-8"))
         docroot = "{}/{}/".format(site_info["docroot_base"], site_info["docroot"])
         output = create_task(exec_bin="/var/www/imunify/scripts/run_scan.py",
-                             name='scan',
+                             name='scan-{}'.format(str(result[0]["type"]).lower()),
                              params=["--address", host,
                                      "--docroot", docroot,
                                      "--params", preset.decode(),
