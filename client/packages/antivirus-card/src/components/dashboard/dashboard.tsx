@@ -107,7 +107,7 @@ export class Dashboard {
       <antivirus-card-preview scanType="PARTIAL" />
     ) : (
       <PreviewNewScan
-        scanning={Boolean(this.scanning)}
+        scanning={this.scanning !== null}
         onClick={() => this.newScanModal.toggle(true)}
         text={this.t.msg(['NEW_SCAN_BTN'])}
       />
