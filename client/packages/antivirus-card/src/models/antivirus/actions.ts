@@ -268,8 +268,10 @@ export namespace AntivirusActions {
         const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);
         const taskId = notifyEvent.id;
         if (started !== undefined && taskId !== undefined) {
-          const [scanResponse, infectedFilesCount, presetsResponse] = await Promise.all([
-            fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`),
+          // wait when result will be saved to DB
+          const scanResponse = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`);
+          // after save result to DB get others date
+          const [infectedFilesCount, presetsResponse] = await Promise.all([
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`),
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`),
           ]);
