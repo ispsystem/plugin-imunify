@@ -171,6 +171,8 @@ export class AntivirusCard {
             if (taskName !== undefined) {
               switch (taskName) {
                 case TaskEventName.scan:
+                case TaskEventName.scanFull:
+                case TaskEventName.scanPartial:
                   await this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
                   break;
                 case TaskEventName.filesDelete:
