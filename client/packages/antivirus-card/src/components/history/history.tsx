@@ -94,11 +94,11 @@ export class History {
   /**
    * Handle retry scan by history and redirect to dashboard
    *
-   * @param presetId - scan preset id
+   * @param item - history item
    */
-  async handleRetryScan(file: HistoryItem) {
+  async handleRetryScan(item: HistoryItem) {
     await Promise.all([
-      this.scanVirus(file.scanOptionId, file.checkType, this.siteId),
+      this.scanVirus(item.scanOptionId, item.checkType, this.siteId),
       this.cardElement.changeActiveItem(AntivirusCardPages.dashboard),
     ]);
   }
