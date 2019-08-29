@@ -26,15 +26,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_BEGIN: {
       return {
         ...state,
-        scanning: true,
-        error: null,
-      };
-    }
-
-    case ANTIVIRUS_ACTION.SCANNING: {
-      return {
-        ...state,
-        scanning: true,
+        scanning: action.payload.type,
         error: null,
       };
     }
@@ -49,6 +41,11 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
           partial: action.payload.data.historyItem.checkType === 'PARTIAL' ? action.payload.data.historyItem : state.lastScan.partial,
         },
         historyItemCount: state.historyItemCount++,
+        scanPreset: {
+          ...state.scanPreset,
+          full: action.payload.data.presets.full,
+          partial: action.payload.data.presets.partial,
+        },
       };
     }
 

@@ -191,8 +191,8 @@ export class Preview {
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
           <span class={this.scanning ? 'link-disabled' : 'link'}>
             <StartCheckIcon
-              onClick={() => this.scanVirus(this.scanOption.id, this.siteId)}
-              disabled={this.scanning}
+              onClick={() => this.scanVirus(this.scanOption.id, this.scanType, this.siteId)}
+              disabled={Boolean(this.scanning)}
               btnLabel={this.t.msg('BTN_SCAN')}
             />
           </span>

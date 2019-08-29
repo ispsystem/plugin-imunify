@@ -96,8 +96,11 @@ export class History {
    *
    * @param presetId - scan preset id
    */
-  async handleRetryScan(presetId: number) {
-    await Promise.all([this.scanVirus(presetId, this.siteId), this.cardElement.changeActiveItem(AntivirusCardPages.dashboard)]);
+  async handleRetryScan(file: HistoryItem) {
+    await Promise.all([
+      this.scanVirus(file.scanOptionId, file.checkType, this.siteId),
+      this.cardElement.changeActiveItem(AntivirusCardPages.dashboard),
+    ]);
   }
 
   render() {
@@ -139,7 +142,7 @@ export class History {
                 <antivirus-card-table-cell style={{ 'text-align': 'right' }} doubleline>
                   <a
                     class={`link${this.scanning ? ' disabled' : ''}`}
-                    onClick={async ev => (this.scanning ? ev.preventDefault() : await this.handleRetryScan(historyItem.scanOptionId))}
+                    onClick={async ev => (this.scanning ? ev.preventDefault() : await this.handleRetryScan(historyItem))}
                   >
                     {this.t.msg(['HISTORY_TAB', 'ACTION', 'RETRY'])}
                   </a>
