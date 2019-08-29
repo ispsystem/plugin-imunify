@@ -43,7 +43,10 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
         scanPreset: {
           ...state.scanPreset,
           full: action.payload.data.presets.full,
-          partial: action.payload.data.presets.partial,
+          partial:
+            action.payload.data.presets.partial && action.payload.data.presets.partial.isActive
+              ? action.payload.data.presets.partial
+              : null,
         },
         historyItemCount: state.historyItemCount + 1,
       };
