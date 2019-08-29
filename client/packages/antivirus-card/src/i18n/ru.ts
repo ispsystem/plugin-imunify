@@ -8,7 +8,7 @@ const lang = {
     MORE_DETAILS: 'Подробнее',
     DESCRIPTION: {
       NO_VIRUSES: 'Вирусов не обнаружено',
-      VIRUSES_CURED: 'Обнаружен %{smart_count} вирус |||| Обнаружено %{smart_count} вируса |||| Обнаружено %{smart_count} вирусов',
+      VIRUSES_CURED: 'Вылечен %{smart_count} файл |||| Вылечено %{smart_count} файла |||| Вылечено %{smart_count} файлов',
     },
   },
   MENU_ITEMS: {

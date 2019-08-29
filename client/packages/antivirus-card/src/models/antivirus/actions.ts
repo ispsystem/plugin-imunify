@@ -283,30 +283,31 @@ export namespace AntivirusActions {
           ]);
 
           // Infected files notification
-          const infectedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'INFECTED');
-          if (infectedFiles.length > 1) {
+          const infectedFiles = scanResult.historyItem.infectedFilesCount;
+          const curedFiles = scanResult.historyItem.curedFilesCount;
+
+          // Cured files notification
+          if (curedFiles > 0) {
             userNotification.push({
-              title: t.msg(['VIRUS_GROUP_DETECTED'], infectedFiles.length),
+              title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
+              content: t.msg(['NOTIFY', 'DESCRIPTION', 'VIRUSES_CURED'], curedFiles),
+              // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
+              type: NotifyBannerTypes.NORMAL_FAST,
+            });
+          } else if (infectedFiles > 1) {
+            userNotification.push({
+              title: t.msg(['VIRUS_GROUP_DETECTED'], infectedFiles),
               content: undefined,
               type: NotifyBannerTypes.ERROR_FAST,
             });
-          } else if (infectedFiles.length === 1) {
-            const file = infectedFiles[0];
+          } else if (infectedFiles === 1) {
+            const file = scanResult.infectedFiles.list[0];
+            debugger;
+            console.log(file);
             userNotification.push({
               title: t.msg(['VIRUS_DETECTED']),
               content: file.name,
               type: NotifyBannerTypes.ERROR_FAST,
-            });
-          }
-
-          // Cured files notification
-          const curedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'CURED');
-          if (curedFiles.length > 0) {
-            userNotification.push({
-              title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
-              content: t.msg(['NOTIFY', 'DESCRIPTION', 'VIRUSES_CURED'], curedFiles.length),
-              // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
-              type: NotifyBannerTypes.NORMAL_FAST,
             });
           } else {
             userNotification.push({
