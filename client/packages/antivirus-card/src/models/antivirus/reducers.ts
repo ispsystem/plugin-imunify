@@ -26,7 +26,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_BEGIN: {
       return {
         ...state,
-        scanning: action.payload.type,
+        scanning: action.payload.type || null,
         error: null,
       };
     }
