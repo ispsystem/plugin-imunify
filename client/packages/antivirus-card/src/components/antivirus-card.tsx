@@ -119,8 +119,7 @@ export class AntivirusCard {
             const runningTask = notifyEvents.find(event => getNestedObject(event, ['additional_data', 'status']) === 'running');
             if (
               runningTask !== undefined &&
-              (runningTask.additional_data.name === TaskEventName.scanFull ||
-                runningTask.additional_data.name === TaskEventName.scanPartial)
+              [TaskEventName.scanPartial, TaskEventName.scanFull].includes(runningTask.additional_data.name)
             ) {
               this.updateState({
                 ...this.store.getState().antivirus,
@@ -152,7 +151,7 @@ export class AntivirusCard {
             console.log('UPDATE scan or cure', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (
-              (taskName === TaskEventName.scanFull || taskName === TaskEventName.scanPartial) &&
+              [TaskEventName.scanPartial, TaskEventName.scanFull].includes(taskName) &&
               notifyEvent.additional_data.status === 'running'
             ) {
               this.updateState({
