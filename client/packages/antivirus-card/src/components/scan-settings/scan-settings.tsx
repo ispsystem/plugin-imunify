@@ -3,7 +3,7 @@ import { ITranslate } from '../../models/translate.reducers';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
-import { ScanOption } from '../../models/antivirus/state';
+import { ScanOption, CheckType } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { ISPNotifier } from '@ispsystem/notice-tools';
 
@@ -27,22 +27,19 @@ export class ScanSettings {
 
   /** Global store */
   @Prop({ context: 'store' }) store: Store<RootState, ActionTypes>;
-
-  /** global notifier object */
-  @State() notifier: ISPNotifier;
-
   /** Method for click close modal */
   @Prop() closeModal: () => void = () => {};
 
+  /** global notifier object */
+  @State() notifier: ISPNotifier;
   /** Model settings for new scan */
   @State() preset: ScanOption;
-
+  /** Scan type */
+  @State() scanType: CheckType;
   /** Translate object */
   @State() t: ITranslate;
-
   /** Site id state */
   @State() siteId: RootState['siteId'];
-
   /** @todo uncomment when email notification will release in backend */
   /** Flag for use email notification */
   // @State() useEmailNotify: boolean;
@@ -77,11 +74,9 @@ export class ScanSettings {
    * @param preset - model of scanOptions
    */
   @Method()
-  async setPreset(preset: ScanOption) {
-    /** @todo @bug modal state is not update when preset update */
-    // this.host.forceUpdate();
+  async setPreset(preset: ScanOption, type: CheckType) {
     this.preset = { ...preset };
-    // this.useEmailNotify = this.preset.email !== '';
+    this.scanType = type;
   }
 
   /**
@@ -187,7 +182,7 @@ export class ScanSettings {
   async handleScan() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this.prepareDataForSubmit(this.preset);
-    const res = await this.saveAndScan(preset, this.siteId);
+    const res = await this.saveAndScan(preset, this.siteId, this.scanType);
     this.isPreloader = { ...this.isPreloader, submit: false };
     if (res && res['error']) {
       console.warn('Oops, failed to save preset or start scanning', res['error']);
@@ -203,7 +198,7 @@ export class ScanSettings {
   async handleSave() {
     this.isPreloader = { ...this.isPreloader, submit: true };
     const preset = this.prepareDataForSubmit(this.preset);
-    const res = await this.savePreset(preset, this.siteId);
+    const res = await this.savePreset(preset, this.siteId, this.scanType);
     this.isPreloader = { ...this.isPreloader, submit: false };
     if (res && res['error']) {
       console.warn('Oops, failed to save preset or start scanning', res['error']);

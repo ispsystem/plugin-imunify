@@ -9,6 +9,7 @@ const getInitialState = (): AntivirusState => {
     hasScheduledActions: false,
     infectedFilesCount: 0,
     scanning: false,
+    healing: false,
     purchasing: false,
     inBlackLists: false,
     historyItemCount: 0,
@@ -124,6 +125,17 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
       };
     }
 
+    case ANTIVIRUS_ACTION.SAVE_FULL_PRESET_SUCCESS: {
+      return {
+        ...state,
+        scanPreset: {
+          ...state.scanPreset,
+          full: action.payload.data,
+        },
+        error: null,
+      };
+    }
+
     case ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE: {
       return {
         ...state,
@@ -148,6 +160,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS: {
       const scanPreset = {
         full: action.payload.data.full,
+        default: action.payload.data.default,
       };
       if (action.payload.data.partial !== undefined && action.payload.data.partial.isActive) {
         scanPreset['partial'] = action.payload.data.partial;

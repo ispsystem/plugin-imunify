@@ -19,18 +19,15 @@ export class Modal {
   @Prop({ attribute: 'max-modal-width' }) maxModalWidth: string;
 
   /** Flag for visible component */
-  @Prop({
-    mutable: true,
-    reflect: true,
-  })
-  visible: boolean;
+  @Prop({ mutable: true, reflect: true }) visible = false;
 
   /**
    * Method for change modal visible
+   * @param value - value for visible
    */
   @Method()
   async toggle(value?: boolean) {
-    this.visible = value ? value : !this.visible;
+    this.visible = value !== undefined ? value : !this.visible;
   }
 
   /**
@@ -50,7 +47,7 @@ export class Modal {
     return (
       <div class={this.visible ? 'wrapper visible' : 'wrapper'} ref={el => (this.modalWrapper = el)}>
         <div style={{ width: this.modalWidth, maxWidth: this.maxModalWidth }} class="modal" ref={el => (this.modalElement = el)}>
-          <span class="modal-close" onClick={() => this.toggle()}>
+          <span class="modal-close" onClick={async () => await this.toggle()}>
             <CloseIcon />
           </span>
           <slot />

@@ -115,9 +115,12 @@ export interface AntivirusState {
   scanPreset?: {
     full: ScanOption;
     partial?: ScanOption;
+    default: ScanOption;
   };
   // scanning flag
   scanning: boolean;
+  // healing flag
+  healing: boolean;
   // purchasing flag
   purchasing: boolean;
   // domain in black list

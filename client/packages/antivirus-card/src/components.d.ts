@@ -183,6 +183,7 @@ export namespace Components {
     'modalWidth': string;
     /**
     * Method for change modal visible
+    * @param value - value for visible
     */
     'toggle': (value?: boolean) => Promise<void>;
     /**
@@ -197,7 +198,7 @@ export namespace Components {
     /**
     * Function on modal close
     */
-    'closeModal': () => void;
+    'closeModal': () => Promise<void>;
     /**
     * Model settings for new scan
     */
@@ -252,7 +253,7 @@ export namespace Components {
     * Method for set preset in modal
     * @param preset - model of scanOptions
     */
-    'setPreset': (preset: ScanOption) => Promise<void>;
+    'setPreset': (preset: ScanOption, type: CheckType) => Promise<void>;
   }
   interface AntivirusCardSelect {
     /**
@@ -716,7 +717,7 @@ declare namespace LocalJSX {
     /**
     * Function on modal close
     */
-    'closeModal'?: () => void;
+    'closeModal'?: () => Promise<void>;
     /**
     * Model settings for new scan
     */
@@ -768,7 +769,7 @@ declare namespace LocalJSX {
     /**
     * to open scan settings modal
     */
-    'onOpenScanSettingsModal'?: (event: CustomEvent<any>) => void;
+    'onOpenScanSettingsModal'?: (event: CustomEvent<{ preset: ScanOption; type: CheckType }>) => void;
     /**
     * scan type for this card
     */

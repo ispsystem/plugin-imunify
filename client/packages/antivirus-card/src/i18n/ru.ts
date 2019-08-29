@@ -1,5 +1,8 @@
 const lang = {
-  TITLE: 'Антивирус ImunifyAV',
+  TITLE: {
+    FREE: 'Антивирус ImunifyAV',
+    PRO: 'Антивирус ImunifyAV+',
+  },
   NOTIFY: {
     SCAN_SUCCESS: 'Проверка сайта закончилась',
     MORE_DETAILS: 'Подробнее',
@@ -66,6 +69,7 @@ const lang = {
     CURE: 'Лечить',
     DETAIL: 'Подробнее',
     NOT_INFECTED_FILES: 'Вирусов не обнаружили',
+    HEALING: 'Лечим вирусы',
     IN_BLACK_LISTS: 'Сайт находится в чёрных списках',
     HOW_TO_FIX: 'Как исправить',
     NOT_IN_BLACK_LISTS: 'Сайта в чёрных списках нет',

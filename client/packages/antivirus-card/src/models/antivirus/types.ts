@@ -1,4 +1,5 @@
 import { DeleteFilesResponse, ScanSuccessData, LastScanData, CureFilesResponse, PriceListItem } from './model';
+import { ScanOption } from './state';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -14,7 +15,7 @@ export enum ANTIVIRUS_ACTION {
   GET_LAST_SCAN_FAILURE = 'GET_LAST_SCAN_FAILURE',
 
   SAVE_PARTIAL_PRESET_SUCCESS = 'SAVE_PARTIAL_PRESET_SUCCESS',
-
+  SAVE_FULL_PRESET_SUCCESS = 'SAVE_FULL_PRESET_SUCCESS',
   SAVE_PRESET_FAILURE = 'SAVE_PRESET_FAILURE',
 
   SAVE_AND_SCAN_BEGIN = 'SAVE_AND_SCAN_BEGIN',
@@ -115,6 +116,13 @@ export const getLastScanSuccess = data => async (dispatch: (obj: GetLastScanSucc
 export const savePartialPresetSuccess = data => async (dispatch: (obj: SavePartialPresetSuccessAction) => void) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS,
+    payload: { data },
+  });
+};
+
+export const saveFullPresetSuccess = data => async (dispatch: (obj: SaveFullPresetSuccessAction) => void) => {
+  return dispatch({
+    type: ANTIVIRUS_ACTION.SAVE_FULL_PRESET_SUCCESS,
     payload: { data },
   });
 };
@@ -300,6 +308,11 @@ interface SavePartialPresetSuccessAction {
   payload: any;
 }
 
+interface SaveFullPresetSuccessAction {
+  type: ANTIVIRUS_ACTION.SAVE_FULL_PRESET_SUCCESS;
+  payload: { data: ScanOption };
+}
+
 interface SavePresetFailureAction {
   type: ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE;
   payload: any;
@@ -417,6 +430,7 @@ export type AntivirusActionTypes =
   | GetLastScanSuccessAction
   | GetLastScanFailureAction
   | SavePartialPresetSuccessAction
+  | SaveFullPresetSuccessAction
   | SavePresetFailureAction
   | SaveAndScanBeginAction
   | SaveAndScanFailureAction

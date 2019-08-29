@@ -18,6 +18,7 @@ import {
   saveAndScanFailure,
   saveAndScanSuccess,
   savePartialPresetSuccess,
+  saveFullPresetSuccess,
   savePresetFailure,
   scanBegin,
   scanFailure,
@@ -380,8 +381,7 @@ export namespace AntivirusActions {
         if (scanType === 'PARTIAL') {
           dispatch(savePartialPresetSuccess({ ...preset, id: json.preset_id }));
         } else if (scanType === 'FULL') {
-          /** @todo add handle for save full preset */
-          // dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
+          dispatch(saveFullPresetSuccess({ ...preset, id: json.preset_id }));
         }
         return json.preset_id;
       } catch (error) {
@@ -440,7 +440,7 @@ export namespace AntivirusActions {
         const lastPartial: GetLastScanResponse = await partial.json();
         const result: LastScanData = {
           full: lastFull.list.length > 0 ? lastFull.list[0] : null,
-          partial: lastPartial.list.length > 0 ? lastFull.list[0] : null,
+          partial: lastPartial.list.length > 0 ? lastPartial.list[0] : null,
           size: lastFull.size,
         };
         dispatch(getLastScanSuccess(result));
@@ -483,11 +483,14 @@ export namespace AntivirusActions {
         const requestInit: RequestInit = {
           method: 'GET',
         };
-        const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit);
-        handleErrors(response);
-        const json = await response.json();
-
-        dispatch(getPresetsSuccess(json));
+        const [customPresets, defaultPreset] = await Promise.all([
+          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`, requestInit),
+          fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets/default`, requestInit),
+        ]);
+        handleErrors(customPresets);
+        handleErrors(defaultPreset);
+        const [presetsResult, defaultResult] = await Promise.all([customPresets.json(), defaultPreset.json()]);
+        dispatch(getPresetsSuccess({ ...presetsResult, default: defaultResult }));
       } catch (error) {
         dispatch(getPresetsFailure(error));
       }

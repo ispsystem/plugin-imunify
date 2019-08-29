@@ -145,12 +145,18 @@ export class AntivirusCard {
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('UPDATE scan', notifyEvent);
+            console.log('UPDATE scan or cure', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName === TaskEventName.scan && notifyEvent.additional_data.status === 'running') {
               this.updateState({
                 ...this.store.getState().antivirus,
                 scanning: true,
+              });
+            }
+            if (taskName === TaskEventName.filesCure && notifyEvent.additional_data.status === 'running') {
+              this.updateState({
+                ...this.store.getState().antivirus,
+                healing: true,
               });
             }
           },
@@ -172,6 +178,10 @@ export class AntivirusCard {
                   break;
                 case TaskEventName.filesCure:
                   await this.cureFilesPostProcess(notifyEvent, this.userNotification, this.t);
+                  this.updateState({
+                    ...this.store.getState().antivirus,
+                    healing: false,
+                  });
                   break;
               }
             }
@@ -545,7 +555,7 @@ export class AntivirusCard {
     } else {
       return (
         <Host>
-          <h2 class="title">{this.t.msg(['TITLE'])}</h2>
+          <h2 class="title">{this.t.msg(['TITLE', this.isProVersion ? 'PRO' : 'FREE'])}</h2>
           <antivirus-card-navigation items={this.items} />
           {this.items.find(item => item.active).component()}
           {this.renderBuyModal()}

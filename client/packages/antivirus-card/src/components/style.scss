@@ -89,3 +89,18 @@
   right: 0;
   top: -55px;
 }
+
+.popover {
+  --sapUiShadowLevel2: 0 10px 14px 0 var(--isp-color__default-shadow, rgba(0, 0, 0, 0.4)), 0 0 0 1px var(--isp-color__border, #d9d9d9);
+
+  .modal-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+  }
+}
+
+.popover-content {
+  padding: 20px 30px 30px 20px;
+}
