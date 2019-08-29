@@ -8,6 +8,7 @@ export interface Translate {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any;
   loading: boolean;
+  lang: string;
 }
 
 /** интерфейс события нотификации */

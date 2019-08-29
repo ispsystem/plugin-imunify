@@ -40,12 +40,12 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
           full: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.full,
           partial: action.payload.data.historyItem.checkType === 'PARTIAL' ? action.payload.data.historyItem : state.lastScan.partial,
         },
-        historyItemCount: state.historyItemCount++,
         scanPreset: {
           ...state.scanPreset,
           full: action.payload.data.presets.full,
           partial: action.payload.data.presets.partial,
         },
+        historyItemCount: state.historyItemCount + 1,
       };
     }
 

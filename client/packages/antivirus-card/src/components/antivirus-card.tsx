@@ -20,6 +20,7 @@ import { AntivirusState } from '../models/antivirus/state';
 import { purchase, getPaymentOrders } from '../utils/controllers';
 import { NotifierActions } from '../models/notifier.actions';
 import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
+import { ThemePalette } from './button/button.interface';
 
 /**
  * AntivirusCard component
@@ -230,6 +231,8 @@ export class AntivirusCard {
             configureNotifier(this.notifierService, notifierParams);
           },
         });
+      } else {
+        configureNotifier(this.notifierService, notifierParams);
       }
 
       this.updateNotifier(this.notifierService);
@@ -319,6 +322,8 @@ export class AntivirusCard {
    * Init global store and subscribe to notifications
    */
   async componentWillLoad(): Promise<void> {
+    configureNotifier(this.notifierService, { plugin: [this.pluginId] });
+
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {
@@ -556,9 +561,27 @@ export class AntivirusCard {
     </antivirus-card-modal>
   );
 
+  renderFirstScan = () => (
+    <div>
+      <h2 class="title">{this.t.msg(['TITLE', this.isProVersion ? 'PRO' : 'FREE'])}</h2>
+
+      <div style={{ display: 'flex', 'flex-direction': 'column' }}>
+        <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_1'])}</span>
+        <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_2'])}</span>
+        <div style={{ display: 'inline-block', 'margin-top': '25px' }}>
+          <antivirus-card-button theme={ThemePalette.accent} onClick={() => this.scanVirus(this.scanPreset.full.id, this.siteId)}>
+            {this.t.msg(['PREVIEW', 'FIRST_SCAN', 'BUTTON'])}
+          </antivirus-card-button>
+        </div>
+      </div>
+    </div>
+  );
+
   render() {
     if (this.isPreloader.card) {
       return <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>;
+    } else if (this.historyItemCount === 0 && !this.scanning) {
+      return this.renderFirstScan();
     } else {
       return (
         <Host>
