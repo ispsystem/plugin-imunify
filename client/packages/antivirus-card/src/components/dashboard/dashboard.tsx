@@ -145,7 +145,7 @@ export class Dashboard {
       <Host>
         {this.isProVersion && Boolean(this.scanPreset.partial) && (
           <antivirus-card-button
-            isDisabled={Boolean(this.scanning)}
+            isDisabled={this.scanning !== null}
             class="header-button new-scan-button"
             btn-theme="third"
             onClick={ev => (this.scanning ? ev.preventDefault() : this.newScanModal.toggle(true))}
