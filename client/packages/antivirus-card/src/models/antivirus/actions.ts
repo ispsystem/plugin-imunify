@@ -288,7 +288,7 @@ export namespace AntivirusActions {
             type: NotifyBannerTypes.NORMAL_FAST,
           });
 
-          // Infected files notifications
+          // Infected files notification
           const infectedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'INFECTED');
           if (infectedFiles.length > 1) {
             userNotification.push({
@@ -300,6 +300,24 @@ export namespace AntivirusActions {
             const file = infectedFiles[0];
             userNotification.push({
               title: t.msg(['VIRUS_DETECTED']),
+              content: file.name,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          }
+
+          // Cured files notification
+          const curedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'CURED');
+          if (curedFiles.length > 1) {
+            const title = `${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_1'])} ${curedFiles.length} ${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_2'])}`;
+            userNotification.push({
+              title,
+              content: undefined,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          } else if (curedFiles.length === 1) {
+            const file = curedFiles[0];
+            userNotification.push({
+              title: t.msg(['VIRUS_CURE', 'DONE']),
               content: file.name,
               type: NotifyBannerTypes.ERROR_FAST,
             });

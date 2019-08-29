@@ -52,6 +52,8 @@ export interface CureFilesResponse extends TaskManagerResponse {}
 /** Antivirus task event names */
 export enum TaskEventName {
   scan = 'scan',
+  scanFull = 'scan-full',
+  scanPartial = 'scan-partial',
   filesCure = 'files-cure',
   filesDelete = 'files',
   pluginActivate = 'plugin-activate',
