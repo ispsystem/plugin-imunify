@@ -118,10 +118,13 @@ export class AntivirusCard {
           next: async (notifyEvents: ISPNotifierEvent[]) => {
             console.log('TASK LIST', notifyEvents);
             const runningTask = notifyEvents.find(event => getNestedObject(event, ['additional_data', 'status']) === 'running');
-            if (runningTask !== undefined && runningTask.additional_data.name === TaskEventName.scan) {
+            if (
+              runningTask !== undefined &&
+              [TaskEventName.scanPartial, TaskEventName.scanFull].includes(runningTask.additional_data.name)
+            ) {
               this.updateState({
                 ...this.store.getState().antivirus,
-                scanning: true,
+                scanning: runningTask.additional_data.name === TaskEventName.scanPartial ? 'PARTIAL' : 'FULL',
               });
             }
           },
@@ -148,10 +151,13 @@ export class AntivirusCard {
           next: async (notifyEvent: ISPNotifierEvent) => {
             console.log('UPDATE scan or cure', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
-            if (taskName === TaskEventName.scan && notifyEvent.additional_data.status === 'running') {
+            if (
+              [TaskEventName.scanPartial, TaskEventName.scanFull].includes(taskName) &&
+              notifyEvent.additional_data.status === 'running'
+            ) {
               this.updateState({
                 ...this.store.getState().antivirus,
-                scanning: true,
+                scanning: taskName === TaskEventName.scanPartial ? 'PARTIAL' : 'FULL',
               });
             }
             if (taskName === TaskEventName.filesCure && notifyEvent.additional_data.status === 'running') {
@@ -171,7 +177,8 @@ export class AntivirusCard {
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName !== undefined) {
               switch (taskName) {
-                case TaskEventName.scan:
+                case TaskEventName.scanPartial:
+                case TaskEventName.scanFull:
                   await this.getScanResult(notifyEvent, this.userNotification, this.t, this.siteId);
                   break;
                 case TaskEventName.filesDelete:
@@ -562,7 +569,7 @@ export class AntivirusCard {
         <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_1'])}</span>
         <span>{this.t.msg(['PREVIEW', 'FIRST_SCAN', 'TEXT_2'])}</span>
         <div style={{ display: 'inline-block', 'margin-top': '25px' }}>
-          <antivirus-card-button theme={ThemePalette.accent} onClick={() => this.scanVirus(this.scanPreset.full.id, this.siteId)}>
+          <antivirus-card-button theme={ThemePalette.accent} onClick={() => this.scanVirus(this.scanPreset.full.id, 'FULL', this.siteId)}>
             {this.t.msg(['PREVIEW', 'FIRST_SCAN', 'BUTTON'])}
           </antivirus-card-button>
         </div>

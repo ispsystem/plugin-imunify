@@ -8,7 +8,7 @@ const getInitialState = (): AntivirusState => {
     isProVersion: false,
     hasScheduledActions: false,
     infectedFilesCount: 0,
-    scanning: false,
+    scanning: null,
     healing: false,
     purchasing: false,
     inBlackLists: false,
@@ -26,15 +26,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_BEGIN: {
       return {
         ...state,
-        scanning: true,
-        error: null,
-      };
-    }
-
-    case ANTIVIRUS_ACTION.SCANNING: {
-      return {
-        ...state,
-        scanning: true,
+        scanning: action.payload.type || null,
         error: null,
       };
     }
@@ -42,11 +34,16 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_SUCCESS: {
       return {
         ...state,
-        scanning: false,
+        scanning: null,
         infectedFilesCount: action.payload.data.infectedFilesCount,
         lastScan: {
           full: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.full,
           partial: action.payload.data.historyItem.checkType === 'PARTIAL' ? action.payload.data.historyItem : state.lastScan.partial,
+        },
+        scanPreset: {
+          ...state.scanPreset,
+          full: action.payload.data.presets.full,
+          partial: action.payload.data.presets.partial,
         },
         historyItemCount: state.historyItemCount + 1,
       };
@@ -55,7 +52,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_FAILURE: {
       return {
         ...state,
-        scanning: false,
+        scanning: null,
         error: action.payload.error,
       };
     }

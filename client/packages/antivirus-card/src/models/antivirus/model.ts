@@ -1,4 +1,4 @@
-import { InfectedFile, HistoryItem } from './state';
+import { InfectedFile, HistoryItem, ScanOption } from './state';
 import { JSX } from '@stencil/core';
 
 /** Interface of scan action result */
@@ -29,6 +29,10 @@ export interface NavigationItem {
 /** Interface for data after scan success */
 export interface ScanSuccessData extends ScanResultResponse {
   infectedFilesCount: number;
+  presets: {
+    full: ScanOption;
+    partial?: ScanOption;
+  };
 }
 
 /** Common response for get list */
@@ -51,7 +55,8 @@ export interface CureFilesResponse extends TaskManagerResponse {}
 
 /** Antivirus task event names */
 export enum TaskEventName {
-  scan = 'scan',
+  scanFull = 'scan-full',
+  scanPartial = 'scan-partial',
   filesCure = 'files-cure',
   filesDelete = 'files',
   pluginActivate = 'plugin-activate',

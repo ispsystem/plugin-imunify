@@ -162,7 +162,8 @@ export interface HistoryItem {
 
 /** Antivirus task event names */
 export enum TaskEventName {
-  scan = 'scan',
+  scanFull = 'scan-full',
+  scanPartial = 'scan-partial',
   cure = 'files-cure',
 }
 

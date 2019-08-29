@@ -324,7 +324,7 @@ export class ScanSettings {
                 }}
                 width={100}
               >
-                {[256, 384, 512, 1024].map(value => (
+                {[1024, 1536, 2048].map(value => (
                   <antivirus-card-select-option selected={this.preset.ramForCheck === value} value={value}>
                     {value}
                   </antivirus-card-select-option>
