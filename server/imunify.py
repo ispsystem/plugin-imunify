@@ -25,6 +25,7 @@ ANSIBLE_PLAYBOOK_COMMAND = getenv("ANSIBLE_PLAYBOOK")
 PROXY_SERVICE = getenv("PROXY_SERVICE")
 SCHEMAS_PATH = 'schemas/'
 MAX_REQUEST_ATTEMPTS = 10
+MAX_REQUEST_INSTANCE_ATTEMPTS = 30
 OPERATION_STATUS_SUCCESS = "success"
 DEFAULT_LIMIT_VALUE = 15
 LIMIT_REGEXP = r"^\d+,\d+$|^\d+$"
@@ -550,14 +551,18 @@ async def get_instance(instance_id):
     attempt = 0
     request = None
     async with ClientSession() as ses:
-        while attempt < MAX_REQUEST_ATTEMPTS:
+        while attempt < MAX_REQUEST_INSTANCE_ATTEMPTS:
             request = await ses.get('http://{}/auth/v3/instance/{}'.format(PROXY_SERVICE, instance_id),
                                     headers={"internal-auth": "on"})
-            data = await request.json()
-            if data.get("host"):
-                break
+            log.debug("Attempt: '{}'. Status: '{}'. Response: '{}'".format(attempt, request.status, await request.text()))
+            if request.status == 200:
+                data = await request.json()
+                host = data.get("host")
+                if host:
+                    log.debug("Recived host: '{}'".format(host))
+                    break
             attempt += 1
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
         return request
 
 
@@ -640,6 +645,7 @@ class Imunify:
                 response = await ses.get("http://{}/isp/v3/site/{}".format(PROXY_SERVICE, site_id),
                                          headers={"Host": "instance-{}".format(instance_id)},
                                          cookies={"ses6": ses6})
+                log.debug("Attempt: '{}'. Status: '{}'. Response: '{}'".format(attempts, response.status, response.text()))
                 if response.status != 503:
                     return response
                 else:
@@ -1259,6 +1265,8 @@ class Imunify:
         plugin_id = getenv("PLUGIN_ID")
 
         license = request_body.get("license")
+        log.debug("License: {}".format(str(license)))
+
         instance_id = request_body.get("instance")
         lic_key = license.get("lickey", str())
 
@@ -1273,6 +1281,7 @@ class Imunify:
         instance_info = await get_instance(instance_id)
         if instance_info.status != 200:
             response = await instance_info.text()
+            log.error("Instance '{}' not found. Error: '{}'".format(str(instance_id), response))
             return web.Response(text=response, status=instance_info.status)
 
         data = await instance_info.json()
@@ -1286,26 +1295,36 @@ class Imunify:
         env = environ.copy()
         env["INSTANCE_ID"] = str(instance_id)
         cmd = ["/usr/bin/ssh", "-o", "StrictHostKeyChecking=no", "root@" + host, "imunify-antivirus", "register", lic_key, "--json"]
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
-        proc.wait()
 
-        proc_stdout = proc.stdout.read().decode("utf-8")
-        proc_stderr = proc.stderr.read().decode("utf-8")
+        attempt = 0
+        result = {}
+        while attempt < MAX_REQUEST_ATTEMPTS:
+            attempt += 1
+            proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+            proc.wait()
 
-        if proc.returncode:
-            notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
-                "name": "plugin-activate",
-                "reason": "License key not found",
-                "status": "failed"
-            })
-            return web.HTTPBadRequest(text=proc_stderr if proc_stderr else proc_stdout)
+            proc_stdout = proc.stdout.read().decode("utf-8")
+            proc_stderr = proc.stderr.read().decode("utf-8")
 
-        await update("settings", data={"value": "True"}, where="instance=%s AND name=%s", params=[instance_id, "isProVersion"])
+            log.debug("Attempt: '{}' Run command: '{}'. Return code: '{}'. STDOUT: '{}', STDERR: '{}'".format(attempt, str(cmd), str(proc.returncode), proc_stdout, proc_stderr))
+            if proc.returncode:
+                result = {"stdout": proc_stdout, "stderr": proc_stderr}
+                log.error("Attempt: '{}' '{}'".format(attempt, dumps(result)))
+                await asyncio.sleep(1)
+            else:
+                await update("settings", data={"value": "True"}, where="instance=%s AND name=%s", params=[instance_id, "isProVersion"])
+                notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
+                    "name": "plugin-activate",
+                    "status": "complete"
+                })
+                return web.HTTPOk(text=proc_stdout)
+
         notify_consul.put_key(str(instance_id), "update", "plugin", [f"plugin/{plugin_id}"], addition={
             "name": "plugin-activate",
-            "status": "complete"
+            "reason": "License key not found",
+            "status": "failed"
         })
-        return web.HTTPOk(text=proc_stdout)
+        return web.HTTPBadRequest(text=dumps(result))
 
 
 imunify = Imunify()
@@ -1377,7 +1396,7 @@ async def install_imunufy(instance=None):
     log.debug("Start installing ImunifyAV")
     vepp_list = list()
     try:
-        response = await get_vepp_list() if instance is None else await get_instance(instance)
+        response = await get_vepp_list() if (instance is None) else await get_instance(instance)
         if response.status == 200:
             data = await response.json()
             vepp_list = data['list'] if instance is None else [data]
