@@ -246,7 +246,8 @@ export class Store extends AbstractStore<WidgetState> {
    */
   async updateStateByNotify(event: ISPNotifierEvent): Promise<void> {
     switch (event.additional_data.name) {
-      case TaskEventName.scan:
+      case TaskEventName.scanPartial:
+      case TaskEventName.scanFull:
         switch (event.additional_data.status) {
           case 'complete':
             await this.getScanResult(event);
