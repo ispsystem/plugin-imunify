@@ -1,5 +1,5 @@
 import { DeleteFilesResponse, ScanSuccessData, LastScanData, CureFilesResponse, PriceListItem } from './model';
-import { ScanOption } from './state';
+import { ScanOption, CheckType } from './state';
 
 export enum ANTIVIRUS_ACTION {
   SCAN_BEGIN = 'SCAN_BEGIN',
@@ -45,16 +45,10 @@ export enum ANTIVIRUS_ACTION {
   CURE_FILES_POST_PROCESS_FAILURE = 'CURE_FILES_POST_PROCESS_FAILURE',
 }
 
-export const scanBegin = () => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
+export const scanBegin = data => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_BEGIN,
-  });
-};
-
-export const scanning = (data: { scanId: number }) => async (dispatch: (obj: ScanningAction) => any, _getState) => {
-  return dispatch({
-    type: ANTIVIRUS_ACTION.SCANNING,
-    payload: { data },
+    payload: data,
   });
 };
 
@@ -260,14 +254,8 @@ export const deleteFilesPostProcessFailure = error => async (dispatch: (obj: Del
 
 interface ScanBeginAction {
   type: ANTIVIRUS_ACTION.SCAN_BEGIN;
-}
-
-interface ScanningAction {
-  type: ANTIVIRUS_ACTION.SCANNING;
   payload: {
-    data: {
-      scanId: number;
-    };
+    type: CheckType;
   };
 }
 
@@ -421,7 +409,6 @@ interface CureFilesPostProcessFailure {
 
 export type AntivirusActionTypes =
   | ScanBeginAction
-  | ScanningAction
   | ScanSuccessAction
   | ScanFailureAction
   | GetStateBeginAction

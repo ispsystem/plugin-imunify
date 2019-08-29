@@ -22,7 +22,6 @@ import {
   savePresetFailure,
   scanBegin,
   scanFailure,
-  scanning,
   scanSuccess,
   getPriceListSuccess,
   getPriceListFailure,
@@ -240,9 +239,9 @@ export namespace AntivirusActions {
    * @param presetId - scan options preset Id
    * @param siteId - vepp site ID
    */
-  export function scan(presetId: number, siteId: number) {
+  export function scan(presetId: number, type: CheckType, siteId: number) {
     return async dispatch => {
-      dispatch(scanBegin());
+      dispatch(scanBegin({ type }));
       try {
         const requestInit: RequestInit = {
           method: 'POST',
@@ -251,10 +250,6 @@ export namespace AntivirusActions {
 
         const response = await fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/scan`, requestInit);
         handleErrors(response);
-
-        const json = await response.json();
-
-        dispatch(scanning({ scanId: json.task_id }));
       } catch (error) {
         dispatch(scanFailure(error));
       }
@@ -273,14 +268,19 @@ export namespace AntivirusActions {
         const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);
         const taskId = notifyEvent.id;
         if (started !== undefined && taskId !== undefined) {
-          const [scanResponse, infectedFilesCount] = await Promise.all([
+          const [scanResponse, infectedFilesCount, presetsResponse] = await Promise.all([
             fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`),
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`),
+            fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`),
           ]);
           handleErrors(scanResponse);
           handleErrors(infectedFilesCount);
-          const scanResult: ScanResultResponse = await scanResponse.json();
-          const filesResult: GetInfectedFilesResponse = await infectedFilesCount.json();
+          handleErrors(presetsResponse);
+          const [scanResult, filesResult, presets]: [ScanResultResponse, GetInfectedFilesResponse, any] = await Promise.all([
+            scanResponse.json(),
+            infectedFilesCount.json(),
+            presetsResponse.json(),
+          ]);
           userNotification.push({
             title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
             content: '',
@@ -324,7 +324,7 @@ export namespace AntivirusActions {
             });
           }
 
-          const result: ScanSuccessData = { ...scanResult, infectedFilesCount: filesResult.size };
+          const result: ScanSuccessData = { ...scanResult, infectedFilesCount: filesResult.size, presets };
           dispatch(scanSuccess(result));
         } else {
           throw 'Can not found object started or taskId in a notify!';
@@ -425,7 +425,7 @@ export namespace AntivirusActions {
         const presetId = await savePreset(preset, siteId, scanType)(dispatch);
         /** @todo: need refactoring */
         if (typeof presetId === 'number') {
-          await scan(presetId, siteId)(dispatch);
+          await scan(presetId, scanType, siteId)(dispatch);
         } else {
           dispatch(saveAndScanFailure(presetId['error']));
           return presetId;

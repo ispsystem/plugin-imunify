@@ -7,7 +7,7 @@ import { CheckType } from '../../models/antivirus/state';
  * PreviewStatus component props
  */
 interface PreviewStatusProps {
-  scanning: boolean;
+  scanning: null | CheckType;
   t: ITranslate;
   type: CheckType;
   lastScanDate: number;
@@ -20,7 +20,7 @@ interface PreviewStatusProps {
  * @param props - properties
  */
 export const PreviewStatus: FunctionalComponent<PreviewStatusProps> = props =>
-  props.scanning ? (
+  props.scanning === props.type ? (
     <div style={{ display: 'flex' }}>
       <p class="before-check">{props.t.msg(['PREVIEW', 'WAIT_CHECK', props.type])}</p>
       <div class="antivirus-card-preview__spinner">
