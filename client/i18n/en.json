@@ -1,5 +1,8 @@
 {
-  "TITLE": "Antivirus ImunifyAV",
+  "TITLE": {
+    "FREE": "Antivirus ImunifyAV",
+    "PRO": "Antivirus ImunifyAV+"
+  },
   "PRO_PERIODS": {
     "MONTH": {
       "SHORT": "month",
@@ -42,12 +45,12 @@
     "HELP": "This website is blacklisted by Roskomnadzor, Yandex, and Google. A possible reason can be a hacking attack on the website, inappropriate or prohibited website content. ",
     "HELP_RECOMMENDATION": "We recommend curing the viruses and reindexing the website. This process may take from 3 to 72 hours. ",
     "WAIT_CHECK": {
-      "FULL": "",
-      "PARTIAL": ""
+      "FULL": "Website scanning in progress ",
+      "PARTIAL": "Scanning in progress"
     },
     "LAST_CHECK": {
-      "FULL": "",
-      "PARTIAL": ""
+      "FULL": "Full scanning ",
+      "PARTIAL": "Scanning /%{directory}"
     },
     "NEXT_CHECK": "Next scanning: 04.06.2019 Daily ",
     "INFECTED_FILES_WORD_1": "Infected |||| Infected |||| Infected ",
@@ -148,10 +151,10 @@
       },
       "ERROR_404": "%{filename} - this file doesn't exist on the server "
     },
-    "CHECK_SITE": "",
+    "CHECK_SITE": "Check website ",
     "COMMON_DATE": {
-      "TODAY": "",
-      "YESTERDAY": ""
+      "TODAY": "Today",
+      "YESTERDAY": "Yesterday"
     }
   },
   "NEW_SCAN_BTN": "New scanning ",
@@ -257,13 +260,13 @@
     "ERROR_404": "%{filename} - this file doesn't exist on the server"
   },
   "COMMON_DATE": {
-    "TODAY": "",
-    "YESTERDAY": ""
+    "TODAY": "Today ",
+    "YESTERDAY": "Yesterday"
   },
   "PURCHASE": {
     "PREVIEW": {
-      "TITLE": "",
-      "MSG": ""
+      "TITLE": "Paying for the ImunifyAV subscription ",
+      "MSG": "Usually, it takes up to 30 minutes "
     }
   }
 }
