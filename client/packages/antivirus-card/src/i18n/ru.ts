@@ -185,7 +185,7 @@ const lang = {
   CONFIGURE: 'Настроить',
   MEGABYTE_SHORT: 'MB',
   VIRUS_DETECTED: 'Обнаружен вирус',
-  VIRUS_GROUP_DETECTED: 'Обнаружен %{amount} вирус |||| Обнаружены %{amount} вируса |||| Обнаружено %{amount} вирусов',
+  VIRUS_GROUP_DETECTED: 'Обнаружен %{smart_count} вирус |||| Обнаружены %{smart_count} вируса |||| Обнаружено %{smart_count} вирусов',
   PRICE_PERIOD: {
     DAY: 'день',
     MONTH: 'месяц',

@@ -292,7 +292,7 @@ export namespace AntivirusActions {
           const infectedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'INFECTED');
           if (infectedFiles.length > 1) {
             userNotification.push({
-              title: t.msg(['VIRUS_GROUP_DETECTED'], { amount: infectedFiles.length }),
+              title: t.msg(['VIRUS_GROUP_DETECTED'], infectedFiles.length),
               content: undefined,
               type: NotifyBannerTypes.ERROR_FAST,
             });
@@ -308,7 +308,8 @@ export namespace AntivirusActions {
           // Cured files notification
           const curedFiles = scanResult.infectedFiles.list.filter(f => f.status === 'CURED');
           if (curedFiles.length > 1) {
-            const title = `${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_1'])} ${curedFiles.length} ${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_2'])}`;
+            const count = curedFiles.length;
+            const title = `${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_1'], count)} ${count} ${t.msg(['VIRUS_CURE', 'GROUP', 'DONE_2'], count)}`;
             userNotification.push({
               title,
               content: undefined,
