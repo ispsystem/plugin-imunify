@@ -118,7 +118,7 @@ export interface AntivirusState {
     default: ScanOption;
   };
   // scanning flag
-  scanning: false | CheckType;
+  scanning: null | CheckType;
   // healing flag
   healing: boolean;
   // purchasing flag

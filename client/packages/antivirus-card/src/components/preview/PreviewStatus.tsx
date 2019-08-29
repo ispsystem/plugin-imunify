@@ -7,7 +7,7 @@ import { CheckType } from '../../models/antivirus/state';
  * PreviewStatus component props
  */
 interface PreviewStatusProps {
-  scanning: false | CheckType;
+  scanning: null | CheckType;
   t: ITranslate;
   type: CheckType;
   lastScanDate: number;

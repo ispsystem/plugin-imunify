@@ -8,7 +8,7 @@ const getInitialState = (): AntivirusState => {
     isProVersion: false,
     hasScheduledActions: false,
     infectedFilesCount: 0,
-    scanning: false,
+    scanning: null,
     healing: false,
     purchasing: false,
     inBlackLists: false,
@@ -34,7 +34,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_SUCCESS: {
       return {
         ...state,
-        scanning: false,
+        scanning: null,
         infectedFilesCount: action.payload.data.infectedFilesCount,
         lastScan: {
           full: action.payload.data.historyItem.checkType === 'FULL' ? action.payload.data.historyItem : state.lastScan.full,
@@ -52,7 +52,7 @@ export const antivirusReducer = (state: AntivirusState = getInitialState(), acti
     case ANTIVIRUS_ACTION.SCAN_FAILURE: {
       return {
         ...state,
-        scanning: false,
+        scanning: null,
         error: action.payload.error,
       };
     }
