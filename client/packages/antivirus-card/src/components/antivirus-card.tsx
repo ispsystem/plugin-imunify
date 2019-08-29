@@ -570,9 +570,7 @@ export class AntivirusCard {
     if (this.isPreloader.card) {
       return <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>;
     } else if (this.historyItemCount === 0 && !this.scanning) {
-      {
-        return this.renderFirstScan();
-      }
+      return this.renderFirstScan();
     } else {
       return (
         <Host>
