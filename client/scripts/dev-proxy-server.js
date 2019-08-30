@@ -40,8 +40,18 @@ proxy.on('proxyReq', function(proxyReq, req, res, options) {
   proxyReq.setHeader('cookie', SETTINGS.cookie);
 });
 
+proxy.on('proxyReqWs', function(proxyReqWs, req, res, options) {
+  proxyReqWs.setHeader('Origin', 'https://' + SETTINGS.host);
+  proxyReqWs.setHeader('Referer', 'https://' + SETTINGS.host + '/');
+  proxyReqWs.setHeader('cookie', SETTINGS.cookie);
+});
+
 proxy.on('proxyRes', function(proxyRes, req, res) {
   res.setHeader('access-control-allow-origin', '*');
+  res.setHeader('access-control-allow-methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200);
+  }
 });
 
 // Listen for the `error` event on `proxy`.
@@ -61,8 +71,6 @@ proxy.on('error', function(err, req, res) {
 });
 
 const server = http.createServer(function(req, res) {
-  // console.log(req.headers);
-
   proxy.web(req, res, {
     target: 'https://' + SETTINGS.host,
     secure: false,
@@ -74,8 +82,8 @@ const server = http.createServer(function(req, res) {
 // Listen to the `upgrade` event and proxy the
 // WebSocket requests as well.
 //
-server.on('upgrade', function (req, socket, head) {
-  proxy.ws(req, socket, head,{
+server.on('upgrade', function(req, socket, head) {
+  proxy.ws(req, socket, head, {
     target: 'wss://' + SETTINGS.host,
     secure: false,
     changeOrigin: true,
