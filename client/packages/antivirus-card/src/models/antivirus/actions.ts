@@ -268,8 +268,10 @@ export namespace AntivirusActions {
         const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);
         const taskId = notifyEvent.id;
         if (started !== undefined && taskId !== undefined) {
-          const [scanResponse, infectedFilesCount, presetsResponse] = await Promise.all([
-            fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`),
+          // wait when result will be saved to DB
+          const scanResponse = await fetch(`${endpoint}/plugin/api/imunify/scan/result?task_id=${notifyEvent.id}&started=${started}`);
+          // after save result to DB get others date
+          const [infectedFilesCount, presetsResponse] = await Promise.all([
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/files/infected?limit=0`),
             fetch(`${endpoint}/plugin/api/imunify/site/${siteId}/presets`),
           ]);
@@ -281,17 +283,41 @@ export namespace AntivirusActions {
             infectedFilesCount.json(),
             presetsResponse.json(),
           ]);
-          userNotification.push({
-            title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
-            content: '',
-            // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
-            type: NotifyBannerTypes.NORMAL_FAST,
-          });
-          scanResult.infectedFiles.list.forEach(file => {
-            if (file.status === 'INFECTED') {
-              userNotification.push({ title: t.msg(['VIRUS_DETECTED']), content: file.threatName, type: NotifyBannerTypes.ERROR_FAST });
-            }
-          });
+
+          // Infected files notification
+          const infectedFiles = scanResult.historyItem.infectedFilesCount;
+          const curedFiles = scanResult.historyItem.curedFilesCount;
+
+          // Cured files notification
+          if (curedFiles > 0) {
+            userNotification.push({
+              title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
+              content: t.msg(['NOTIFY', 'DESCRIPTION', 'VIRUSES_CURED'], curedFiles),
+              // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
+              type: NotifyBannerTypes.NORMAL_FAST,
+            });
+          } else if (infectedFiles > 1) {
+            userNotification.push({
+              title: t.msg(['VIRUS_GROUP_DETECTED'], infectedFiles),
+              content: undefined,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          } else if (infectedFiles === 1) {
+            const file = scanResult.infectedFiles.list[0];
+            userNotification.push({
+              title: t.msg(['VIRUS_DETECTED']),
+              content: file.name,
+              type: NotifyBannerTypes.ERROR_FAST,
+            });
+          } else {
+            userNotification.push({
+              title: t.msg(['NOTIFY', 'SCAN_SUCCESS']),
+              content: t.msg(['NOTIFY', 'DESCRIPTION', 'NO_VIRUSES']),
+              // link: this._t.msg(['NOTIFY', 'MORE_DETAILS']),
+              type: NotifyBannerTypes.NORMAL_FAST,
+            });
+          }
+
           const result: ScanSuccessData = { ...scanResult, infectedFilesCount: filesResult.size, presets };
           dispatch(scanSuccess(result));
         } else {
