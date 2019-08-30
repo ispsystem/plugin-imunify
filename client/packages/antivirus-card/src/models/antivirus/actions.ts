@@ -304,8 +304,6 @@ export namespace AntivirusActions {
             });
           } else if (infectedFiles === 1) {
             const file = scanResult.infectedFiles.list[0];
-            debugger;
-            console.log(file);
             userNotification.push({
               title: t.msg(['VIRUS_DETECTED']),
               content: file.name,
