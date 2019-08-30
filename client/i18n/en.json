@@ -60,7 +60,13 @@
     "NOT_INFECTED_FILES": "Viruses not found ",
     "IN_BLACK_LISTS": "The website is blacklisted ",
     "HOW_TO_FIX": "How to fix",
-    "NOT_IN_BLACK_LISTS": "Website is not blacklisted "
+    "NOT_IN_BLACK_LISTS": "Website is not blacklisted ",
+    "HEALING": "",
+    "FIRST_SCAN": {
+      "BUTTON": "",
+      "TEXT_1": "",
+      "TEXT_2": ""
+    }
   },
   "INFECTED_FILES": {
     "NOT_FOUND": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. Use Imunify Pro to cure viruses. You can subscribe right now. ",
@@ -223,7 +229,11 @@
   "VIRUS_DETECTED": "Virus detected ",
   "NOTIFY": {
     "SCAN_SUCCESS": "Website scanning has been completed ",
-    "MORE_DETAILS": "Details "
+    "MORE_DETAILS": "Details ",
+    "DESCRIPTION": {
+      "NO_VIRUSES": "",
+      "VIRUSES_CURED": ""
+    }
   },
   "PAYMENT_FAILED_MODAL": {
     "TITLE": "Error paying for ImunifyAV+",
@@ -268,5 +278,6 @@
       "TITLE": "Paying for the ImunifyAV subscription ",
       "MSG": "Usually, it takes up to 30 minutes "
     }
-  }
+  },
+  "VIRUS_GROUP_DETECTED": ""
 }
