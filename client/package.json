@@ -1,17 +1,20 @@
 {
-  "name": "imunify",
+  "name": "imunify-plugin-client",
   "version": "1.0.0",
-  "description": "",
+  "description": "Frontend plugin ImunifyAV/ImunifyAV+ for Vepp",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ispsystem/plugin-imunify.git"
+  },
   "scripts": {
-    "dev:ac": "concurrently \"lerna run --stream --scope antivirus-card start\" \"npm:proxy\"",
+    "dev:ac": "concurrently \"lerna run --stream --scope antivirus-card start\" \"dev-proxy-server\"",
     "build:ac": "lerna run --stream --scope antivirus-card build && npm run lang",
-    "dev:am": "concurrently \"lerna run --stream --scope antivirus-menu start\" \"npm:proxy\"",
+    "dev:am": "concurrently \"lerna run --stream --scope antivirus-menu start\" \"dev-proxy-server\"",
     "build:am": "lerna run --stream --scope antivirus-menu build && npm run lang",
-    "dev:aw": "concurrently \"lerna run --stream --scope antivirus-widget start\" \"npm:proxy\"",
+    "dev:aw": "concurrently \"lerna run --stream --scope antivirus-widget start\" \"dev-proxy-server\"",
     "build:aw": "lerna run --stream --scope antivirus-widget build && npm run lang",
     "build": "concurrently \"npm:build:ac\" \"npm:build:am\" \"npm:build:aw\" && node scripts/.make",
-    "proxy": "node scripts/dev-proxy-server",
     "cz": "node git-cz/cli",
     "lang": "node --experimental-modules scripts/prepare-lang.js",
     "msg": "sh scripts/translate.sh ru upload master && sh scripts/translate.sh en download i18n/en.json"
@@ -22,6 +25,7 @@
   "devDependencies": {
     "@commitlint/cli": "^8.1.0",
     "@commitlint/config-conventional": "^8.1.0",
+    "@ispsystem/dev-proxy-server": "^0.1.2",
     "@ispsystem/notice-tools": "^1.0.1",
     "@ispsystem/websocket": "^1.0.1",
     "@stencil/core": "1.2.2",
@@ -39,7 +43,6 @@
     "fs-extra": "^8.1.0",
     "git-cz": "^3.2.1",
     "glob": "^7.1.4",
-    "http-proxy": "^1.17.0",
     "husky": "^3.0.0",
     "lerna": "^3.15.0",
     "lint-staged": "^9.2.1",
