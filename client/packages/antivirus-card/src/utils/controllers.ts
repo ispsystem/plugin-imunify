@@ -1,58 +1,10 @@
 import { handleErrors } from '../models/antivirus/actions';
 import { endpoint } from '../constants';
-import { configureNotifier, getNestedObject } from './tools';
+import { getNestedObject } from './tools';
 import { ISPNotifier } from '@ispsystem/notice-tools';
-import { take, switchMap, catchError } from 'rxjs/operators';
-import { of, Observable } from 'rxjs';
+import { switchMap, catchError, take, map, filter } from 'rxjs/operators';
+import { of, Observable, merge, interval, from } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-
-/**
- * Buy PRO antivirus version
- *
- * @param pricelist - tariff identifier
- * @param period - buy period
- * @param pluginId - this plugin ID
- * @param notifier - notifier service
- */
-export async function purchase(
-  pricelist: string,
-  period: string,
-  pluginId: number,
-  notifier: ISPNotifier,
-): Promise<Observable<string | null>> {
-  const locationUrl = location.origin + location.pathname + location.hash + '?';
-
-  const requestInit: RequestInit = {
-    method: 'POST',
-    body: JSON.stringify({
-      pricelist,
-      period,
-      fail_url: locationUrl + 'payment=failed',
-      pending_url: location.href + 'payment=pending',
-      success_url: locationUrl + 'payment=success',
-    }),
-  };
-
-  const response = await fetch(`${endpoint}/api/isp/market/v3/service/plugin/purchase`, requestInit);
-  handleErrors(response);
-  const json: { id: number; order_id: number; task: number } = await response.json();
-
-  configureNotifier(notifier, { plugin: [pluginId], market_order: [json.order_id] });
-
-  return notifier.getEvents('market_order', json.order_id, 'update').pipe(
-    take(1),
-    switchMap(notifyEvent => {
-      const paymentLink = getNestedObject(notifyEvent, ['data', 'payment_link']);
-      const status = getNestedObject(notifyEvent, ['data', 'status']);
-
-      if (status !== 'Fail' && typeof paymentLink === 'string' && notifyEvent.id === json.order_id) {
-        return of(paymentLink);
-      } else {
-        throw { status, paymentLink };
-      }
-    }),
-  );
-}
 
 /**
  * Payment orders object interface
@@ -95,5 +47,62 @@ export function getPaymentOrders(): Observable<PaymentOrders> {
       }
     }),
     catchError(error => of({ error: true, message: error.message })),
+  );
+}
+
+/**
+ * Buy PRO antivirus version
+ *
+ * @param pricelist - tariff identifier
+ * @param period - buy period
+ * @param notifier - notifier service
+ */
+export async function purchase(pricelist: string, period: string, notifier: ISPNotifier): Promise<Observable<string | null>> {
+  const locationUrl = location.origin + location.pathname + location.hash + '?';
+
+  const requestInit: RequestInit = {
+    method: 'POST',
+    body: JSON.stringify({
+      pricelist,
+      period,
+      fail_url: locationUrl + 'payment=failed',
+      pending_url: location.href + 'payment=pending',
+      success_url: locationUrl + 'payment=success',
+    }),
+  };
+
+  const response = await fetch(`${endpoint}/api/isp/market/v3/service/plugin/purchase`, requestInit);
+  handleErrors(response);
+  const json: { id: number; order_id: number; task: number } = await response.json();
+
+  // common processing function for payment order
+  const getOrderLink = (paymentOrder: PaymentOrderItem): string => {
+    if (paymentOrder.status === 'Payment' && typeof paymentOrder.payment_link === 'string') {
+      return paymentOrder.payment_link;
+    } else if (paymentOrder.status === 'Fail') {
+      throw { paymentOrder };
+    }
+  };
+
+  // get order info hard with simple request to market (need if we didn't get order info with notifier)
+  const intervalGetPaymentLink$ = interval(4000).pipe(
+    switchMap(() => getPaymentOrders().toPromise()),
+    map(paymentOrders => {
+      const paymentOrder = (paymentOrders.list || []).find(paymentOrder => paymentOrder.id === json.order_id);
+      if (paymentOrder !== undefined) {
+        return getOrderLink(paymentOrder);
+      }
+    }),
+  );
+
+  // base subscribe to market orders
+  const notifyGetPaymentLink$ = from(notifier.getEvents('market_order', json.order_id, 'update').toPromise()).pipe(
+    filter(notifyEvent => getNestedObject(notifyEvent, ['data', 'id']) === json.order_id),
+    switchMap(notifyEvent => of(getOrderLink(notifyEvent.data))),
+  );
+
+  return merge(intervalGetPaymentLink$, notifyGetPaymentLink$).pipe(
+    filter(l => typeof l === 'string'),
+    take(1),
   );
 }

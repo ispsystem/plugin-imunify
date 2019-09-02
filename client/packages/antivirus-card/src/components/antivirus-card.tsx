@@ -481,7 +481,7 @@ export class AntivirusCard {
       ...this.store.getState().antivirus,
       purchasing: true,
     });
-    const orderNotifier = await purchase(this.priceList.id, this.priceList.price[0].id, this.pluginId, this.notifierService);
+    const orderNotifier = await purchase(this.priceList.id, this.priceList.price[0].id, this.notifierService);
     orderNotifier.subscribe({
       next: paymentLink => {
         location.replace(paymentLink);
