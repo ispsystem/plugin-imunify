@@ -186,17 +186,16 @@ export function configureNotifier(notifier: ISPNotifier, entityIds: NotifierEnti
       ],
     });
   }
-  if (entityIds.market_order !== undefined) {
-    params.entities.push({
-      entity: 'market_order',
-      ids: entityIds['market_order'],
-      type: [
-        { name: ISPNotifierNotifyType.CREATE },
-        { name: ISPNotifierNotifyType.UPDATE, action: '/isp/market/v3/order/{market_order_id}' },
-        { name: ISPNotifierNotifyType.DELETE },
-      ],
-    });
-  }
+
+  params.entities.push({
+    entity: 'market_order',
+    ids: entityIds['market_order'],
+    type: [
+      { name: ISPNotifierNotifyType.CREATE },
+      { name: ISPNotifierNotifyType.UPDATE, action: '/isp/market/v3/order/{market_order_id}' },
+      { name: ISPNotifierNotifyType.DELETE },
+    ],
+  });
 
   notifier && notifier.setParams(params);
 }
