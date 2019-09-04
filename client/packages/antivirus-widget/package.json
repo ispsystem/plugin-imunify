@@ -25,6 +25,6 @@
   },
   "dependencies": {
     "@ispsystem/translang": "^0.2.1",
-    "rxjs": "^6.5.3"
+    "rxjs": "6.5.2"
   }
 }
