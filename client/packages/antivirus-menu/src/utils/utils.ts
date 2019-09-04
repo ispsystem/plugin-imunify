@@ -3,10 +3,12 @@ import { Lang } from '../i18n/ru';
 import { Translang, translang } from '@ispsystem/translang';
 
 export interface Translate extends Translang<Lang, languageTypes> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any;
   loading: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleErrors(response): any {
   if (!response.ok) {
     throw new Error(response.statusText);
@@ -36,6 +38,7 @@ export async function loadTranslate(lang: languageTypes): Promise<Translate> {
   return { ...translang(lang, { ...json }), error: null, loading: false };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getNestedObject(nestedObj, pathArr): any {
   return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), nestedObj);
 }
