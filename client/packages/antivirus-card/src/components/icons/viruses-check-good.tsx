@@ -1,5 +1,6 @@
 import { h } from '@stencil/core';
 
+/* eslint-disable react/no-unknown-property */
 export const VirusesCheckGoodIcon = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="0.5" y="2.5" width="29" height="24" rx="2.5" fill="white" stroke="#344A5E" />
@@ -15,3 +16,4 @@ export const VirusesCheckGoodIcon = () => (
     <path d="M20 18.6L22.5714 21L26 17" stroke="white" />
   </svg>
 );
+/* eslint-enable react/no-unknown-property */

@@ -87,6 +87,7 @@ export class History {
    *
    * @param error - error
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleFailure(error: any): void {
     throw new Error("Oops, we haven't got JSON with a history list!" + error);
   }

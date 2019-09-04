@@ -26,7 +26,7 @@ export class Input {
   @Prop({ mutable: true }) value: string;
 
   /** Style width for input field */
-  @Prop({ reflect: true }) width: string = '280px';
+  @Prop({ reflect: true }) width = '280px';
 
   /** List of custom validators */
   @Prop() validator: Validator<string> | Validator<string>[];

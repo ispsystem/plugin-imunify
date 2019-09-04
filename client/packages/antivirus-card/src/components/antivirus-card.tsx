@@ -116,7 +116,6 @@ export class AntivirusCard {
         .pipe(take(1))
         .subscribe({
           next: async (notifyEvents: ISPNotifierEvent[]) => {
-            console.log('TASK LIST', notifyEvents);
             const runningTask = notifyEvents.find(event => getNestedObject(event, ['additional_data', 'status']) === 'running');
             if (
               runningTask !== undefined &&
@@ -133,7 +132,6 @@ export class AntivirusCard {
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'update').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('UPDATE activate', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName === TaskEventName.pluginActivate && notifyEvent.additional_data.status === 'complete') {
               this.updateState({
@@ -149,7 +147,6 @@ export class AntivirusCard {
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('UPDATE scan or cure', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (
               [TaskEventName.scanPartial, TaskEventName.scanFull].includes(taskName) &&
@@ -173,7 +170,6 @@ export class AntivirusCard {
       this.sub.add(
         this.notifierService.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('DELETE', notifyEvent);
             const taskName = getNestedObject(notifyEvent, ['additional_data', 'name']);
             if (taskName !== undefined) {
               switch (taskName) {
@@ -217,8 +213,7 @@ export class AntivirusCard {
               });
               this.sub.add(
                 this.notifierService.getEvents('market_order', '*', 'task', '*', 'delete').subscribe({
-                  next: async (notifyEvent: ISPNotifierEvent) => {
-                    console.log('MARKET_ORDER TASK DELETE', notifyEvent);
+                  next: async () => {
                     this.checkFeatures();
                   },
                 }),

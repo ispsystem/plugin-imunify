@@ -1,5 +1,6 @@
 import { h } from '@stencil/core';
 
+/* eslint-disable react/no-unknown-property */
 export const CheckListGoodIcon = () => (
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="2.5" y="2.5" width="25" height="27" rx="2.5" fill="white" stroke="#344A5E" />
@@ -19,3 +20,4 @@ export const CheckListGoodIcon = () => (
     <line x1="5.5" y1="23.5" x2="15.5" y2="23.5" stroke="#344A5E" stroke-linecap="round" />
   </svg>
 );
+/* eslint-enable react/no-unknown-property */

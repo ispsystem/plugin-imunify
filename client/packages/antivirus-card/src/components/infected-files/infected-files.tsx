@@ -162,6 +162,7 @@ export class InfectedFiles {
    *
    * @param error - error
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   handleFailure(error: any): void {
     /** @todo add handle for error fetch list */
     throw new Error("Oops, we haven't got JSON with a infected file list!" + error);
