@@ -8,6 +8,7 @@ import { ISPNotifier, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
  * @param object - root object
  * @param pathArr - path to nested object as string array
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getNestedObject(object: object, pathArr: string[]): any {
   return pathArr.reduce((obj, key) => (obj && obj[key] !== 'undefined' ? obj[key] : undefined), object);
 }
@@ -17,6 +18,7 @@ export function getNestedObject(object: object, pathArr: string[]): any {
  * https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
  */
 export function uuidv4(): string {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const hash: any = ([1e7] as any) + -1e3 + -4e3 + -8e3 + -1e11;
   // https://stackoverflow.com/questions/44042816/what-is-wrong-with-crypto-getrandomvalues-in-internet-explorer-11
   const crypto = window.crypto || window['msCrypto']; // for IE 11

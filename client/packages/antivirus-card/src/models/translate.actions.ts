@@ -13,34 +13,40 @@ interface LoadBeginAction {
 
 interface LoadSuccessAction {
   type: TRANSLATE_ACTION.LOAD_I18N_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface LoadFailureAction {
   type: TRANSLATE_ACTION.LOAD_I18N_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
-export const loadBegin = () => async (dispatch: (obj: LoadBeginAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const loadBegin = () => async (dispatch: (obj: LoadBeginAction) => any) => {
   return dispatch({
     type: TRANSLATE_ACTION.LOAD_I18N_BEGIN,
   });
 };
 
-export const loadSuccess = data => async (dispatch: (obj: LoadSuccessAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const loadSuccess = data => async (dispatch: (obj: LoadSuccessAction) => any) => {
   return dispatch({
     type: TRANSLATE_ACTION.LOAD_I18N_SUCCESS,
     payload: { data },
   });
 };
 
-export const loadFailure = error => async (dispatch: (obj: LoadFailureAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const loadFailure = error => async (dispatch: (obj: LoadFailureAction) => any) => {
   return dispatch({
     type: TRANSLATE_ACTION.LOAD_I18N_FAILURE,
     payload: { error },
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function handleErrors(response): any {
   if (!response.ok) {
     throw new Error(response.statusText);

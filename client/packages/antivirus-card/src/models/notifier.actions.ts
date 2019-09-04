@@ -4,7 +4,8 @@ export enum NOTIFIER_ACTION {
   UPDATE_NOTIFIER_SUCCESS = 'UPDATE_NOTIFIER_SUCCESS',
 }
 
-export const updateNotifierSuccess = data => async (dispatch: (obj: UpdateNotifierSuccessAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateNotifierSuccess = data => async (dispatch: (obj: UpdateNotifierSuccessAction) => any) => {
   return dispatch({
     type: NOTIFIER_ACTION.UPDATE_NOTIFIER_SUCCESS,
     payload: { data },

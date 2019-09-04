@@ -4,6 +4,7 @@ import { Translang } from '@ispsystem/translang';
 import { languageTypes } from '../constants';
 
 export interface Translate extends Translang<Lang, languageTypes> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any;
   loading: boolean;
 }

@@ -278,6 +278,7 @@ export namespace AntivirusActions {
           handleErrors(scanResponse);
           handleErrors(infectedFilesCount);
           handleErrors(presetsResponse);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const [scanResult, filesResult, presets]: [ScanResultResponse, GetInfectedFilesResponse, any] = await Promise.all([
             scanResponse.json(),
             infectedFilesCount.json(),
