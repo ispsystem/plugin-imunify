@@ -1,32 +1,29 @@
-import Polyglot from 'node-polyglot';
 import { TranslateActionTypes, TRANSLATE_ACTION } from './translate.actions';
 import { Lang } from '../i18n/ru';
-import { Path } from '../utils/types';
+import { Translang } from '@ispsystem/translang';
+import { languageTypes } from '../constants';
 
-export interface ITranslate {
-  msg<T extends Lang, L extends Path<T, L>>(
-    params: L,
-    options?: number | Polyglot.InterpolationOptions
-  ): string;
+export interface Translate extends Translang<Lang, languageTypes> {
   error: any;
   loading: boolean;
 }
 
-const getInitialState = (): ITranslate => {
+const getInitialState = (): Translate => {
   return {
     error: null,
     loading: false,
-    msg: () => ''
+    lang: null,
+    msg: () => '',
   };
 };
 
-export const translateReducer = (state: ITranslate = getInitialState(), action: TranslateActionTypes) => {
+export const translateReducer = (state: Translate = getInitialState(), action: TranslateActionTypes): Translate => {
   switch (action.type) {
     case TRANSLATE_ACTION.LOAD_I18N_BEGIN: {
       return {
         ...state,
         loading: true,
-        error: null
+        error: null,
       };
     }
 
@@ -34,7 +31,7 @@ export const translateReducer = (state: ITranslate = getInitialState(), action: 
       return {
         ...state,
         loading: false,
-        msg: action.payload.data
+        msg: action.payload.data,
       };
     }
 
@@ -42,7 +39,7 @@ export const translateReducer = (state: ITranslate = getInitialState(), action: 
       return {
         ...state,
         loading: false,
-        error: action.payload.error
+        error: action.payload.error,
       };
     }
   }

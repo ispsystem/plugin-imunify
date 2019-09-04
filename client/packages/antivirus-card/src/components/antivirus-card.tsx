@@ -8,7 +8,7 @@ import { RootState } from '../redux/reducers';
 import { ActionTypes } from '../redux/actions';
 import { ProIcon } from './icons/pro';
 import { TranslateActions } from '../models/translate.actions';
-import { ITranslate } from '../models/translate.reducers';
+import { Translate } from '../models/translate.reducers';
 import { Observable, Subscription, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { defaultLang, languageTypes, languages } from '../constants';
@@ -67,7 +67,7 @@ export class AntivirusCard {
   /** flag is true if this antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
   /** nested components */
   @State() items: NavigationItem[];
   /** first loading flag */

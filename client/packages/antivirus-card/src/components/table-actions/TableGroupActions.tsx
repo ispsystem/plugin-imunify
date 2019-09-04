@@ -1,6 +1,6 @@
 import { FunctionalComponent, h } from '@stencil/core';
 import { DoneIcon } from '../icons/doneIcon';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 
 /**
  * Table group action component
@@ -11,7 +11,7 @@ interface TableGroupActionsProps {
     name: string;
     msg: string;
   }[];
-  t: ITranslate;
+  t: Translate;
   handleActions: (x: string) => Promise<void>;
 }
 

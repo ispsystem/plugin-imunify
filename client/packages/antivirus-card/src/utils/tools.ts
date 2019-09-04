@@ -1,4 +1,4 @@
-import { ITranslate } from '../models/translate.reducers';
+import { Translate } from '../models/translate.reducers';
 import { PricePeriodType } from '../models/antivirus/model';
 import { ISPNotifier, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
 
@@ -103,7 +103,7 @@ export const filterEmptyString = (arr: string[]): string[] => reduceFilter(arr, 
  * @param date - input date in date obj
  * @param t - translate object
  */
-export function getDayMonthYearAsStr(date: Date, t?: ITranslate): string {
+export function getDayMonthYearAsStr(date: Date, t?: Translate): string {
   if (t !== undefined && t !== null) {
     const today = new Date().setHours(0, 0, 0, 0);
     const yesterday = today - 864e5;
@@ -149,7 +149,7 @@ export function getCurrencySymbol(currency: string): string {
  * @param period - period
  * @param t - translate object
  */
-export function getShortPeriod(period: PricePeriodType, t: ITranslate, count = 3): string {
+export function getShortPeriod(period: PricePeriodType, t: Translate, count = 3): string {
   return t.msg(['PRICE_PERIOD', period.toUpperCase() as 'DAY' | 'MONTH' | 'YEAR']).slice(0, count);
 }
 

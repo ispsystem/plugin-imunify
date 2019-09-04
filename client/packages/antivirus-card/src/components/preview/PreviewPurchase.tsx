@@ -1,12 +1,12 @@
 import { FunctionalComponent, h } from '@stencil/core';
 import { ImunifyLogo } from '../icons/ImunifyLogo';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 
 /**
  * PreviewPurchase component props
  */
 interface PreviewPurchaseProps {
-  t: ITranslate;
+  t: Translate;
 }
 
 /**

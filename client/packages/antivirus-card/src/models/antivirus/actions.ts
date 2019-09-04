@@ -34,7 +34,7 @@ import { endpoint } from '../../constants';
 import { AntivirusState, CheckType, InfectedFile, ScanOption } from './state';
 import { getNestedObject } from '../../utils/tools';
 import { NotifyBannerTypes, UserNotification } from '../../redux/user-notification.interface';
-import { ITranslate } from '../translate.reducers';
+import { Translate } from '../translate.reducers';
 import {
   ScanResultResponse,
   TaskManagerResponse,
@@ -79,7 +79,7 @@ export namespace AntivirusActions {
    * @param userNotification User notifications provider
    * @param t i18n provider
    */
-  export function deleteFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: ITranslate) {
+  export function deleteFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: Translate) {
     return async dispatch => {
       try {
         const body = { files: files.map(f => f.id) };
@@ -123,7 +123,7 @@ export namespace AntivirusActions {
    * @param userNotification User Notification provider
    * @param t Translator provider
    */
-  export function deleteFilesPostProcess(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate) {
+  export function deleteFilesPostProcess(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: Translate) {
     return dispatch => {
       try {
         const results = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'result']);
@@ -160,7 +160,7 @@ export namespace AntivirusActions {
    * @param userNotification User notifications provider
    * @param t i18n provider
    */
-  export function cureFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: ITranslate) {
+  export function cureFiles(siteId: number, files: InfectedFile[], userNotification: UserNotification, t: Translate) {
     return async dispatch => {
       try {
         const body = { files: files.map(f => f.id), action: 'cure' };
@@ -204,7 +204,7 @@ export namespace AntivirusActions {
    * @param userNotification - User Notification provider
    * @param t - Translator provider
    */
-  export function cureFilesPostProcess(notifierEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate) {
+  export function cureFilesPostProcess(notifierEvent: ISPNotifierEvent, userNotification: UserNotification, t: Translate) {
     return dispatch => {
       try {
         const results = getNestedObject(notifierEvent, ['additional_data', 'output', 'content', 'result']);
@@ -262,7 +262,7 @@ export namespace AntivirusActions {
    *
    * @param notifyEvent - result from notifier
    */
-  export function getScanResult(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: ITranslate, siteId: number) {
+  export function getScanResult(notifyEvent: ISPNotifierEvent, userNotification: UserNotification, t: Translate, siteId: number) {
     return async dispatch => {
       try {
         const started = getNestedObject(notifyEvent, ['additional_data', 'output', 'content', 'scan', 'started']);

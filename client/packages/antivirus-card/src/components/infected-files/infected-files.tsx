@@ -3,7 +3,7 @@ import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr, getNestedObject } from '../../utils/tools';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { TableState, TableController, TableStore } from '../table/table-controller';
 import { Subscription } from 'rxjs';
 import { endpoint } from '../../constants';
@@ -49,7 +49,7 @@ export class InfectedFiles {
   @State() isProVersion: AntivirusState['isProVersion'];
 
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
 
   /** Global notifier object */
   @State() notifier: RootState['notifier'];

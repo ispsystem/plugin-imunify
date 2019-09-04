@@ -4,7 +4,7 @@ import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { HistoryItem, AntivirusState } from '../../models/antivirus/state';
 import { endpoint } from '../../constants';
 import { TableController, TableState, TableStore } from '../table/table-controller';
@@ -36,7 +36,7 @@ export class History {
   @State() siteId: RootState['siteId'];
 
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
 
   /** Common table state */
   @State() tableState: TableState<HistoryItem>;

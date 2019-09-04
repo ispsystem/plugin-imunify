@@ -1,5 +1,5 @@
 import { Component, h, Host, Prop, State } from '@stencil/core';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
@@ -28,7 +28,7 @@ export class History {
   @Prop() changeCountOnPage: (event: number) => void;
 
   /** Global translate */
-  @State() t: ITranslate;
+  @State() t: Translate;
 
   componentWillLoad() {
     this.store.mapStateToProps(this, state => ({ t: state.translate }));

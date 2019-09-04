@@ -1,5 +1,5 @@
 import { Component, h, Host, State, Prop, Method, Element } from '@stencil/core';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
@@ -37,7 +37,7 @@ export class ScanSettings {
   /** Scan type */
   @State() scanType: CheckType;
   /** Translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
   /** Site id state */
   @State() siteId: RootState['siteId'];
   /** @todo uncomment when email notification will release in backend */
