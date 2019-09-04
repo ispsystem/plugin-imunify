@@ -1,14 +1,11 @@
-import Polyglot from 'node-polyglot';
 import { Lang } from '../i18n/ru';
-import { Path } from '../utils/types';
 import { Observable } from 'rxjs';
+import { Translang } from '@ispsystem/translang';
+import { languageTypes } from '../constants';
 
-export interface Translate {
-  msg<T extends Lang, L extends Path<T, L>>(params: L, options?: number | Polyglot.InterpolationOptions): string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface Translate extends Translang<Lang, languageTypes> {
   error: any;
   loading: boolean;
-  lang: string;
 }
 
 /** интерфейс события нотификации */
