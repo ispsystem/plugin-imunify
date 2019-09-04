@@ -1,7 +1,7 @@
 import { Component, h, Prop, State } from '@stencil/core';
 import { Observable, Subscription } from 'rxjs';
 import { languageTypes, defaultLang, languages } from '../../constants';
-import { loadTranslate, getNestedObject, ITranslate } from '../../utils/utils';
+import { loadTranslate, getNestedObject, Translate } from '../../utils/utils';
 import { MenuIcon } from './Menu-icon';
 
 /**
@@ -32,7 +32,7 @@ export class AntivirusMenu {
   @State() isActiveVMenuItem: boolean;
 
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
 
   /** Flag for display only icon */
   @State() iconOnly = false;
