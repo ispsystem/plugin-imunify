@@ -5,17 +5,10 @@ export interface Validator<T> {
 }
 
 /** Default validator */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const defaultValidator: Validator<any> = {
-  validate: () => true
-}
-
-/** 
- * Method for return a validator with merged input validators 
- * @param validatorList - list of validators
- */
-export function getValidator<T>(validatorList: Array<Validator<T>>): Validator<T> {
-  return (validatorList || []).reduce(combineValidators, defaultValidator);
-}
+  validate: () => true,
+};
 
 /**
  * Method of combine two validators
@@ -23,19 +16,25 @@ export function getValidator<T>(validatorList: Array<Validator<T>>): Validator<T
  * @param v2 validator two
  */
 export function combineValidators<T>(v1: Validator<T>, v2: Validator<T>): Validator<T> {
-  let combined: Validator<T>;
-  combined = {
-      validate: (x: T) => {
-          const res1: boolean = v1.validate(x);
-          const res2: boolean = v2.validate(x);
-          if (!res1) {
-              combined.errorMessage = v1.errorMessage;
-          } else if (!res2) {
-              combined.errorMessage = v2.errorMessage;
-          }
-          return res1 && res2;
-      },
-  }
+  const combined: Validator<T> = {
+    validate: (x: T) => {
+      const res1: boolean = v1.validate(x);
+      const res2: boolean = v2.validate(x);
+      if (!res1) {
+        combined.errorMessage = v1.errorMessage;
+      } else if (!res2) {
+        combined.errorMessage = v2.errorMessage;
+      }
+      return res1 && res2;
+    },
+  };
   return combined;
 }
 
+/**
+ * Method for return a validator with merged input validators
+ * @param validatorList - list of validators
+ */
+export function getValidator<T>(validatorList: Array<Validator<T>>): Validator<T> {
+  return (validatorList || []).reduce(combineValidators, defaultValidator);
+}

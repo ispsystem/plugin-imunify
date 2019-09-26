@@ -67,8 +67,7 @@ export class AntivirusWidget {
     if (this.userNotification === undefined) {
       console.warn('User notification service was not provided');
       this.userNotification = {
-        push: banner => {
-          console.log('USER NOTIFY', banner);
+        push: () => {
           return of(null);
         },
       };
@@ -161,8 +160,6 @@ export class AntivirusWidget {
           .pipe(take(1))
           .subscribe({
             next: async (notifyEvents: ISPNotifierEvent[]) => {
-              console.log('TASK LIST', notifyEvents);
-
               const runningTask = notifyEvents.find(event => ['running'].includes(getNestedObject(event, ['additional_data', 'status'])));
               if (runningTask !== undefined) {
                 await this.store.updateStateByNotify(runningTask);
@@ -174,7 +171,6 @@ export class AntivirusWidget {
       this.sub.add(
         notifier.getEvents('plugin', this.pluginId, 'task', '*', 'update').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('UPDATE', notifyEvent);
             if (getNestedObject(notifyEvent, ['additional_data', 'status']) === 'running') {
               await this.store.updateStateByNotify(notifyEvent);
             }
@@ -185,7 +181,6 @@ export class AntivirusWidget {
       this.sub.add(
         notifier.getEvents('plugin', this.pluginId, 'task', '*', 'delete').subscribe({
           next: async (notifyEvent: ISPNotifierEvent) => {
-            console.log('DELETE', notifyEvent);
             if (getNestedObject(notifyEvent, ['additional_data', 'status']) !== undefined) {
               await this.store.updateStateByNotify(notifyEvent);
             }

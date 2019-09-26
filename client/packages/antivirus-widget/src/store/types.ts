@@ -1,23 +1,21 @@
-import Polyglot from 'node-polyglot';
 import { Lang } from '../i18n/ru';
-import { Path } from '../utils/types';
 import { Observable } from 'rxjs';
+import { Translang } from '@ispsystem/translang';
+import { languageTypes } from '../constants';
 
-export interface Translate {
-  msg<T extends Lang, L extends Path<T, L>>(params: L, options?: number | Polyglot.InterpolationOptions): string;
+export interface Translate extends Translang<Lang, languageTypes> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error: any;
   loading: boolean;
-  lang: string;
 }
 
-/** интерфейс события нотификации */
+/** Notification Event Interface */
 export interface NotifyEvent {
   type: NotifyBannerEvents;
   id: number;
 }
 
-/** Возможные события на уведомлениях */
+/** Possible events on notifications */
 export enum NotifyBannerEvents {
   CLOSE = 'close',
   CLICK = 'click',
@@ -25,7 +23,7 @@ export enum NotifyBannerEvents {
   LINK_CLICK = 'link-click',
 }
 
-/** типы банеров для уведомлений */
+/** Types of banners for notifications */
 export enum NotifyBannerTypes {
   ERROR_FAST = 'error-fast',
   NORMAL_FAST = 'normal-fast',
@@ -35,7 +33,7 @@ export enum NotifyBannerTypes {
   REST_LIST = 'rest-list',
 }
 
-/** интерфейс баннера  */
+/** Banner interface  */
 export interface NotifyBanner {
   type: NotifyBannerTypes;
   title: string;
@@ -53,7 +51,7 @@ export interface NotifyBanner {
   linkWhiteSpace?: WhiteSpaceValue;
 }
 
-/** Перечисление возможных значений white-space */
+/** Listing possible values for white-space */
 export enum WhiteSpaceValue {
   normal = 'normal',
   nowrap = 'nowrap',
@@ -66,18 +64,16 @@ export enum WhiteSpaceValue {
   unset = 'unset',
 }
 
-/** перечисление типов ссылок */
+/** Enumerating Link Types */
 export enum LinkType {
-  /** сплошное подчеркивание */
+  /** solid underline */
   default = 'default',
-  /** сплошное подчеркивание при наведении */
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  default_hover = 'default-hover',
-  /** пунктирное подчеркивание */
+  /** solid underline on hover */
+  default_hover = 'default-hover', // eslint-disable-line @typescript-eslint/camelcase
+  /** dotted underline */
   dropdown = 'dropdown',
-  /** пунктирное подчеркивание при наведении */
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  dropdown_hover = 'dropdown-hover',
+  /** dotted underline on hover */
+  dropdown_hover = 'dropdown-hover', // eslint-disable-line @typescript-eslint/camelcase
 }
 
 export interface UserNotification {

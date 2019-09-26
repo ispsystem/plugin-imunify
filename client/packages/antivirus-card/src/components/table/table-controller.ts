@@ -8,6 +8,7 @@ export interface FetchListResult<T> {
 }
 
 /** Type for group action */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GroupActionType<K extends string, E = any> = {
   [k in K]: (entries: E[]) => Promise<void>;
 };
@@ -45,8 +46,10 @@ export namespace TableController {
     private _store: U;
 
     /** Handle for request failure */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleFailure: (error: any) => void;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(query: string, handleFailure: (error: any) => void, store: U) {
       this._query = query;
       this._store = store;

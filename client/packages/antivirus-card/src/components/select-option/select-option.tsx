@@ -15,16 +15,14 @@ export class SelectOption {
   private _host: HTMLAntivirusCardSelectOptionElement;
 
   /** Option value */
-  @Prop()
-  public value: SelectedOption['v'];
+  @Prop() value: SelectedOption['v'];
 
   /** Key for active selected value  */
   @Prop({ reflect: true, mutable: true })
-  public selected = false;
+  selected = false;
 
   /** Event by change selected status */
-  @Event()
-  public changedSelectStatus: EventEmitter<SelectedOption>;
+  @Event() changedSelectStatus: EventEmitter<SelectedOption>;
 
   /**
    * Method of selecting an item initiated by the user

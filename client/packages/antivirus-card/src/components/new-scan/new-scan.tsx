@@ -1,5 +1,5 @@
 import { Component, h, Host, State, Prop } from '@stencil/core';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
 import { Store } from '@stencil/redux';
@@ -31,7 +31,7 @@ export class NewScan {
   @Prop({ mutable: true }) preset!: ScanOption;
 
   /** Translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
 
   /** Site id */
   @State() siteId: number;

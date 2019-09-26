@@ -45,55 +45,63 @@ export enum ANTIVIRUS_ACTION {
   CURE_FILES_POST_PROCESS_FAILURE = 'CURE_FILES_POST_PROCESS_FAILURE',
 }
 
-export const scanBegin = data => async (dispatch: (obj: ScanBeginAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const scanBegin = data => async (dispatch: (obj: ScanBeginAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_BEGIN,
     payload: data,
   });
 };
 
-export const scanSuccess = (data: ScanSuccessData) => async (dispatch: (obj: ScanSuccessAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const scanSuccess = (data: ScanSuccessData) => async (dispatch: (obj: ScanSuccessAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_SUCCESS,
     payload: { data },
   });
 };
 
-export const scanFailure = error => async (dispatch: (obj: ScanFailureAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const scanFailure = error => async (dispatch: (obj: ScanFailureAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.SCAN_FAILURE,
     payload: { error },
   });
 };
 
-export const getStateBegin = () => async (dispatch: (obj: GetStateBeginAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getStateBegin = () => async (dispatch: (obj: GetStateBeginAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_STATE_BEGIN,
   });
 };
 
-export const getStateSuccess = data => async (dispatch: (obj: GetStateSuccessAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getStateSuccess = data => async (dispatch: (obj: GetStateSuccessAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_STATE_SUCCESS,
     payload: { data },
   });
 };
 
-export const getStateFailure = error => async (dispatch: (obj: GetStateFailureAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getStateFailure = error => async (dispatch: (obj: GetStateFailureAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_STATE_FAILURE,
     payload: { error },
   });
 };
 
-export const getPriceListSuccess = data => async (dispatch: (obj: GetPriceListSuccessAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getPriceListSuccess = data => async (dispatch: (obj: GetPriceListSuccessAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_PRICE_LIST_SUCCESS,
     payload: { data },
   });
 };
 
-export const getPriceListFailure = error => async (dispatch: (obj: GetPriceListFailureAction) => any, _getState) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getPriceListFailure = error => async (dispatch: (obj: GetPriceListFailureAction) => any) => {
   return dispatch({
     type: ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE,
     payload: { error },
@@ -265,6 +273,7 @@ interface SaveAndScanBeginAction {
 
 interface SaveAndScanFailureAction {
   type: ANTIVIRUS_ACTION.SAVE_AND_SCAN_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -279,6 +288,7 @@ interface ScanSuccessAction {
 
 interface ScanFailureAction {
   type: ANTIVIRUS_ACTION.SCAN_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -288,11 +298,13 @@ interface GetStateBeginAction {
 
 interface GetStateSuccessAction {
   type: ANTIVIRUS_ACTION.GET_STATE_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface SavePartialPresetSuccessAction {
   type: ANTIVIRUS_ACTION.SAVE_PARTIAL_PRESET_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -303,11 +315,13 @@ interface SaveFullPresetSuccessAction {
 
 interface SavePresetFailureAction {
   type: ANTIVIRUS_ACTION.SAVE_PRESET_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface GetStateFailureAction {
   type: ANTIVIRUS_ACTION.GET_STATE_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -318,6 +332,7 @@ interface GetLastScanSuccessAction {
 
 interface GetPriceListFailureAction {
   type: ANTIVIRUS_ACTION.GET_PRICE_LIST_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -328,36 +343,43 @@ interface GetPriceListSuccessAction {
 
 interface GetLastScanFailureAction {
   type: ANTIVIRUS_ACTION.GET_LAST_SCAN_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface GetInfectedFilesSuccessAction {
   type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface GetInfectedFilesFailureAction {
   type: ANTIVIRUS_ACTION.GET_INFECTED_FILES_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface GetPresetsSuccessAction {
   type: ANTIVIRUS_ACTION.GET_PRESETS_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface GetPresetsFailureAction {
   type: ANTIVIRUS_ACTION.GET_PRESETS_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface DisablePresetFailure {
   type: ANTIVIRUS_ACTION.DISABLE_PRESET_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
 interface DisablePresetSuccess {
   type: ANTIVIRUS_ACTION.DISABLE_PRESET_SUCCESS;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -370,6 +392,7 @@ interface DeleteFilesSuccess {
 
 interface DeleteFilesFailure {
   type: ANTIVIRUS_ACTION.DELETE_FILES_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -382,6 +405,7 @@ interface CureFilesSuccess {
 
 interface CureFilesFailure {
   type: ANTIVIRUS_ACTION.CURE_FILES_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -393,6 +417,7 @@ interface DeleteFilesPostProcessSuccess {
 }
 interface DeleteFilesPostProcessFailure {
   type: ANTIVIRUS_ACTION.DELETE_FILES_POST_PROCESS_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 
@@ -404,6 +429,7 @@ interface CureFilesPostProcessSuccess {
 }
 interface CureFilesPostProcessFailure {
   type: ANTIVIRUS_ACTION.CURE_FILES_POST_PROCESS_FAILURE;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: any;
 }
 

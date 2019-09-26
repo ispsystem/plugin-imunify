@@ -2,7 +2,7 @@ import { Component, h, Host, Prop, Event, EventEmitter, Listen } from '@stencil/
 
 @Component({
   tag: 'antivirus-card-switcher-option',
-  shadow: true
+  shadow: true,
 })
 export class SwitcherOption {
   @Prop({ reflect: true, mutable: true }) active = false;

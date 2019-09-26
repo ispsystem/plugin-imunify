@@ -1,5 +1,5 @@
 import { FunctionalComponent, h } from '@stencil/core';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { getDayMonthYearAsStr, getTimeAsStr } from '../../utils/tools';
 import { CheckType } from '../../models/antivirus/state';
 
@@ -8,7 +8,7 @@ import { CheckType } from '../../models/antivirus/state';
  */
 interface PreviewStatusProps {
   scanning: null | CheckType;
-  t: ITranslate;
+  t: Translate;
   type: CheckType;
   lastScanDate: number;
   pathList?: string[];

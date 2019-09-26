@@ -1,5 +1,6 @@
 import { h } from '@stencil/core';
 
+/* eslint-disable react/no-unknown-property */
 export const ProIcon = () => (
   <svg width="22" height="12" viewBox="0 0 15 9" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="0.35" y="0.35" width="14.3" height="7.98421" rx="1.65" fill="white" stroke="#0279C0" stroke-width="0.7" />
@@ -17,3 +18,4 @@ export const ProIcon = () => (
     />
   </svg>
 );
+/* eslint-enable react/no-unknown-property */

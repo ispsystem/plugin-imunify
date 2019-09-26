@@ -8,7 +8,7 @@ import { QuestionAccentIcon } from '../icons/question-accent';
 })
 export class Hint {
   /** Ref for dropdown element */
-  public dropdownEl!: HTMLAntivirusCardDropdownElement;
+  dropdownEl!: HTMLAntivirusCardDropdownElement;
 
   /** Flag for display accent icon */
   @Prop({ reflect: true }) accent: boolean;

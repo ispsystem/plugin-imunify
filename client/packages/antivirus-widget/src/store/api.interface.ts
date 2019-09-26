@@ -1,4 +1,4 @@
-import { Preset, HistoryItem } from './types';
+import { Preset, HistoryItem, InfectedFile } from './types';
 
 /**
  * Response interfaces for request of plugin api
@@ -15,7 +15,7 @@ export namespace API {
   }
 
   export interface GetInfectedFilesResponse {
-    list: any[];
+    list: InfectedFile[];
     size: number;
   }
 

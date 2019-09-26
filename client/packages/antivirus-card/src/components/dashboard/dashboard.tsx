@@ -4,7 +4,7 @@ import { Component, h, Host, State, Prop, Event, EventEmitter, Listen } from '@s
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { PreviewNewScan } from '../preview/PreviewNewScan';
 import { AntivirusState, ScanOption, CheckType } from '../../models/antivirus/state';
 import { PreviewPurchase } from '../preview/PreviewPurchase';
@@ -33,7 +33,7 @@ export class Dashboard {
   /** flag if antivirus is pro version */
   @State() isProVersion: AntivirusState['isProVersion'];
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
   /** Preset object for scanning */
   @State() scanPreset: AntivirusState['scanPreset'];
   /** Price list for pro version */

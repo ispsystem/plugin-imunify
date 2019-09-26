@@ -1,14 +1,14 @@
 import { FunctionalComponent, h, EventEmitter } from '@stencil/core';
 import { VirusesCheckGoodIcon } from '../icons/viruses-check-good';
 import { VirusesCheckBadIcon } from '../icons/viruses-check-bad';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { CheckType } from '../../models/antivirus/state';
 
 /**
  * PreviewInfectedFiles component props
  */
 interface PreviewInfectedFilesProps {
-  t: ITranslate;
+  t: Translate;
   infectedFilesCount: number;
   clickItem: EventEmitter;
   openBuyModal: EventEmitter;

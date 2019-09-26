@@ -1,5 +1,6 @@
 import { h } from '@stencil/core';
 
+/* eslint-disable react/no-unknown-property */
 export const LockIcon = () => (
   <svg width="11" height="13" viewBox="0 0 11 13" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect x="2.01865" y="0.65" width="6.22632" height="8.96316" rx="3.11316" stroke="#9B9B9B" stroke-width="1.3" />
@@ -18,3 +19,4 @@ export const LockIcon = () => (
     />
   </svg>
 );
+/* eslint-enable react/no-unknown-property */

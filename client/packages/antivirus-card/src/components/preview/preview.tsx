@@ -6,7 +6,7 @@ import { LockIcon } from '../icons/lock';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
 import { ActionTypes } from '../../redux/actions';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { AntivirusState, CheckType, ScanOption } from '../../models/antivirus/state';
 import { AntivirusActions } from '../../models/antivirus/actions';
 import { PreviewStatus } from './PreviewStatus';
@@ -49,7 +49,7 @@ export class Preview {
   /** global notifier object */
   @State() notifier: ISPNotifier;
   /** translate object */
-  @State() t: ITranslate;
+  @State() t: Translate;
   /** Site id */
   @State() siteId: number;
   /** scan option preset */

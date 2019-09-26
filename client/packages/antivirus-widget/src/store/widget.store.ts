@@ -38,7 +38,7 @@ export class WidgetState {
   isProVersion: boolean;
 
   /** Error state */
-  error: any;
+  error: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
   constructor(siteId: number, pluginId: number) {
     this.siteId = siteId;
@@ -326,6 +326,7 @@ export class Store extends AbstractStore<WidgetState> {
    *
    * @param error - error value
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setError(error: any): void {
     this.setState({
       ...this.state,

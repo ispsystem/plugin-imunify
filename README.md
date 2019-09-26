@@ -1,6 +1,18 @@
-🛠 Documentation status: IN PROCESS
+# Плагин ImunifyAV/ImunifyAV+ для Vepp
 
-# Плагин ImunifyAV/ImunifyAV+ для vepp
+------
+
+![widget](screenshot_widget.png)
+
+------
+
+![widget](screenshot_dashboard.png)
+
+------
+
+![widget](screenshot_table.png)
+
+------
 
 ## Разработчикам
 

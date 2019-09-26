@@ -1,5 +1,5 @@
 import { FunctionalComponent, h } from '@stencil/core';
-import { ITranslate } from '../../models/translate.reducers';
+import { Translate } from '../../models/translate.reducers';
 import { CheckListGoodIcon } from '../icons/check-list-good';
 import { CheckListBadIcon } from '../icons/check-list-bad';
 
@@ -7,7 +7,7 @@ import { CheckListBadIcon } from '../icons/check-list-bad';
  * PreviewInfectedFiles component props
  */
 interface PreviewInBlackListsProps {
-  t: ITranslate;
+  t: Translate;
   inBlackLists: boolean;
   dropdownElToggle: (e: MouseEvent) => void;
 }

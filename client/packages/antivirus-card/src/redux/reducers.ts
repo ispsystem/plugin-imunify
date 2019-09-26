@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { ISPNotifier } from '@ispsystem/notice-tools';
 
-import { translateReducer, ITranslate } from '../models/translate.reducers';
+import { translateReducer, Translate } from '../models/translate.reducers';
 import { AntivirusState } from '../models/antivirus/state';
 import { antivirusReducer } from '../models/antivirus/reducers';
 import { UserNotification } from './user-notification.interface';
@@ -14,7 +14,7 @@ export interface RootState {
   antivirus?: AntivirusState;
   notifier: ISPNotifier;
   userNotification: UserNotification;
-  translate?: ITranslate;
+  translate?: Translate;
 }
 
 // Combine feature reducers into a single root reducer

@@ -1,6 +1,6 @@
-import Polyglot from 'node-polyglot';
 import { languageTypes, isDevMode, endpoint } from '../constants';
 import { Translate } from '../store/types';
+import { translang } from '@ispsystem/translang';
 
 /**
  *
@@ -21,17 +21,6 @@ export function handleErrors(response: Response): Response {
   return response;
 }
 
-function msg(polyglot: Polyglot, keys: string[], options?: number | Polyglot.InterpolationOptions): string {
-  if (Array.isArray(keys)) {
-    return polyglot.t(keys.join('.'), options);
-  } else if (typeof keys === 'string') {
-    return polyglot.t(keys, options);
-  }
-
-  console.warn(keys);
-  return '';
-}
-
 export async function loadTranslate(lang: languageTypes): Promise<Translate> {
   let json = {};
   if (isDevMode) {
@@ -45,9 +34,7 @@ export async function loadTranslate(lang: languageTypes): Promise<Translate> {
     json = await response.json();
   }
 
-  const _polyglot = new Polyglot({ phrases: { ...json }, locale: lang });
-
-  return { msg: msg.bind(null, _polyglot), error: null, loading: false, lang };
+  return { ...translang(lang, { ...json }), error: null, loading: false };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

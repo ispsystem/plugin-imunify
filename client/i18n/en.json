@@ -43,7 +43,7 @@
   },
   "PREVIEW": {
     "HELP": "This website is blacklisted by Roskomnadzor, Yandex, and Google. A possible reason can be a hacking attack on the website, inappropriate or prohibited website content. ",
-    "HELP_RECOMMENDATION": "We recommend curing the viruses and reindexing the website. This process may take from 3 to 72 hours. ",
+    "HELP_RECOMMENDATION": "We recommend removing the viruses and reindexing the website. This process may take from 3 to 72 hours. ",
     "WAIT_CHECK": {
       "FULL": "Website scanning in progress ",
       "PARTIAL": "Scanning in progress"
@@ -55,7 +55,7 @@
     "NEXT_CHECK": "Next scanning: 04.06.2019 Daily ",
     "INFECTED_FILES_WORD_1": "Infected |||| Infected |||| Infected ",
     "INFECTED_FILES_WORD_2": "file |||| files |||| files ",
-    "CURE": "Cure",
+    "CURE": "Clean up",
     "DETAIL": "Details ",
     "NOT_INFECTED_FILES": "Viruses not found ",
     "IN_BLACK_LISTS": "The website is blacklisted ",
@@ -63,14 +63,14 @@
     "NOT_IN_BLACK_LISTS": "Website is not blacklisted ",
     "HEALING": "",
     "FIRST_SCAN": {
-      "BUTTON": "",
+      "BUTTON": "Scan website",
       "TEXT_1": "",
-      "TEXT_2": ""
+      "TEXT_2": "Start the first check to make sure the website is not infected."
     }
   },
   "INFECTED_FILES": {
-    "NOT_FOUND": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. Use Imunify Pro to cure viruses. You can subscribe right now. ",
-    "SUBSCRIBE_TO_PRO": "Subscribe to Imunify Pro",
+    "NOT_FOUND": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. Use ImunifyAV+ to remove viruses. You can subscribe right now. ",
+    "SUBSCRIBE_TO_PRO": "Subscribe to ImunifyAV+",
     "TABLE_HEADER": {
       "CELL_1": "File name ",
       "CELL_2": "Threat name ",
@@ -79,14 +79,14 @@
     },
     "STATUS": {
       "INFECTED": "infected",
-      "CURED": "Cured",
+      "CURED": "cleaned up",
       "EXCEPTED": "added to Ignore list\n",
       "HEALING": "curing ",
       "DELETED": "deleting "
     },
     "NOT_FOUND_PRO": "We haven't found any infected files. If viruses are detected, the information about them will be stored in this tab. ",
     "ACTIONS": {
-      "HEAL": "Cure",
+      "HEAL": "Clean up",
       "EXCLUDE": "Add to Ignore list",
       "OPEN_FOLDER": "Show in folder",
       "DELETE": "Delete"
@@ -113,7 +113,7 @@
     "ACTION": {
       "RETRY": "Re-try "
     },
-    "CURED_COUNT": "Cured %{count}"
+    "CURED_COUNT": "Cleaned up %{count}"
   },
   "MENU_ITEM": "Antivirus ImunifyAV",
   "WIDGET": {
@@ -136,23 +136,23 @@
     },
     "LAST_CHECK": "last scanning: %{value}",
     "CHECK_AGAIN": "Scan again ",
-    "CURE": "Cure",
+    "CURE": "Clean up",
     "ACTION": {
       "SCANNING": "scanning the website for viruses",
-      "CURE": "curing the virus"
+      "CURE": "removing the virus"
     },
     "VIRUS_DETECTED": "Virus detected ",
     "SCAN_SUCCESS": "Website scanning has been completed ",
-    "CURE_COUNT_FILES": "${smart_count} file has been cured |||| ${smart_count} files have been cured |||| ${smart_count} files have been cured ",
+    "CURE_COUNT_FILES": "${smart_count} file has been cleaned up|||| ${smart_count} files have been cleaned up|||| ${smart_count} files have been cleaned up",
     "MORE_DETAILS": "Details",
     "TODAY": "today",
     "VIRUS_CURE": {
-      "DONE": "The infected file has been cured ",
-      "FAIL": "Error curing the file ",
+      "DONE": "The infected file has been cleaned up",
+      "FAIL": "Error cleaning up the file ",
       "GROUP": {
-        "DONE_1": "Cured |||| Cured |||| Cured ",
-        "DONE_2": "infected file |||| infcфайла |||| заражённых файлов",
-        "FAIL_1": "Could not cure the file ",
+        "DONE_1": "Cleaned up |||| Cleaned up |||| Cleaned up",
+        "DONE_2": "infected file |||| infected files |||| infected files",
+        "FAIL_1": "Cannot clean up",
         "FAIL_2": "file |||| files |||| files"
       },
       "ERROR_404": "%{filename} - this file doesn't exist on the server "
@@ -165,8 +165,8 @@
   },
   "NEW_SCAN_BTN": "New scanning ",
   "DASHBOARD": {
-    "TITLE": "Buy ImunifyAV+ for %{cost} %{currency}/%{period} to cure infected files",
-    "TEXT": "to cure files, check reputation, configure a schedule and email notifications about viruses. "
+    "TITLE": "Buy ImunifyAV+ for %{cost} %{currency}/%{period} to clean up infected files",
+    "TEXT": "to clean up files, check reputation, configure a schedule and email notifications about viruses. "
   },
   "SCAN_SETTINGS": {
     "NEW_SCAN": "New scanning ",
@@ -196,7 +196,7 @@
     },
     "CONFIGURE_SCAN": "Configure scanning",
     "SAVE_COPY_FILES": "Store copies of cured files",
-    "AUTO_HEAL_MALWARE": "Cure viruses automatically ",
+    "AUTO_HEAL_MALWARE": "Remove viruses automatically ",
     "DELETE_ONLY_CONTENT": "Delete the o",
     "EMAIL_NOTIFY": "Notify admin via email",
     "ADVANCED_SETTINGS": "Advanced settings ",
@@ -231,8 +231,8 @@
     "SCAN_SUCCESS": "Website scanning has been completed ",
     "MORE_DETAILS": "Details ",
     "DESCRIPTION": {
-      "NO_VIRUSES": "",
-      "VIRUSES_CURED": ""
+      "NO_VIRUSES": "Viruses not found",
+      "VIRUSES_CURED": "%{smart_count} file has been cleaned up|||| %{smart_count} files have been cleaned up|||| %{smart_count} files have been cleaned up"
     }
   },
   "PAYMENT_FAILED_MODAL": {
@@ -259,12 +259,12 @@
     "ERROR_404": "%{filename} - this file has been already deleted"
   },
   "VIRUS_CURE": {
-    "DONE": "The infected file has been cured",
-    "FAIL": "Failed to cure the file ",
+    "DONE": "The infected file has been cleaned up",
+    "FAIL": "Failed to clean up the file ",
     "GROUP": {
-      "DONE_1": "Cured |||| Cured |||| Cured ",
+      "DONE_1": "Cleaned up |||| Cleaned up |||| Cleaned up",
       "DONE_2": "infected file |||| infected files |||| infected files",
-      "FAIL_1": "Failed to  cure",
+      "FAIL_1": "Cannot clean up",
       "FAIL_2": "file |||| files |||| files"
     },
     "ERROR_404": "%{filename} - this file doesn't exist on the server"
@@ -279,5 +279,5 @@
       "MSG": "Usually, it takes up to 30 minutes "
     }
   },
-  "VIRUS_GROUP_DETECTED": ""
+  "VIRUS_GROUP_DETECTED": "%{smart_count} virus is found|||| %{smart_count} viruses are found|||| %{smart_count} viruses are found"
 }
