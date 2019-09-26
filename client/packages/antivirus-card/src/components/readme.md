@@ -10,7 +10,7 @@
 | `notifierService`  | --          | global notifier object           | `ISPNotifier`                                                                                      | `undefined` |
 | `pluginId`         | `plugin-id` | plugin ID from vepp              | `number`                                                                                           | `undefined` |
 | `siteId`           | `site-id`   | site ID from vepp                | `number`                                                                                           | `undefined` |
-| `translateService` | --          | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `translateService` | --          | main app translate service       | `{ currentLang: string; defaultLang: string; onLangChange: Observable<{ lang: "en" \| "ru"; }>; }` | `undefined` |
 | `userNotification` | --          | Global user notification service | `UserNotification`                                                                                 | `undefined` |
 
 
