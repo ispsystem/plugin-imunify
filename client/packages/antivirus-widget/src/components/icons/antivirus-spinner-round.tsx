@@ -1,9 +1,15 @@
 import { h, FunctionalComponent } from '@stencil/core';
 
+/**
+ * Props interface for spinner
+ */
 export interface SpinnerRoundProps {
   color?: string;
 }
 
+/**
+ * Functional component spinner
+ */
 export const AntivirusSpinnerRound: FunctionalComponent<SpinnerRoundProps> = props => {
   const color = (props && props.color) || '#30ba9a';
   return (

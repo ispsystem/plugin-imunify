@@ -219,12 +219,18 @@ export class AntivirusWidget {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   handleClickStopCure() {}
 
+  /**
+   * Render first loading state
+   */
   renderPreloader = () => (
     <div class="antivirus-card-spinner-round">
       <AntivirusSpinnerRound color="#ed81b5" />
     </div>
   );
 
+  /**
+   * Render widget after loading
+   */
   renderWidget = () => {
     return [
       <a class="overview-widget-list__item-link" href={this.url}>
