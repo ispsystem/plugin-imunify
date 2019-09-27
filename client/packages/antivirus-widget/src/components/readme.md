@@ -12,7 +12,7 @@
 | `notifierService`  | --          | global notifier object           | `ISPNotifier`                                                                 | `undefined` |
 | `pluginId`         | `plugin-id` | Plugin id                        | `number`                                                                      | `undefined` |
 | `siteId`           | `site-id`   | Site id                          | `number`                                                                      | `undefined` |
-| `translateService` | --          | Translate service                | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `translateService` | --          | Translate service                | `{ currentLang: string; onLangChange: Observable<{ lang: "en" \| "ru"; }>; }` | `undefined` |
 | `url`              | `url`       | url to antivirus main page       | `string`                                                                      | `undefined` |
 | `userNotification` | --          | Global user notification service | `UserNotification`                                                            | `undefined` |
 

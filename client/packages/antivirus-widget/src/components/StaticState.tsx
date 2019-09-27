@@ -41,7 +41,6 @@ export const StaticState: FunctionalComponent<StaticStateProps> = props => {
     <div class="widget-icon_adaptive">{isSuccess ? <AntivirusShieldIcon /> : <AntivirusShieldDisableIcon />}</div>,
     <a
       class="link link_type_hover-dropdown link_size_small link_color_primary"
-      style={{ 'line-height': '22px' }}
       rel="noopener noreferrer"
       onClick={event => {
         !props.disableClick && (isSuccess ? props.handleClickRetryScan() : props.handleClickCure());

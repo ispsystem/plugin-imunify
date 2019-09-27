@@ -8,6 +8,7 @@ import { Store, WidgetState } from '../store/widget.store';
 import { StaticState } from './StaticState';
 import { ActiveState } from './ActiveState';
 import { ISPNotifier, ISPNotifierEvent, ISPNotifierNotifyType } from '@ispsystem/notice-tools';
+import { AntivirusSpinnerRound } from './icons/antivirus-spinner-round';
 
 /**
  * The imunifyAV-widget web component
@@ -51,6 +52,7 @@ export class AntivirusWidget {
   /** Preloader state */
   @State() isPreloader = {
     button: false,
+    widget: true,
   };
 
   /**
@@ -81,7 +83,7 @@ export class AntivirusWidget {
   /**
    * LIFECYCLE
    *
-   * Initialize data
+   * Initialize store and notifier
    */
   async componentWillLoad() {
     // prettier-ignore
@@ -94,7 +96,14 @@ export class AntivirusWidget {
     this.store.t = this.t;
 
     this.configureNotifier(this.notifierService);
+  }
 
+  /**
+   * LIFECYCLE
+   *
+   * Initialize data
+   */
+  async componentDidLoad() {
     await Promise.all([this.store.getPresets(), this.store.getFeature(), this.store.getInfectedFiles(), this.store.getLastScan()]);
 
     if (this.translateService) {
@@ -104,6 +113,8 @@ export class AntivirusWidget {
         }
       });
     }
+
+    this.isPreloader = { ...this.isPreloader, widget: false };
   }
 
   /**
@@ -208,29 +219,45 @@ export class AntivirusWidget {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   handleClickStopCure() {}
 
+  /**
+   * Render first loading state
+   */
+  renderPreloader = () => (
+    <div class="antivirus-card-spinner-round">
+      <AntivirusSpinnerRound color="#ed81b5" />
+    </div>
+  );
+
+  /**
+   * Render widget after loading
+   */
+  renderWidget = () => {
+    return [
+      <a class="overview-widget-list__item-link" href={this.url}>
+        {this.t.msg(['WIDGET', 'ANTIVIRUS'])}
+      </a>,
+      (this.state.scanning && (
+        <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'SCANNING'])} handleClickCancel={this.handleClickStopScan} />
+      )) ||
+        (this.state.healing && (
+          <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'CURE'])} handleClickCancel={this.handleClickStopCure} />
+        )) || (
+          <StaticState
+            t={this.t}
+            handleClickRetryScan={this.handleClickRetryScan.bind(this)}
+            handleClickCure={this.handleClickCure.bind(this)}
+            lastCheck={this.state.lastCheck}
+            infectedFilesCount={this.store.state.infectedFilesCount}
+            disableClick={this.isPreloader.button}
+          />
+        ),
+    ];
+  };
+
   render() {
     return (
       <section class="overview-widget-list__item widget_adaptive">
-        <div>
-          <a class="overview-widget-list__item-link" href={this.url}>
-            {this.t.msg(['WIDGET', 'ANTIVIRUS'])}
-          </a>
-        </div>
-        {(this.state.scanning && (
-          <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'SCANNING'])} handleClickCancel={this.handleClickStopScan} />
-        )) ||
-          (this.state.healing && (
-            <ActiveState desc={this.t.msg(['WIDGET', 'ACTION', 'CURE'])} handleClickCancel={this.handleClickStopCure} />
-          )) || (
-            <StaticState
-              t={this.t}
-              handleClickRetryScan={this.handleClickRetryScan.bind(this)}
-              handleClickCure={this.handleClickCure.bind(this)}
-              lastCheck={this.state.lastCheck}
-              infectedFilesCount={this.store.state.infectedFilesCount}
-              disableClick={this.isPreloader.button}
-            />
-          )}
+        {this.isPreloader.widget ? this.renderPreloader() : this.renderWidget()}
       </section>
     );
   }
