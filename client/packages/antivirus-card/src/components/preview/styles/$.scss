@@ -72,4 +72,21 @@ antivirus-card-preview {
 
 .link-disabled {
   cursor: not-allowed;
+  color: #9b9b9b;
+}
+
+.antivirus-card-preview__new-scan {
+ border: 1px solid #187ABD;
+ border-radius: 3px;
+ display: flex;
+ align-items: center;
+ padding: 4px 10px; 
+
+  &:hover {
+    border-color: #0991e2;
+  }
+
+  &.link-disabled {
+    border-color: #9b9b9b;
+  }
 }

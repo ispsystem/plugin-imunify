@@ -1,7 +1,6 @@
 import '@stencil/redux';
 
 import { Component, h, Host, State, Prop, Event, EventEmitter } from '@stencil/core';
-import { StartCheckIcon } from '../icons/start-check';
 import { LockIcon } from '../icons/lock';
 import { Store } from '@stencil/redux';
 import { RootState } from '../../redux/reducers';
@@ -13,6 +12,7 @@ import { PreviewStatus } from './PreviewStatus';
 import { PreviewInfectedFiles } from './PreviewInfectedFiles';
 import { CloseIcon } from '../icons/close';
 import { ISPNotifier } from '@ispsystem/notice-tools';
+import { StartScanIcon } from '../icons/start-scan';
 
 /**
  * Preview component for antivirus-card
@@ -189,12 +189,12 @@ export class Preview {
         ></PreviewInBlackLists>
         */}
         <div style={{ display: 'flex', 'align-items': 'center', 'margin-top': '25px', height: '28px' }}>
-          <span class={this.scanning ? 'link-disabled' : 'link'}>
-            <StartCheckIcon
-              onClick={() => this.scanVirus(this.scanOption.id, this.scanType, this.siteId)}
-              disabled={this.scanning !== null}
-              btnLabel={this.t.msg('BTN_SCAN')}
-            />
+          <span
+            onClick={() => this.scanning || this.scanVirus(this.scanOption.id, this.scanType, this.siteId)}
+            class={{ link: !this.scanning, 'link-disabled': this.scanning !== null, 'antivirus-card-preview__new-scan': true }}
+          >
+            <StartScanIcon disabled={this.scanning !== null} />
+            <span style={{ 'margin-left': '8px' }}>{this.t.msg('BTN_SCAN')}</span>
           </span>
           {this.isProVersion && !this.scanning && (
             <a
