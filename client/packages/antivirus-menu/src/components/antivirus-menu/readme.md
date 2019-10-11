@@ -11,7 +11,7 @@
 | ------------------- | --------- | -------------------------------- | ----------------------------------------------------------------------------- | ----------- |
 | `iconsOnly$`        | --        | Observable of icons only menu    | `Observable<boolean>`                                                         | `undefined` |
 | `routerChangeEvent` | --        | Observable of application router | `Observable<any>`                                                             | `undefined` |
-| `translateService`  | --        | Observable of translate service  | `{ currentLang: string; onLangChange: Observable<{ lang: "ru" \| "en"; }>; }` | `undefined` |
+| `translateService`  | --        | Observable of translate service  | `{ currentLang: string; onLangChange: Observable<{ lang: "en" \| "ru"; }>; }` | `undefined` |
 | `url`               | `url`     | Antivirus card plugin url        | `string`                                                                      | `undefined` |
 
 

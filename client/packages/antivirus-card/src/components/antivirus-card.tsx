@@ -388,12 +388,6 @@ export class AntivirusCard {
       this.getInfectedFiles(this.siteId),
       /** @todo may be get price list for only free version */
       this.getPriceList(),
-      this.loadTranslate(
-        // prettier-ignore
-        getNestedObject(this.translateService, ['currentLang'])
-        || getNestedObject(this.translateService, ['defaultLang'])
-        || defaultLang,
-      ),
     ]);
 
     if (this.translateService !== undefined) {
@@ -574,7 +568,12 @@ export class AntivirusCard {
 
   render() {
     if (this.isPreloader.card) {
-      return <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>;
+      return (
+        <Host>
+          <h2 class="title">{this.t.msg(['TITLE', this.isProVersion ? 'PRO' : 'FREE'])}</h2>
+          <antivirus-card-spinner-round width="60px" position="relative" height="250px"></antivirus-card-spinner-round>
+        </Host>
+      );
     } else if (this.historyItemCount === 0 && !this.scanning) {
       return this.renderFirstScan();
     } else {
