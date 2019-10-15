@@ -68,6 +68,8 @@ export class InfectedFiles {
 
   /** Chosen file to apply an action to */
   @State() chosenFiles: InfectedFile[];
+  /** purchase in process */
+  @State() purchasing: RootState['antivirus']['purchasing'];
 
   /** Event for open modal window with buy pro version */
   @Event() openBuyModal: EventEmitter;
@@ -298,7 +300,7 @@ export class InfectedFiles {
       <div style={{ display: 'contents' }}>
         <p class="stub-text">{this.t.msg(['INFECTED_FILES', 'NOT_FOUND'])}</p>
 
-        <antivirus-card-button onClick={() => this.openBuyModal.emit()} btn-theme="accent">
+        <antivirus-card-button isDisabled={this.purchasing} onClick={() => !this.purchasing && this.openBuyModal.emit()} btn-theme="accent">
           {this.t.msg(['INFECTED_FILES', 'SUBSCRIBE_TO_PRO'])}
         </antivirus-card-button>
       </div>
@@ -432,7 +434,7 @@ export class InfectedFiles {
         </antivirus-card-vmenu>
       </antivirus-card-dropdown>,
       <antivirus-card-modal ref={el => (this.deletionModal = el)} max-modal-width="530px">
-        <span class="title">
+        <span class="modal-title">
           <span class="delete-modal-title">
             {this.chosenFiles &&
               (this.chosenFiles.length === 1

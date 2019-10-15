@@ -9,7 +9,7 @@ import { fromFetch } from 'rxjs/fetch';
 /**
  * Payment orders object interface
  */
-interface PaymentOrders {
+export interface PaymentOrders {
   last_notify: number;
   list: PaymentOrderItem[];
   size: number;
@@ -18,7 +18,7 @@ interface PaymentOrders {
 /**
  * One item from Payment orders object
  */
-interface PaymentOrderItem {
+export interface PaymentOrderItem {
   id: number;
   payment_id: string;
   payment_link: string;
@@ -30,8 +30,20 @@ interface PaymentOrderItem {
   service_instance: number;
   service_status: string;
   service_type: string;
-  status: string;
+  status: OrderStatus;
   type: string;
+}
+
+/**
+ * Order statuses
+ */
+export enum OrderStatus {
+  ACTIVE = 'Active',
+  CONFIGURE = 'Configure',
+  FAIL = 'Fail',
+  INIT = 'Init',
+  PAYMENT = 'Payment',
+  DELETED = 'Deleted',
 }
 
 /**
@@ -51,6 +63,32 @@ export function getPaymentOrders(): Observable<PaymentOrders> {
 }
 
 /**
+ * Mark order as deleted
+ * @param orderId - order id
+ */
+export async function markOrderAsDelete(orderId: number): Promise<void> {
+  const requestInit: RequestInit = {
+    method: 'DELETE',
+  };
+
+  await fetch(`${endpoint}/api/isp/market/v3/order/${orderId}`, requestInit);
+}
+
+/**
+ * Get order info by id
+ * @param orderId - order id
+ */
+export async function getOrderInfo(orderId: number): Promise<PaymentOrderItem> {
+  const requestInit: RequestInit = {
+    method: 'GET',
+  };
+
+  const response = await fetch(`${endpoint}/api/isp/market/v3/order/${orderId}`, requestInit);
+  handleErrors(response);
+  return response.json();
+}
+
+/**
  * Buy PRO antivirus version
  *
  * @param pricelist - tariff identifier
@@ -58,16 +96,16 @@ export function getPaymentOrders(): Observable<PaymentOrders> {
  * @param notifier - notifier service
  */
 export async function purchase(pricelist: string, period: string, notifier: ISPNotifier): Promise<Observable<string | null>> {
-  const locationUrl = location.origin + location.pathname + location.hash + '?';
+  const locationUrl = `${location.origin}${location.pathname}${location.hash}${location.search ? '' : '?'}`;
 
   const requestInit: RequestInit = {
     method: 'POST',
     body: JSON.stringify({
       pricelist,
       period,
-      fail_url: locationUrl + 'payment=failed',
-      pending_url: location.href + 'payment=pending',
-      success_url: locationUrl + 'payment=success',
+      fail_url: locationUrl + 'payment=failed&order_id={order_id}',
+      pending_url: locationUrl + 'payment=pending&order_id={order_id}',
+      success_url: locationUrl + 'payment=success&order_id={order_id}',
     }),
   };
 

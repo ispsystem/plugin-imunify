@@ -1,8 +1,8 @@
 import { Component, Prop, h, State, Watch } from '@stencil/core';
 import { loadTranslate, getNestedObject } from '../utils/utils';
-import { languages, defaultLang, languageTypes } from '../constants';
+import { languages, defaultLang, languageTypes, isDevMode, SITE_ID } from '../constants';
 import { Observable, Subscription, of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, first, filter } from 'rxjs/operators';
 import { Translate, UserNotification } from '../store/types';
 import { Store, WidgetState } from '../store/widget.store';
 import { StaticState } from './StaticState';
@@ -21,34 +21,28 @@ import { AntivirusSpinnerRound } from './icons/antivirus-spinner-round';
 export class AntivirusWidget {
   /** RXJS subscription */
   sub = new Subscription();
-
   /** Global store */
   store: Store;
 
   /** Translate service */
   @Prop() translateService: { currentLang: string; onLangChange: Observable<{ lang: languageTypes }> };
-
   /** url to antivirus main page */
   @Prop() url: string;
-
   /** global notifier object */
   @Prop() notifierService: ISPNotifier;
-
   /** Global user notification service */
   @Prop() userNotification: UserNotification;
-
-  /** Site id */
-  @Prop() siteId: number;
-
+  /** Observable of siteId from vepp */
+  @Prop() siteId$: Observable<number>;
   /** Plugin id */
   @Prop() pluginId: number;
 
   /** Widget state */
   @State() state: WidgetState;
-
   /** translate object */
   @State() t: Translate;
-
+  /** vepp site id */
+  @State() siteId: number;
   /** Preloader state */
   @State() isPreloader = {
     button: false,
@@ -72,12 +66,6 @@ export class AntivirusWidget {
         },
       };
     }
-    this.store = new Store(this.siteId, this.pluginId, this.userNotification);
-    this.sub.add(
-      this.store.state$.subscribe({
-        next: newState => (this.state = newState),
-      }),
-    );
   }
 
   /**
@@ -86,6 +74,18 @@ export class AntivirusWidget {
    * Initialize store and notifier
    */
   async componentWillLoad() {
+    if (isDevMode) {
+      this.siteId$ = of(SITE_ID);
+    }
+    this.siteId = await this.siteId$.pipe(first()).toPromise();
+
+    this.store = new Store(this.siteId, this.pluginId, this.userNotification);
+    this.sub.add(
+      this.store.state$.subscribe({
+        next: newState => (this.state = newState),
+      }),
+    );
+
     // prettier-ignore
     this.t = await loadTranslate(
       getNestedObject(this.translateService, ['currentLang'])
@@ -113,6 +113,8 @@ export class AntivirusWidget {
         }
       });
     }
+
+    this.sub.add(this.siteId$.pipe(filter(id => this.siteId !== id)).subscribe(await this.onChangeSiteId.bind(this)));
 
     this.isPreloader = { ...this.isPreloader, widget: false };
   }
@@ -145,6 +147,20 @@ export class AntivirusWidget {
     }
     await this.store.cure();
     this.isPreloader = { ...this.isPreloader, button: false };
+  }
+
+  /**
+   * Method for update state if site id changed
+   * @param siteId - new site id
+   */
+  async onChangeSiteId(siteId: number) {
+    this.isPreloader = { ...this.isPreloader, widget: true };
+    this.siteId = siteId;
+    this.store.setStateProperty({
+      siteId,
+    });
+    await Promise.all([this.store.getPresets(), this.store.getInfectedFiles(), this.store.getLastScan()]);
+    this.isPreloader = { ...this.isPreloader, widget: false };
   }
 
   /**

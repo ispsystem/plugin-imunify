@@ -124,6 +124,8 @@ export interface AntivirusState {
   healing: boolean;
   // purchasing flag
   purchasing: boolean;
+  // flag if purchase error exist
+  havePurchaseError: boolean;
   // domain in black list
   inBlackLists: boolean;
 

@@ -7,14 +7,14 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
+  Observable,
+} from 'rxjs';
+import {
   ISPNotifier,
 } from '@ispsystem/notice-tools';
 import {
   UserNotification,
 } from './redux/user-notification.interface';
-import {
-  Observable,
-} from 'rxjs';
 import {
   languageTypes,
 } from './constants';
@@ -59,9 +59,9 @@ export namespace Components {
     */
     'pluginId': number;
     /**
-    * site ID from vepp
+    * observable of siteId from vepp
     */
-    'siteId': number;
+    'siteId$': Observable<number>;
     /**
     * main app translate service
     */
@@ -574,9 +574,9 @@ declare namespace LocalJSX {
     */
     'pluginId'?: number;
     /**
-    * site ID from vepp
+    * observable of siteId from vepp
     */
-    'siteId'?: number;
+    'siteId$'?: Observable<number>;
     /**
     * main app translate service
     */

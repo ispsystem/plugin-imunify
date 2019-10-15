@@ -64,6 +64,23 @@
   margin: 0 0 15px 0;
 }
 
+.main-title {
+  display: inline-flex;
+  margin: 0 0 15px 0;
+
+  .title {
+    margin: 0;
+  }
+
+  .status_payment {
+    color: #187abd;
+  }
+
+  .status_error {
+    color: #e44592;
+  }
+}
+
 .button-container {
   margin-top: 30px;
 }
