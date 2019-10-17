@@ -1,5 +1,5 @@
 import { AbstractStore } from './abstract.store';
-import { endpoint } from '../constants';
+import { endpoint, isDevMode } from '../constants';
 import { API } from './api.interface';
 import { UserNotification, Translate, NotifyBannerTypes, TaskEventName, InfectedFile } from './types';
 import { ISPNotifierEvent } from '@ispsystem/notice-tools';
@@ -331,12 +331,12 @@ export class Store extends AbstractStore<WidgetState> {
    * @param properties - new properties
    */
   setStateProperty(properties: Partial<WidgetState>): void {
-    console.warn('BEFORE WIDGET STATE', this.state);
+    isDevMode && console.warn('BEFORE WIDGET STATE', this.state);
     this.setState({
       ...this.state,
       ...properties,
     });
-    console.warn('AFTER WIDGET STATE', this.state);
+    isDevMode && console.warn('AFTER WIDGET STATE', this.state);
   }
 
   /**

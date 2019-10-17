@@ -1,7 +1,11 @@
 {
   "TITLE": {
     "FREE": "Antivirus ImunifyAV",
-    "PRO": "Antivirus ImunifyAV+"
+    "PRO": "Antivirus ImunifyAV+",
+    "STATUS": {
+      "PURCHASING": "",
+      "ERROR": ""
+    }
   },
   "PRO_PERIODS": {
     "MONTH": {
@@ -61,10 +65,10 @@
     "IN_BLACK_LISTS": "The website is blacklisted ",
     "HOW_TO_FIX": "How to fix",
     "NOT_IN_BLACK_LISTS": "Website is not blacklisted ",
-    "HEALING": "",
+    "HEALING": "Leaning up",
     "FIRST_SCAN": {
       "BUTTON": "Scan website",
-      "TEXT_1": "",
+      "TEXT_1": "The antivirus is checking the website for viruses ",
       "TEXT_2": "Start the first check to make sure the website is not infected."
     }
   },
@@ -161,7 +165,16 @@
     "COMMON_DATE": {
       "TODAY": "Today",
       "YESTERDAY": "Yesterday"
-    }
+    },
+    "NOTIFY": {
+      "SCAN_SUCCESS": "",
+      "MORE_DETAILS": "",
+      "DESCRIPTION": {
+        "NO_VIRUSES": "",
+        "VIRUSES_CURED": ""
+      }
+    },
+    "VIRUS_GROUP_DETECTED": ""
   },
   "NEW_SCAN_BTN": "New scanning ",
   "DASHBOARD": {
