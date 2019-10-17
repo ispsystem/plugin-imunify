@@ -17,15 +17,7 @@ import { AntivirusActions } from '../models/antivirus/actions';
 import { UserNotification } from '../redux/user-notification.interface';
 import { TaskEventName, NavigationItem, AntivirusCardPages, PaymentStatus } from '../models/antivirus/model';
 import { AntivirusState } from '../models/antivirus/state';
-import {
-  purchase,
-  getPaymentOrders,
-  getOrderInfo,
-  OrderStatus,
-  markOrderAsDelete,
-  PaymentOrders,
-  PaymentOrderItem,
-} from '../utils/controllers';
+import { purchase, getPaymentOrders, getOrderInfo, OrderStatus, markOrderAsDelete, PaymentOrders } from '../utils/controllers';
 import { NotifierActions } from '../models/notifier.actions';
 import { ISPNotifier, ISPNotifierEvent } from '@ispsystem/notice-tools';
 import { ThemePalette } from './button/button.interface';
@@ -233,8 +225,7 @@ export class AntivirusCard {
               );
             } else {
               /** check last order on Delete or Fail status */
-              const lastOrder: PaymentOrderItem = data.list.length > 0 ? data.list[0] : null;
-              if (lastOrder && [OrderStatus.FAIL, OrderStatus.DELETED].includes(lastOrder.status)) {
+              if (data.list[0] !== undefined && [OrderStatus.FAIL, OrderStatus.DELETED].includes(data.list[0].status)) {
                 this.updateState({
                   ...this.store.getState().antivirus,
                   havePurchaseError: true,

@@ -5,6 +5,15 @@ const lang = {
       SUCCESS: 'угроз не обнаружено',
       ACCENT: 'нашли %{smart_count} вирус |||| нашли %{smart_count} вируса |||| нашли %{smart_count} вирусов',
     },
+    NOTIFY: {
+      SCAN_SUCCESS: 'Проверка сайта закончилась',
+      MORE_DETAILS: 'Подробнее',
+      DESCRIPTION: {
+        NO_VIRUSES: 'Вирусов не обнаружено',
+        VIRUSES_CURED: 'Вылечен %{smart_count} файл |||| Вылечено %{smart_count} файла |||| Вылечено %{smart_count} файлов',
+      },
+    },
+    VIRUS_GROUP_DETECTED: 'Обнаружен %{smart_count} вирус |||| Обнаружено %{smart_count} вируса |||| Обнаружено %{smart_count} вирусов',
     LAST_CHECK: 'последняя проверка: %{value}',
     DESC_MSG: {
       HISTORY: 'последняя проверка: сегодня',
