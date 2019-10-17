@@ -115,7 +115,7 @@ export class History {
             <antivirus-card-table-cell style={{ width: 200 - 20 + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_2'])}
             </antivirus-card-table-cell>
-            <antivirus-card-table-cell style={{ width: 547 - 20 + 'px' }}>
+            <antivirus-card-table-cell style={{ width: 547 - 20 - (this.isProVersion ? 90 : 0) + 'px' }}>
               {this.t.msg(['HISTORY_TAB', 'TABLE_HEADER', 'CELL_3'])}
             </antivirus-card-table-cell>
             {this.isProVersion && <antivirus-card-table-cell style={{ width: 70 + 'px' }}></antivirus-card-table-cell>}
