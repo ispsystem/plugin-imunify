@@ -30,9 +30,9 @@ export namespace Components {
     */
     'pluginId': number;
     /**
-    * Site id
+    * Observable of siteId from vepp
     */
-    'siteId': number;
+    'siteId$': Observable<number>;
     /**
     * Translate service
     */
@@ -72,9 +72,9 @@ declare namespace LocalJSX {
     */
     'pluginId'?: number;
     /**
-    * Site id
+    * Observable of siteId from vepp
     */
-    'siteId'?: number;
+    'siteId$'?: Observable<number>;
     /**
     * Translate service
     */

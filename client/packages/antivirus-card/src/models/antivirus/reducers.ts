@@ -4,7 +4,7 @@ import { ANTIVIRUS_ACTION, AntivirusActionTypes } from './types';
 const getInitialState = (): AntivirusState => {
   return {
     error: null,
-
+    havePurchaseError: false,
     isProVersion: false,
     hasScheduledActions: false,
     infectedFilesCount: 0,

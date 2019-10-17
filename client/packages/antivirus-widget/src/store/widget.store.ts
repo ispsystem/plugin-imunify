@@ -210,22 +210,40 @@ export class Store extends AbstractStore<WidgetState> {
           infectedFilesResponse.json(),
         ]);
 
-        this._userNotification.push({
-          title: this._t.msg(['WIDGET', 'SCAN_SUCCESS']),
-          content: '',
-          // link: this._t.msg(['WIDGET', 'MORE_DETAILS']),
-          type: NotifyBannerTypes.NORMAL_FAST,
-        });
+        // Infected files notification
+        const infectedFiles = scanResult.historyItem.infectedFilesCount;
+        const curedFiles = scanResult.historyItem.curedFilesCount;
 
-        scanResult.infectedFiles.list.forEach(file => {
-          if (file.status === 'INFECTED') {
-            this._userNotification.push({
-              title: this._t.msg(['WIDGET', 'VIRUS_DETECTED']),
-              content: file.threatName,
-              type: NotifyBannerTypes.ERROR_FAST,
-            });
-          }
-        });
+        // Cured files notification
+        if (curedFiles > 0) {
+          this._userNotification.push({
+            title: this._t.msg(['WIDGET', 'NOTIFY', 'SCAN_SUCCESS']),
+            content: this._t.msg(['WIDGET', 'NOTIFY', 'DESCRIPTION', 'VIRUSES_CURED'], curedFiles),
+            // link: this._this._t.msg(['WIDGET', 'MORE_DETAILS']),
+            type: NotifyBannerTypes.NORMAL_FAST,
+          });
+        } else if (infectedFiles > 1) {
+          this._userNotification.push({
+            title: this._t.msg(['WIDGET', 'VIRUS_GROUP_DETECTED'], infectedFiles),
+            content: undefined,
+            type: NotifyBannerTypes.ERROR_FAST,
+          });
+        } else if (infectedFiles === 1) {
+          const file = scanResult.infectedFiles.list[0];
+          this._userNotification.push({
+            title: this._t.msg(['WIDGET', 'VIRUS_DETECTED']),
+            content: file.name,
+            type: NotifyBannerTypes.ERROR_FAST,
+          });
+        } else {
+          this._userNotification.push({
+            title: this._t.msg(['WIDGET', 'NOTIFY', 'SCAN_SUCCESS']),
+            content: this._t.msg(['WIDGET', 'NOTIFY', 'DESCRIPTION', 'NO_VIRUSES']),
+            // link: this._this._t.msg(['NOTIFY', 'MORE_DETAILS']),
+            type: NotifyBannerTypes.NORMAL_FAST,
+          });
+        }
+
         this.setStateProperty({
           lastCheck: scanResult.historyItem.date,
           infectedFilesCount: infectedFilesResult.size,

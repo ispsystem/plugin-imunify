@@ -17,6 +17,7 @@ export class SpinnerRound {
   /** Position absolute or relative, absolute is default */
   @Prop({ reflect: true }) position: 'absolute' | 'relative' | 'static' | 'fixed' | 'inherit' | 'unset' | 'initial' = 'absolute';
 
+  /* eslint-disable react/no-unknown-property */
   render() {
     return (
       <div class="antivirus-card-spinner-round" style={{ width: this.width, height: this.height, position: this.position }}>
@@ -24,7 +25,7 @@ export class SpinnerRound {
           <defs>
             <linearGradient x1="100%" y1="10%" x2="35%" y2="100%" id={this.uuid}>
               <stop class="antivirus-card-spinner-round__linear-gradient-stop" offset="0%" />
-              <stop class="antivirus-card-spinner-round__linear-gradient-stop" stopOpacity="0.001" offset="100%" />
+              <stop class="antivirus-card-spinner-round__linear-gradient-stop" stop-opacity="0.001" offset="100%" />
             </linearGradient>
           </defs>
           <circle
@@ -33,13 +34,13 @@ export class SpinnerRound {
             cy="50"
             r="20"
             fill="none"
-            // eslint-disable-next-line react/no-unknown-property
             stroke-width="3"
             stroke={'url(#' + this.uuid + ')'}
-            strokeMiterlimit="10"
+            stroke-miterlimit="10"
           />
         </svg>
       </div>
     );
   }
+  /* eslint-enable react/no-unknown-property */
 }

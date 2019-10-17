@@ -2,6 +2,10 @@ const lang = {
   TITLE: {
     FREE: 'Антивирус ImunifyAV',
     PRO: 'Антивирус ImunifyAV+',
+    STATUS: {
+      PURCHASING: 'Оплачивается',
+      ERROR: 'Ошибка при оплате',
+    },
   },
   NOTIFY: {
     SCAN_SUCCESS: 'Проверка сайта закончилась',
