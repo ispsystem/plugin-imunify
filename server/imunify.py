@@ -576,6 +576,20 @@ async def get_vepp_list():
                              headers={"internal-auth": "on"},
                              params={"where": "product EQ 'vepp'"})
 
+class SiteInfo:
+    def __init__(self, res):
+        self.status = res.status
+        self.m_text = None
+        self.m_json = None
+
+
+    def json(self):
+        return self.m_json
+
+
+    def text(self):
+        return self.m_text
+
 
 class Imunify:
     """Основной класс, реализующий хендлеры"""
@@ -640,19 +654,23 @@ class Imunify:
         """
         async with ClientSession() as ses:
             attempts = 0
-            result = None
+            response = None
             while attempts < MAX_REQUEST_ATTEMPTS:
                 response = await ses.get("http://{}/isp/v3/site/{}".format(PROXY_SERVICE, site_id),
                                          headers={"Host": "instance-{}".format(instance_id)},
                                          cookies={"ses6": ses6})
                 log.debug("Attempt: '{}'. Status: '{}'. Response: '{}'".format(attempts, response.status, response.text()))
                 if response.status != 503:
-                    return response
+                    break
                 else:
-                    result = response
                     attempts += 1
                     await asyncio.sleep(1)
-            return result
+            site_info = SiteInfo(response)
+            if response.status != 200:
+                site_info.m_text = await response.text()
+            else:
+                site_info.m_json = await response.json()
+            return site_info
 
     async def post_site_site_id_scan(self, info: HandlerInfo):
         """
@@ -667,9 +685,9 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
-        site_info = await site_info_response.json()
+        site_info = site_info_response.json()
 
         request_body = await info.body
         response = await get_instance(info.instance_id)
@@ -791,7 +809,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         scan_type = request_body.get("scan_type")
@@ -937,7 +955,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         where_statement = "date_use IN (SELECT MAX(date_use) FROM imunify_presets " \
@@ -988,9 +1006,9 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
-        site_info = await site_info_response.json()
+        site_info = site_info_response.json()
 
         default_preset = get_default_preset()
         if not default_preset:
@@ -1015,7 +1033,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         where_statement = "id=%s AND site_id=%s AND instance=%s"
@@ -1048,7 +1066,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         where_statement = "instance=%s AND site_id=%s "
@@ -1094,7 +1112,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         file_type = info.path_params.get("type").upper()
@@ -1142,9 +1160,9 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
-        site_info = await site_info_response.json()
+        site_info = site_info_response.json()
 
         file_ids = request_body.get("files")
         response = await get_instance(info.instance_id)
@@ -1201,7 +1219,7 @@ class Imunify:
 
         site_info_response = await self.get_site_info(info.instance_id, site_id, info.ses6)
         if site_info_response.status != 200:
-            response = await site_info_response.text()
+            response = site_info_response.text()
             return web.Response(text=response, status=site_info_response.status)
 
         file_ids = request_body.get("files")
